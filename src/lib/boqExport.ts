@@ -113,7 +113,12 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
   const XLSX = await import("xlsx");
   const wb = XLSX.utils.book_new();
 
-  const abs: (string | number)[][] = [["BOQFather – " + title], [], ["Sr", "Item", "Description", "Unit", "Qty", "Rate (Rs.)", "Amount (Rs.)"]];
+  const abs: (string | number)[][] = [
+    ["BOQFather – " + title],
+    ...r.warnings.map((w) => ["", "CHECK", w.en]),
+    [],
+    ["Sr", "Item", "Description", "Unit", "Qty", "Rate (Rs.)", "Amount (Rs.)"],
+  ];
   let sr = 0;
   for (const s of r.sections) {
     abs.push(["", `${s.code}. ${s.title.en.toUpperCase()}`]);
@@ -124,7 +129,15 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
   abs.push(["", "", "Contingency / misc. 5%", "", "", "", r.contingency]);
   abs.push(["", "", "GRAND TOTAL", "", "", "", r.grandTotal]);
   if (r.externalTotal) abs.push(["", "", "of which external works (incl. 5%)", "", "", "", r.externalTotal]);
-  abs.push(["", "", `House cost per sqft on ${round(r.geometry.builtUpSqft)} sqft built-up${r.externalTotal ? " (external works excluded)" : ""}`, "", "", "", Math.round(r.perSqft)]);
+  abs.push([
+    "",
+    "",
+    `House cost per sqft on ${round(r.geometry.builtUpSqft)} sqft built-up${r.externalTotal ? " (external works excluded)" : ""}`,
+    "",
+    "",
+    "",
+    Math.round(r.perSqft),
+  ]);
   const ws1 = XLSX.utils.aoa_to_sheet(abs);
   ws1["!cols"] = [{ wch: 5 }, { wch: 7 }, { wch: 62 }, { wch: 6 }, { wch: 11 }, { wch: 11 }, { wch: 14 }];
   XLSX.utils.book_append_sheet(wb, ws1, "Abstract");
@@ -270,6 +283,26 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     { maxWidth: W - 2 * M },
   );
 
+  let startAbs = 43;
+  if (r.warnings.length) {
+    const lines = doc.splitTextToSize(r.warnings.map((w) => `- ${w.en}`).join("\n"), W - 2 * M - 6);
+    const hBox = 7 + lines.length * 3.6;
+    doc
+      .setFillColor(255, 244, 214)
+      .setDrawColor(229, 199, 122)
+      .roundedRect(M, 41.5, W - 2 * M, hBox, 1.5, 1.5, "FD");
+    doc
+      .setFont("helvetica", "bold")
+      .setFontSize(8.5)
+      .setTextColor(180, 83, 9)
+      .text(`PLEASE CHECK (${r.warnings.length})`, M + 3, 46);
+    doc
+      .setFont("helvetica", "normal")
+      .setFontSize(7.8)
+      .setTextColor(90, 60, 10)
+      .text(lines, M + 3, 50);
+    startAbs = 41.5 + hBox + 3;
+  }
   const body: (string | { content: string; colSpan?: number; styles?: object })[][] = [];
   let sr = 0;
   for (const s of r.sections) {
@@ -292,7 +325,7 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
   body.push(["", "", `House cost per sqft (${inr(r.geometry.builtUpSqft)} sqft${r.externalTotal ? ", external works excluded" : ""})`, "", "", "", inr(r.perSqft)]);
   autoTable(doc, {
     ...base,
-    startY: 43,
+    startY: startAbs,
     head: [["Sr", "MB item", "Description of work", "Unit", "Qty", "Rate (Rs.)", "Amount (Rs.)"]],
     body,
     columnStyles: {
@@ -362,7 +395,11 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
       .setFont("helvetica", "bold")
       .setFontSize(8.5)
       .setTextColor(...INK)
-      .text(`${["Ground floor", "First floor", "Second floor", "Third floor"][sk.floor] ?? `Floor ${sk.floor}`} – ${round(sk.L * 3.28084, 1)} x ${round(sk.B * 3.28084, 1)} ft`, x0, sy + 3);
+      .text(
+        `${["Ground floor", "First floor", "Second floor", "Third floor"][sk.floor] ?? `Floor ${sk.floor}`} – ${round(sk.L * 3.28084, 1)} x ${round(sk.B * 3.28084, 1)} ft`,
+        x0,
+        sy + 3,
+      );
     for (const rc of sk.rects) {
       doc
         .setFillColor(...(FILL[rc.type] ?? [238, 238, 238]))

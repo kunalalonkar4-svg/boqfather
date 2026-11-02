@@ -215,6 +215,17 @@ export const ROOM_DEFS: Record<RoomType, RoomDef> = {
 };
 export const ROOM_TYPES = Object.keys(ROOM_DEFS) as RoomType[];
 
+/** Minimum room sizes for residential buildings (NBC 2016, Part 3) — area m², narrowest side m. */
+export const NBC_MIN: Partial<Record<RoomType, { area?: number; width?: number }>> = {
+  hall: { area: 9.5, width: 2.4 },
+  bedroom: { area: 7.5, width: 2.4 },
+  study: { area: 7.5, width: 2.4 },
+  kitchen: { area: 5.0, width: 1.8 },
+  toilet: { area: 2.8, width: 1.2 },
+  passage: { width: 1.0 },
+  balcony: { width: 0.9 },
+};
+
 /** Default clear sizes in metres (L × B) — kept for older callers. */
 export const ROOM_SIZES = Object.fromEntries(ROOM_TYPES.map((t) => [t, [ROOM_DEFS[t].L, ROOM_DEFS[t].B]])) as Record<RoomType, [number, number]>;
 
@@ -519,7 +530,8 @@ export interface BoqResult {
   steelThumbKg: number;
   specSheet: { key: string; item: { en: string; hi: string }; spec: { en: string; hi: string } }[];
   sketch: { floor: number; L: number; B: number; rects: SketchRect[] }[];
-  warnings: string[];
+  /** Plot and building-code checks (English / Hindi). */
+  warnings: { en: string; hi: string }[];
 }
 
 export function floorLabel(f: number, total: number) {
@@ -1397,14 +1409,37 @@ export function calcBoq(input: BoqInput): BoqResult {
     steelThumbKg,
     specSheet,
     sketch,
-    warnings: spec.buildableM2
-      ? geo
-          .filter((g) => g.A > spec.buildableM2! * 1.02)
-          .map(
-            (g) =>
-              `${flr(g.f)} needs about ${Math.round(g.A * SQFT_PER_M2)} sqft but the plot allows ${Math.round(spec.buildableM2! * SQFT_PER_M2)} sqft after setbacks — reduce rooms or sizes.`,
-          )
-      : [],
+    warnings: [
+      ...(spec.buildableM2
+        ? geo
+            .filter((g) => g.A > spec.buildableM2! * 1.02)
+            .map((g) => ({
+              en: `${flr(g.f)} needs about ${Math.round(g.A * SQFT_PER_M2)} sqft but the plot allows only ${Math.round(spec.buildableM2! * SQFT_PER_M2)} sqft after setbacks — reduce rooms or sizes.`,
+              hi: `${flr(g.f)} को लगभग ${Math.round(g.A * SQFT_PER_M2)} sqft चाहिए, पर सेटबैक के बाद प्लॉट में सिर्फ़ ${Math.round(spec.buildableM2! * SQFT_PER_M2)} sqft की जगह है — कमरे या साइज़ कम करें।`,
+            }))
+        : []),
+      ...rooms.flatMap((r) => {
+        const m = NBC_MIN[r.type];
+        if (!m) return [];
+        const w = Math.min(r.L, r.B);
+        const bad = (m.area !== undefined && r.area < m.area - 0.05) || (m.width !== undefined && w < m.width - 0.02);
+        if (!bad) return [];
+        const need = [
+          m.area !== undefined ? `${m.area} m² (${Math.round(m.area * SQFT_PER_M2)} sqft)` : "",
+          m.width !== undefined ? `${m.width} m (${round(m.width * 3.28084, 1)} ft) wide` : "",
+        ].filter(Boolean);
+        const needHi = [
+          m.area !== undefined ? `${m.area} m² (${Math.round(m.area * SQFT_PER_M2)} sqft)` : "",
+          m.width !== undefined ? `${m.width} m (${round(m.width * 3.28084, 1)} ft) चौड़ाई` : "",
+        ].filter(Boolean);
+        return [
+          {
+            en: `${flr(r.floor)} ${r.code} ${ROOM_DEFS[r.type].name.en} is ${round(r.area, 1)} m², ${round(w, 2)} m wide — NBC minimum is ${need.join(" and ")}.`,
+            hi: `${flr(r.floor)} ${r.code} ${ROOM_DEFS[r.type].name.hi} ${round(r.area, 1)} m², ${round(w, 2)} m चौड़ा है — NBC के हिसाब से कम से कम ${needHi.join(" और ")} चाहिए।`,
+          },
+        ];
+      }),
+    ],
     assumptions: [
       `Each floor's outline is worked out from its own rooms (no drawing): carpet ≈ 83% of built-up incl. staircase ${STAIR_FP} m². ` +
         perFloor.map((p) => `${flr(p.floor)} ${p.L} × ${p.B} m`).join(", ") +

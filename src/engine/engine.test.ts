@@ -306,3 +306,36 @@ describe("advanced BOQ", () => {
       }
   });
 });
+
+describe("plot and building-code checks", () => {
+  it("flags rooms below NBC minimum and a house bigger than the plot", () => {
+    const r = calcBoq({
+      floorRooms: [
+        [
+          { type: "hall", L: 3.0, B: 3.0 },
+          { type: "bedroom", L: 2.7, B: 2.2 },
+          { type: "passage", L: 3, B: 0.8 },
+        ],
+      ],
+      spec: { buildableM2: 15 },
+    });
+    const en = r.warnings.map((w) => w.en).join(" | ");
+    expect(en).toContain("plot allows only");
+    expect(en).toContain("H1");
+    expect(en).toContain("BR1");
+    expect(en).toContain("P1");
+    expect(r.warnings.every((w) => w.hi.length > 0)).toBe(true);
+  });
+  it("plot fit keeps passages 1 m wide and bedrooms at NBC size", () => {
+    const ft = (x: number) => x / 3.28084;
+    const p = fitPlot({ plotL: ft(40), plotB: ft(30), front: ft(5), back: ft(3), side: ft(3), bhk: 2, floors: 1, parking: true });
+    const r = calcBoq({ floorRooms: p.floorRooms });
+    expect(r.warnings).toHaveLength(0);
+  });
+  it("stair sits in the same corner on every floor", () => {
+    const r = calcBoq({ floors: 3, plan: { bedrooms: 2, toilets: 2, kitchen: true, dining: true, balconies: 1 } });
+    const st = r.sketch.map((s) => s.rects.find((x) => x.type === "stair")!);
+    for (const [i, x] of st.entries()) expect(x.x + x.w).toBeCloseTo(r.sketch[i].L, 5);
+    for (const x of st) expect(x.y).toBe(0);
+  });
+});

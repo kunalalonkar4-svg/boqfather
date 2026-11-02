@@ -2,7 +2,7 @@
  * Plot-first start: plot size + setbacks + BHK → rooms that fit the buildable area,
  * and a schematic floor sketch (rooms as blocks inside the floor outline).
  */
-import { ROOM_DEFS, RoomSpec, RoomType } from "./boq";
+import { NBC_MIN, ROOM_DEFS, RoomSpec, RoomType } from "./boq";
 import { round } from "./units";
 
 export interface PlotInput {
@@ -74,7 +74,21 @@ export function fitPlot(p: PlotInput): PlotFit {
       k = 0.8;
     }
     if (f === 0) scale = k;
-    floorRooms.push(list.map((r) => (FIXED.includes(r.type) ? r : { ...r, L: round(r.L * k, 2), B: round(r.B * k, 2) })));
+    floorRooms.push(
+      list.map((r) => {
+        if (FIXED.includes(r.type)) return r;
+        // passages keep their width; everything else scales, then is held at the NBC minimum
+        let L = round(r.L * k, 2),
+          B = r.type === "passage" ? r.B : round(r.B * k, 2);
+        const m = NBC_MIN[r.type];
+        if (m?.width !== undefined && Math.min(L, B) < m.width) {
+          if (L < B) L = m.width;
+          else B = m.width;
+        }
+        if (m?.area !== undefined && L * B < m.area) L = round(m.area / B + 0.005, 2);
+        return { ...r, L, B };
+      }),
+    );
   }
   return { buildL, buildB, buildArea, floorRooms, scale, warnings };
 }
@@ -97,27 +111,26 @@ export interface SketchRect {
  * It shows proportions only — it is not an architectural plan.
  */
 export function sketchFloor(L: number, B: number, items: { key: string; label: string; type: RoomType | "stair"; area: number; L?: number; B?: number }[]): SketchRect[] {
-  const total = items.reduce((a, i) => a + i.area, 0) || 1;
   const out: SketchRect[] = [];
-  const sorted = [...items].sort((a, b) => b.area - a.area);
-  const place = (list: typeof sorted, x: number, y: number, w: number, h: number) => {
-    if (!list.length) return;
+  const place = (list: typeof items, x: number, y: number, w: number, h: number) => {
+    if (!list.length || w <= 0 || h <= 0) return;
     if (list.length === 1) {
       const i = list[0];
       out.push({ key: i.key, label: i.label, type: i.type, x, y, w, h, L: i.L, B: i.B });
       return;
     }
-    const sum = list.reduce((a, i) => a + i.area, 0);
+    const sorted = [...list].sort((a, b) => b.area - a.area);
+    const sum = sorted.reduce((a, i) => a + i.area, 0);
     // split into two groups of near-equal area
     let acc = 0,
       cut = 1;
-    for (let k = 0; k < list.length - 1; k++) {
-      acc += list[k].area;
+    for (let k = 0; k < sorted.length - 1; k++) {
+      acc += sorted[k].area;
       cut = k + 1;
       if (acc >= sum / 2) break;
     }
-    const a = list.slice(0, cut),
-      b = list.slice(cut);
+    const a = sorted.slice(0, cut),
+      b = sorted.slice(cut);
     const fa = a.reduce((s, i) => s + i.area, 0) / sum;
     if (w >= h) {
       place(a, x, y, w * fa, h);
@@ -127,6 +140,36 @@ export function sketchFloor(L: number, B: number, items: { key: string; label: s
       place(b, x, y + h * fa, w, h * (1 - fa));
     }
   };
-  place(sorted, 0, 0, L, B * Math.min(1, total / total));
+  const stair = items.find((i) => i.type === "stair");
+  const rest = items.filter((i) => i !== stair);
+  if (!stair) {
+    place(rest, 0, 0, L, B);
+    return out;
+  }
+  // staircase always in the same corner (top right) on every floor
+  const sw = Math.min(2.4, L * 0.35);
+  const sh = Math.min(B * 0.6, stair.area / sw);
+  out.push({ key: stair.key, label: stair.label, type: "stair", x: L - sw, y: 0, w: sw, h: sh });
+  const colArea = sw * (B - sh);
+  const totalRest = rest.reduce((a, i) => a + i.area, 0) || 1;
+  const leftArea = (L - sw) * B;
+  // small rooms fill the strip below the stair, in proportion to the space it offers
+  const target = (colArea / (colArea + leftArea)) * totalRest;
+  const col: typeof rest = [];
+  let got = 0;
+  for (const it of [...rest].sort((a, b) => a.area - b.area)) {
+    if (got + it.area > target * 1.15 && col.length) break;
+    col.push(it);
+    got += it.area;
+    if (got >= target) break;
+  }
+  place(col, L - sw, sh, sw, B - sh);
+  place(
+    rest.filter((i) => !col.includes(i)),
+    0,
+    0,
+    L - sw,
+    B,
+  );
   return out;
 }

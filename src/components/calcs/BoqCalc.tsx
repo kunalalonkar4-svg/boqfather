@@ -241,7 +241,10 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
 
   const beds = floorRooms.flat().filter((r) => r.type === "bedroom").length;
   const floorTag = F === 1 ? "G" : `G+${F - 1}`;
-  const title = res ? `${beds}BHK ${floorTag} house – ${Math.round(res.geometry.builtUpSqft)} sqft` : "";
+  // separate units (a kitchen on every floor) read as "2BHK + 2BHK"; one family house as "4BHK"
+  const unitWise = F > 1 && floorRooms.every((f) => f.some((r) => r.type === "kitchen"));
+  const bhkLabel = unitWise ? floorRooms.map((f) => `${f.filter((r) => r.type === "bedroom").length}BHK`).join(" + ") : `${beds}BHK`;
+  const title = res ? `${bhkLabel} ${floorTag} house – ${Math.round(res.geometry.builtUpSqft)} sqft` : "";
 
   const run = async (kind: "pdf" | "xls") => {
     if (!res) return;
@@ -716,11 +719,16 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   </li>
                 ))}
               </ul>
-              {res.warnings.map((w) => (
-                <p key={w} className="mt-3 rounded-lg bg-[#3a2f12] px-3 py-2 text-[13px] text-[#ffd98a]">
-                  ⚠ {w}
-                </p>
-              ))}
+              {res.warnings.length > 0 && (
+                <div className="mt-3 flex flex-col gap-1.5 rounded-lg bg-[#3a2f12] px-3 py-2.5 text-[13px] text-[#ffd98a]">
+                  <span className="font-bold">
+                    ⚠ {hi ? "जांचें" : "Check"} ({res.warnings.length})
+                  </span>
+                  {res.warnings.map((w) => (
+                    <span key={w.en}>• {w[lang]}</span>
+                  ))}
+                </div>
+              )}
               <p className="mt-3 text-[12px] text-[#cfcbc2]">
                 {hi ? "क्वालिटी" : "Finish"}: {{ basic: hi ? "बेसिक" : "Basic", standard: hi ? "स्टैंडर्ड" : "Standard", premium: hi ? "प्रीमियम" : "Premium" }[res.quality]} ·{" "}
                 {res.wall === "aac" ? (hi ? "AAC दीवार" : "AAC walls") : hi ? "ईंट की दीवार" : "Brick walls"} · {hi ? "सरिया BBS से" : "Steel from BBS"} {inr(res.bbs.total)} kg
