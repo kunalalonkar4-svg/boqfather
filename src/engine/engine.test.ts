@@ -196,3 +196,47 @@ describe("quote checker", () => {
     expect(Object.fromEntries(r.items.map((i) => [i.key, i.status]))).toEqual({ steel: "high", cement: "ok", tiles: "low" });
   });
 });
+
+describe("floor-wise rooms", () => {
+  const gf = [
+    { type: "parking", L: 5.4, B: 3.0 },
+    { type: "hall", L: 4.5, B: 3.9 },
+    { type: "kitchen", L: 3, B: 2.7 },
+    { type: "bedroom", L: 3.6, B: 3.3 },
+    { type: "toilet", L: 2.4, B: 1.5, wc: "iwc" },
+  ] as const;
+  const ff = [
+    { type: "bedroom", L: 3.6, B: 3.3 },
+    { type: "toilet", L: 2.4, B: 1.5 },
+  ] as const;
+  it("G only gives one floor, G+1 adds the first floor's own rooms", () => {
+    const g = calcBoq({ floorRooms: [[...gf]] });
+    const g1 = calcBoq({ floorRooms: [[...gf], [...ff]] });
+    expect(g.geometry.perFloor).toHaveLength(1);
+    expect(g1.geometry.perFloor).toHaveLength(2);
+    expect(g1.geometry.perFloor[1].builtUpSqft).toBeLessThan(g1.geometry.perFloor[0].builtUpSqft);
+    expect(g1.grandTotal).toBeGreaterThan(g.grandTotal);
+    expect(g1.geometry.builtUpSqft).toBeCloseTo(g1.geometry.perFloor.reduce((a, p) => a + p.builtUpSqft, 0), 5);
+  });
+  it("WC choice, windows and room-driven items", () => {
+    const r = calcBoq({ floorRooms: [[...gf], [...ff]] });
+    const all = r.sections.flatMap((s) => s.items);
+    expect(all.find((i) => i.rateKey === "iwc")!.qty).toBe(1);
+    expect(all.find((i) => i.rateKey === "ewc")!.qty).toBe(1);
+    expect(all.find((i) => i.rateKey === "sink")!.qty).toBe(1);
+    const more = calcBoq({ floorRooms: [[...gf.map((x) => (x.type === "hall" ? { ...x, windows: 4 } : x))], [...ff]] });
+    const win = (b: typeof r) => b.sections.flatMap((s) => s.items).find((i) => i.rateKey === "alwin")!.qty;
+    expect(win(more)).toBeGreaterThan(win(r));
+  });
+  it("smaller upper floor leaves an open terrace with parapet; no stair when G only without terrace", () => {
+    const r = calcBoq({ floorRooms: [[...gf], [...ff]] });
+    const para = r.sections.find((s) => s.code === "C")!.items.find((i) => i.desc.startsWith("Parapet"))!;
+    expect(para.rows.length).toBe(2);
+    const g = calcBoq({ floorRooms: [[...gf]], spec: { stairToTerrace: false } });
+    expect(g.sections.some((s) => s.title.en.startsWith("Staircase"))).toBe(false);
+  });
+  it("every item's measurement rows add up", () => {
+    const r = calcBoq({ floorRooms: [[...gf], [...ff], [...ff]], spec: { floorH: 3.2 } });
+    for (const s of r.sections) for (const i of s.items) expect(i.rows.reduce((a, x) => a + x.q, 0)).toBeCloseTo(i.qty, Math.max(0, i.dec - 1));
+  });
+});

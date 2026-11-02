@@ -1,5 +1,5 @@
 import type { BoqResult } from "@/engine";
-import { inr, round } from "@/engine";
+import { inr, ROOM_DEFS, round } from "@/engine";
 
 const fmt = (n: number | undefined, d = 3) => (n === undefined ? "" : round(n, d));
 const materialName: Record<string, string> = {
@@ -48,7 +48,7 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
   r.thumb.forEach((t) => mat.push([materialName[t.key] ?? t.key, t.unit, t.perSqft, Math.round(t.thumbQty), Math.round(t.qty), Math.round(t.diffPct)]));
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(mat), "Materials");
 
-  const rooms: (string | number)[][] = [["Floor", "Code", "Room", "L (m)", "B (m)", "Area (m²)", "Perimeter (m)"], ...r.rooms.map((x) => [x.floor === 0 ? "GF" : `Floor ${x.floor}`, x.code, x.type, x.L, x.B, round(x.area, 2), round(x.per, 2)])];
+  const rooms: (string | number)[][] = [["Floor", "Code", "Room", "L (m)", "B (m)", "Area (m²)", "Perimeter (m)"], ...r.rooms.map((x) => [x.floor === 0 ? "GF" : `Floor ${x.floor}`, x.code, ROOM_DEFS[x.type].name.en, x.L, x.B, round(x.area, 2), round(x.per, 2)])];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rooms), "Rooms");
 
   XLSX.writeFile(wb, `BOQFather_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.xlsx`);
@@ -84,11 +84,8 @@ export async function downloadBoqPdf(r: BoqResult, title: string) {
   header();
   doc.setTextColor(...INK).setFont("helvetica", "bold").setFontSize(14).text(title.toUpperCase(), M, 33);
   doc.setFont("helvetica", "normal").setFontSize(8.5).setTextColor(70, 68, 62);
-  doc.text(
-    `Built-up ${inr(r.geometry.builtUpSqftPerFloor)} sqft x ${r.geometry.floors} floor(s) = ${inr(r.geometry.builtUpSqft)} sqft  |  Columns 300x300, beams 230x400, slab 125 mm  |  M20, Fe500D  |  Composite rates`,
-    M,
-    38.5,
-  );
+  const fl = r.geometry.perFloor.map((p) => `${p.floor === 0 ? "GF" : r.geometry.floors > 2 ? `F${p.floor}` : "FF"} ${inr(p.builtUpSqft)}`).join(" + ");
+  doc.text(`Built-up ${fl} = ${inr(r.geometry.builtUpSqft)} sqft  |  Columns 300x300, beams 230x400, slab 125 mm  |  M20, Fe500D  |  Composite rates`, M, 38.5, { maxWidth: W - 2 * M });
 
   const body: (string | { content: string; colSpan?: number; styles?: object })[][] = [];
   let sr = 0;

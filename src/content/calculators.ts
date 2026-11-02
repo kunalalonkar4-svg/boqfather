@@ -376,7 +376,7 @@ export const CALCULATORS: CalcInfo[] = [
       metaDescription:
         "Enter floors, bedrooms, toilets and kitchen to get an item-wise BOQ of your house: excavation, RCC, steel, brickwork, plaster, flooring, doors, plumbing, electrical — with measurement book, editable rates, Excel and PDF.",
       intro:
-        "Tell us how many floors and rooms you want. BOQFather sizes the rooms, lays out columns and walls, and builds an item-wise BOQ with a measurement book (Nos × L × B × H) for every item. Change any rate and the total updates. Download Excel or PDF.",
+        "Choose G, G+1, G+2 or G+3, then add the rooms of each floor with their sizes — hall, bedrooms, kitchen, toilets, pooja, store, parking, shop and more. BOQFather lays out columns, beams and walls floor by floor and builds an item-wise BOQ with a measurement book (Nos × L × B × H) for every item. Change any rate and the total updates. Download Excel or PDF.",
       faqs: [
         {
           q: "How is this different from the house cost calculator?",
@@ -404,7 +404,7 @@ export const CALCULATORS: CalcInfo[] = [
       metaDescription:
         "मंज़िल, बेडरूम, टॉयलेट और किचन डालें और घर का आइटम-वार BOQ पाएं: खुदाई, RCC, सरिया, ईंट, प्लास्टर, फ़्लोरिंग, दरवाज़े, प्लंबिंग, बिजली — मेज़रमेंट बुक, बदलने लायक रेट, Excel और PDF के साथ।",
       intro:
-        "बताइए कितनी मंज़िल और कितने कमरे चाहिए। BOQFather कमरों का साइज़, कॉलम और दीवारें तय करके हर आइटम का मेज़रमेंट बुक (Nos × L × B × H) के साथ आइटम-वार BOQ बनाता है। कोई भी रेट बदलें, टोटल अपने आप बदलेगा। Excel या PDF डाउनलोड करें।",
+        "G, G+1, G+2 या G+3 चुनें, फिर हर मंज़िल के कमरे उनके साइज़ के साथ जोड़ें — हॉल, बेडरूम, किचन, टॉयलेट, पूजा, स्टोर, पार्किंग, दुकान और बाकी। BOQFather हर मंज़िल के कॉलम, बीम और दीवारें तय करके हर आइटम का मेज़रमेंट बुक (Nos × L × B × H) के साथ आइटम-वार BOQ बनाता है। कोई भी रेट बदलें, टोटल अपने आप बदलेगा। Excel या PDF डाउनलोड करें।",
       faqs: [
         {
           q: "यह घर खर्च कैलकुलेटर से अलग कैसे है?",

@@ -5,18 +5,226 @@
  */
 import { CEMENT_BAG_M3, CFT_PER_M3, round, SQFT_PER_M2 } from "./units";
 
-export type RoomType = "hall" | "dining" | "kitchen" | "bedroom" | "toilet" | "passage" | "balcony";
+export type RoomType = "hall" | "dining" | "kitchen" | "bedroom" | "toilet" | "passage" | "balcony" | "pooja" | "store" | "study" | "utility" | "parking" | "shop";
 
-/** Default clear sizes in metres (L × B). */
-export const ROOM_SIZES: Record<RoomType, [number, number]> = {
-  hall: [4.5, 3.9],
-  dining: [3.0, 2.7],
-  kitchen: [3.0, 2.7],
-  bedroom: [3.6, 3.3],
-  toilet: [2.4, 1.5],
-  passage: [4.8, 1.0],
-  balcony: [3.0, 1.2],
+export type DoorKind = "main" | "flush" | "pvc" | "shutter" | "none";
+
+interface RoomDef {
+  L: number;
+  B: number;
+  code: string;
+  door: DoorKind;
+  /** Door / opening width (m) — used for skirting and lintels. */
+  doorW: number;
+  windows: number;
+  vents: number;
+  floor: "vit" | "anti";
+  plaster: boolean;
+  ceiling: boolean;
+  skirting: boolean;
+  name: { en: string; hi: string };
+}
+
+/** Every room type with its default size (m) and what it brings with it. */
+export const ROOM_DEFS: Record<RoomType, RoomDef> = {
+  hall: {
+    L: 4.5,
+    B: 3.9,
+    code: "H",
+    door: "main",
+    doorW: 1.0,
+    windows: 2,
+    vents: 0,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Hall / living", hi: "हॉल / लिविंग" },
+  },
+  bedroom: {
+    L: 3.6,
+    B: 3.3,
+    code: "BR",
+    door: "flush",
+    doorW: 0.9,
+    windows: 1,
+    vents: 0,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Bedroom", hi: "बेडरूम" },
+  },
+  kitchen: {
+    L: 3.0,
+    B: 2.7,
+    code: "K",
+    door: "flush",
+    doorW: 0.9,
+    windows: 1,
+    vents: 0,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Kitchen", hi: "किचन" },
+  },
+  dining: {
+    L: 3.0,
+    B: 2.7,
+    code: "D",
+    door: "none",
+    doorW: 1.2,
+    windows: 1,
+    vents: 0,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Dining", hi: "डाइनिंग" },
+  },
+  toilet: {
+    L: 2.4,
+    B: 1.5,
+    code: "T",
+    door: "pvc",
+    doorW: 0.75,
+    windows: 0,
+    vents: 1,
+    floor: "anti",
+    plaster: true,
+    ceiling: true,
+    skirting: false,
+    name: { en: "Toilet / bath", hi: "टॉयलेट / बाथ" },
+  },
+  passage: {
+    L: 3.6,
+    B: 1.0,
+    code: "P",
+    door: "none",
+    doorW: 2.0,
+    windows: 0,
+    vents: 0,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Passage / lobby", hi: "पैसेज / लॉबी" },
+  },
+  balcony: {
+    L: 3.0,
+    B: 1.2,
+    code: "BL",
+    door: "main",
+    doorW: 1.0,
+    windows: 0,
+    vents: 0,
+    floor: "vit",
+    plaster: false,
+    ceiling: false,
+    skirting: true,
+    name: { en: "Balcony", hi: "बालकनी" },
+  },
+  pooja: {
+    L: 1.8,
+    B: 1.5,
+    code: "PJ",
+    door: "flush",
+    doorW: 0.75,
+    windows: 0,
+    vents: 0,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Pooja room", hi: "पूजा घर" },
+  },
+  store: {
+    L: 2.1,
+    B: 1.8,
+    code: "S",
+    door: "flush",
+    doorW: 0.75,
+    windows: 0,
+    vents: 1,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Store", hi: "स्टोर" },
+  },
+  study: {
+    L: 3.0,
+    B: 3.0,
+    code: "ST",
+    door: "flush",
+    doorW: 0.9,
+    windows: 1,
+    vents: 0,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Study / office", hi: "स्टडी / ऑफ़िस" },
+  },
+  utility: {
+    L: 2.1,
+    B: 1.5,
+    code: "U",
+    door: "none",
+    doorW: 0.9,
+    windows: 0,
+    vents: 1,
+    floor: "anti",
+    plaster: true,
+    ceiling: true,
+    skirting: false,
+    name: { en: "Wash / utility", hi: "वॉश / यूटिलिटी" },
+  },
+  parking: {
+    L: 5.4,
+    B: 3.0,
+    code: "PK",
+    door: "none",
+    doorW: 3.0,
+    windows: 0,
+    vents: 0,
+    floor: "anti",
+    plaster: true,
+    ceiling: true,
+    skirting: false,
+    name: { en: "Parking", hi: "पार्किंग" },
+  },
+  shop: {
+    L: 4.5,
+    B: 3.0,
+    code: "SH",
+    door: "shutter",
+    doorW: 2.4,
+    windows: 0,
+    vents: 0,
+    floor: "vit",
+    plaster: true,
+    ceiling: true,
+    skirting: true,
+    name: { en: "Shop (shutter)", hi: "दुकान (शटर)" },
+  },
 };
+export const ROOM_TYPES = Object.keys(ROOM_DEFS) as RoomType[];
+
+/** Default clear sizes in metres (L × B) — kept for older callers. */
+export const ROOM_SIZES = Object.fromEntries(ROOM_TYPES.map((t) => [t, [ROOM_DEFS[t].L, ROOM_DEFS[t].B]])) as Record<RoomType, [number, number]>;
+
+/** One room as the user enters it (metres). */
+export interface RoomSpec {
+  type: RoomType;
+  L: number;
+  B: number;
+  /** Windows in this room (default by type). */
+  windows?: number;
+  /** Toilets only: western or Indian WC. */
+  wc?: "ewc" | "iwc";
+}
 
 export interface FloorPlan {
   bedrooms: number;
@@ -28,11 +236,53 @@ export interface FloorPlan {
 
 /** Composite rates (material + labour), ₹ — editable. */
 export const BOQ_RATES = {
-  exc: 280, pcc: 5200, back: 150, termite: 60, murum: 900, rcc: 7000, steel: 78, sh_col: 350, sh_beam: 350, sh_slab: 300,
-  sh_foot: 300, brick: 6500, lintel: 18000, pl_int: 345, pl_ext: 430, pl_ceil: 365, pl_para: 430, vit: 1615, skirt: 150,
-  anti: 1075, wtile: 1025, toi_wp: 540, ter_wp: 450, granite: 4500, mdoor: 25000, fdoor: 13500, pvc: 3800, alwin: 5920,
-  vent: 1800, ewc: 8500, iwc: 4500, basin: 3500, shower: 4500, taps: 2400, fdrain: 600, sink: 4500, cpvc: 310, swr110: 1050,
-  swr75: 690, riser: 15000, elec: 1185, p_int: 280, p_ext: 235, st_tile: 1830, st_soffit: 645, rail: 3935,
+  exc: 280,
+  pcc: 5200,
+  back: 150,
+  termite: 60,
+  murum: 900,
+  rcc: 7000,
+  steel: 78,
+  sh_col: 350,
+  sh_beam: 350,
+  sh_slab: 300,
+  sh_foot: 300,
+  brick: 6500,
+  lintel: 18000,
+  pl_int: 345,
+  pl_ext: 430,
+  pl_ceil: 365,
+  pl_para: 430,
+  vit: 1615,
+  skirt: 150,
+  anti: 1075,
+  wtile: 1025,
+  toi_wp: 540,
+  ter_wp: 450,
+  granite: 4500,
+  mdoor: 25000,
+  fdoor: 13500,
+  pvc: 3800,
+  alwin: 5920,
+  vent: 1800,
+  ewc: 8500,
+  iwc: 4500,
+  basin: 3500,
+  shower: 4500,
+  taps: 2400,
+  fdrain: 600,
+  sink: 4500,
+  cpvc: 310,
+  swr110: 1050,
+  swr75: 690,
+  riser: 15000,
+  elec: 1185,
+  p_int: 280,
+  p_ext: 235,
+  st_tile: 1830,
+  st_soffit: 645,
+  rail: 3935,
+  shutter: 3200,
 } as const;
 export type RateKey = keyof typeof BOQ_RATES;
 
@@ -66,14 +316,30 @@ export interface BoqSection {
   subtotal: number;
 }
 
+export interface BoqSpec {
+  /** Floor-to-floor height, m (default 3.0 = 10 ft). */
+  floorH?: number;
+  /** Window size, m (default 1.5 × 1.2). */
+  winW?: number;
+  winH?: number;
+  /** Plinth height above ground, m (default 0.45). */
+  plinth?: number;
+  /** Staircase going up to the terrace (default true). */
+  stairToTerrace?: boolean;
+}
+
 export interface BoqInput {
-  floors: number;
-  plan: FloorPlan;
+  /** Rooms of each floor, ground floor first. When given, floors / plan / roomSizes are ignored. */
+  floorRooms?: RoomSpec[][];
+  /** Older simple input: same plan repeated on every floor. */
+  floors?: number;
+  plan?: FloorPlan;
+  roomSizes?: Partial<Record<RoomType, [number, number]>>;
+  spec?: BoqSpec;
   /** Multiplier applied to every composite rate (city / market level). */
   locationFactor?: number;
   /** Rate overrides by item code (A1, B2…). */
   rateOverrides?: Record<string, number>;
-  roomSizes?: Partial<Record<RoomType, [number, number]>>;
 }
 
 export interface Room {
@@ -84,7 +350,11 @@ export interface Room {
   B: number;
   area: number;
   per: number;
+  door: DoorKind;
   doorWidth: number;
+  windows: number;
+  vents: number;
+  wc?: "ewc" | "iwc";
 }
 
 const row = (desc: string, n: number, L?: number, B?: number, H?: number, rem?: string): MbRow => {
@@ -94,60 +364,91 @@ const row = (desc: string, n: number, L?: number, B?: number, H?: number, rem?: 
 };
 const qRow = (desc: string, q: number, rem?: string): MbRow => ({ desc, n: 1, L: round(q, 3), q, rem });
 
-const ROOM_CODE: Record<RoomType, string> = { hall: "H", dining: "D", kitchen: "K", bedroom: "BR", toilet: "T", passage: "P", balcony: "BL" };
-const ROOM_NAME: Record<RoomType, string> = {
-  hall: "Hall / living",
-  dining: "Dining",
-  kitchen: "Kitchen",
-  bedroom: "Bedroom",
-  toilet: "Toilet",
-  passage: "Passage",
-  balcony: "Balcony",
-};
-export const roomName = (t: RoomType) => ROOM_NAME[t];
+export const roomName = (t: RoomType, lang: "en" | "hi" = "en") => ROOM_DEFS[t].name[lang];
 
-export function buildRooms(floors: number, plan: FloorPlan, sizes: Partial<Record<RoomType, [number, number]>> = {}): Room[] {
+/** Typical room list for one floor from a simple plan. */
+export function planRooms(plan: FloorPlan, sizes: Partial<Record<RoomType, [number, number]>> = {}, isGround = true): RoomSpec[] {
   const size = (t: RoomType): [number, number] => sizes[t] ?? ROOM_SIZES[t];
+  const list: RoomSpec[] = [{ type: "hall", L: size("hall")[0], B: size("hall")[1] }];
+  if (plan.dining) list.push({ type: "dining", L: size("dining")[0], B: size("dining")[1] });
+  if (plan.kitchen) list.push({ type: "kitchen", L: size("kitchen")[0], B: size("kitchen")[1] });
+  for (let i = 0; i < plan.bedrooms; i++) {
+    const [l, b] = size("bedroom");
+    list.push({ type: "bedroom", L: i === 0 && !sizes.bedroom ? round(l + 0.3, 2) : l, B: b });
+  }
+  list.push({ type: "passage", L: sizes.passage?.[0] ?? Math.max(3, round(1.2 * (plan.bedrooms + plan.toilets), 2)), B: size("passage")[1] });
+  for (let i = 0; i < plan.toilets; i++)
+    list.push({ type: "toilet", L: size("toilet")[0], B: size("toilet")[1], wc: isGround && plan.toilets > 1 && i === plan.toilets - 1 ? "iwc" : "ewc" });
+  for (let i = 0; i < plan.balconies; i++) list.push({ type: "balcony", L: size("balcony")[0], B: size("balcony")[1] });
+  return list;
+}
+
+/** Room list for every floor (older simple input). */
+export function buildRooms(floors: number, plan: FloorPlan, sizes: Partial<Record<RoomType, [number, number]>> = {}): Room[] {
+  return toRooms(Array.from({ length: floors }, (_, f) => planRooms(plan, sizes, f === 0)));
+}
+
+function toRooms(floorRooms: RoomSpec[][]): Room[] {
   const counts: Record<string, number> = {};
   const rooms: Room[] = [];
-  const passageLen = Math.max(3, round(1.2 * (plan.bedrooms + plan.toilets), 2));
-  for (let f = 0; f < floors; f++) {
-    const list: { t: RoomType; L: number; B: number; dw: number }[] = [];
-    const [hl, hb] = size("hall");
-    list.push({ t: "hall", L: hl, B: hb, dw: 2.0 });
-    if (plan.dining) list.push({ t: "dining", L: size("dining")[0], B: size("dining")[1], dw: 1.0 });
-    if (plan.kitchen) list.push({ t: "kitchen", L: size("kitchen")[0], B: size("kitchen")[1], dw: 0.9 });
-    for (let i = 0; i < plan.bedrooms; i++) {
-      const [l, b] = size("bedroom");
-      // master bedroom slightly larger when defaults are used
-      list.push({ t: "bedroom", L: i === 0 && !sizes.bedroom ? round(l + 0.3, 2) : l, B: b, dw: 0.9 });
-    }
-    list.push({ t: "passage", L: sizes.passage?.[0] ?? passageLen, B: size("passage")[1], dw: 0.9 * plan.bedrooms + 0.75 * plan.toilets + 1.0 });
-    for (let i = 0; i < plan.toilets; i++) list.push({ t: "toilet", L: size("toilet")[0], B: size("toilet")[1], dw: 0.75 });
-    for (let i = 0; i < plan.balconies; i++) list.push({ t: "balcony", L: size("balcony")[0], B: size("balcony")[1], dw: 1.0 });
+  floorRooms.forEach((list, f) => {
     for (const r of list) {
-      const c = ROOM_CODE[r.t];
-      counts[c] = (counts[c] ?? 0) + 1;
-      rooms.push({ code: `${c}${counts[c]}`, type: r.t, floor: f, L: r.L, B: r.B, area: r.L * r.B, per: 2 * (r.L + r.B), doorWidth: r.dw });
+      const def = ROOM_DEFS[r.type];
+      counts[def.code] = (counts[def.code] ?? 0) + 1;
+      const L = Math.max(0.6, r.L),
+        B = Math.max(0.6, r.B);
+      rooms.push({
+        code: `${def.code}${counts[def.code]}`,
+        type: r.type,
+        floor: f,
+        L,
+        B,
+        area: L * B,
+        per: 2 * (L + B),
+        door: def.door,
+        doorWidth: def.doorW,
+        windows: Math.max(0, Math.round(r.windows ?? def.windows)),
+        vents: def.vents,
+        wc: r.type === "toilet" ? (r.wc ?? "ewc") : undefined,
+      });
     }
-  }
+  });
   return rooms;
+}
+
+export interface FloorGeo {
+  floor: number;
+  L: number;
+  B: number;
+  areaM2: number;
+  builtUpSqft: number;
+  carpetSqft: number;
+  columns: number;
+  baysL: number;
+  baysB: number;
+  partition: number;
+  rooms: number;
 }
 
 export interface BoqResult {
   rooms: Room[];
   geometry: {
     floors: number;
+    /** Base (largest) floor outline, used for foundation. */
     L0: number;
     B0: number;
     footprintM2: number;
+    /** Ground floor built-up (sqft). */
     builtUpSqftPerFloor: number;
     builtUpSqft: number;
+    /** Ground floor carpet (sqft). */
     carpetSqftPerFloor: number;
+    carpetSqft: number;
     columns: number;
     baysL: number;
     baysB: number;
     partitionPerFloor: number;
+    perFloor: FloorGeo[];
   };
   sections: BoqSection[];
   itemsTotal: number;
@@ -159,48 +460,115 @@ export interface BoqResult {
   assumptions: string[];
 }
 
+export function floorLabel(f: number, total: number) {
+  return f === 0 ? "GF" : total > 2 ? `F${f}` : "FF";
+}
+
 export function calcBoq(input: BoqInput): BoqResult {
-  const F = Math.max(1, Math.round(input.floors));
-  const plan = input.plan;
+  const floorRooms: RoomSpec[][] = input.floorRooms?.length
+    ? input.floorRooms
+    : Array.from({ length: Math.max(1, Math.round(input.floors ?? 1)) }, (_, f) =>
+        planRooms(input.plan ?? { bedrooms: 2, toilets: 2, kitchen: true, dining: true, balconies: 0 }, input.roomSizes, f === 0),
+      );
+  const F = floorRooms.length;
   const factor = input.locationFactor ?? 1;
   const overrides = input.rateOverrides ?? {};
-  const rooms = buildRooms(F, plan, input.roomSizes);
-  const gf = rooms.filter((r) => r.floor === 0);
+  const spec = input.spec ?? {};
+  const rooms = toRooms(floorRooms);
+  const flr = (f: number) => floorLabel(f, F);
+  const FL = Array.from({ length: F }, (_, f) => f);
+  const onFloor = (f: number) => rooms.filter((r) => r.floor === f);
 
-  // ---------------- geometry
+  // ---------------- constants
+  const COL = 0.3,
+    BW = 0.23,
+    BD = 0.4,
+    SLAB = 0.125,
+    WE = 0.23,
+    WI = 0.115;
+  const FH = round(spec.floorH ?? 3.0, 3);
+  const PLINTH = round(spec.plinth ?? 0.45, 3);
+  const WW = round(spec.winW ?? 1.5, 3),
+    WH = round(spec.winH ?? 1.2, 3);
+  const terrace = spec.stairToTerrace ?? true;
+  const NS = F - 1 + (terrace ? 1 : 0); // staircases (one per storey climbed)
   const STAIR_FP = 6.83;
-  const carpet = gf.reduce((a, r) => a + r.area, 0);
-  const A = (carpet + STAIR_FP) / 0.83;
-  const L0 = round(Math.sqrt(A * 1.25), 2);
-  const B0 = round(A / L0, 2);
-  const COL = 0.3, BW = 0.23, FH = 3.0, BD = 0.4, SLAB = 0.125, PLINTH = 0.45, WE = 0.23, WI = 0.115;
-  const LC = L0 - COL, BC = B0 - COL;
-  const NBL = Math.max(2, Math.ceil(LC / 3.6)), NBB = Math.max(2, Math.ceil(BC / 3.6));
-  const CLL = round(LC / NBL - COL, 3), CLB = round(BC / NBB - COL, 3);
-  const NCOL = (NBL + 1) * (NBB + 1);
-  const WALL_H = FH - BD, PL_H = FH - SLAB;
-  const INNER_PER = 2 * (L0 - 2 * WE + (B0 - 2 * WE));
-  const OUTER_PER = 2 * (L0 + B0);
-  const PARA_CL = OUTER_PER - 4 * WE;
-  const perimSum = gf.reduce((a, r) => a + r.per, 0);
-  const PART = round(Math.max(0, (perimSum - INNER_PER) / 2), 2);
-  const NET_GF = round(carpet + STAIR_FP, 2);
-  const highGround = F > 1;
-  const FOOT = highGround ? 1.5 : 1.2, FOOT_D = highGround ? 0.45 : 0.4, PIT_D = highGround ? 1.5 : 1.2;
-  const PCC_W = FOOT + 0.2, PIT = FOOT + 0.4;
-  const GA = Array.from({ length: NBB + 1 }, (_, i) => String.fromCharCode(65 + i));
-  const GN = Array.from({ length: NBL + 1 }, (_, i) => String(i + 1));
+  const WALL_H = round(FH - BD, 3),
+    PL_H = round(FH - SLAB, 3);
+  const SH_H = 2.4; // shutter height
 
-  // openings per floor
-  const WIN = plan.bedrooms + 2 + (plan.kitchen ? 1 : 0) + (plan.dining ? 1 : 0);
-  const VEN = plan.toilets;
-  const RD = plan.bedrooms + (plan.kitchen ? 1 : 0);
-  const TD = plan.toilets;
-  const MD = 1 + plan.balconies;
-  const KIT = plan.kitchen ? F : 0;
-  const NT = plan.toilets * F;
+  // ---------------- per-floor geometry (each floor sized from its own rooms)
+  const geo = FL.map((f) => {
+    const rs = onFloor(f);
+    const carpet = rs.reduce((a, r) => a + r.area, 0);
+    const hasStair = f < F - 1 || terrace;
+    const A = (carpet + (hasStair ? STAIR_FP : 0)) / 0.83;
+    const L = round(Math.sqrt(A * 1.25), 2);
+    const B = round(A / L, 2);
+    const LC = L - COL,
+      BC = B - COL;
+    const NBL = Math.max(1, Math.ceil(LC / 3.6)),
+      NBB = Math.max(1, Math.ceil(BC / 3.6));
+    const CLL = round(LC / NBL - COL, 3),
+      CLB = round(BC / NBB - COL, 3);
+    const NCOL = (NBL + 1) * (NBB + 1);
+    const innerPer = 2 * (L - 2 * WE + (B - 2 * WE));
+    const outerPer = 2 * (L + B);
+    const part = round(Math.max(0, (rs.reduce((a, r) => a + r.per, 0) - innerPer) / 2), 2);
+    const cnt = (fn: (r: Room) => number) => rs.reduce((a, r) => a + fn(r), 0);
+    return {
+      f,
+      rs,
+      carpet,
+      hasStair,
+      L,
+      B,
+      A: L * B,
+      NBL,
+      NBB,
+      CLL,
+      CLB,
+      NCOL,
+      outerPer,
+      paraCl: outerPer - 4 * WE,
+      part,
+      net: carpet + (hasStair ? STAIR_FP : 0),
+      win: cnt((r) => r.windows),
+      ven: cnt((r) => r.vents),
+      md: cnt((r) => (r.door === "main" ? 1 : 0)),
+      fd: cnt((r) => (r.door === "flush" ? 1 : 0)),
+      fdW: cnt((r) => (r.door === "flush" ? r.doorWidth : 0)),
+      td: cnt((r) => (r.door === "pvc" ? 1 : 0)),
+      sh: cnt((r) => (r.door === "shutter" ? 1 : 0)),
+      pk: cnt((r) => (r.type === "parking" ? 1 : 0)),
+      GA: Array.from({ length: NBB + 1 }, (_, i) => String.fromCharCode(65 + i)),
+      GN: Array.from({ length: NBL + 1 }, (_, i) => String(i + 1)),
+    };
+  });
+  const base = geo.reduce((a, g) => (g.A > a.A ? g : a), geo[0]);
+  const g0 = geo[0];
+  const NCOL = base.NCOL;
+  const highGround = F > 1;
+  const FOOT = highGround ? 1.5 : 1.2,
+    FOOT_D = highGround ? 0.45 : 0.4,
+    PIT_D = highGround ? 1.5 : 1.2;
+  const PCC_W = FOOT + 0.2,
+    PIT = FOOT + 0.4;
+
   const toilets = rooms.filter((r) => r.type === "toilet");
   const kitchens = rooms.filter((r) => r.type === "kitchen");
+  const utils = rooms.filter((r) => r.type === "utility");
+  const NT = toilets.length,
+    KIT = kitchens.length,
+    UT = utils.length;
+  const tot = (k: "win" | "ven" | "md" | "fd" | "td" | "sh") => geo.reduce((a, g) => a + g[k], 0);
+  const WIN = tot("win"),
+    VEN = tot("ven"),
+    MD = tot("md"),
+    FD = tot("fd"),
+    TD = tot("td"),
+    SH = tot("sh");
+  const avgFdW = FD ? round(geo.reduce((a, g) => a + g.fdW, 0) / FD, 2) : 0.9;
 
   // ---------------- items
   const sections: BoqSection[] = [];
@@ -208,17 +576,45 @@ export function calcBoq(input: BoqInput): BoqResult {
   const item = (desc: string, unit: string, rateKey: RateKey, basis: string, rows: MbRow[], dec = 3): BoqItem => {
     const s = sections.at(-1)!;
     const code = `${s.code}${s.items.length + 1}`;
-    const qty = round(rows.reduce((a, r) => a + r.q, 0), dec);
+    const qty = round(
+      rows.reduce((a, r) => a + r.q, 0),
+      dec,
+    );
     const rate = overrides[code] ?? Math.round(BOQ_RATES[rateKey] * factor);
     const it: BoqItem = { code, desc, unit, rateKey, rate, basis, rows, qty, dec, amount: Math.round(qty * rate) };
     s.items.push(it);
     return it;
   };
+  /** Opening deductions for one floor, as MB rows. */
+  const openRows = (g: (typeof geo)[number], t: number, mode: "ext" | "int" | "plInt" | "plExt") => {
+    const p = flr(g.f);
+    const out: MbRow[] = [];
+    const r = (desc: string, n: number, L: number, H: number) => {
+      if (n) out.push(row(`${p} (−) ${desc}`, -n, L, H));
+    };
+    if (mode === "ext" || mode === "plExt" || mode === "plInt") {
+      r(`Windows ${WW} × ${WH}`, g.win, WW, WH);
+      r("Main / balcony doors 1.0 × 2.1", g.md, 1.0, 2.1);
+      r(`Shutters 2.4 × ${SH_H}`, g.sh, 2.4, SH_H);
+      r("Ventilators 0.6 × 0.45", g.ven, 0.6, 0.45);
+      r("Parking opening 3.0 × 2.4", g.pk, 3.0, 2.4);
+    }
+    if (mode === "int" || mode === "plInt") {
+      const k = mode === "plInt" ? 2 : 1;
+      r(`Room doors ${avgFdW} × 2.1${k === 2 ? " (both faces)" : ""}`, g.fd * k, avgFdW, 2.1);
+      r(`Toilet doors 0.75 × 2.1${k === 2 ? " (both faces)" : ""}`, g.td * k, 0.75, 2.1);
+    }
+    return t ? out.map((x) => row(x.desc, x.n, x.L, x.B, t)) : out;
+  };
 
   sec("A", "Earthwork and foundation", "खुदाई और नींव");
-  const exc = item(`Excavation for column footings in ordinary soil, depth ${PIT_D} m`, "m³", "exc", `Pit = footing ${FOOT} m + 0.20 m working space each side = ${round(PIT, 2)} m square × ${PIT_D} m deep.`, [
-    row(`Footing pits F1–F${NCOL}`, NCOL, PIT, PIT, PIT_D, `${NCOL} columns`),
-  ]);
+  const exc = item(
+    `Excavation for column footings in ordinary soil, depth ${PIT_D} m`,
+    "m³",
+    "exc",
+    `Pit = footing ${FOOT} m + 0.20 m working space each side = ${round(PIT, 2)} m square × ${PIT_D} m deep.`,
+    [row(`Footing pits F1–F${NCOL}`, NCOL, PIT, PIT, PIT_D, `${NCOL} columns`)],
+  );
   const pccf = item("PCC 1:4:8 below footings, 100 mm", "m³", "pcc", `${round(PCC_W, 2)} m square × 0.10 m.`, [row("Below footings", NCOL, PCC_W, PCC_W, 0.1)]);
   const foot = item(`RCC M20 isolated footings ${FOOT} × ${FOOT} m, ${FOOT_D * 1000} mm (avg)`, "m³", "rcc", "Typical footing; confirm by soil test and structural design.", [
     row(`Footings F1–F${NCOL}`, NCOL, FOOT, FOOT, FOOT_D),
@@ -230,26 +626,32 @@ export function calcBoq(input: BoqInput): BoqResult {
     row("(−) Column below GL", -NCOL, COL, COL, round(PIT_D - FOOT_D, 2)),
   ]);
   const pbRows = [
-    ...GA.map((g) => row(`Grid ${g} (along length), ${NBL} spans`, NBL, CLL, BW, 0.3)),
-    ...GN.map((g) => row(`Grid ${g} (along width), ${NBB} spans`, NBB, CLB, BW, 0.3)),
+    ...base.GA.map((x) => row(`Grid ${x} (along length), ${base.NBL} spans`, base.NBL, base.CLL, BW, 0.3)),
+    ...base.GN.map((x) => row(`Grid ${x} (along width), ${base.NBB} spans`, base.NBB, base.CLB, BW, 0.3)),
   ];
   const pbeam = item("RCC M20 plinth beam 230 × 300 mm", "m³", "rcc", "Clear span between columns × 0.23 × 0.30 m.", pbRows);
-  item("Anti-termite treatment on plinth area", "m²", "termite", "Outer L × B.", [row("Plinth area", 1, L0, B0)], 2);
-  item("Plinth filling with murum / sand, 300 mm", "m³", "murum", "Net ground floor area × 0.30 m.", [row("Net GF area (rooms + stair)", 1, NET_GF, undefined, 0.3)]);
-  const pccfl = item("PCC 1:4:8 base for ground floor, 75 mm", "m³", "pcc", "Net ground floor area × 0.075 m.", [row("Net GF area", 1, NET_GF, undefined, 0.075)]);
+  item("Anti-termite treatment on plinth area", "m²", "termite", "Outer L × B of the ground floor.", [row("Plinth area", 1, g0.L, g0.B)], 2);
+  item(`Plinth filling with murum / sand, 300 mm`, "m³", "murum", "Net ground floor area (rooms + stair) × 0.30 m.", [row("Net GF area", 1, round(g0.net, 2), undefined, 0.3)]);
+  const pccfl = item("PCC 1:4:8 base for ground floor, 75 mm", "m³", "pcc", "Net ground floor area × 0.075 m.", [row("Net GF area", 1, round(g0.net, 2), undefined, 0.075)]);
 
   sec("B", "RCC structure – M20 / Fe500D", "RCC ढांचा – M20 / Fe500D");
   const colH = round(PIT_D - FOOT_D + PLINTH, 2);
-  const col = item("RCC M20 columns 300 × 300 mm", "m³", "rcc", `Below plinth ${colH} m; each floor clear height ${FH} − ${BD} = ${round(WALL_H, 2)} m.`, [
+  const col = item("RCC M20 columns 300 × 300 mm", "m³", "rcc", `Below plinth ${colH} m; each floor clear height ${FH} − ${BD} = ${WALL_H} m.`, [
     row("Footing top to plinth", NCOL, COL, COL, colH),
-    row(`Columns, ${F} floor(s)`, NCOL * F, COL, COL, round(WALL_H, 2)),
+    ...geo.map((g) => row(`${flr(g.f)} columns`, g.NCOL, COL, COL, WALL_H)),
   ]);
-  const bmRows = [
-    ...GA.map((g) => row(`Grid ${g} (along length), ${NBL} spans × ${F} fl`, NBL * F, CLL, BW, BD - SLAB)),
-    ...GN.map((g) => row(`Grid ${g} (along width), ${NBB} spans × ${F} fl`, NBB * F, CLB, BW, BD - SLAB)),
-  ];
+  const bmRows = geo.flatMap((g) => [
+    row(`${flr(g.f)} beams along length (${g.GA.length} grids × ${g.NBL} spans)`, g.GA.length * g.NBL, g.CLL, BW, BD - SLAB),
+    row(`${flr(g.f)} beams along width (${g.GN.length} grids × ${g.NBB} spans)`, g.GN.length * g.NBB, g.CLB, BW, BD - SLAB),
+  ]);
   const beam = item("RCC M20 beams 230 × 400 mm (275 mm below slab)", "m³", "rcc", "Clear span × 0.23 × 0.275 m; slab portion counted in slab.", bmRows);
-  const slab = item("RCC M20 slab 125 mm", "m³", "rcc", `Built-up per floor ${L0} × ${B0} m × 0.125 m.`, Array.from({ length: F }, (_, i) => row(`Roof slab over floor ${i + 1}`, 1, L0, B0, SLAB)));
+  const slab = item(
+    "RCC M20 slab 125 mm",
+    "m³",
+    "rcc",
+    "Each floor's outline L × B × 0.125 m.",
+    geo.map((g) => row(`Roof slab over ${flr(g.f)}`, 1, g.L, g.B, SLAB)),
+  );
   const KG = { foot: 80, col: 180, pbeam: 120, beam: 150, slab: 90, stair: 90 };
   const stRows = [
     row("Footings: m³ × 80 kg/m³", 1, foot.qty, KG.foot, undefined, "m³ × kg/m³"),
@@ -258,156 +660,405 @@ export function calcBoq(input: BoqInput): BoqResult {
     row("Beams: m³ × 150 kg/m³", 1, beam.qty, KG.beam),
     row("Slabs: m³ × 90 kg/m³", 1, slab.qty, KG.slab),
   ];
-  const netSteel = stRows.reduce((a, r) => a + r.q, 0);
-  stRows.push(qRow("Add 5% laps / wastage", round(netSteel * 0.05, 1)));
-  const steel = item("Reinforcement steel Fe500D (cut, bent, tied)", "kg", "steel", "Thumb rule kg per m³ of concrete by member + 5%. Exact steel comes from the bar bending schedule.", stRows, 1);
-  const beamLen = round(bmRows.reduce((a, r) => a + r.n * (r.L ?? 0), 0), 2);
-  const pbLen = round(pbRows.reduce((a, r) => a + r.n * (r.L ?? 0), 0), 2);
+  stRows.push(qRow("Add 5% laps / wastage", round(stRows.reduce((a, r) => a + r.q, 0) * 0.05, 1)));
+  const steel = item(
+    "Reinforcement steel Fe500D (cut, bent, tied)",
+    "kg",
+    "steel",
+    "Thumb rule kg per m³ of concrete by member + 5%. Exact steel comes from the bar bending schedule.",
+    stRows,
+    1,
+  );
+  const beamLen = round(
+    bmRows.reduce((a, r) => a + r.n * (r.L ?? 0), 0),
+    2,
+  );
+  const pbLen = round(
+    pbRows.reduce((a, r) => a + r.n * (r.L ?? 0), 0),
+    2,
+  );
   item("Shuttering – footing sides", "m²", "sh_foot", "4 sides × size × depth.", [row("Footing sides", NCOL * 4, FOOT, undefined, FOOT_D)], 2);
-  item("Shuttering – columns", "m²", "sh_col", "Perimeter 1.20 m × height.", [row("Footing to plinth", NCOL, 1.2, undefined, colH), row(`Columns, ${F} floor(s)`, NCOL * F, 1.2, undefined, round(WALL_H, 2))], 2);
-  item("Shuttering – plinth beams and beams", "m²", "sh_beam", "Plinth beam 2 sides × 0.30; beams girth 0.78 m.", [row("Plinth beam sides", 2, pbLen, undefined, 0.3), row("Beams girth 0.78 m", 1, beamLen, 0.78)], 2);
-  item("Shuttering / centering – slab soffit and edges", "m²", "sh_slab", "Slab area less beam soffit, plus edges.", [
-    row(`Slab soffit, ${F} slab(s)`, F, L0, B0),
-    row("(−) Beam soffit", -1, beamLen, BW),
-    row("Slab edges", F, round(OUTER_PER, 2), undefined, SLAB),
-  ], 2);
+  item(
+    "Shuttering – columns",
+    "m²",
+    "sh_col",
+    "Perimeter 1.20 m × height.",
+    [row("Footing to plinth", NCOL, 1.2, undefined, colH), ...geo.map((g) => row(`${flr(g.f)} columns`, g.NCOL, 1.2, undefined, WALL_H))],
+    2,
+  );
+  item(
+    "Shuttering – plinth beams and beams",
+    "m²",
+    "sh_beam",
+    "Plinth beam 2 sides × 0.30; beams girth 0.78 m.",
+    [row("Plinth beam sides", 2, pbLen, undefined, 0.3), row("Beams girth 0.78 m", 1, beamLen, 0.78)],
+    2,
+  );
+  item(
+    "Shuttering / centering – slab soffit and edges",
+    "m²",
+    "sh_slab",
+    "Slab area less beam soffit, plus edges.",
+    [
+      ...geo.map((g) => row(`${flr(g.f)} slab soffit`, 1, g.L, g.B)),
+      row("(−) Beam soffit", -1, beamLen, BW),
+      ...geo.map((g) => row(`${flr(g.f)} slab edges`, 1, round(g.outerPer, 2), undefined, SLAB)),
+    ],
+    2,
+  );
 
   sec("C", "Brickwork, parapet and lintels", "ईंट की चिनाई, पैरापेट और लिंटल");
-  const bwE = item("Brickwork 230 mm outer walls, CM 1:6", "m³", "brick", `Between columns × 0.23 × ${round(WALL_H, 2)} m; openings deducted.`, [
-    row(`Long sides, ${NBL} spans × 2 × ${F} fl`, NBL * 2 * F, CLL, WE, round(WALL_H, 2)),
-    row(`Short sides, ${NBB} spans × 2 × ${F} fl`, NBB * 2 * F, CLB, WE, round(WALL_H, 2)),
-    row("(−) Windows 1.5 × 1.2", -WIN * F, 1.5, 1.2, WE),
-    row("(−) Main / balcony doors 1.0 × 2.1", -MD * F, 1.0, 2.1, WE),
-    ...(VEN ? [row("(−) Ventilators 0.6 × 0.45", -VEN * F, 0.6, 0.45, WE)] : []),
-  ], 2);
-  const bwI = item("Brickwork 115 mm partitions, CM 1:6", "m³", "brick", `Partition length ${PART} m per floor (from room perimeters) × 0.115 × ${round(WALL_H, 2)} m.`, [
-    row(`Partitions, ${F} floor(s)`, F, PART, WI, round(WALL_H, 2)),
-    ...(RD ? [row("(−) Room doors 0.9 × 2.1", -RD * F, 0.9, 2.1, WI)] : []),
-    ...(TD ? [row("(−) Toilet doors 0.75 × 2.1", -TD * F, 0.75, 2.1, WI)] : []),
-  ], 2);
-  const para = item("Parapet 230 mm × 0.90 m, CM 1:6", "m³", "brick", "Centre-line length × 0.23 × 0.90.", [row("Roof parapet", 1, round(PARA_CL, 2), WE, 0.9)], 2);
+  const bwE = item(
+    "Brickwork 230 mm outer walls, CM 1:6",
+    "m³",
+    "brick",
+    `Between columns × 0.23 × ${WALL_H} m; openings deducted.`,
+    geo.flatMap((g) => [
+      row(`${flr(g.f)} long sides, ${g.NBL} spans × 2`, g.NBL * 2, g.CLL, WE, WALL_H),
+      row(`${flr(g.f)} short sides, ${g.NBB} spans × 2`, g.NBB * 2, g.CLB, WE, WALL_H),
+      ...openRows(g, WE, "ext"),
+    ]),
+    2,
+  );
+  const bwI = item(
+    "Brickwork 115 mm partitions, CM 1:6",
+    "m³",
+    "brick",
+    `Partition length per floor from room perimeters × 0.115 × ${WALL_H} m.`,
+    geo.flatMap((g) => [row(`${flr(g.f)} partitions ${g.part} m`, 1, g.part, WI, WALL_H), ...openRows(g, WI, "int")]),
+    2,
+  );
+  // parapet on the top roof, and on any lower roof left open by a smaller floor above
+  const paraRows = geo.flatMap((g) => {
+    const up = geo[g.f + 1];
+    if (!up) return [row(`Parapet over ${flr(g.f)}`, 1, round(g.paraCl, 2), WE, 0.9)];
+    if (g.A > up.A * 1.05) return [row(`Open terrace over ${flr(g.f)}`, 1, round(g.B + 2 * Math.max(0, g.L - up.L), 2), WE, 0.9)];
+    return [];
+  });
+  const paraLen = paraRows.reduce((a, r) => a + (r.L ?? 0), 0);
+  const para = item("Parapet 230 mm × 0.90 m, CM 1:6", "m³", "brick", "Centre-line length × 0.23 × 0.90.", paraRows, 2);
   const lintel = item("RCC lintels incl. steel and shuttering", "m³", "lintel", "Opening + 0.30 m × wall thickness × 0.15 m.", [
-    row("Windows (230 wall)", WIN * F, 1.8, WE, 0.15),
-    row("Main / balcony doors (230 wall)", MD * F, 1.3, WE, 0.15),
-    ...(VEN ? [row("Ventilators (230 wall)", VEN * F, 0.9, WE, 0.15)] : []),
-    ...(RD ? [row("Room doors (115 wall)", RD * F, 1.2, WI, 0.15)] : []),
-    ...(TD ? [row("Toilet doors (115 wall)", TD * F, 1.05, WI, 0.15)] : []),
+    ...(WIN ? [row("Windows (230 wall)", WIN, round(WW + 0.3, 2), WE, 0.15)] : []),
+    ...(MD ? [row("Main / balcony doors (230 wall)", MD, 1.3, WE, 0.15)] : []),
+    ...(SH ? [row("Shutters (230 wall)", SH, 2.7, WE, 0.15)] : []),
+    ...(geo.some((g) => g.pk)
+      ? [
+          row(
+            "Parking opening beam (230 wall)",
+            geo.reduce((a, g) => a + g.pk, 0),
+            3.3,
+            WE,
+            0.15,
+          ),
+        ]
+      : []),
+    ...(VEN ? [row("Ventilators (230 wall)", VEN, 0.9, WE, 0.15)] : []),
+    ...(FD ? [row("Room doors (115 wall)", FD, round(avgFdW + 0.3, 2), WI, 0.15)] : []),
+    ...(TD ? [row("Toilet doors (115 wall)", TD, 1.05, WI, 0.15)] : []),
   ]);
 
   sec("D", "Plastering", "प्लास्टर");
-  const plI = item("Internal plaster 12 mm, CM 1:5", "m²", "pl_int", `Room perimeter 2(L+B) × ${PL_H} m, less openings (doors in partitions on both faces).`, [
-    ...rooms.filter((r) => r.type !== "balcony").map((r) => row(`${flr(r.floor)} ${r.code} ${ROOM_NAME[r.type]} 2(${r.L}+${r.B})`, 1, round(r.per, 2), PL_H)),
-    row("(−) Windows (one face)", -WIN * F, 1.5, 1.2),
-    row("(−) Main / balcony doors (one face)", -MD * F, 1.0, 2.1),
-    ...(VEN ? [row("(−) Ventilators", -VEN * F, 0.6, 0.45)] : []),
-    ...(RD ? [row("(−) Room doors (both faces)", -RD * F * 2, 0.9, 2.1)] : []),
-    ...(TD ? [row("(−) Toilet doors (both faces)", -TD * F * 2, 0.75, 2.1)] : []),
-  ], 1);
-  const extH = round(PLINTH + FH * F, 2);
-  const plE = item("External plaster 20 mm, CM 1:4", "m²", "pl_ext", `Outer perimeter × ${extH} m, less openings.`, [
-    row("Outer faces", 1, round(OUTER_PER, 2), extH),
-    row("(−) Windows", -WIN * F, 1.5, 1.2),
-    row("(−) Main / balcony doors", -MD * F, 1.0, 2.1),
-    ...(VEN ? [row("(−) Ventilators", -VEN * F, 0.6, 0.45)] : []),
-  ], 1);
-  const plC = item("Ceiling plaster 12 mm, CM 1:5", "m²", "pl_ceil", "Slab soffit of every room = L × B.", rooms.filter((r) => r.type !== "balcony").map((r) => row(`${flr(r.floor)} ${r.code} ${ROOM_NAME[r.type]}`, 1, r.L, r.B)), 1);
-  const plP = item("Parapet plaster both faces + coping, CM 1:4", "m²", "pl_para", "Outer + inner face × 0.90 m + coping 0.23 m.", [
-    row("Outer face", 1, round(OUTER_PER, 2), 0.9),
-    row("Inner face", 1, round(OUTER_PER - 8 * WE, 2), 0.9),
-    row("Coping", 1, round(PARA_CL, 2), WE),
-  ], 1);
+  const plRooms = rooms.filter((r) => ROOM_DEFS[r.type].plaster);
+  const plI = item(
+    "Internal plaster 12 mm, CM 1:5",
+    "m²",
+    "pl_int",
+    `Room perimeter 2(L+B) × ${PL_H} m, less openings (doors in partitions on both faces).`,
+    [
+      ...plRooms.map((r) => row(`${flr(r.floor)} ${r.code} ${roomName(r.type)} 2(${round(r.L, 2)}+${round(r.B, 2)})`, 1, round(r.per, 2), PL_H)),
+      ...geo.flatMap((g) => openRows(g, 0, "plInt")),
+    ],
+    1,
+  );
+  const plE = item(
+    "External plaster 20 mm, CM 1:4",
+    "m²",
+    "pl_ext",
+    `Outer perimeter × storey height, less openings.`,
+    geo.flatMap((g) => [row(`${flr(g.f)} outer faces`, 1, round(g.outerPer, 2), g.f === 0 ? round(FH + PLINTH, 2) : FH), ...openRows(g, 0, "plExt")]),
+    1,
+  );
+  const plC = item(
+    "Ceiling plaster 12 mm, CM 1:5",
+    "m²",
+    "pl_ceil",
+    "Slab soffit of every room = L × B.",
+    rooms.filter((r) => ROOM_DEFS[r.type].ceiling).map((r) => row(`${flr(r.floor)} ${r.code} ${roomName(r.type)}`, 1, round(r.L, 2), round(r.B, 2))),
+    1,
+  );
+  const plP = item(
+    "Parapet plaster both faces + coping, CM 1:4",
+    "m²",
+    "pl_para",
+    "Outer + inner face × 0.90 m + coping 0.23 m.",
+    [row("Outer face", 1, round(paraLen + 4 * WE, 2), 0.9), row("Inner face", 1, round(Math.max(0, paraLen - 4 * WE), 2), 0.9), row("Coping", 1, round(paraLen, 2), WE)],
+    1,
+  );
 
   sec("E", "Flooring, tiles and waterproofing", "फ़र्श, टाइल्स और वॉटरप्रूफिंग");
-  const vit = item("Vitrified tiles 600 × 600 in CM bedding", "m²", "vit", "Room floor = clear L × B (toilets separate).", rooms.filter((r) => r.type !== "toilet").map((r) => row(`${flr(r.floor)} ${r.code} ${ROOM_NAME[r.type]}`, 1, r.L, r.B)), 1);
-  item("Tile skirting 100 mm", "rm", "skirt", "Room perimeter less door / opening widths.", rooms.filter((r) => r.type !== "toilet").map((r) => row(`${flr(r.floor)} ${r.code} 2(L+B) − ${round(r.doorWidth, 2)}`, 1, round(Math.max(0, r.per - r.doorWidth), 2))), 1);
-  const anti = item("Anti-skid floor tiles – toilets", "m²", "anti", "Toilet L × B.", toilets.map((r) => row(`${flr(r.floor)} ${r.code}`, 1, r.L, r.B)), 1);
-  const wt = item("Wall tiles – toilets 2.10 m, kitchen dado 0.60 m", "m²", "wtile", "(Perimeter − door) × 2.10; kitchen 3.0 × 0.60.", [
-    ...toilets.map((r) => row(`${flr(r.floor)} ${r.code} (${round(r.per, 2)} − 0.75) × 2.10`, 1, round(r.per - 0.75, 2), 2.1)),
-    ...(VEN ? [row("(−) Ventilators", -VEN * F, 0.6, 0.45)] : []),
-    ...kitchens.map((r) => row(`${flr(r.floor)} ${r.code} dado`, 1, 3.0, 0.6)),
-  ], 1);
-  item("Toilet waterproofing (floor + 0.30 m turn-up)", "m²", "toi_wp", "Floor + 0.30 m on walls.", [
-    ...toilets.map((r) => row(`${flr(r.floor)} ${r.code} floor`, 1, r.L, r.B)),
-    ...toilets.map((r) => row(`${flr(r.floor)} ${r.code} turn-up`, 1, round(r.per - 0.75, 2), 0.3)),
-  ], 1);
-  item("Terrace waterproofing with screed", "m²", "ter_wp", "Roof inside parapet.", [row("Terrace", 1, round(L0 - 2 * WE, 2), round(B0 - 2 * WE, 2))], 1);
-  if (KIT) item("Kitchen platform – granite 600 mm", "rm", "granite", "3.0 m per kitchen.", [row(`Kitchens × ${KIT}`, KIT, 3.0)], 1);
+  const vitRooms = rooms.filter((r) => ROOM_DEFS[r.type].floor === "vit");
+  const antiRooms = rooms.filter((r) => ROOM_DEFS[r.type].floor === "anti");
+  const vit = item(
+    "Vitrified tiles 600 × 600 in CM bedding",
+    "m²",
+    "vit",
+    "Room floor = clear L × B.",
+    vitRooms.map((r) => row(`${flr(r.floor)} ${r.code} ${roomName(r.type)}`, 1, round(r.L, 2), round(r.B, 2))),
+    1,
+  );
+  item(
+    "Tile skirting 100 mm",
+    "rm",
+    "skirt",
+    "Room perimeter less door / opening width.",
+    rooms.filter((r) => ROOM_DEFS[r.type].skirting).map((r) => row(`${flr(r.floor)} ${r.code} 2(L+B) − ${r.doorWidth}`, 1, round(Math.max(0, r.per - r.doorWidth), 2))),
+    1,
+  );
+  const anti = item(
+    "Anti-skid floor tiles – toilets, wash, parking",
+    "m²",
+    "anti",
+    "Room L × B.",
+    antiRooms.map((r) => row(`${flr(r.floor)} ${r.code} ${roomName(r.type)}`, 1, round(r.L, 2), round(r.B, 2))),
+    1,
+  );
+  const wt = item(
+    "Wall tiles – toilets 2.10 m, kitchen dado 0.60 m",
+    "m²",
+    "wtile",
+    "(Perimeter − door) × 2.10; kitchen platform length × 0.60.",
+    [
+      ...toilets.map((r) => row(`${flr(r.floor)} ${r.code} (${round(r.per, 2)} − 0.75) × 2.10`, 1, round(r.per - 0.75, 2), 2.1)),
+      ...(NT ? [row("(−) Toilet ventilators", -NT, 0.6, 0.45)] : []),
+      ...kitchens.map((r) => row(`${flr(r.floor)} ${r.code} dado`, 1, round(Math.min(3.0, r.L), 2), 0.6)),
+    ],
+    1,
+  );
+  if (NT)
+    item(
+      "Toilet waterproofing (floor + 0.30 m turn-up)",
+      "m²",
+      "toi_wp",
+      "Floor + 0.30 m on walls.",
+      [
+        ...toilets.map((r) => row(`${flr(r.floor)} ${r.code} floor`, 1, round(r.L, 2), round(r.B, 2))),
+        ...toilets.map((r) => row(`${flr(r.floor)} ${r.code} turn-up`, 1, round(r.per - 0.75, 2), 0.3)),
+      ],
+      1,
+    );
+  item(
+    "Terrace waterproofing with screed",
+    "m²",
+    "ter_wp",
+    "Open roof inside parapet.",
+    geo.flatMap((g) => {
+      const up = geo[g.f + 1];
+      if (!up) return [row(`Terrace over ${flr(g.f)}`, 1, round(g.L - 2 * WE, 2), round(g.B - 2 * WE, 2))];
+      if (g.A > up.A * 1.05) return [qRow(`Open roof over ${flr(g.f)} (${round(g.A, 1)} − ${round(up.A, 1)})`, round(g.A - up.A, 2))];
+      return [];
+    }),
+    1,
+  );
+  if (KIT)
+    item(
+      "Kitchen platform – granite 600 mm",
+      "rm",
+      "granite",
+      "Platform along the kitchen length, max 3.0 m.",
+      kitchens.map((r) => row(`${flr(r.floor)} ${r.code}`, 1, round(Math.min(3.0, r.L), 2))),
+      1,
+    );
 
   sec("F", "Doors, windows, ventilators", "दरवाज़े, खिड़कियां, वेंटिलेटर");
-  item("Main / balcony door 1.0 × 2.1 m, hardwood frame, hardware", "nos", "mdoor", `${MD} per floor.`, [row("Main + balcony doors", MD * F)], 0);
-  if (RD) item("Flush door 0.9 × 2.1 m with frame and hardware", "nos", "fdoor", `${RD} per floor (rooms, kitchen).`, [row("Room doors", RD * F)], 0);
-  if (TD) item("PVC / UPVC door 0.75 × 2.1 m (toilets)", "nos", "pvc", "One per toilet.", [row("Toilet doors", TD * F)], 0);
-  item("Aluminium sliding windows with glass", "m²", "alwin", `${WIN} per floor, 1.5 × 1.2 m.`, [row("Windows", WIN * F, 1.5, 1.2)], 1);
-  if (VEN) item("Aluminium ventilator 0.6 × 0.45 m", "nos", "vent", "One per toilet.", [row("Ventilators", VEN * F)], 0);
+  if (MD)
+    item(
+      "Main / balcony door 1.0 × 2.1 m, hardwood frame, hardware",
+      "nos",
+      "mdoor",
+      "Halls and balconies.",
+      geo.filter((g) => g.md).map((g) => row(`${flr(g.f)} main / balcony doors`, g.md)),
+      0,
+    );
+  if (FD)
+    item(
+      `Flush door ${avgFdW} × 2.1 m with frame and hardware`,
+      "nos",
+      "fdoor",
+      "Bedrooms, kitchen, study, pooja, store.",
+      geo.filter((g) => g.fd).map((g) => row(`${flr(g.f)} room doors`, g.fd)),
+      0,
+    );
+  if (TD)
+    item(
+      "PVC / UPVC door 0.75 × 2.1 m (toilets)",
+      "nos",
+      "pvc",
+      "One per toilet.",
+      geo.filter((g) => g.td).map((g) => row(`${flr(g.f)} toilet doors`, g.td)),
+      0,
+    );
+  if (SH) item(`Rolling shutter 2.4 × ${SH_H} m with lock`, "m²", "shutter", "One per shop.", [row("Shutters", SH, 2.4, SH_H)], 1);
+  if (WIN)
+    item(
+      "Aluminium sliding windows with glass",
+      "m²",
+      "alwin",
+      `${WW} × ${WH} m each.`,
+      geo.filter((g) => g.win).map((g) => row(`${flr(g.f)} windows`, g.win, WW, WH)),
+      1,
+    );
+  if (VEN)
+    item(
+      "Aluminium ventilator 0.6 × 0.45 m",
+      "nos",
+      "vent",
+      "Toilets, store, wash.",
+      geo.filter((g) => g.ven).map((g) => row(`${flr(g.f)} ventilators`, g.ven)),
+      0,
+    );
 
   sec("G", "Plumbing and sanitary", "प्लंबिंग और सैनिटरी");
+  const ewc = toilets.filter((r) => r.wc !== "iwc"),
+    iwc = toilets.filter((r) => r.wc === "iwc");
+  if (ewc.length)
+    item(
+      "Western commode (EWC) with cistern and fittings",
+      "nos",
+      "ewc",
+      "Toilets set to western WC.",
+      [row(ewc.map((r) => `${flr(r.floor)} ${r.code}`).join(", "), ewc.length)],
+      0,
+    );
+  if (iwc.length)
+    item("Indian WC with cistern and fittings", "nos", "iwc", "Toilets set to Indian WC.", [row(iwc.map((r) => `${flr(r.floor)} ${r.code}`).join(", "), iwc.length)], 0);
   if (NT) {
-    item("Western commode (EWC) with cistern and fittings", "nos", "ewc", "All toilets except one.", [row("EWC", Math.max(0, NT - 1))], 0);
-    item("Indian WC with cistern and fittings", "nos", "iwc", "One toilet.", [row("IWC", 1)], 0);
     item("Wash basin with tap and waste", "nos", "basin", "One per toilet.", [row("Wash basins", NT)], 0);
     item("Shower with mixer / overhead", "nos", "shower", "One per toilet.", [row("Showers", NT)], 0);
-    item("Taps – bib cock + health faucet (set)", "set", "taps", "One set per toilet.", [row("Tap sets", NT)], 0);
   }
-  item("Floor drain / trap with jali", "nos", "fdrain", "Toilets + kitchens.", [row("Toilets", NT), row("Kitchens", KIT)], 0);
+  if (NT + UT)
+    item("Taps – bib cock + health faucet (set)", "set", "taps", "One set per toilet and wash area.", [row("Toilets", NT), ...(UT ? [row("Wash / utility", UT)] : [])], 0);
+  if (NT + KIT + UT)
+    item(
+      "Floor drain / trap with jali",
+      "nos",
+      "fdrain",
+      "Toilets, kitchens, wash areas.",
+      [row("Toilets", NT), row("Kitchens", KIT), ...(UT ? [row("Wash / utility", UT)] : [])],
+      0,
+    );
   if (KIT) item("Kitchen sink (SS) with tap", "nos", "sink", "One per kitchen.", [row("Kitchens", KIT)], 0);
-  item("CPVC 20 mm supply pipe, concealed", "rm", "cpvc", "12 m per toilet + 8 m per kitchen.", [row("Toilets", NT, 12), row("Kitchens", KIT, 8)], 1);
-  item("SWR 110 mm drain pipe with fittings", "rm", "swr110", "6 m per toilet + 8 m stack.", [row("Toilets", NT, 6), row("Main stack", 1, 8)], 1);
-  item("SWR 75 / 40 mm waste pipe with fittings", "rm", "swr75", "6 m per toilet + 4 m per kitchen.", [row("Toilets", NT, 6), row("Kitchens", KIT, 4)], 1);
-  item("Main riser + drain stack to ground, chamber connection", "LS", "riser", "Lump sum.", [row("Lump sum", 1)], 0);
+  if (NT + KIT + UT) {
+    item(
+      "CPVC 20 mm supply pipe, concealed",
+      "rm",
+      "cpvc",
+      "12 m per toilet, 8 m per kitchen, 6 m per wash area.",
+      [row("Toilets", NT, 12), row("Kitchens", KIT, 8), ...(UT ? [row("Wash / utility", UT, 6)] : [])],
+      1,
+    );
+    item("SWR 110 mm drain pipe with fittings", "rm", "swr110", "6 m per toilet + stack per floor.", [row("Toilets", NT, 6), row("Main stack", 1, round(FH * F + 2, 2))], 1);
+    item(
+      "SWR 75 / 40 mm waste pipe with fittings",
+      "rm",
+      "swr75",
+      "6 m per toilet, 4 m per kitchen and wash area.",
+      [row("Toilets", NT, 6), row("Kitchens", KIT, 4), ...(UT ? [row("Wash / utility", UT, 4)] : [])],
+      1,
+    );
+    item("Main riser + drain stack to ground, chamber connection", "LS", "riser", "Lump sum.", [row("Lump sum", 1)], 0);
+  }
 
-  sec("H", "Staircase (dog-legged RCC)", "सीढ़ी (डॉग-लेग्ड RCC)");
-  const NS = F; // one flight set per floor, including terrace access
-  const nr = 10, rise = FH / 20, tread = 0.25, sw = 1.0, waist = 0.15;
-  const incl = Math.hypot((nr - 1) * tread, nr * rise);
-  const stc = item("Staircase RCC M20 – 2 flights × 10 risers × 1.0 m + landing", "m³", "rcc", `Waist ${waist} m, inclined length ${round(incl, 3)} m; ${NS} staircase(s) incl. terrace access.`, [
-    row("Waist slab, 2 flights", 2 * NS, round(incl, 3), sw, waist),
-    row("Steps (triangular)", 2 * nr * NS, tread, sw, round(rise / 2, 3), "½ × tread × riser"),
-    row("Mid landing", NS, 2.1, sw, waist),
-  ]);
-  const sts = item("Staircase steel Fe500D", "kg", "steel", "90 kg per m³ of staircase concrete.", [row("Staircase m³ × 90 kg/m³", 1, stc.qty, KG.stair)], 1);
-  item("Staircase shuttering", "m²", "sh_slab", "Waist + landing soffit + risers.", [
-    row("Waist soffit", 2 * NS, round(incl, 3), sw),
-    row("Landing soffit", NS, 2.1, sw),
-    row("Risers", 2 * nr * NS, sw, undefined, round(rise, 3)),
-  ], 2);
-  const stt = item("Stair tread + riser tiles incl. landing", "m²", "st_tile", "Treads, risers, landing.", [
-    row("Treads", 2 * nr * NS, tread, sw),
-    row("Risers", 2 * nr * NS, round(rise, 3), sw),
-    row("Landing", NS, 2.1, sw),
-  ], 2);
-  item("Staircase soffit plaster + paint", "m²", "st_soffit", "Waist + landing soffit.", [row("Waist soffit", 2 * NS, round(incl, 3), sw), row("Landing soffit", NS, 2.1, sw)], 2);
-  item("MS railing 1 m with handrail", "rm", "rail", "Both flights + landing return.", [row("Railing", NS, round(2 * incl + sw, 2))], 1);
+  let stc: BoqItem | undefined, sts: BoqItem | undefined, stt: BoqItem | undefined;
+  if (NS > 0) {
+    sec("H", "Staircase (dog-legged RCC)", "सीढ़ी (डॉग-लेग्ड RCC)");
+    const nr = Math.max(8, Math.round(FH / 0.15 / 2)),
+      rise = round(FH / (2 * nr), 3),
+      tread = 0.25,
+      sw = 1.0,
+      waist = 0.15;
+    const incl = Math.hypot((nr - 1) * tread, nr * rise);
+    stc = item(
+      `Staircase RCC M20 – 2 flights × ${nr} risers × 1.0 m + landing`,
+      "m³",
+      "rcc",
+      `Rise ${rise * 1000} mm, waist ${waist} m, inclined length ${round(incl, 3)} m; ${NS} staircase(s)${terrace ? " incl. terrace access" : ""}.`,
+      [
+        row("Waist slab, 2 flights", 2 * NS, round(incl, 3), sw, waist),
+        row("Steps (triangular)", 2 * nr * NS, tread, sw, round(rise / 2, 3), "½ × tread × riser"),
+        row("Mid landing", NS, 2.1, sw, waist),
+      ],
+    );
+    sts = item("Staircase steel Fe500D", "kg", "steel", "90 kg per m³ of staircase concrete.", [row("Staircase m³ × 90 kg/m³", 1, stc.qty, KG.stair)], 1);
+    item(
+      "Staircase shuttering",
+      "m²",
+      "sh_slab",
+      "Waist + landing soffit + risers.",
+      [row("Waist soffit", 2 * NS, round(incl, 3), sw), row("Landing soffit", NS, 2.1, sw), row("Risers", 2 * nr * NS, sw, undefined, rise)],
+      2,
+    );
+    stt = item(
+      "Stair tread + riser tiles incl. landing",
+      "m²",
+      "st_tile",
+      "Treads, risers, landing.",
+      [row("Treads", 2 * nr * NS, tread, sw), row("Risers", 2 * nr * NS, rise, sw), row("Landing", NS, 2.1, sw)],
+      2,
+    );
+    item(
+      "Staircase soffit plaster + paint",
+      "m²",
+      "st_soffit",
+      "Waist + landing soffit.",
+      [row("Waist soffit", 2 * NS, round(incl, 3), sw), row("Landing soffit", NS, 2.1, sw)],
+      2,
+    );
+    item("MS railing 1 m with handrail", "rm", "rail", "Both flights + landing return.", [row("Railing", NS, round(2 * incl + sw, 2))], 1);
+  }
 
-  sec("I", "Electrical and painting", "बिजली और पेंटिंग");
-  const Afl = L0 * B0;
-  item("Concealed wiring, conduit, switches, DB (excl. fixtures)", "m²", "elec", "Built-up area, all floors.", [row(`Built-up, ${F} floor(s)`, F, round(Afl, 2))], 1);
-  item("Internal paint: putty 2 coats + primer + 2 coats emulsion", "m²", "p_int", "Wall plaster less tiles, plus ceilings.", [qRow("Wall plaster (D1)", plI.qty), qRow("(−) Tiled area (E4)", -wt.qty), qRow("Ceilings (D3)", plC.qty)], 1);
+  sec(NS > 0 ? "I" : "H", "Electrical and painting", "बिजली और पेंटिंग");
+  item(
+    "Concealed wiring, conduit, switches, DB (excl. fixtures)",
+    "m²",
+    "elec",
+    "Built-up area of every floor.",
+    geo.map((g) => row(`${flr(g.f)} built-up`, 1, g.L, g.B)),
+    1,
+  );
+  item(
+    "Internal paint: putty 2 coats + primer + 2 coats emulsion",
+    "m²",
+    "p_int",
+    "Wall plaster less tiles, plus ceilings.",
+    [qRow("Wall plaster (D1)", plI.qty), qRow("(−) Tiled area", -wt.qty), qRow("Ceilings (D3)", plC.qty)],
+    1,
+  );
   item("External weather-coat paint, primer + 2 coats", "m²", "p_ext", "External plaster + parapet.", [qRow("External plaster (D2)", plE.qty), qRow("Parapet (D4)", plP.qty)], 1);
 
   for (const s of sections) s.subtotal = s.items.reduce((a, i) => a + i.amount, 0);
   const itemsTotal = sections.reduce((a, s) => a + s.subtotal, 0);
   const contingency = Math.round(itemsTotal * 0.05);
   const grandTotal = itemsTotal + contingency;
-  const builtUpSqftPerFloor = Afl * SQFT_PER_M2;
-  const builtUpSqft = builtUpSqftPerFloor * F;
+  const builtUpSqft = geo.reduce((a, g) => a + g.A, 0) * SQFT_PER_M2;
+  const carpetSqft = geo.reduce((a, g) => a + g.carpet, 0) * SQFT_PER_M2;
 
   // ---------------- materials
-  const m20 = foot.qty + pbeam.qty + col.qty + beam.qty + slab.qty + stc.qty + lintel.qty;
+  const m20 = foot.qty + pbeam.qty + col.qty + beam.qty + slab.qty + (stc?.qty ?? 0) + lintel.qty;
   const pcc = pccf.qty + pccfl.qty;
   const brickV = bwE.qty + bwI.qty + para.qty;
   const mortBw = brickV * 0.26;
   const pl15 = (plI.qty + plC.qty) * 0.012 * 1.3;
   const pl14 = (plE.qty + plP.qty) * 0.02 * 1.3;
-  const bed = (vit.qty + anti.qty + stt.qty) * 0.03;
+  const bed = (vit.qty + anti.qty + (stt?.qty ?? 0)) * 0.03;
   const cement = m20 * 8.06 + pcc * 3.4 + mortBw * 5.7 + pl15 * 6.8 + pl14 * 8.1 + bed * 8.1;
   const sand = m20 * 0.42 + pcc * 0.47 + (mortBw + pl15 + pl14 + bed) * 1.05;
   const agg = m20 * 0.84 + pcc * 0.94;
   const bricks = brickV * 500 * 1.03;
-  const steelT = steel.qty + sts.qty;
-  const tilesSqft = (vit.qty + anti.qty + wt.qty + stt.qty) * 1.05 * SQFT_PER_M2;
+  const steelT = steel.qty + (sts?.qty ?? 0);
+  const tilesSqft = (vit.qty + anti.qty + wt.qty + (stt?.qty ?? 0)) * 1.05 * SQFT_PER_M2;
   const materials = [
     { key: "cement", unit: "bags", qty: cement, basis: "Concrete 8.06, PCC 3.4, masonry mortar 5.7, plaster 6.8 / 8.1 bags per m³" },
-    { key: "steel", unit: "kg", qty: steelT, basis: "Items B4 + H2" },
+    { key: "steel", unit: "kg", qty: steelT, basis: "Structure + staircase steel" },
     { key: "sand", unit: "cft", qty: sand * CFT_PER_M3, basis: "Concrete share + 1.05 m³ per m³ of mortar" },
     { key: "aggregate", unit: "cft", qty: agg * CFT_PER_M3, basis: "Concrete only" },
     { key: "bricks", unit: "nos", qty: bricks, basis: "500 per m³ of brickwork + 3% breakage" },
@@ -427,20 +1078,36 @@ export function calcBoq(input: BoqInput): BoqResult {
     return { key, unit, perSqft, thumbQty, qty, diffPct: ((qty - thumbQty) / thumbQty) * 100 };
   });
 
+  const perFloor: FloorGeo[] = geo.map((g) => ({
+    floor: g.f,
+    L: g.L,
+    B: g.B,
+    areaM2: g.A,
+    builtUpSqft: g.A * SQFT_PER_M2,
+    carpetSqft: g.carpet * SQFT_PER_M2,
+    columns: g.NCOL,
+    baysL: g.NBL,
+    baysB: g.NBB,
+    partition: g.part,
+    rooms: g.rs.length,
+  }));
+
   return {
     rooms,
     geometry: {
       floors: F,
-      L0,
-      B0,
-      footprintM2: Afl,
-      builtUpSqftPerFloor,
+      L0: base.L,
+      B0: base.B,
+      footprintM2: base.A,
+      builtUpSqftPerFloor: g0.A * SQFT_PER_M2,
       builtUpSqft,
-      carpetSqftPerFloor: carpet * SQFT_PER_M2,
+      carpetSqftPerFloor: g0.carpet * SQFT_PER_M2,
+      carpetSqft,
       columns: NCOL,
-      baysL: NBL,
-      baysB: NBB,
-      partitionPerFloor: PART,
+      baysL: base.NBL,
+      baysB: base.NBB,
+      partitionPerFloor: g0.part,
+      perFloor,
     },
     sections,
     itemsTotal,
@@ -450,19 +1117,18 @@ export function calcBoq(input: BoqInput): BoqResult {
     materials,
     thumb,
     assumptions: [
-      `Layout assumed from rooms (no drawing): footprint ${L0} × ${B0} m, carpet ≈ 83% of built-up incl. staircase ${STAIR_FP} m².`,
-      `RCC frame: ${NCOL} columns 300 × 300 (${NBL} × ${NBB} bays, max 3.6 m), beams 230 × 400, slab 125 mm, floor height ${FH} m, plinth ${PLINTH} m.`,
+      `Each floor's outline is worked out from its own rooms (no drawing): carpet ≈ 83% of built-up incl. staircase ${STAIR_FP} m². ` +
+        perFloor.map((p) => `${flr(p.floor)} ${p.L} × ${p.B} m`).join(", ") +
+        ".",
+      `RCC frame: columns 300 × 300 at max 3.6 m spacing (${NCOL} at foundation), beams 230 × 400, slab 125 mm, floor height ${FH} m, plinth ${PLINTH} m.`,
       `Isolated footings ${FOOT} × ${FOOT} m at ${PIT_D} m depth — confirm by soil test / structural design.`,
-      `Per floor: ${WIN} windows 1.5 × 1.2, ${RD} room doors, ${TD} toilet doors, ${MD} main / balcony door(s), ${VEN} ventilators.`,
+      `Openings from rooms: ${WIN} windows ${WW} × ${WH} m, ${FD} room doors, ${TD} toilet doors, ${MD} main / balcony doors${SH ? `, ${SH} shutters` : ""}, ${VEN} ventilators.`,
+      NS > 0 ? `${NS} staircase flight set(s)${terrace ? " including terrace access" : ""}.` : "No staircase.",
       "Steel by kg per m³ of concrete (footing 80, column 180, plinth beam 120, beam 150, slab 90, stair 90) + 5%.",
       "Composite rates (material + labour) — edit any rate to match your city or SOR.",
       "Excludes land, approvals, interiors, fixtures, compound wall, borewell, water tank, septic tank, GST if extra.",
     ],
   };
-
-  function flr(f: number) {
-    return f === 0 ? "GF" : F > 2 ? `F${f}` : "FF";
-  }
 }
 
 /** Cement bags in 1 m³ of a given material — exposed for UI notes. */
