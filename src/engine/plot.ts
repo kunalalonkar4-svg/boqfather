@@ -89,12 +89,32 @@ export function fitPlot(p: PlotInput): PlotFit {
       STAIR_FP,
       ground,
     );
+  const wide = isWidePlot(buildB, buildL);
+  const fitsFor = (list: RoomSpec[], ground: boolean): boolean =>
+    depthFor(list, ground) <= buildL + 0.05 ||
+    (wide &&
+      requiredWidth(
+        buildL,
+        list.map((r, i) => ({
+          key: `${r.type}${i}`,
+          type: r.type,
+          area: r.L * r.B,
+          L: r.L,
+          B: r.B,
+          windows: r.windows ?? ROOM_DEFS[r.type].windows,
+          vents: ROOM_DEFS[r.type].vents,
+          wc: r.wc,
+        })),
+        STAIR_FP,
+        ground,
+      ) <=
+        buildB + 0.05);
   for (let f = 0; f < Math.max(1, p.floors); f++) {
     const list = template(p.bhk, f === 0, p.parking);
     // largest room scale (0.8–1.3) whose planned layout still fits the buildable depth
     let k = 1.3;
-    while (k > 0.8 && depthFor(scaleList(list, k), f === 0) > buildL + 0.05) k = round(k - 0.025, 3);
-    const fitsAtMin = depthFor(scaleList(list, k), f === 0) <= buildL + 0.05;
+    while (k > 0.8 && !fitsFor(scaleList(list, k), f === 0)) k = round(k - 0.025, 3);
+    const fitsAtMin = fitsFor(scaleList(list, k), f === 0);
     if (!fitsAtMin && f === 0)
       warnings.push(
         `The plot is small for ${p.bhk}BHK${p.parking ? " with parking" : ""}: even with rooms at the minimum size the plan needs more depth than the plot allows. Try fewer bedrooms or no parking.`,
@@ -690,6 +710,184 @@ function hubFloor(W: number, D: number | null, rooms: LayoutRoom[], stairArea: n
   return { rects: out, need: need + 2 * wall };
 }
 
+/** Shallow, wide plots (deep less than ~10.5 m, much wider than deep): bands run along the road instead of lanes going back. */
+export const isWidePlot = (buildW: number, buildD: number) => buildD < 10.5 && buildW > buildD * 1.3;
+
+interface WCell {
+  key: string;
+  kind: SketchKind;
+  room?: LayoutRoom;
+  w: number;
+  minW: number;
+  flex?: boolean;
+  attachedTo?: string;
+}
+
+/**
+ * Wide plot layout: front band along the road (parking, hall, kitchen + dining, stair), a 1 m passage along the width,
+ * back band (bedrooms with attached toilets, common toilets, pooja, store). Very shallow plots get one band behind a front verandah.
+ * Returns the rects for width W, or (W = null) the width the house needs.
+ */
+function wideFloor(W: number | null, D: number, rooms: LayoutRoom[], stairArea: number, ground: boolean, wall: number): { rects: SketchRect[]; need: number } {
+  const id = D - 2 * wall;
+  const c = 1.05;
+  const by = (t: RoomType) => rooms.filter((r) => r.type === t);
+  const twoBands = id >= 3.0 + c + 2.7 + 2 * IW;
+  const fd = twoBands ? Math.max(3.0, Math.min(5.4, (id - c - 2 * IW) * 0.5)) : id - c - IW;
+  const bd = twoBands ? id - c - 2 * IW - fd : 0;
+  const cell = (r: LayoutRoom, depth: number, extra: Partial<WCell> = {}): WCell => {
+    const minW = MIN_D[r.type] ?? 1.2;
+    return { key: r.key, kind: r.type, room: r, w: Math.max(minW, r.area / depth), minW, flex: FLEX.includes(r.type), ...extra };
+  };
+  const front: WCell[] = [];
+  const back: WCell[] = [];
+  const B = twoBands ? back : front;
+  const bdep = twoBands ? bd : fd;
+  for (const p of by("parking")) front.push({ key: p.key, kind: "parking", room: p, w: fd >= 5.0 ? 3.0 : 5.4, minW: 3.0 });
+  for (const s of by("shop")) front.push(cell(s, fd));
+  for (const h of by("hall")) front.push(cell(h, fd));
+  for (const b of by("balcony")) front.push({ ...cell(b, fd), w: Math.max(1.5, b.area / Math.min(fd, 1.5)) });
+  for (const k of by("kitchen")) front.push(cell(k, fd));
+  for (const d of by("dining")) front.push(cell(d, fd));
+  const toilets = by("toilet");
+  const beds = [...by("bedroom")].sort((x, y) => y.area - x.area);
+  const attN = toilets.length >= 2 ? Math.min(toilets.length - 1, beds.length) : 0;
+  const att = toilets.slice(0, attN);
+  beds.forEach((bdm, i) => {
+    B.push(cell(bdm, bdep));
+    if (att[i]) B.push({ ...cell(att[i], bdep), attachedTo: bdm.key });
+  });
+  for (const t of [...toilets.slice(attN), ...by("pooja"), ...by("store"), ...by("utility"), ...by("study")]) B.push(cell(t, bdep));
+  const stairW = stairArea > 0 ? Math.max(STAIR_W, stairArea / fd) : 0;
+  const sum = (l: WCell[]) => l.reduce((t, x) => t + x.w, 0) + IW * Math.max(0, l.length - 1);
+  // balance the bands: move kitchen / dining to the back band or small rooms to the front when one band is much longer
+  if (twoBands)
+    for (let g = 0; g < 6; g++) {
+      const fT = sum(front) + (stairW ? stairW + IW : 0),
+        bT = sum(back);
+      const diff = fT - bT;
+      if (Math.abs(diff) < 1.5) break;
+      const [from, to, depthTo] = diff > 0 ? [front, back, bd] : [back, front, fd];
+      const pick = [...from]
+        .reverse()
+        .find((x) => (diff > 0 ? x.kind === "dining" || x.kind === "kitchen" : ["pooja", "store", "utility", "study"].includes(x.kind) || (x.kind === "toilet" && !x.attachedTo)));
+      if (!pick || !pick.room) break;
+      from.splice(from.indexOf(pick), 1);
+      to.push(cell(pick.room, depthTo));
+    }
+  const need = Math.max(sum(front) + (stairW ? stairW + IW : 0), sum(back)) + 2 * wall;
+  if (W === null) return { rects: [], need };
+  const iw = W - 2 * wall;
+  // fit each band to the width: flexible rooms take up the slack (±25%), leftover = open space at the far end
+  const fitBand = (band: WCell[], extra: number) => {
+    const avail = iw - extra;
+    const fixed = band.filter((x) => !x.flex).reduce((t, x) => t + x.w, 0) + IW * Math.max(0, band.length - 1);
+    const flex = band.filter((x) => x.flex).reduce((t, x) => t + x.w, 0);
+    let k = flex > 0 ? (avail - fixed) / flex : 1;
+    k = Math.max(0.7, Math.min(1.25, k));
+    for (const x of band) if (x.flex) x.w = Math.max(x.minW * 0.9, x.w * k);
+    const used = sum(band);
+    if (avail - used > 0.8) band.push({ key: `OTS-${band === front ? "F" : "B"}`, kind: "open", w: avail - used - IW, minW: 0 });
+    else if (used > avail) {
+      const s2 = (avail - IW * Math.max(0, band.length - 1)) / band.reduce((t, x) => t + x.w, 0);
+      for (const x of band) x.w *= s2;
+    } else if (band.length) band[band.length - 1].w += avail - used;
+  };
+  fitBand(front, stairW ? stairW + IW : 0);
+  if (twoBands) fitBand(back, 0);
+
+  const out: SketchRect[] = [];
+  const X0 = wall,
+    Y0 = wall;
+  // y: back band at the top, passage, front band at the bottom (road)
+  const yBack = Y0,
+    yPass = twoBands ? Y0 + bd + IW : Y0 + fd + IW,
+    yFront = twoBands ? yPass + c + IW : Y0;
+  const attachedOf = new Map<string, string>();
+  const placeBand = (band: WCell[], y: number, h: number) => {
+    let x = X0;
+    for (const cc of band) {
+      if (cc.attachedTo) attachedOf.set(cc.key, cc.attachedTo);
+      out.push({ key: cc.key, label: cc.key, type: cc.kind, x, y, w: cc.w, h, doors: [], windows: [] });
+      x += cc.w + IW;
+    }
+  };
+  if (twoBands) placeBand(back, yBack, bd);
+  placeBand(front, yFront, fd);
+  if (stairW) out.push({ key: "STAIR", label: "Stair", type: "stair", x: X0 + iw - stairW, y: yFront, w: stairW, h: fd, doors: [], windows: [] });
+  if (twoBands) out.push({ key: "PASS", label: "Passage", type: "corridor", x: X0, y: yPass, w: iw, h: c, doors: [], windows: [] });
+  else
+    out.push({ key: "VERANDAH", label: "Verandah", type: "porch", x: X0, y: yPass, w: iw, h: c, doors: [{ side: "bottom", at: 0.3, width: iw - 0.6, open: true }], windows: [] });
+  const pass = out.find((r) => r.key === "PASS" || r.key === "VERANDAH")!;
+  const onFront = (r: SketchRect) => Math.abs(r.y - yFront) < 0.01 && twoBands;
+  for (const r of out) {
+    if (r === pass || r.type === "open") continue;
+    const room = rooms.find((q) => q.key === r.key);
+    const toPass: Side = onFront(r) ? "top" : "bottom";
+    const mid = (w: number) => Math.max(0.1, Math.min(0.3, r.w - w - 0.1));
+    switch (r.type) {
+      case "parking":
+        r.doors!.push({ side: "bottom", at: 0.1, width: r.w - 0.2, open: true });
+        break;
+      case "shop":
+        r.doors!.push({ side: "bottom", at: Math.max(0.1, (r.w - Math.min(2.4, r.w - 0.3)) / 2), width: Math.min(2.4, r.w - 0.3), shutter: true });
+        break;
+      case "hall":
+        if (ground && twoBands) r.doors!.push({ side: "bottom", at: Math.max(0.2, r.w / 2 - 0.5), width: 1.0, main: true });
+        r.doors!.push({ side: toPass, at: mid(1.2), width: Math.min(1.2, r.w - 0.3), open: true });
+        break;
+      case "stair":
+        r.doors!.push({ side: toPass, at: 0.1, width: Math.min(1.0, r.w - 0.2), open: true });
+        if (ground && twoBands) r.doors!.push({ side: "bottom", at: 0.1, width: Math.min(1.0, r.w - 0.2), open: true });
+        break;
+      case "dining":
+        r.doors!.push({ side: toPass, at: mid(1.2), width: Math.min(1.2, r.w - 0.3), open: true });
+        break;
+      case "balcony":
+        break;
+      case "toilet": {
+        const bed = out.find((q) => q.key === attachedOf.get(r.key));
+        if (bed && Math.abs(bed.y - r.y) < 0.01) r.doors!.push({ side: bed.x < r.x ? "left" : "right", at: Math.max(0.1, r.h - 0.95), width: 0.75 });
+        else r.doors!.push({ side: toPass, at: mid(0.75), width: Math.min(0.75, r.w - 0.2) });
+        break;
+      }
+      default:
+        r.doors!.push({ side: toPass, at: mid(0.9), width: Math.min(0.9, r.w - 0.2) });
+    }
+    // windows on outer walls
+    if (room) {
+      const ext: Side[] = [];
+      if (r.y + r.h >= Y0 + id - 0.01) ext.push("bottom");
+      if (r.y <= Y0 + 0.01) ext.push("top");
+      if (r.x <= X0 + 0.01) ext.push("left");
+      if (r.x + r.w >= X0 + iw - 0.01) ext.push("right");
+      const nW = room.type === "toilet" || room.type === "store" || room.type === "utility" ? 0 : room.windows;
+      const pref = (["top", "bottom", "left", "right"] as Side[]).filter((sd) => ext.includes(sd));
+      for (let i = 0; i < nW && pref.length; i++) r.windows!.push({ side: pref[i % pref.length] });
+      for (let i = 0; i < room.vents && pref.length; i++) r.windows!.push({ side: pref[(nW + i) % pref.length], vent: true });
+    }
+  }
+  if (pass.key === "PASS") pass.windows!.push({ side: "left" }, { side: "right" });
+  connectAll(out, W, D, wall);
+  // columns along the front and back walls every ≤ 4.2 m, and at the passage walls
+  const nX = Math.max(1, Math.ceil(W / 4.2));
+  const ys = twoBands ? [0, yPass - IW / 2 - 0.15, yPass + c + IW / 2 - 0.15, D - 0.3] : [0, D - 0.3];
+  for (let i = 0; i <= nX; i++) {
+    const cx = Math.min(W - 0.3, Math.max(0, (W * i) / nX - 0.15));
+    for (const cy of ys) {
+      const yy = Math.min(D - 0.3, Math.max(0, cy));
+      const inside = out.some((r) => r.type !== "column" && cx + 0.15 > r.x + 0.05 && cx + 0.15 < r.x + r.w - 0.05 && yy + 0.15 > r.y + 0.05 && yy + 0.15 < r.y + r.h - 0.05);
+      if (!inside) out.push({ key: `C${i}-${yy.toFixed(2)}`, label: "", type: "column", x: cx, y: yy, w: 0.3, h: 0.3 });
+    }
+  }
+  return { rects: out, need: W };
+}
+
+/** Width a wide-plot floor needs (incl. outer walls) for a given depth. */
+export function requiredWidth(D: number, rooms: LayoutRoom[], stairArea: number, ground: boolean, wall = 0.23): number {
+  return wideFloor(null, D, rooms, stairArea, ground, wall).need;
+}
+
 /** Clear depth a floor needs so that every room keeps its size (lanes + walls), metres incl. outer walls. */
 export function requiredDepth(W: number, rooms: LayoutRoom[], stairArea: number, ground: boolean, wall = 0.23): number {
   if (!twoLanes(W, wall)) return hubFloor(W, null, rooms, stairArea, ground, wall).need;
@@ -703,7 +901,8 @@ export function requiredDepth(W: number, rooms: LayoutRoom[], stairArea: number,
   return id + 2 * wall;
 }
 
-export function layoutFloor(W: number, D: number, rooms: LayoutRoom[], stairArea: number, ground: boolean, wall = 0.23): SketchRect[] {
+export function layoutFloor(W: number, D: number, rooms: LayoutRoom[], stairArea: number, ground: boolean, wall = 0.23, wide = false): SketchRect[] {
+  if (wide) return wideFloor(W, D, rooms, stairArea, ground, wall).rects;
   const X0 = wall,
     Y0 = wall;
   const iw = W - 2 * wall,

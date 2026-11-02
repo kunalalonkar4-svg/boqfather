@@ -82,11 +82,11 @@ export function planPrimitives(
   D: number,
   rects: SketchRect[],
   names: (t: string) => string,
-  opts: { wall?: number; road?: string; up?: string; metres?: string } = {},
+  opts: { wall?: number; road?: string; up?: string; metres?: string; facing?: "N" | "E" | "S" | "W"; north?: string } = {},
 ): Primitives {
   const wall = opts.wall ?? 0.23;
   const inner = 0.115;
-  const P: Primitives = { bounds: { x: -1.2, y: -0.6, w: W + 1.8, h: D + 2.75 }, rects: [], lines: [], curves: [], texts: [] };
+  const P: Primitives = { bounds: { x: -1.2, y: opts.facing ? -1.6 : -0.6, w: W + 1.8, h: D + (opts.facing ? 3.75 : 2.75) }, rects: [], lines: [], curves: [], texts: [] };
   const spaces = rects.filter((r) => r.type !== "column");
   const cols = rects.filter((r) => r.type === "column");
   const eps = 0.03;
@@ -227,6 +227,33 @@ export function planPrimitives(
   // road
   P.lines.push({ x1: -0.4, y1: D + 1.05, x2: W + 0.4, y2: D + 1.05, sw: 0.02, color: THIN, dash: true });
   P.texts.push({ x: W / 2, y: D + 1.42, text: opts.road ?? "ROAD / FRONT", size: 0.26, bold: true, color: THIN, anchor: "middle" });
+  // north arrow: the road side (bottom of the drawing) faces `facing`
+  if (opts.facing) {
+    const ang = ({ S: 0, E: 90, N: 180, W: 270 } as const)[opts.facing] * (Math.PI / 180); // clockwise from up
+    const cx = W - 0.45,
+      cy = -0.85,
+      r = 0.42;
+    const ux = Math.sin(ang),
+      uy = -Math.cos(ang);
+    const px = -uy,
+      py = ux;
+    P.curves.push(
+      ...[0, 1, 2, 3].map((q) => {
+        const a0 = (q * Math.PI) / 2,
+          a1 = a0 + Math.PI / 2,
+          k = 0.5523;
+        const p0: [number, number] = [cx + r * Math.cos(a0), cy + r * Math.sin(a0)];
+        const p1: [number, number] = [cx + r * Math.cos(a1), cy + r * Math.sin(a1)];
+        const c1: [number, number] = [p0[0] - k * r * Math.sin(a0), p0[1] + k * r * Math.cos(a0)];
+        const c2: [number, number] = [p1[0] + k * r * Math.sin(a1), p1[1] - k * r * Math.cos(a1)];
+        return { p0, c1, c2, p1, sw: 0.02, color: INK };
+      }),
+    );
+    P.lines.push({ x1: cx - ux * r * 0.8, y1: cy - uy * r * 0.8, x2: cx + ux * r * 0.95, y2: cy + uy * r * 0.95, sw: 0.035, color: INK });
+    P.lines.push({ x1: cx + ux * r * 0.95, y1: cy + uy * r * 0.95, x2: cx + ux * r * 0.45 + px * 0.13, y2: cy + uy * r * 0.45 + py * 0.13, sw: 0.035, color: INK });
+    P.lines.push({ x1: cx + ux * r * 0.95, y1: cy + uy * r * 0.95, x2: cx + ux * r * 0.45 - px * 0.13, y2: cy + uy * r * 0.45 - py * 0.13, sw: 0.035, color: INK });
+    P.texts.push({ x: cx + ux * (r + 0.22), y: cy + uy * (r + 0.22) + 0.08, text: opts.north ?? "N", size: 0.22, bold: true, color: INK, anchor: "middle" });
+  }
   // scale bar 0–5 m
   const sx = 0,
     sy = D + 1.8;

@@ -108,8 +108,10 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
   const [rates, setRates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<"" | "pdf" | "xls">("");
   // plot-first start
-  const [plot, setPlot] = useState({ L: "40", B: "30", front: "5", back: "3", side: "3", bhk: "2", parking: "no" as "yes" | "no" });
-  const [plotFit, setPlotFit] = useState<{ aspect: number; buildableM2: number; widthM: number; perimeterM: number; warnings: string[] } | null>(null);
+  // B = road-side width (frontage), L = depth from the road to the back
+  const [plot, setPlot] = useState({ L: "50", B: "30", front: "5", back: "3", side: "3", bhk: "2", parking: "no" as "yes" | "no", facing: "E" as "N" | "E" | "S" | "W" });
+  const [applied, setApplied] = useState("");
+  const [plotFit, setPlotFit] = useState<{ aspect: number; buildableM2: number; widthM: number; depthM: number; perimeterM: number; warnings: string[] } | null>(null);
   // finish level, walls, extras, imported rates
   const [quality, setQuality] = useState<BoqQuality>("standard");
   const [wall, setWall] = useState<"brick" | "aac">("brick");
@@ -168,9 +170,10 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
       stairToTerrace: terrace === "yes",
       quality,
       wall,
-      ...(plotFit ? { aspect: plotFit.aspect, buildableM2: plotFit.buildableM2, widthM: plotFit.widthM } : {}),
+      ...(plotFit ? { aspect: plotFit.aspect, buildableM2: plotFit.buildableM2, widthM: plotFit.widthM, depthM: plotFit.depthM } : {}),
+      facing: plot.facing,
     };
-  }, [floorH, winW, winH, plinth, terrace, quality, wall, plotFit]);
+  }, [floorH, winW, winH, plinth, terrace, quality, wall, plotFit, plot.facing]);
 
   const extras: BoqExtras = useMemo(() => {
     const m = (v: string) => Math.max(0, dimToM(v, "ft") || 0);
@@ -216,14 +219,16 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     if (!(pL > 3 && pB > 3)) return;
     const fit = fitPlot({ plotL: pL, plotB: pB, front: m(plot.front), back: m(plot.back), side: m(plot.side), bhk: Number(plot.bhk), floors: 4, parking: plot.parking === "yes" });
     setPlans(fit.floorRooms.map((list) => list.map((r) => mk(r.type, { L: ft(r.L), B: ft(r.B), ...(r.wc ? { wc: r.wc } : {}) }))));
-    setPlotFit({ aspect: fit.buildL / fit.buildB, buildableM2: fit.buildArea, widthM: fit.buildB, perimeterM: 2 * (pL + pB), warnings: fit.warnings });
+    setPlotFit({ aspect: fit.buildL / fit.buildB, buildableM2: fit.buildArea, widthM: fit.buildB, depthM: fit.buildL, perimeterM: 2 * (pL + pB), warnings: fit.warnings });
+    setApplied(JSON.stringify(plot));
+    setView("sketch");
   };
+  // plan once on load from the default plot; after that the user presses "Make plan"
   useEffect(() => {
-    if (!plotLive) return;
-    const t = setTimeout(applyPlot, 300);
-    return () => clearTimeout(t);
+    if (plotLive) applyPlot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plot, plotLive]);
+  }, []);
+  const plotChanged = plotLive && applied !== "" && applied !== JSON.stringify(plot);
 
   const rateSheet = async (kind: "down" | "up", file?: File) => {
     const m = await import("@/lib/boqExport");
@@ -286,9 +291,9 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
                 {(
                   [
-                    ["L", hi ? "प्लॉट लंबाई" : "Plot length"],
-                    ["B", hi ? "प्लॉट चौड़ाई" : "Plot width"],
-                    ["front", hi ? "आगे छोड़ें" : "Front setback"],
+                    ["B", hi ? "सड़क की तरफ़ चौड़ाई (फ़्रंट)" : "Road-side width (frontage)"],
+                    ["L", hi ? "गहराई (आगे से पीछे)" : "Depth (front to back)"],
+                    ["front", hi ? "आगे छोड़ें (सड़क की तरफ़)" : "Front setback (road side)"],
                     ["back", hi ? "पीछे छोड़ें" : "Rear setback"],
                     ["side", hi ? "साइड छोड़ें (हर तरफ़)" : "Side setback (each)"],
                   ] as const
@@ -323,23 +328,45 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   ]}
                 />
               </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[13px] font-semibold">{hi ? "सड़क किस दिशा में है (प्लॉट का फ़ेसिंग)" : "Road is on which side (plot facing)"}</span>
+                <div role="radiogroup" className="grid grid-cols-4 gap-1.5">
+                  {(
+                    [
+                      ["N", hi ? "उत्तर" : "North"],
+                      ["E", hi ? "पूर्व" : "East"],
+                      ["S", hi ? "दक्षिण" : "South"],
+                      ["W", hi ? "पश्चिम" : "West"],
+                    ] as const
+                  ).map(([v, lbl]) => (
+                    <button
+                      key={v}
+                      type="button"
+                      role="radio"
+                      aria-checked={plot.facing === v}
+                      onClick={() => setPlot((p) => ({ ...p, facing: v }))}
+                      className={"h-10 rounded-lg text-[13.5px] font-bold " + (plot.facing === v ? "bg-ink text-white" : "border border-line bg-white")}
+                    >
+                      {lbl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <span className="text-[12px] text-muted">
+                {hi ? "उदाहरण: 20×50 प्लॉट = सड़क की तरफ़ 20 ft, गहराई 50 ft।" : "Example: a 20×50 plot = 20 ft on the road side, 50 ft deep."}
+              </span>
               <div className="flex flex-wrap items-center gap-2">
-                {plotLive ? (
-                  <span className="inline-flex items-center gap-2 rounded-lg bg-[#e5f4ec] px-3 py-2 text-[13px] font-bold text-good">
-                    ● {hi ? "प्लॉट बदलते ही नक्शा और एस्टिमेट अपने आप बनते हैं" : "Plan and estimate update as you change the plot"}
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPlotLive(true);
-                      applyPlot();
-                    }}
-                    className="inline-flex h-11 items-center rounded-lg bg-ink px-4 text-[14px] font-extrabold text-white"
-                  >
-                    {hi ? "प्लॉट से फिर प्लान बनाएं →" : "Plan from the plot again →"}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlotLive(true);
+                    applyPlot();
+                  }}
+                  className={"inline-flex h-12 items-center rounded-lg px-5 text-[15px] font-extrabold " + (plotChanged || !plotLive ? "bg-amber text-ink" : "bg-ink text-white")}
+                >
+                  {hi ? "नक्शा और एस्टिमेट बनाएं →" : "Make plan and estimate →"}
+                </button>
+                {plotChanged && <span className="text-[13px] font-semibold text-warn">{hi ? "प्लॉट बदला है — बटन दबाएं" : "Plot changed — press the button"}</span>}
                 {plotLive && (
                   <button
                     type="button"
@@ -360,8 +387,8 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
               ))}
               <span className="text-[12px] text-muted">
                 {hi
-                  ? "हर मंज़िल पर कमरे प्लॉट की जगह में फ़िट किए जाते हैं; नीचे कोई भी कमरा या साइज़ बदल सकते हैं।"
-                  : "Rooms on every floor are fitted to the buildable area; you can change any room or size below."}
+                  ? "बटन दबाते ही हर मंज़िल के कमरे प्लॉट में फ़िट होकर नक्शा और एस्टिमेट बनता है; नीचे कोई भी कमरा या साइज़ बदल सकते हैं।"
+                  : "Press the button: rooms on every floor are fitted to the plot, then the plan and estimate are made; you can change any room or size below."}
               </span>
             </div>
           </details>

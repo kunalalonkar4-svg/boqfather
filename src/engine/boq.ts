@@ -6,7 +6,7 @@
 import { CEMENT_BAG_M3, CFT_PER_M3, round, SQFT_PER_M2 } from "./units";
 import { BbsResult, calcBbs } from "./bbs";
 import { BoqQuality, QUALITY_RATE_OVERRIDES, SPEC_SHEET } from "./specs";
-import { layoutFloor, requiredDepth, SketchRect } from "./plot";
+import { isWidePlot, layoutFloor, requiredDepth, requiredWidth, SketchRect } from "./plot";
 
 export type RoomType = "hall" | "dining" | "kitchen" | "bedroom" | "toilet" | "passage" | "balcony" | "pooja" | "store" | "study" | "utility" | "parking" | "shop";
 
@@ -366,6 +366,10 @@ export interface BoqSpec {
   buildableM2?: number;
   /** Buildable width of the plot (m): the house uses the full width; depth comes from the plan. */
   widthM?: number;
+  /** Buildable depth of the plot (m): on shallow wide plots the house takes the full depth and rooms run along the road. */
+  depthM?: number;
+  /** Direction the road side faces (for the north arrow). */
+  facing?: "N" | "E" | "S" | "W";
 }
 
 /** Optional external works and services. Lengths in metres. */
@@ -526,6 +530,7 @@ export interface BoqResult {
   thumb: { key: string; unit: string; perSqft: number; thumbQty: number; qty: number; diffPct: number }[];
   assumptions: string[];
   quality: BoqQuality;
+  facing?: "N" | "E" | "S" | "W";
   wall: "brick" | "aac";
   bbs: BbsResult;
   /** Steel by thumb rule, for comparison with the BBS (kg, structure only). */
@@ -584,6 +589,14 @@ export function calcBoq(input: BoqInput): BoqResult {
     const hasStair = f < F - 1 || terrace;
     const A = (carpet + (hasStair ? STAIR_FP : 0)) / 0.83;
     // width from the area and plot shape; depth from the planned layout (rooms keep their sizes, plus passage / porch / stair)
+    // rooms along the road only when the plot is shallow and wide AND the house really fits its width
+    const lr = rs.map((r) => ({ key: r.code, type: r.type, area: r.area, L: r.L, B: r.B, windows: r.windows, vents: r.vents }));
+    const wide = !!(
+      spec.widthM &&
+      spec.depthM &&
+      isWidePlot(spec.widthM, spec.depthM) &&
+      requiredWidth(spec.depthM, lr, f < F - 1 || terrace ? STAIR_FP : 0, f === 0, WE) <= spec.widthM + 0.3
+    );
     const B = spec.widthM ? round(spec.widthM, 2) : round(A / Math.sqrt(A * ASPECT), 2);
     const need = requiredDepth(
       B,
@@ -592,7 +605,7 @@ export function calcBoq(input: BoqInput): BoqResult {
       f === 0,
       WE,
     );
-    const L = round(spec.widthM ? need : Math.max(A / B, need), 2);
+    const L = round(wide ? spec.depthM! : spec.widthM ? need : Math.max(A / B, need), 2);
     const LC = L - COL,
       BC = B - COL;
     const NBL = Math.max(1, Math.ceil(LC / 4.2)),
@@ -609,6 +622,7 @@ export function calcBoq(input: BoqInput): BoqResult {
       rs,
       carpet,
       hasStair,
+      wide,
       L,
       B,
       A: L * B,
@@ -1367,6 +1381,7 @@ export function calcBoq(input: BoqInput): BoqResult {
       g.hasStair ? STAIR_FP : 0,
       g.f === 0,
       WE,
+      g.wide,
     ),
   }));
 
@@ -1419,6 +1434,7 @@ export function calcBoq(input: BoqInput): BoqResult {
     materials,
     thumb,
     quality,
+    facing: spec.facing,
     wall: AAC ? "aac" : "brick",
     bbs,
     steelThumbKg,

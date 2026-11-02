@@ -401,7 +401,8 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     }
     const boxY = top ? 30 : 30 + (H - 30 - 18) / 2 + 2;
     const boxH = (H - 30 - 18) / 2 - 8;
-    const P = planPrimitives(sk.L, sk.B, sk.rects, nm, { wall: r.wall === "aac" ? 0.2 : 0.23 });
+    const face = r.facing ? { N: "NORTH", E: "EAST", S: "SOUTH", W: "WEST" }[r.facing] : "";
+    const P = planPrimitives(sk.L, sk.B, sk.rects, nm, { wall: r.wall === "aac" ? 0.2 : 0.23, facing: r.facing, road: face ? `ROAD - ${face} FACING` : "ROAD / FRONT" });
     doc
       .setTextColor(...INK)
       .setFont("helvetica", "bold")

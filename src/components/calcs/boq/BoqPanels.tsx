@@ -38,7 +38,13 @@ export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; name
       </p>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {r.sketch.map((s) => {
-          const P = planPrimitives(s.L, s.B, s.rects, nm, { road: L(lang, "ROAD / FRONT", "सड़क / सामने"), up: L(lang, "UP", "ऊपर") });
+          const face = r.facing ? { N: ["NORTH", "उत्तर"], E: ["EAST", "पूर्व"], S: ["SOUTH", "दक्षिण"], W: ["WEST", "पश्चिम"] }[r.facing] : null;
+          const P = planPrimitives(s.L, s.B, s.rects, nm, {
+            road: face ? L(lang, `ROAD — ${face[0]} FACING`, `सड़क — ${face[1]} मुखी`) : L(lang, "ROAD / FRONT", "सड़क / सामने"),
+            up: L(lang, "UP", "ऊपर"),
+            facing: r.facing,
+            north: L(lang, "N", "उ"),
+          });
           const b = P.bounds;
           return (
             <figure key={s.floor} className="m-0 flex min-w-0 flex-col gap-2">

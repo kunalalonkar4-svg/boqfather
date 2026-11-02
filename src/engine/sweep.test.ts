@@ -6,15 +6,15 @@ const problems: string[] = [];
 describe("plan sweep: every plot input gives a sound plan", () => {
   it("sweep", () => {
     let n = 0;
-    for (const L of [30, 40, 50, 60, 80])
+    for (const L of [20, 25, 30, 40, 50, 60, 80])
       for (const B of [20, 25, 30, 40, 50])
         for (const bhk of [1, 2, 3, 4])
           for (const parking of [false, true])
             for (const floors of [1, 2, 3]) {
-              const setF = L >= 50 ? 10 : 5,
+              const setF = L >= 50 ? 10 : L <= 25 ? 3 : 5,
                 side = B >= 30 ? 3 : 0;
               const p = fitPlot({ plotL: ft(L), plotB: ft(B), front: ft(setF), back: ft(3), side: ft(side), bhk, floors, parking });
-              const r = calcBoq({ floorRooms: p.floorRooms, spec: { aspect: p.buildL / p.buildB, buildableM2: p.buildArea, widthM: p.buildB } });
+              const r = calcBoq({ floorRooms: p.floorRooms, spec: { aspect: p.buildL / p.buildB, buildableM2: p.buildArea, widthM: p.buildB, depthM: p.buildL } });
               n++;
               const tag = `${L}x${B} ${bhk}BHK park=${parking} G+${floors - 1}`;
               if (!Number.isFinite(r.grandTotal) || r.grandTotal <= 0) problems.push(`${tag}: bad total`);
@@ -50,7 +50,7 @@ describe("plan sweep: every plot input gives a sound plan", () => {
     for (const pr of problems) {
       const [tag, rest] = pr.split(": ");
       const B = tag.split(" ")[0].split("x")[1];
-      const kind = rest.replace(/^\S+ /, "").replace(/[\d.]+(x[\d.]+)?/g, "#");
+      const kind = rest.replace(/^\S+ /, "").replace(/[\d.]+(x[\d.]+)?/g, "#") + ` L=${tag.split(" ")[0].split("x")[0]}`;
       const bh = tag.split(" ")[1];
       const k = `B=${B} ${bh} ${kind}`;
       agg.set(k, (agg.get(k) ?? 0) + 1);
