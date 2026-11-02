@@ -2,7 +2,7 @@ import { CalcResult } from "./types";
 import { round, rupees } from "./units";
 
 /** Construction rate per sqft of built-up area (₹, 2026, composite material + labour). Editable by the user. */
-export const QUALITY_RATES = { basic: 1600, standard: 1900, premium: 2600 } as const;
+export const QUALITY_RATES = { basic: 1450, standard: 1700, premium: 2400 } as const;
 export type Quality = keyof typeof QUALITY_RATES;
 
 /** Location multiplier on the base rate. */

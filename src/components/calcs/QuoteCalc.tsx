@@ -63,7 +63,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
   const [location, setLocation] = useState<Location>("tier2");
   const [scope, setScope] = useState<"turnkey" | "labour">("turnkey");
   const [mode, setMode] = useState<"sqft" | "lump">("sqft");
-  const [quote, setQuote] = useState("2150");
+  const [quote, setQuote] = useState("1950");
   const [items, setItems] = useState<Record<QuoteItem, string>>({ cement: "", steel: "", rcc: "", brickwork: "", plaster: "", tiles: "", labour: "" });
   const [checked, setChecked] = useState<boolean[]>(QUOTE_CHECKLIST.map(() => false));
 
@@ -93,7 +93,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
             value={scope}
             onChange={(s) => {
               setScope(s);
-              setQuote(s === "turnkey" ? "2150" : "480");
+              setQuote(s === "turnkey" ? "1950" : "480");
             }}
             options={[
               { value: "turnkey", label: hi ? "माल + मज़दूरी (टर्नकी)" : "Material + labour" },

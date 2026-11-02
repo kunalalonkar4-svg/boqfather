@@ -7,7 +7,7 @@ import { CEMENT_BAG_M3, CFT_PER_M3, round, SQFT_PER_M2 } from "./units";
 
 export type RoomType = "hall" | "dining" | "kitchen" | "bedroom" | "toilet" | "passage" | "balcony" | "pooja" | "store" | "study" | "utility" | "parking" | "shop";
 
-export type DoorKind = "main" | "flush" | "pvc" | "shutter" | "none";
+export type DoorKind = "main" | "balcony" | "flush" | "pvc" | "shutter" | "none";
 
 interface RoomDef {
   L: number;
@@ -115,7 +115,7 @@ export const ROOM_DEFS: Record<RoomType, RoomDef> = {
     L: 3.0,
     B: 1.2,
     code: "BL",
-    door: "main",
+    door: "balcony",
     doorW: 1.0,
     windows: 0,
     vents: 0,
@@ -234,55 +234,13 @@ export interface FloorPlan {
   balconies: number;
 }
 
-/** Composite rates (material + labour), ₹ — editable. */
+/** Composite market rates (material + labour), tier-2 private work 2026, ₹ — editable. */
 export const BOQ_RATES = {
-  exc: 280,
-  pcc: 5200,
-  back: 150,
-  termite: 60,
-  murum: 900,
-  rcc: 7000,
-  steel: 78,
-  sh_col: 350,
-  sh_beam: 350,
-  sh_slab: 300,
-  sh_foot: 300,
-  brick: 6500,
-  lintel: 18000,
-  pl_int: 345,
-  pl_ext: 430,
-  pl_ceil: 365,
-  pl_para: 430,
-  vit: 1615,
-  skirt: 150,
-  anti: 1075,
-  wtile: 1025,
-  toi_wp: 540,
-  ter_wp: 450,
-  granite: 4500,
-  mdoor: 25000,
-  fdoor: 13500,
-  pvc: 3800,
-  alwin: 5920,
-  vent: 1800,
-  ewc: 8500,
-  iwc: 4500,
-  basin: 3500,
-  shower: 4500,
-  taps: 2400,
-  fdrain: 600,
-  sink: 4500,
-  cpvc: 310,
-  swr110: 1050,
-  swr75: 690,
-  riser: 15000,
-  elec: 1185,
-  p_int: 280,
-  p_ext: 235,
-  st_tile: 1830,
-  st_soffit: 645,
-  rail: 3935,
-  shutter: 3200,
+  exc: 280, pcc: 4800, back: 150, termite: 60, murum: 900, rcc: 6500, steel: 72, sh_col: 320, sh_beam: 320, sh_slab: 280,
+  sh_foot: 280, brick: 6200, lintel: 16000, pl_int: 300, pl_ext: 380, pl_ceil: 320, pl_para: 380, vit: 1300, skirt: 130,
+  anti: 950, wtile: 950, toi_wp: 500, ter_wp: 420, granite: 4000, mdoor: 25000, bdoor: 12000, fdoor: 11000, pvc: 3800, alwin: 4800,
+  vent: 1500, ewc: 8500, iwc: 4500, basin: 3000, shower: 3500, taps: 2000, fdrain: 500, sink: 4000, cpvc: 280, swr110: 900,
+  swr75: 600, riser: 12000, elec: 800, p_int: 220, p_ext: 200, st_tile: 1600, st_soffit: 550, rail: 2500, shutter: 3200,
 } as const;
 export type RateKey = keyof typeof BOQ_RATES;
 
@@ -405,7 +363,7 @@ function toRooms(floorRooms: RoomSpec[][]): Room[] {
         B,
         area: L * B,
         per: 2 * (L + B),
-        door: def.door,
+        door: r.type === "hall" && f > 0 ? "flush" : def.door,
         doorWidth: def.doorW,
         windows: Math.max(0, Math.round(r.windows ?? def.windows)),
         vents: def.vents,
@@ -536,6 +494,7 @@ export function calcBoq(input: BoqInput): BoqResult {
       win: cnt((r) => r.windows),
       ven: cnt((r) => r.vents),
       md: cnt((r) => (r.door === "main" ? 1 : 0)),
+      bd: cnt((r) => (r.door === "balcony" ? 1 : 0)),
       fd: cnt((r) => (r.door === "flush" ? 1 : 0)),
       fdW: cnt((r) => (r.door === "flush" ? r.doorWidth : 0)),
       td: cnt((r) => (r.door === "pvc" ? 1 : 0)),
@@ -561,7 +520,7 @@ export function calcBoq(input: BoqInput): BoqResult {
   const NT = toilets.length,
     KIT = kitchens.length,
     UT = utils.length;
-  const tot = (k: "win" | "ven" | "md" | "fd" | "td" | "sh") => geo.reduce((a, g) => a + g[k], 0);
+  const tot = (k: "win" | "ven" | "md" | "bd" | "fd" | "td" | "sh") => geo.reduce((a, g) => a + g[k], 0);
   const WIN = tot("win"),
     VEN = tot("ven"),
     MD = tot("md"),
@@ -594,7 +553,8 @@ export function calcBoq(input: BoqInput): BoqResult {
     };
     if (mode === "ext" || mode === "plExt" || mode === "plInt") {
       r(`Windows ${WW} × ${WH}`, g.win, WW, WH);
-      r("Main / balcony doors 1.0 × 2.1", g.md, 1.0, 2.1);
+      r("Main doors 1.0 × 2.1", g.md, 1.0, 2.1);
+      r("Balcony doors 1.0 × 2.1", g.bd, 1.0, 2.1);
       r(`Shutters 2.4 × ${SH_H}`, g.sh, 2.4, SH_H);
       r("Ventilators 0.6 × 0.45", g.ven, 0.6, 0.45);
       r("Parking opening 3.0 × 2.4", g.pk, 3.0, 2.4);
@@ -739,7 +699,7 @@ export function calcBoq(input: BoqInput): BoqResult {
   const para = item("Parapet 230 mm × 0.90 m, CM 1:6", "m³", "brick", "Centre-line length × 0.23 × 0.90.", paraRows, 2);
   const lintel = item("RCC lintels incl. steel and shuttering", "m³", "lintel", "Opening + 0.30 m × wall thickness × 0.15 m.", [
     ...(WIN ? [row("Windows (230 wall)", WIN, round(WW + 0.3, 2), WE, 0.15)] : []),
-    ...(MD ? [row("Main / balcony doors (230 wall)", MD, 1.3, WE, 0.15)] : []),
+    ...(MD + BD ? [row("Main / balcony doors (230 wall)", MD + BD, 1.3, WE, 0.15)] : []),
     ...(SH ? [row("Shutters (230 wall)", SH, 2.7, WE, 0.15)] : []),
     ...(geo.some((g) => g.pk)
       ? [
@@ -872,11 +832,20 @@ export function calcBoq(input: BoqInput): BoqResult {
   sec("F", "Doors, windows, ventilators", "दरवाज़े, खिड़कियां, वेंटिलेटर");
   if (MD)
     item(
-      "Main / balcony door 1.0 × 2.1 m, hardwood frame, hardware",
+      "Main door 1.0 × 2.1 m, teak / hardwood frame and shutter, hardware",
       "nos",
       "mdoor",
-      "Halls and balconies.",
-      geo.filter((g) => g.md).map((g) => row(`${flr(g.f)} main / balcony doors`, g.md)),
+      "Entrance door of the ground floor hall.",
+      geo.filter((g) => g.md).map((g) => row(`${flr(g.f)} main doors`, g.md)),
+      0,
+    );
+  if (BD)
+    item(
+      "Balcony door 1.0 × 2.1 m, UPVC / aluminium with glass",
+      "nos",
+      "bdoor",
+      "One per balcony.",
+      geo.filter((g) => g.bd).map((g) => row(`${flr(g.f)} balcony doors`, g.bd)),
       0,
     );
   if (FD)
@@ -1122,10 +1091,10 @@ export function calcBoq(input: BoqInput): BoqResult {
         ".",
       `RCC frame: columns 300 × 300 at max 3.6 m spacing (${NCOL} at foundation), beams 230 × 400, slab 125 mm, floor height ${FH} m, plinth ${PLINTH} m.`,
       `Isolated footings ${FOOT} × ${FOOT} m at ${PIT_D} m depth — confirm by soil test / structural design.`,
-      `Openings from rooms: ${WIN} windows ${WW} × ${WH} m, ${FD} room doors, ${TD} toilet doors, ${MD} main / balcony doors${SH ? `, ${SH} shutters` : ""}, ${VEN} ventilators.`,
+      `Openings from rooms: ${WIN} windows ${WW} × ${WH} m, ${FD} room doors, ${TD} toilet doors, ${MD} main door(s), ${BD} balcony door(s)${SH ? `, ${SH} shutters` : ""}, ${VEN} ventilators.`,
       NS > 0 ? `${NS} staircase flight set(s)${terrace ? " including terrace access" : ""}.` : "No staircase.",
       "Steel by kg per m³ of concrete (footing 80, column 180, plinth beam 120, beam 150, slab 90, stair 90) + 5%.",
-      "Composite rates (material + labour) — edit any rate to match your city or SOR.",
+      "Composite market rates (material + labour) for private work in a tier-2 city, 2026 — edit any rate to match your city, contractor or SOR.",
       "Excludes land, approvals, interiors, fixtures, compound wall, borewell, water tank, septic tank, GST if extra.",
     ],
   };

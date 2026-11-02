@@ -113,9 +113,9 @@ describe("excavation", () => {
 });
 
 describe("house cost", () => {
-  it("1000 sqft G+1 standard tier-2 = 2000 × 1900", () => {
+  it("1000 sqft G+1 standard tier-2 = 2000 × 1700", () => {
     const r = calcHouse({ areaPerFloorSqft: 1000, floors: 2, quality: "standard", location: "tier2" });
-    expect(r.values.total).toBe(3_800_000);
+    expect(r.values.total).toBe(3_400_000);
     expect(r.values.materials.find((m) => m.key === "cement")!.qty).toBe(800);
     expect(r.values.materials.find((m) => m.key === "steel")!.qty).toBe(8000);
   });
@@ -182,13 +182,13 @@ describe("quote checker", () => {
     expect(verdictFor(30)).toBe("high");
   });
   it("per sqft and lump sum agree", () => {
-    const a = checkQuote({ builtUpSqft: 2000, quality: "standard", location: "tier2", scope: "turnkey", mode: "sqft", quote: 2090 });
-    const b = checkQuote({ builtUpSqft: 2000, quality: "standard", location: "tier2", scope: "turnkey", mode: "lump", quote: 4_180_000 });
-    expect(a.benchPerSqft).toBe(1900);
+    const a = checkQuote({ builtUpSqft: 2000, quality: "standard", location: "tier2", scope: "turnkey", mode: "sqft", quote: 1870 });
+    const b = checkQuote({ builtUpSqft: 2000, quality: "standard", location: "tier2", scope: "turnkey", mode: "lump", quote: 3_740_000 });
+    expect(a.benchPerSqft).toBe(1700);
     expect(a.diffPct).toBeCloseTo(10, 5);
-    expect(b.quotePerSqft).toBe(2090);
+    expect(b.quotePerSqft).toBe(1870);
     expect(a.verdict).toBe("slightly_high");
-    expect(a.diffAmount).toBe(380_000);
+    expect(a.diffAmount).toBe(340_000);
   });
   it("flags item rates", () => {
     const r = checkQuote({ builtUpSqft: 1000, quality: "standard", location: "tier2", scope: "labour", mode: "sqft", quote: 420, items: { steel: 90, cement: 380, tiles: 80 } });

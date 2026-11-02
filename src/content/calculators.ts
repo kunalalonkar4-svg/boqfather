@@ -48,7 +48,7 @@ export const CALCULATORS: CalcInfo[] = [
       faqs: [
         {
           q: "What is the construction cost per sqft in India in 2026?",
-          a: "For an RCC framed house it is roughly ₹1,600–1,800 per sqft for basic quality, ₹1,800–2,200 for standard and ₹2,500+ for premium, varying by city. Use the rate box to enter your local rate.",
+          a: "For an RCC framed house it is roughly ₹1,400–1,550 per sqft for basic quality, ₹1,600–1,800 for standard and ₹2,300+ for premium in a tier-2 city, higher in metros. A single-storey house costs about 8–10% more per sqft than G+1 because the foundation and roof are shared by less area. Use the rate box to enter your local rate.",
         },
         {
           q: "How much cement and steel does a 1000 sqft house need?",
@@ -76,7 +76,7 @@ export const CALCULATORS: CalcInfo[] = [
       faqs: [
         {
           q: "2026 में घर बनाने का प्रति sqft खर्च कितना है?",
-          a: "RCC फ्रेम वाले घर के लिए बेसिक क्वालिटी में लगभग ₹1,600–1,800, स्टैंडर्ड में ₹1,800–2,200 और प्रीमियम में ₹2,500+ प्रति sqft, शहर के हिसाब से। रेट बॉक्स में अपना लोकल रेट डाल सकते हैं।",
+          a: "RCC फ्रेम वाले घर के लिए टियर-2 शहर में बेसिक क्वालिटी में लगभग ₹1,400–1,550, स्टैंडर्ड में ₹1,600–1,800 और प्रीमियम में ₹2,300+ प्रति sqft, मेट्रो में ज़्यादा। सिर्फ़ ग्राउंड फ़्लोर वाला घर G+1 से प्रति sqft 8–10% महंगा पड़ता है क्योंकि नींव और छत का खर्च कम एरिया पर बंटता है। रेट बॉक्स में अपना लोकल रेट डाल सकते हैं।",
         },
         {
           q: "1000 sqft घर में कितना सीमेंट और सरिया लगेगा?",
@@ -441,7 +441,7 @@ export const CALCULATORS: CalcInfo[] = [
       faqs: [
         {
           q: "What is a fair turnkey construction rate in India?",
-          a: "For an RCC framed house with standard finishes, about ₹1,800–2,200 per sqft in tier-2 cities in 2026; metros are 10–20% higher, small towns and villages lower.",
+          a: "For an RCC framed house with standard finishes, about ₹1,600–1,800 per sqft in tier-2 cities in 2026; metros are 10–20% higher, small towns and villages lower.",
         },
         {
           q: "What is a fair labour-only rate?",
@@ -469,7 +469,7 @@ export const CALCULATORS: CalcInfo[] = [
       faqs: [
         {
           q: "भारत में सही टर्नकी कंस्ट्रक्शन रेट क्या है?",
-          a: "स्टैंडर्ड फ़िनिश वाले RCC फ्रेम घर के लिए 2026 में टियर-2 शहरों में लगभग ₹1,800–2,200 प्रति sqft; मेट्रो में 10–20% ज़्यादा, छोटे शहर और गांव में कम।",
+          a: "स्टैंडर्ड फ़िनिश वाले RCC फ्रेम घर के लिए 2026 में टियर-2 शहरों में लगभग ₹1,600–1,800 प्रति sqft; मेट्रो में 10–20% ज़्यादा, छोटे शहर और गांव में कम।",
         },
         {
           q: "सिर्फ़ मज़दूरी का सही रेट क्या है?",
