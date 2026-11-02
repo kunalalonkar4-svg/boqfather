@@ -55,7 +55,10 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
 }
 
 /** PDF: abstract of cost + measurement book, BOQFather branding. */
-export async function downloadBoqPdf(r: BoqResult, title: string) {
+export async function downloadBoqPdf(r0: BoqResult, title: string) {
+  // Standard PDF fonts have no "−" (U+2212) or "≈" glyphs — swap them for plain characters.
+  const r: BoqResult = JSON.parse(JSON.stringify(r0).replace(/\u2212/g, "-").replace(/\u2248/g, "~"));
+  title = title.replace(/\u2212/g, "-");
   const { jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");
   const doc = new jsPDF({ unit: "mm", format: "a4" });
@@ -85,7 +88,7 @@ export async function downloadBoqPdf(r: BoqResult, title: string) {
   doc.setTextColor(...INK).setFont("helvetica", "bold").setFontSize(14).text(title.toUpperCase(), M, 33);
   doc.setFont("helvetica", "normal").setFontSize(8.5).setTextColor(70, 68, 62);
   const fl = r.geometry.perFloor.map((p) => `${p.floor === 0 ? "GF" : r.geometry.floors > 2 ? `F${p.floor}` : "FF"} ${inr(p.builtUpSqft)}`).join(" + ");
-  doc.text(`Built-up ${fl} = ${inr(r.geometry.builtUpSqft)} sqft  |  Columns 300x300, beams 230x400, slab 125 mm  |  M20, Fe500D  |  Composite rates`, M, 38.5, { maxWidth: W - 2 * M });
+  doc.text(`Built-up ${fl} = ${inr(r.geometry.builtUpSqft)} sqft  |  Columns 300x300, beams 230x400, slab 125 mm  |  M20, Fe500D  |  Market rates, tier-2 city 2026`, M, 38.5, { maxWidth: W - 2 * M });
 
   const body: (string | { content: string; colSpan?: number; styles?: object })[][] = [];
   let sr = 0;

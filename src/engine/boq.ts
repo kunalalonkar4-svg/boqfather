@@ -349,8 +349,12 @@ export function buildRooms(floors: number, plan: FloorPlan, sizes: Partial<Recor
 function toRooms(floorRooms: RoomSpec[][]): Room[] {
   const counts: Record<string, number> = {};
   const rooms: Room[] = [];
+  // One main entrance for the house: the first ground-floor hall (or passage if there is no hall).
+  const gf = floorRooms[0] ?? [];
+  const mainIdx = gf.findIndex((r) => r.type === "hall") >= 0 ? gf.findIndex((r) => r.type === "hall") : gf.findIndex((r) => r.type === "passage");
   floorRooms.forEach((list, f) => {
-    for (const r of list) {
+    const firstHall = list.findIndex((r) => r.type === "hall");
+    list.forEach((r, i) => {
       const def = ROOM_DEFS[r.type];
       counts[def.code] = (counts[def.code] ?? 0) + 1;
       const L = Math.max(0.6, r.L),
@@ -363,13 +367,14 @@ function toRooms(floorRooms: RoomSpec[][]): Room[] {
         B,
         area: L * B,
         per: 2 * (L + B),
-        door: r.type === "hall" && f > 0 ? "flush" : def.door,
+        // other halls: entry door from the stair lobby on upper floors (first hall only), otherwise open to the house
+        door: f === 0 && i === mainIdx ? "main" : r.type === "hall" ? (f > 0 && i === firstHall ? "flush" : "none") : def.door,
         doorWidth: def.doorW,
         windows: Math.max(0, Math.round(r.windows ?? def.windows)),
         vents: def.vents,
         wc: r.type === "toilet" ? (r.wc ?? "ewc") : undefined,
       });
-    }
+    });
   });
   return rooms;
 }
@@ -465,8 +470,8 @@ export function calcBoq(input: BoqInput): BoqResult {
     const B = round(A / L, 2);
     const LC = L - COL,
       BC = B - COL;
-    const NBL = Math.max(1, Math.ceil(LC / 3.6)),
-      NBB = Math.max(1, Math.ceil(BC / 3.6));
+    const NBL = Math.max(1, Math.ceil(LC / 4.2)),
+      NBB = Math.max(1, Math.ceil(BC / 4.2));
     const CLL = round(LC / NBL - COL, 3),
       CLB = round(BC / NBB - COL, 3);
     const NCOL = (NBL + 1) * (NBB + 1);
@@ -524,6 +529,7 @@ export function calcBoq(input: BoqInput): BoqResult {
   const WIN = tot("win"),
     VEN = tot("ven"),
     MD = tot("md"),
+    BALD = tot("bd"),
     FD = tot("fd"),
     TD = tot("td"),
     SH = tot("sh");
@@ -699,7 +705,7 @@ export function calcBoq(input: BoqInput): BoqResult {
   const para = item("Parapet 230 mm × 0.90 m, CM 1:6", "m³", "brick", "Centre-line length × 0.23 × 0.90.", paraRows, 2);
   const lintel = item("RCC lintels incl. steel and shuttering", "m³", "lintel", "Opening + 0.30 m × wall thickness × 0.15 m.", [
     ...(WIN ? [row("Windows (230 wall)", WIN, round(WW + 0.3, 2), WE, 0.15)] : []),
-    ...(MD + BD ? [row("Main / balcony doors (230 wall)", MD + BD, 1.3, WE, 0.15)] : []),
+    ...(MD + BALD ? [row("Main / balcony doors (230 wall)", MD + BALD, 1.3, WE, 0.15)] : []),
     ...(SH ? [row("Shutters (230 wall)", SH, 2.7, WE, 0.15)] : []),
     ...(geo.some((g) => g.pk)
       ? [
@@ -839,7 +845,7 @@ export function calcBoq(input: BoqInput): BoqResult {
       geo.filter((g) => g.md).map((g) => row(`${flr(g.f)} main doors`, g.md)),
       0,
     );
-  if (BD)
+  if (BALD)
     item(
       "Balcony door 1.0 × 2.1 m, UPVC / aluminium with glass",
       "nos",
@@ -1089,9 +1095,9 @@ export function calcBoq(input: BoqInput): BoqResult {
       `Each floor's outline is worked out from its own rooms (no drawing): carpet ≈ 83% of built-up incl. staircase ${STAIR_FP} m². ` +
         perFloor.map((p) => `${flr(p.floor)} ${p.L} × ${p.B} m`).join(", ") +
         ".",
-      `RCC frame: columns 300 × 300 at max 3.6 m spacing (${NCOL} at foundation), beams 230 × 400, slab 125 mm, floor height ${FH} m, plinth ${PLINTH} m.`,
+      `RCC frame: columns 300 × 300 at max 4.2 m spacing (${NCOL} at foundation), beams 230 × 400, slab 125 mm, floor height ${FH} m, plinth ${PLINTH} m.`,
       `Isolated footings ${FOOT} × ${FOOT} m at ${PIT_D} m depth — confirm by soil test / structural design.`,
-      `Openings from rooms: ${WIN} windows ${WW} × ${WH} m, ${FD} room doors, ${TD} toilet doors, ${MD} main door(s), ${BD} balcony door(s)${SH ? `, ${SH} shutters` : ""}, ${VEN} ventilators.`,
+      `Openings from rooms: ${WIN} windows ${WW} × ${WH} m, ${FD} room doors, ${TD} toilet doors, ${MD} main door(s), ${BALD} balcony door(s)${SH ? `, ${SH} shutters` : ""}, ${VEN} ventilators.`,
       NS > 0 ? `${NS} staircase flight set(s)${terrace ? " including terrace access" : ""}.` : "No staircase.",
       "Steel by kg per m³ of concrete (footing 80, column 180, plinth beam 120, beam 150, slab 90, stair 90) + 5%.",
       "Composite market rates (material + labour) for private work in a tier-2 city, 2026 — edit any rate to match your city, contractor or SOR.",
