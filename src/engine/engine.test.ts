@@ -332,10 +332,20 @@ describe("plot and building-code checks", () => {
     const r = calcBoq({ floorRooms: p.floorRooms });
     expect(r.warnings).toHaveLength(0);
   });
-  it("stair sits in the same corner on every floor", () => {
+  it("plan: stair at the front right on every floor, bedrooms at the back, hall at the front", () => {
     const r = calcBoq({ floors: 3, plan: { bedrooms: 2, toilets: 2, kitchen: true, dining: true, balconies: 1 } });
-    const st = r.sketch.map((s) => s.rects.find((x) => x.type === "stair")!);
-    for (const [i, x] of st.entries()) expect(x.x + x.w).toBeCloseTo(r.sketch[i].L, 5);
-    for (const x of st) expect(x.y).toBe(0);
+    for (const sk of r.sketch) {
+      const st = sk.rects.find((x) => x.type === "stair")!;
+      expect(st.x + st.w).toBeCloseTo(sk.L - 0.23, 5);
+      expect(st.y + st.h).toBeCloseTo(sk.B - 0.23, 5);
+      const hall = sk.rects.find((x) => x.type === "hall")!;
+      const bed = sk.rects.find((x) => x.type === "bedroom")!;
+      expect(bed.y).toBeLessThan(hall.y);
+      for (const x of sk.rects) {
+        expect(x.x + x.w).toBeLessThanOrEqual(sk.L + 1e-6);
+        expect(x.y + x.h).toBeLessThanOrEqual(sk.B + 1e-6);
+      }
+    }
+    expect(r.sketch[0].rects.find((x) => x.type === "hall")!.door?.main).toBe(true);
   });
 });

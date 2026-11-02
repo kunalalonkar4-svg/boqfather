@@ -6,7 +6,7 @@
 import { CEMENT_BAG_M3, CFT_PER_M3, round, SQFT_PER_M2 } from "./units";
 import { BbsResult, calcBbs } from "./bbs";
 import { BoqQuality, QUALITY_RATE_OVERRIDES, SPEC_SHEET } from "./specs";
-import { sketchFloor, SketchRect } from "./plot";
+import { layoutFloor, SketchRect } from "./plot";
 
 export type RoomType = "hall" | "dining" | "kitchen" | "bedroom" | "toilet" | "passage" | "balcony" | "pooja" | "store" | "study" | "utility" | "parking" | "shop";
 
@@ -1347,12 +1347,17 @@ export function calcBoq(input: BoqInput): BoqResult {
   // ---------------- schematic sketch per floor
   const sketch = geo.map((g) => ({
     floor: g.f,
-    L: g.L,
-    B: g.B,
-    rects: sketchFloor(g.L, g.B, [
-      ...g.rs.map((r) => ({ key: r.code, label: r.code, type: r.type, area: r.area, L: r.L, B: r.B })),
-      ...(g.hasStair ? [{ key: `ST${g.f}`, label: "Stair", type: "stair" as const, area: STAIR_FP }] : []),
-    ]),
+    // drawn with the front (road) at the bottom: width across the front, depth front to back
+    L: g.B,
+    B: g.L,
+    rects: layoutFloor(
+      g.B,
+      g.L,
+      g.rs.map((r) => ({ key: r.code, type: r.type, area: r.area, L: r.L, B: r.B, windows: r.windows, vents: r.vents })),
+      g.hasStair ? STAIR_FP : 0,
+      g.f === 0,
+      WE,
+    ),
   }));
 
   const specSheet = SPEC_SHEET.map((l) => ({ key: l.key, item: l.item, spec: l.spec[quality] }));

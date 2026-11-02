@@ -1,5 +1,36 @@
 import type { BoqResult } from "@/engine";
 import { BOQ_RATES, buildPlan, inr, RateKey, ROOM_DEFS, round } from "@/engine";
+import { planPrimitives, Primitives } from "./planDraw";
+
+type Pdf = InstanceType<typeof import("jspdf").jsPDF>;
+/** Draw plan primitives on a jsPDF page; (ox, oy) is the page position of the plan origin, sc mm per metre. */
+function drawPlan(doc: Pdf, P: Primitives, ox: number, oy: number, sc: number) {
+  const X = (x: number) => ox + x * sc,
+    Y = (y: number) => oy + y * sc;
+  for (const r of P.rects) {
+    if (r.fill) doc.setFillColor(...r.fill);
+    if (r.stroke) doc.setDrawColor(...r.stroke).setLineWidth((r.sw ?? 0.1) * sc);
+    doc.rect(X(r.x), Y(r.y), r.w * sc, r.h * sc, r.fill && r.stroke ? "FD" : r.fill ? "F" : "S");
+  }
+  for (const l of P.lines) {
+    doc.setDrawColor(...l.color).setLineWidth(l.sw * sc);
+    if (l.dash) doc.setLineDashPattern([1.2, 0.8], 0);
+    doc.line(X(l.x1), Y(l.y1), X(l.x2), Y(l.y2));
+    if (l.dash) doc.setLineDashPattern([], 0);
+  }
+  for (const c of P.curves) {
+    doc.setDrawColor(...c.color).setLineWidth(c.sw * sc);
+    const [x0, y0] = c.p0;
+    doc.lines([[(c.c1[0] - x0) * sc, (c.c1[1] - y0) * sc, (c.c2[0] - x0) * sc, (c.c2[1] - y0) * sc, (c.p1[0] - x0) * sc, (c.p1[1] - y0) * sc]], X(x0), Y(y0), [1, 1], "S", false);
+  }
+  for (const t of P.texts) {
+    doc
+      .setFont("helvetica", t.bold ? "bold" : "normal")
+      .setFontSize(Math.max(4.5, t.size * sc * 2.83))
+      .setTextColor(...t.color);
+    doc.text(t.text.replace(/×/g, "x"), X(t.x), Y(t.y), { align: t.anchor === "start" ? "left" : t.anchor === "end" ? "right" : "center", angle: t.rotate ? -t.rotate : 0 });
+  }
+}
 
 const fmt = (n: number | undefined, d = 3) => (n === undefined ? "" : round(n, d));
 const materialName: Record<string, string> = {
@@ -353,82 +384,35 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     body: r.specSheet.map((x) => [x.item.en, x.spec.en.replace(/₹/g, "Rs.")]),
     columnStyles: { 0: { cellWidth: 42, fontStyle: "bold" } },
   });
-  // @ts-expect-error added by the autotable plugin
-  let sy = doc.lastAutoTable.finalY + 8;
-  doc
-    .setFont("helvetica", "bold")
-    .setFontSize(11)
-    .setTextColor(...INK)
-    .text("SCHEMATIC SKETCH (proportions only, not an architectural plan)", M, sy);
-  sy += 4;
-  const FILL: Record<string, [number, number, number]> = {
-    hall: [253, 243, 220],
-    dining: [251, 236, 205],
-    kitchen: [253, 227, 214],
-    bedroom: [230, 237, 245],
-    toilet: [223, 241, 232],
-    utility: [223, 241, 232],
-    passage: [241, 238, 232],
-    balcony: [238, 246, 220],
-    pooja: [251, 231, 240],
-    store: [236, 233, 226],
-    study: [233, 230, 245],
-    parking: [228, 228, 228],
-    shop: [255, 240, 194],
-    stair: [217, 212, 202],
-  };
-  const per = r.sketch.length > 1 ? 2 : 1;
-  const boxW = (W - 2 * M - (per - 1) * 6) / per;
-  let col = 0;
-  for (const sk of r.sketch) {
-    const scale = Math.min(boxW / sk.L, 70 / sk.B);
-    const h = sk.B * scale + 8;
-    if (sy + h > H - 20) {
+  // Floor plans (planning sketch), one floor per half page
+  const nm = (t: string) =>
+    t === "stair" ? "Stair" : (ROOM_DEFS[t as keyof typeof ROOM_DEFS]?.name.en ?? t).replace(" / living", "").replace(" / bath", "").replace(" / lobby", "");
+  const floorNames = ["GROUND FLOOR PLAN", "FIRST FLOOR PLAN", "SECOND FLOOR PLAN", "THIRD FLOOR PLAN"];
+  r.sketch.forEach((sk, i) => {
+    const top = i % 2 === 0;
+    if (top) {
       doc.addPage();
       header();
-      sy = 32;
-      col = 0;
     }
-    const x0 = M + col * (boxW + 6),
-      y0 = sy + 5;
+    const boxY = top ? 30 : 30 + (H - 30 - 18) / 2 + 2;
+    const boxH = (H - 30 - 18) / 2 - 8;
+    const P = planPrimitives(sk.L, sk.B, sk.rects, nm, { wall: r.wall === "aac" ? 0.2 : 0.23 });
     doc
-      .setFont("helvetica", "bold")
-      .setFontSize(8.5)
       .setTextColor(...INK)
-      .text(
-        `${["Ground floor", "First floor", "Second floor", "Third floor"][sk.floor] ?? `Floor ${sk.floor}`} – ${round(sk.L * 3.28084, 1)} x ${round(sk.B * 3.28084, 1)} ft`,
-        x0,
-        sy + 3,
-      );
-    for (const rc of sk.rects) {
+      .setFont("helvetica", "bold")
+      .setFontSize(11)
+      .text(`${floorNames[sk.floor] ?? `FLOOR ${sk.floor} PLAN`}  -  ${round(sk.L * 3.28084, 1)} x ${round(sk.B * 3.28084, 1)} ft`, M, boxY + 3);
+    if (top)
       doc
-        .setFillColor(...(FILL[rc.type] ?? [238, 238, 238]))
-        .setDrawColor(138, 133, 123)
-        .setLineWidth(0.2);
-      doc.rect(x0 + rc.x * scale + 0.4, y0 + rc.y * scale + 0.4, Math.max(0, rc.w * scale - 0.8), Math.max(0, rc.h * scale - 0.8), "FD");
-      doc
-        .setFont("helvetica", "bold")
-        .setFontSize(6.8)
-        .setTextColor(...INK);
-      const cx = x0 + (rc.x + rc.w / 2) * scale,
-        cy = y0 + (rc.y + rc.h / 2) * scale;
-      doc.text(rc.type === "stair" ? "STAIR" : rc.key, cx, cy, { align: "center" });
-      if (rc.L !== undefined && rc.B !== undefined && rc.h * scale > 9)
-        doc
-          .setFont("helvetica", "normal")
-          .setFontSize(5.8)
-          .text(`${round(rc.L * 3.28084, 1)}x${round(rc.B * 3.28084, 1)}`, cx, cy + 3, { align: "center" });
-    }
-    doc
-      .setDrawColor(...INK)
-      .setLineWidth(0.6)
-      .rect(x0, y0, sk.L * scale, sk.B * scale);
-    col++;
-    if (col >= per) {
-      col = 0;
-      sy += h + 4;
-    }
-  }
+        .setFont("helvetica", "normal")
+        .setFontSize(7)
+        .setTextColor(92, 90, 85)
+        .text("Planning sketch from the room list - areas in proportion; final drawing by your architect", W - M, boxY + 3, { align: "right" });
+    const sc = Math.min((W - 2 * M) / P.bounds.w, (boxH - 6) / P.bounds.h);
+    const ox = M + (W - 2 * M - P.bounds.w * sc) / 2 - P.bounds.x * sc;
+    const oy = boxY + 6 - P.bounds.y * sc;
+    drawPlan(doc, P, ox, oy, sc);
+  });
 
   // Stage plan + purchase plan
   const plan = buildPlan(r);

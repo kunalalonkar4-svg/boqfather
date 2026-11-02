@@ -3,44 +3,31 @@
 import { useMemo, useState } from "react";
 import { BoqQuality, BoqResult, buildPlan, inr, lakhWords, loanPlan, round, rupees } from "@/engine";
 import type { Lang } from "@/lib/site";
+import { planPrimitives } from "@/lib/planDraw";
 
 const FT = 3.28084;
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
 
-const ROOM_FILL: Record<string, string> = {
-  hall: "#fdf3dc",
-  dining: "#fbeccd",
-  kitchen: "#fde3d6",
-  bedroom: "#e6edf5",
-  toilet: "#dff1e8",
-  utility: "#dff1e8",
-  passage: "#f1eee8",
-  balcony: "#eef6dc",
-  pooja: "#fbe7f0",
-  store: "#ece9e2",
-  study: "#e9e6f5",
-  parking: "#e4e4e4",
-  shop: "#fff0c2",
-  stair: "#d9d4ca",
-};
-
 const FLOOR = (i: number, lang: Lang) =>
   lang === "hi" ? ["ग्राउंड फ़्लोर", "पहली मंज़िल", "दूसरी मंज़िल", "तीसरी मंज़िल"][i] : ["Ground floor", "First floor", "Second floor", "Third floor"][i];
 
-/** Schematic block sketch of every floor. */
+/** Architect-style planning sketch of every floor (front / road at the bottom). */
 export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; names: (t: string) => string }) {
+  const nm = (t: string) => (t === "stair" ? L(lang, "Stair", "सीढ़ी") : names(t));
+  const rgb = (c?: [number, number, number]) => (c ? `rgb(${c[0]},${c[1]},${c[2]})` : "none");
   return (
     <div className="flex flex-col gap-5">
       <p className="text-[13px] text-muted">
         {L(
           lang,
-          "Schematic only: room blocks are packed by area inside each floor's outline so you can see proportions. Your architect's plan decides the real layout.",
-          "यह सिर्फ़ अंदाज़ा दिखाने वाला स्केच है: हर मंज़िल की बाहरी सीमा में कमरे उनके एरिया के हिसाब से रखे गए हैं। असली लेआउट आपके आर्किटेक्ट का नक्शा तय करेगा।",
+          "Planning sketch drawn from your rooms: road at the bottom, living and parking at the front, kitchen and dining in the middle, bedrooms at the back with toilets back-to-back, staircase at the front right on every floor. Sizes are in proportion — get the final drawing from your architect.",
+          "आपके कमरों से बना प्लानिंग स्केच: नीचे सड़क, आगे हॉल और पार्किंग, बीच में किचन-डाइनिंग, पीछे बेडरूम और उनके बीच बैक-टू-बैक टॉयलेट, हर मंज़िल पर सीढ़ी आगे दाईं तरफ़। साइज़ अनुपात में हैं — फ़ाइनल ड्रॉइंग आर्किटेक्ट से बनवाएं।",
         )}
       </p>
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {r.sketch.map((s) => {
-          const pad = 0.4;
+          const P = planPrimitives(s.L, s.B, s.rects, nm, { road: L(lang, "ROAD / FRONT", "सड़क / सामने"), up: L(lang, "UP", "ऊपर") });
+          const b = P.bounds;
           return (
             <figure key={s.floor} className="m-0 flex min-w-0 flex-col gap-2">
               <figcaption className="flex flex-wrap justify-between gap-2 text-[14px] font-bold">
@@ -49,42 +36,36 @@ export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; name
                   {round(s.L * FT, 1)} × {round(s.B * FT, 1)} ft
                 </span>
               </figcaption>
-              <svg
-                viewBox={`${-pad} ${-pad} ${s.L + 2 * pad} ${s.B + 2 * pad}`}
-                className="h-auto w-full rounded-xl border border-line bg-white"
-                role="img"
-                aria-label={`${FLOOR(s.floor, lang)} sketch`}
-              >
-                <rect x={0} y={0} width={s.L} height={s.B} fill="none" stroke="#16181a" strokeWidth={0.23} />
-                {s.rects.map((x) => {
-                  const fs = Math.max(0.22, Math.min(0.42, Math.min(x.w, x.h) / 4));
-                  return (
-                    <g key={x.key}>
-                      <rect
-                        x={x.x + 0.06}
-                        y={x.y + 0.06}
-                        width={Math.max(0, x.w - 0.12)}
-                        height={Math.max(0, x.h - 0.12)}
-                        fill={ROOM_FILL[x.type] ?? "#eee"}
-                        stroke="#8a857b"
-                        strokeWidth={0.05}
-                      />
-                      <text x={x.x + x.w / 2} y={x.y + x.h / 2 - fs * 0.2} textAnchor="middle" fontSize={fs} fontWeight={700} fill="#16181a">
-                        {x.type === "stair" ? L(lang, "Stair", "सीढ़ी") : `${x.key}`}
-                      </text>
-                      {x.type !== "stair" && x.h > fs * 3 && (
-                        <text x={x.x + x.w / 2} y={x.y + x.h / 2 + fs * 0.95} textAnchor="middle" fontSize={fs * 0.8} fill="#4a4740">
-                          {names(x.type)}
-                        </text>
-                      )}
-                      {x.L !== undefined && x.B !== undefined && x.h > fs * 4.2 && (
-                        <text x={x.x + x.w / 2} y={x.y + x.h / 2 + fs * 1.95} textAnchor="middle" fontSize={fs * 0.75} fill="#6b675f">
-                          {round(x.L * FT, 1)}×{round(x.B * FT, 1)}
-                        </text>
-                      )}
-                    </g>
-                  );
-                })}
+              <svg viewBox={`${b.x} ${b.y} ${b.w} ${b.h}`} className="h-auto w-full rounded-xl border border-line bg-white" role="img" aria-label={`${FLOOR(s.floor, lang)} plan`}>
+                {P.rects.map((x, i) => (
+                  <rect key={`r${i}`} x={x.x} y={x.y} width={x.w} height={x.h} fill={rgb(x.fill)} stroke={rgb(x.stroke)} strokeWidth={x.sw ?? 0} />
+                ))}
+                {P.lines.map((x, i) => (
+                  <line key={`l${i}`} x1={x.x1} y1={x.y1} x2={x.x2} y2={x.y2} stroke={rgb(x.color)} strokeWidth={x.sw} strokeDasharray={x.dash ? "0.15 0.1" : undefined} />
+                ))}
+                {P.curves.map((c, i) => (
+                  <path
+                    key={`c${i}`}
+                    d={`M${c.p0[0]} ${c.p0[1]} C${c.c1[0]} ${c.c1[1]} ${c.c2[0]} ${c.c2[1]} ${c.p1[0]} ${c.p1[1]}`}
+                    fill="none"
+                    stroke={rgb(c.color)}
+                    strokeWidth={c.sw}
+                  />
+                ))}
+                {P.texts.map((t, i) => (
+                  <text
+                    key={`t${i}`}
+                    x={t.x}
+                    y={t.y}
+                    fontSize={t.size}
+                    fontWeight={t.bold ? 700 : 400}
+                    fill={rgb(t.color)}
+                    textAnchor={t.anchor}
+                    transform={t.rotate ? `rotate(${t.rotate} ${t.x} ${t.y})` : undefined}
+                  >
+                    {t.text}
+                  </text>
+                ))}
               </svg>
             </figure>
           );
