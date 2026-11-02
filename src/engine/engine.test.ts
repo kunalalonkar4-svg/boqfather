@@ -142,7 +142,7 @@ describe("room-based BOQ", () => {
     expect(r.geometry.builtUpSqftPerFloor).toBeGreaterThan(850);
     expect(r.geometry.builtUpSqftPerFloor).toBeLessThan(1150);
     const steel = r.thumb.find((t) => t.key === "steel")!;
-    expect(steel.qty / r.geometry.builtUpSqft).toBeGreaterThan(3);
+    expect(steel.qty / r.geometry.builtUpSqft).toBeGreaterThan(2.5);
     expect(steel.qty / r.geometry.builtUpSqft).toBeLessThan(5);
     const cement = r.thumb.find((t) => t.key === "cement")!;
     expect(cement.qty / r.geometry.builtUpSqft).toBeGreaterThan(0.33);
@@ -166,8 +166,7 @@ describe("room-based BOQ", () => {
   });
   it("every item has measurement rows that add up to its quantity", () => {
     const r = calcBoq({ floors: 3, plan: { bedrooms: 3, toilets: 2, kitchen: true, dining: false, balconies: 1 } });
-    for (const s of r.sections)
-      for (const i of s.items) expect(i.rows.reduce((a, x) => a + x.q, 0)).toBeCloseTo(i.qty, Math.max(0, i.dec - 1));
+    for (const s of r.sections) for (const i of s.items) expect(i.rows.reduce((a, x) => a + x.q, 0)).toBeCloseTo(i.qty, Math.max(0, i.dec - 1));
   });
 });
 
@@ -216,7 +215,10 @@ describe("floor-wise rooms", () => {
     expect(g1.geometry.perFloor).toHaveLength(2);
     expect(g1.geometry.perFloor[1].builtUpSqft).toBeLessThan(g1.geometry.perFloor[0].builtUpSqft);
     expect(g1.grandTotal).toBeGreaterThan(g.grandTotal);
-    expect(g1.geometry.builtUpSqft).toBeCloseTo(g1.geometry.perFloor.reduce((a, p) => a + p.builtUpSqft, 0), 5);
+    expect(g1.geometry.builtUpSqft).toBeCloseTo(
+      g1.geometry.perFloor.reduce((a, p) => a + p.builtUpSqft, 0),
+      5,
+    );
   });
   it("WC choice, windows and room-driven items", () => {
     const r = calcBoq({ floorRooms: [[...gf], [...ff]] });
@@ -238,5 +240,69 @@ describe("floor-wise rooms", () => {
   it("every item's measurement rows add up", () => {
     const r = calcBoq({ floorRooms: [[...gf], [...ff], [...ff]], spec: { floorH: 3.2 } });
     for (const s of r.sections) for (const i of s.items) expect(i.rows.reduce((a, x) => a + x.q, 0)).toBeCloseTo(i.qty, Math.max(0, i.dec - 1));
+  });
+});
+
+import { buildPlan, fitPlot, loanPlan } from "./index";
+
+describe("advanced BOQ", () => {
+  const fr = calcBoq({ floors: 2, plan: { bedrooms: 2, toilets: 2, kitchen: true, dining: true, balconies: 1 } });
+  it("BBS steel is in the usual 2.5–4 kg/sqft band and drives the steel item", () => {
+    const kg = fr.materials.find((m) => m.key === "steel")!.qty;
+    expect(kg / fr.geometry.builtUpSqft).toBeGreaterThan(2.5);
+    expect(kg / fr.geometry.builtUpSqft).toBeLessThan(4);
+    const item = fr.sections.flatMap((s) => s.items).find((i) => i.rateKey === "steel")!;
+    expect(item.qty).toBeCloseTo(fr.bbs.total, 0);
+  });
+  it("quality and wall material change the cost in the right direction", () => {
+    const plan = { bedrooms: 2, toilets: 2, kitchen: true, dining: true, balconies: 0 };
+    const b = calcBoq({ floors: 2, plan, spec: { quality: "basic" } }).grandTotal;
+    const s = calcBoq({ floors: 2, plan }).grandTotal;
+    const p = calcBoq({ floors: 2, plan, spec: { quality: "premium" } }).grandTotal;
+    expect(b).toBeLessThan(s);
+    expect(p).toBeGreaterThan(s);
+    const aac = calcBoq({ floors: 2, plan, spec: { wall: "aac" } });
+    expect(aac.materials.some((m) => m.key === "blocks")).toBe(true);
+    expect(aac.materials.some((m) => m.key === "bricks")).toBe(false);
+  });
+  it("imported rate set is used as is", () => {
+    const r = calcBoq({ floors: 1, plan: { bedrooms: 1, toilets: 1, kitchen: true, dining: false, balconies: 0 }, rateSet: { rcc: 9000 }, locationFactor: 1.15 });
+    expect(r.sections.flatMap((s) => s.items).find((i) => i.rateKey === "rcc")!.rate).toBe(9000);
+  });
+  it("external works add a section", () => {
+    const r = calcBoq({
+      floors: 1,
+      plan: { bedrooms: 2, toilets: 1, kitchen: true, dining: false, balconies: 0 },
+      extras: { boundary: { length: 30, height: 1.5 }, septic: { users: 6 }, borewell: { depthFt: 200, pump: true } },
+    });
+    const last = r.sections.at(-1)!;
+    expect(last.title.en).toBe("External works and services");
+    expect(last.items.length).toBe(8);
+  });
+  it("plan stages add up to the grand total; loan splits own money and loan", () => {
+    const p = buildPlan(fr);
+    expect(p.stages.reduce((a, s) => a + s.amount, 0)).toBeCloseTo(fr.grandTotal, -1);
+    expect(p.months.at(-1)!.cumulative).toBeCloseTo(fr.grandTotal, -2);
+    const l = loanPlan(p, fr.grandTotal, 2_000_000, 8.5, 20);
+    expect(l.emi).toBeGreaterThan(17000);
+    expect(l.emi).toBeLessThan(18000);
+    expect(l.construction.at(-1)!.disbursed).toBeCloseTo(2_000_000, -2);
+  });
+  it("plot fit sizes rooms to the buildable area and flags small plots", () => {
+    const ft = (x: number) => x / 3.28084;
+    const big = fitPlot({ plotL: ft(60), plotB: ft(40), front: ft(10), back: ft(5), side: ft(5), bhk: 3, floors: 2, parking: true });
+    expect(big.warnings).toHaveLength(0);
+    const r = calcBoq({ floorRooms: big.floorRooms, spec: { aspect: big.buildL / big.buildB, buildableM2: big.buildArea } });
+    expect(r.warnings).toHaveLength(0);
+    expect(r.geometry.perFloor[0].areaM2).toBeLessThanOrEqual(big.buildArea * 1.02);
+    const small = fitPlot({ plotL: ft(30), plotB: ft(20), front: ft(5), back: ft(3), side: ft(3), bhk: 3, floors: 1, parking: true });
+    expect(small.warnings.length).toBeGreaterThan(0);
+  });
+  it("sketch places every room inside the outline", () => {
+    for (const s of fr.sketch)
+      for (const x of s.rects) {
+        expect(x.x + x.w).toBeLessThanOrEqual(s.L + 1e-6);
+        expect(x.y + x.h).toBeLessThanOrEqual(s.B + 1e-6);
+      }
   });
 });

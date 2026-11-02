@@ -52,10 +52,7 @@ export function calcMemberSteel(input: { member: Member; concreteM3: number; kgP
       { label: "Steel", formula: `${round(input.concreteM3, 3)} × ${k} kg/m³`, value: `${round(net, 1)} kg` },
       { label: "With laps / wastage", formula: `${round(net, 1)} × (1 + ${round(w * 100)}%)`, value: `${round(kg, 1)} kg` },
     ],
-    assumptions: [
-      `Thumb rule ${k} kg of steel per m³ of ${input.member.replace("_", " ")} concrete.`,
-      "Actual steel comes from the structural drawing / bar bending schedule.",
-    ],
+    assumptions: [`Thumb rule ${k} kg of steel per m³ of ${input.member.replace("_", " ")} concrete.`, "Actual steel comes from the structural drawing / bar bending schedule."],
   } satisfies CalcResult<{ kgPerM3: number; netKg: number; kg: number }>;
 }
 

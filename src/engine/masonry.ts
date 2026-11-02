@@ -62,9 +62,7 @@ export function calcBrickwork(input: BrickworkInput): CalcResult<BrickworkValues
       formula: `${round(input.lengthM, 3)} × ${round(input.heightM, 3)} × ${input.thicknessM}`,
       value: `${round(gross, 3)} m³`,
     },
-    ...(openings > 0
-      ? [{ label: "Less openings", formula: `${round(openings, 2)} m² × ${input.thicknessM}`, value: `−${round(deduct, 3)} m³` }]
-      : []),
+    ...(openings > 0 ? [{ label: "Less openings", formula: `${round(openings, 2)} m² × ${input.thicknessM}`, value: `−${round(deduct, 3)} m³` }] : []),
     { label: "Net brickwork", value: `${round(volume, 3)} m³` },
     {
       label: "One brick with mortar",

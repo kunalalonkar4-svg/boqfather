@@ -1,7 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { BoqResult, calcBoq, floorLabel, inr, lakhWords, Location, LOCATION_FACTORS, round, ROOM_DEFS, ROOM_TYPES, RoomSpec, RoomType, rupees } from "@/engine";
+import { useCallback, useMemo, useState } from "react";
+import {
+  BOQ_RATES,
+  BoqExtras,
+  BoqQuality,
+  BoqResult,
+  calcBoq,
+  fitPlot,
+  floorLabel,
+  inr,
+  lakhWords,
+  Location,
+  LOCATION_FACTORS,
+  RateKey,
+  round,
+  ROOM_DEFS,
+  ROOM_TYPES,
+  RoomSpec,
+  RoomType,
+  rupees,
+} from "@/engine";
+import { BbsPanel, ComparePanel, PlanPanel, SketchPanel, SpecPanel } from "./boq/BoqPanels";
 import { name, t } from "@/i18n/ui";
 import type { Lang } from "@/lib/site";
 import { dimToM, Segmented, SelectField } from "@/components/ui/Fields";
@@ -87,6 +107,37 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
   const [terrace, setTerrace] = useState<"yes" | "no">("yes");
   const [rates, setRates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<"" | "pdf" | "xls">("");
+  // plot-first start
+  const [plot, setPlot] = useState({ L: "40", B: "30", front: "5", back: "3", side: "3", bhk: "2", parking: "no" as "yes" | "no" });
+  const [plotFit, setPlotFit] = useState<{ aspect: number; buildableM2: number; perimeterM: number; warnings: string[] } | null>(null);
+  // finish level, walls, extras, imported rates
+  const [quality, setQuality] = useState<BoqQuality>("standard");
+  const [wall, setWall] = useState<"brick" | "aac">("brick");
+  const [ex, setEx] = useState({
+    boundary: false,
+    bLen: "",
+    bH: "5",
+    gate: false,
+    gW: "10",
+    gH: "6",
+    septic: false,
+    users: "6",
+    oht: false,
+    ohtL: "2000",
+    sump: false,
+    sumpL: "5000",
+    bore: false,
+    boreFt: "250",
+    pump: true,
+    elevation: false,
+    falseCeiling: false,
+    rwh: false,
+    connections: false,
+  });
+  const [rateSet, setRateSet] = useState<Partial<Record<RateKey, number>> | null>(null);
+  const [rateMsg, setRateMsg] = useState("");
+  const [view, setView] = useState<"boq" | "sketch" | "spec" | "bbs" | "plan" | "compare">("boq");
+  const setE = (patch: Partial<typeof ex>) => setEx((e) => ({ ...e, ...patch }));
 
   const F = Number(floorCount);
   const cur = Math.min(tab, F - 1);
@@ -107,12 +158,39 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
       const x = dimToM(v, "ft");
       return x > 0 ? x : dflt;
     };
-    return { floorH: m(floorH, 3.0), winW: m(winW, 1.5), winH: m(winH, 1.2), plinth: m(plinth, 0.45), stairToTerrace: terrace === "yes" };
-  }, [floorH, winW, winH, plinth, terrace]);
+    return {
+      floorH: m(floorH, 3.0),
+      winW: m(winW, 1.5),
+      winH: m(winH, 1.2),
+      plinth: m(plinth, 0.45),
+      stairToTerrace: terrace === "yes",
+      quality,
+      wall,
+      ...(plotFit ? { aspect: plotFit.aspect, buildableM2: plotFit.buildableM2 } : {}),
+    };
+  }, [floorH, winW, winH, plinth, terrace, quality, wall, plotFit]);
+
+  const extras: BoqExtras = useMemo(() => {
+    const m = (v: string) => Math.max(0, dimToM(v, "ft") || 0);
+    const n = (v: string) => Math.max(0, Number(v) || 0);
+    const bLen = ex.bLen.trim() ? m(ex.bLen) : plotFit ? plotFit.perimeterM - (ex.gate ? m(ex.gW) : 0) : 0;
+    return {
+      ...(ex.boundary && bLen > 0 ? { boundary: { length: bLen, height: m(ex.bH) || 1.5 } } : {}),
+      ...(ex.gate ? { gate: { width: m(ex.gW), height: m(ex.gH) } } : {}),
+      ...(ex.septic ? { septic: { users: n(ex.users) || 5 } } : {}),
+      ...(ex.oht ? { oht: { litres: n(ex.ohtL) } } : {}),
+      ...(ex.sump ? { sump: { litres: n(ex.sumpL) } } : {}),
+      ...(ex.bore ? { borewell: { depthFt: n(ex.boreFt), pump: ex.pump } } : {}),
+      elevation: ex.elevation,
+      falseCeiling: ex.falseCeiling,
+      rwh: ex.rwh,
+      connections: ex.connections,
+    };
+  }, [ex, plotFit]);
 
   const res: BoqResult | null = useMemo(() => {
     if (!valid) return null;
-    const input = { floorRooms, spec, locationFactor: LOCATION_FACTORS[location] };
+    const input = { floorRooms, spec, extras, locationFactor: LOCATION_FACTORS[location], ...(rateSet ? { rateSet } : {}) };
     const first = calcBoq(input);
     const overrides: Record<string, number> = {};
     for (const s of first.sections)
@@ -121,7 +199,45 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
         if (rates[i.desc] !== undefined && rates[i.desc] !== "" && Number.isFinite(v) && v >= 0) overrides[i.code] = v;
       }
     return Object.keys(overrides).length ? calcBoq({ ...input, rateOverrides: overrides }) : first;
-  }, [floorRooms, spec, location, rates, valid]);
+  }, [floorRooms, spec, extras, location, rates, valid, rateSet]);
+
+  const runVariant = useCallback(
+    (q: BoqQuality, w: "brick" | "aac") =>
+      calcBoq({ floorRooms, spec: { ...spec, quality: q, wall: w }, extras, locationFactor: LOCATION_FACTORS[location], ...(rateSet ? { rateSet } : {}) }),
+    [floorRooms, spec, extras, location, rateSet],
+  );
+
+  const applyPlot = () => {
+    const m = (v: string) => Math.max(0, dimToM(v, "ft") || 0);
+    const pL = m(plot.L),
+      pB = m(plot.B);
+    if (!(pL > 3 && pB > 3)) return;
+    const fit = fitPlot({ plotL: pL, plotB: pB, front: m(plot.front), back: m(plot.back), side: m(plot.side), bhk: Number(plot.bhk), floors: 4, parking: plot.parking === "yes" });
+    setPlans(fit.floorRooms.map((list) => list.map((r) => mk(r.type, { L: ft(r.L), B: ft(r.B), ...(r.wc ? { wc: r.wc } : {}) }))));
+    setPlotFit({ aspect: fit.buildL / fit.buildB, buildableM2: fit.buildArea, perimeterM: 2 * (pL + pB), warnings: fit.warnings });
+    setTab(0);
+  };
+
+  const rateSheet = async (kind: "down" | "up", file?: File) => {
+    const m = await import("@/lib/boqExport");
+    if (kind === "down") {
+      const cur: Record<string, number> = {};
+      for (const k of Object.keys(BOQ_RATES) as RateKey[]) cur[k] = rateSet?.[k] ?? Math.round(BOQ_RATES[k] * LOCATION_FACTORS[location]);
+      await m.downloadRateSheet(cur);
+    } else if (file) {
+      try {
+        const got = await m.readRateSheet(file);
+        const n = Object.keys(got).length;
+        if (n) {
+          setRateSet(got);
+          setRates({});
+          setRateMsg(hi ? `${n} रेट लोड हो गए` : `${n} rates loaded`);
+        } else setRateMsg(hi ? "फ़ाइल में रेट नहीं मिले" : "No rates found in the file");
+      } catch {
+        setRateMsg(hi ? "फ़ाइल नहीं पढ़ पाए" : "Could not read the file");
+      }
+    }
+  };
 
   const beds = floorRooms.flat().filter((r) => r.type === "bedroom").length;
   const floorTag = F === 1 ? "G" : `G+${F - 1}`;
@@ -147,6 +263,79 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     <div className="flex flex-col gap-5 pb-20 lg:pb-0">
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-5 rounded-2xl border border-line bg-white p-4 sm:p-6">
+          <details className="group rounded-xl border-2 border-dashed border-amber bg-amber-tint/40 p-3" open={!plotFit}>
+            <summary className="cursor-pointer list-none text-[14px] font-extrabold text-amber-dark">
+              {hi ? "⚡ प्लॉट साइज़ से शुरू करें (आसान)" : "⚡ Start from your plot size (easiest)"}
+              {plotFit && (
+                <span className="ml-2 font-semibold text-good">
+                  ✓ {hi ? "लागू" : "applied"} · {inr(plotFit.buildableM2 * SQFT)} sqft {hi ? "बनाने लायक" : "buildable"}
+                </span>
+              )}
+            </summary>
+            <div className="mt-3 flex flex-col gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                {(
+                  [
+                    ["L", hi ? "प्लॉट लंबाई" : "Plot length"],
+                    ["B", hi ? "प्लॉट चौड़ाई" : "Plot width"],
+                    ["front", hi ? "आगे छोड़ें" : "Front setback"],
+                    ["back", hi ? "पीछे छोड़ें" : "Rear setback"],
+                    ["side", hi ? "साइड छोड़ें (हर तरफ़)" : "Side setback (each)"],
+                  ] as const
+                ).map(([k, lbl]) => (
+                  <label key={k} className="flex flex-col gap-1 text-[12.5px] font-semibold">
+                    {lbl}
+                    <span className="flex items-center gap-1">
+                      <input
+                        className="h-10 w-full min-w-0 rounded-lg border border-[#cfc9be] bg-white px-2 text-right text-[14px] font-normal"
+                        value={plot[k]}
+                        onChange={(e) => setPlot((p) => ({ ...p, [k]: e.target.value }))}
+                      />
+                      <span className="text-[11px] font-normal text-muted">ft</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Segmented
+                  label={hi ? "हर मंज़िल पर BHK" : "BHK on each floor"}
+                  value={plot.bhk}
+                  onChange={(v) => setPlot((p) => ({ ...p, bhk: v }))}
+                  options={["1", "2", "3", "4"].map((v) => ({ value: v, label: `${v} BHK` }))}
+                />
+                <Segmented
+                  label={hi ? "ग्राउंड फ़्लोर पर पार्किंग" : "Parking on ground floor"}
+                  value={plot.parking}
+                  onChange={(v) => setPlot((p) => ({ ...p, parking: v }))}
+                  options={[
+                    { value: "yes", label: hi ? "हां" : "Yes" },
+                    { value: "no", label: hi ? "नहीं" : "No" },
+                  ]}
+                />
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <button type="button" onClick={applyPlot} className="inline-flex h-11 items-center rounded-lg bg-ink px-4 text-[14px] font-extrabold text-white">
+                  {hi ? "कमरे अपने आप बनाएं →" : "Make rooms for this plot →"}
+                </button>
+                {plotFit && (
+                  <button type="button" onClick={() => setPlotFit(null)} className="text-[13px] font-semibold text-muted underline">
+                    {hi ? "प्लॉट हटाएं" : "Clear plot"}
+                  </button>
+                )}
+              </div>
+              {plotFit?.warnings.map((w) => (
+                <p key={w} className="rounded-lg bg-warn-tint px-3 py-2 text-[13px] text-warn">
+                  {hi ? "प्लॉट छोटा है: कमरे न्यूनतम साइज़ पर हैं, फिर भी सेटबैक के बाद की जगह से बड़े हो सकते हैं। कम बेडरूम या बिना पार्किंग आज़माएं।" : w}
+                </p>
+              ))}
+              <span className="text-[12px] text-muted">
+                {hi
+                  ? "हर मंज़िल पर कमरे प्लॉट की जगह में फ़िट किए जाते हैं; नीचे कोई भी कमरा या साइज़ बदल सकते हैं।"
+                  : "Rooms on every floor are fitted to the buildable area; you can change any room or size below."}
+              </span>
+            </div>
+          </details>
+
           <div className="flex flex-col gap-2">
             <span className="text-[13px] font-bold uppercase tracking-wide text-amber-dark">{hi ? "स्टेप 1 · कितनी मंज़िल?" : "Step 1 · How many floors?"}</span>
             <div role="radiogroup" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -325,7 +514,39 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
           </div>
 
           <div className="flex flex-col gap-3">
-            <span className="text-[13px] font-bold uppercase tracking-wide text-amber-dark">{hi ? "स्टेप 3 · स्पेसिफ़िकेशन और जगह" : "Step 3 · Specification and location"}</span>
+            <span className="text-[13px] font-bold uppercase tracking-wide text-amber-dark">
+              {hi ? "स्टेप 3 · क्वालिटी, दीवार और जगह" : "Step 3 · Finish level, walls and location"}
+            </span>
+            <div role="radiogroup" className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  ["basic", hi ? "बेसिक" : "Basic", hi ? "किफ़ायती, ISI" : "Economy, ISI"],
+                  ["standard", hi ? "स्टैंडर्ड" : "Standard", hi ? "ब्रांडेड, मिड-रेंज" : "Branded mid-range"],
+                  ["premium", hi ? "प्रीमियम" : "Premium", hi ? "टॉप ब्रांड, बड़ी टाइल" : "Top brands"],
+                ] as const
+              ).map(([v, t1, t2]) => (
+                <button
+                  key={v}
+                  type="button"
+                  role="radio"
+                  aria-checked={quality === v}
+                  onClick={() => setQuality(v)}
+                  className={"flex flex-col items-start rounded-xl border-2 px-3 py-2 text-left " + (quality === v ? "border-amber bg-amber-tint" : "border-line bg-white")}
+                >
+                  <span className="text-[14px] font-extrabold">{t1}</span>
+                  <span className="text-[11.5px] leading-tight text-muted">{t2}</span>
+                </button>
+              ))}
+            </div>
+            <Segmented
+              label={hi ? "दीवार का मटीरियल" : "Wall material"}
+              value={wall}
+              onChange={setWall}
+              options={[
+                { value: "brick", label: hi ? 'ईंट 9" / 4.5"' : 'Bricks 9" / 4.5"' },
+                { value: "aac", label: hi ? 'AAC ब्लॉक 8" / 4"' : 'AAC blocks 8" / 4"' },
+              ]}
+            />
             <SelectField
               label={d.location}
               value={location}
@@ -367,6 +588,87 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
               ]}
             />
           </div>
+          <div className="flex flex-col gap-3">
+            <span className="text-[13px] font-bold uppercase tracking-wide text-amber-dark">{hi ? "स्टेप 4 · बाहरी काम और सुविधाएं" : "Step 4 · External works and services"}</span>
+            <div className="flex flex-col gap-2">
+              {(
+                [
+                  ["boundary", hi ? "बाउंड्री वॉल" : "Boundary wall"],
+                  ["gate", hi ? "मेन गेट (MS)" : "Main gate (MS)"],
+                  ["septic", hi ? "सेप्टिक टैंक + सोक पिट" : "Septic tank + soak pit"],
+                  ["oht", hi ? "छत पर पानी की टंकी" : "Overhead water tank"],
+                  ["sump", hi ? "अंडरग्राउंड सम्प" : "Underground sump"],
+                  ["bore", hi ? "बोरवेल" : "Borewell"],
+                  ["elevation", hi ? "फ़्रंट एलिवेशन" : "Front elevation"],
+                  ["falseCeiling", hi ? "फ़ॉल्स सीलिंग (हॉल, बेडरूम)" : "False ceiling (hall, bedrooms)"],
+                  ["rwh", hi ? "रेनवॉटर हार्वेस्टिंग पिट" : "Rainwater harvesting pit"],
+                  ["connections", hi ? "बिजली-पानी कनेक्शन" : "Electricity and water connection"],
+                ] as const
+              ).map(([k, lbl]) => (
+                <div key={k} className={"rounded-xl border px-3 py-2 " + (ex[k] ? "border-amber bg-[#fffaf0]" : "border-line")}>
+                  <label className="flex cursor-pointer items-center gap-2.5 text-[14px] font-semibold">
+                    <input type="checkbox" className="h-5 w-5 accent-[#b07a0a]" checked={ex[k]} onChange={(e) => setE({ [k]: e.target.checked } as Partial<typeof ex>)} />
+                    {lbl}
+                  </label>
+                  {ex[k] && k !== "elevation" && k !== "falseCeiling" && k !== "rwh" && k !== "connections" && (
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px]">
+                      {k === "boundary" && (
+                        <>
+                          <span className="text-muted">{hi ? "लंबाई" : "Length"}</span>
+                          <input
+                            className="h-9 w-20 rounded-md border border-[#cfc9be] px-2 text-right"
+                            placeholder={plotFit ? String(round((plotFit.perimeterM - (ex.gate ? dimToM(ex.gW, "ft") : 0)) * FT, 0)) : "ft"}
+                            value={ex.bLen}
+                            onChange={(e) => setE({ bLen: e.target.value })}
+                          />
+                          <span className="text-muted">ft · {hi ? "ऊंचाई" : "height"}</span>
+                          <input className="h-9 w-16 rounded-md border border-[#cfc9be] px-2 text-right" value={ex.bH} onChange={(e) => setE({ bH: e.target.value })} />
+                          <span className="text-muted">ft</span>
+                          {!plotFit && !ex.bLen && <span className="text-warn">{hi ? "लंबाई डालें या प्लॉट साइज़ लगाएं" : "enter length or apply a plot"}</span>}
+                        </>
+                      )}
+                      {k === "gate" && (
+                        <>
+                          <input className="h-9 w-16 rounded-md border border-[#cfc9be] px-2 text-right" value={ex.gW} onChange={(e) => setE({ gW: e.target.value })} />
+                          <span className="text-muted">×</span>
+                          <input className="h-9 w-16 rounded-md border border-[#cfc9be] px-2 text-right" value={ex.gH} onChange={(e) => setE({ gH: e.target.value })} />
+                          <span className="text-muted">ft</span>
+                        </>
+                      )}
+                      {k === "septic" && (
+                        <>
+                          <input className="h-9 w-16 rounded-md border border-[#cfc9be] px-2 text-right" value={ex.users} onChange={(e) => setE({ users: e.target.value })} />
+                          <span className="text-muted">{hi ? "लोग" : "users"}</span>
+                        </>
+                      )}
+                      {k === "oht" && (
+                        <>
+                          <input className="h-9 w-20 rounded-md border border-[#cfc9be] px-2 text-right" value={ex.ohtL} onChange={(e) => setE({ ohtL: e.target.value })} />
+                          <span className="text-muted">{hi ? "लीटर" : "litres"}</span>
+                        </>
+                      )}
+                      {k === "sump" && (
+                        <>
+                          <input className="h-9 w-20 rounded-md border border-[#cfc9be] px-2 text-right" value={ex.sumpL} onChange={(e) => setE({ sumpL: e.target.value })} />
+                          <span className="text-muted">{hi ? "लीटर" : "litres"}</span>
+                        </>
+                      )}
+                      {k === "bore" && (
+                        <>
+                          <input className="h-9 w-20 rounded-md border border-[#cfc9be] px-2 text-right" value={ex.boreFt} onChange={(e) => setE({ boreFt: e.target.value })} />
+                          <span className="text-muted">{hi ? "फ़ीट गहरा" : "ft deep"}</span>
+                          <label className="ml-2 flex items-center gap-1.5">
+                            <input type="checkbox" className="h-4 w-4 accent-[#b07a0a]" checked={ex.pump} onChange={(e) => setE({ pump: e.target.checked })} />
+                            {hi ? "सबमर्सिबल पंप" : "Submersible pump"}
+                          </label>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {res ? (
@@ -381,10 +683,18 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
               <div className="font-display mt-2 text-[38px] font-extrabold leading-none sm:text-[44px]">{rupees(res.grandTotal)}</div>
               <div className="mt-1 text-[14px] text-[#cfcbc2]">
                 ≈ ₹{lakhWords(res.grandTotal)} · {hi ? "5% आकस्मिक खर्च सहित" : "incl. 5% contingency"}
+                {res.externalTotal > 0 && (
+                  <span className="block">
+                    {hi ? "घर" : "House"} ₹{lakhWords(res.grandTotal - res.externalTotal)} + {hi ? "बाहरी काम" : "external works"} ₹{lakhWords(res.externalTotal)}
+                  </span>
+                )}
               </div>
               <dl className="mt-4 grid grid-cols-3 gap-2">
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">{d.per_sqft}</dt>
+                  <dt className="text-[12px] text-[#cfcbc2]">
+                    {d.per_sqft}
+                    {res.externalTotal > 0 ? (hi ? " (घर)" : " (house)") : ""}
+                  </dt>
                   <dd className="text-[17px] font-bold text-amber">{rupees(res.perSqft)}</dd>
                 </div>
                 <div className="rounded-xl bg-[#222427] p-3">
@@ -406,6 +716,16 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   </li>
                 ))}
               </ul>
+              {res.warnings.map((w) => (
+                <p key={w} className="mt-3 rounded-lg bg-[#3a2f12] px-3 py-2 text-[13px] text-[#ffd98a]">
+                  ⚠ {w}
+                </p>
+              ))}
+              <p className="mt-3 text-[12px] text-[#cfcbc2]">
+                {hi ? "क्वालिटी" : "Finish"}: {{ basic: hi ? "बेसिक" : "Basic", standard: hi ? "स्टैंडर्ड" : "Standard", premium: hi ? "प्रीमियम" : "Premium" }[res.quality]} ·{" "}
+                {res.wall === "aac" ? (hi ? "AAC दीवार" : "AAC walls") : hi ? "ईंट की दीवार" : "Brick walls"} · {hi ? "सरिया BBS से" : "Steel from BBS"} {inr(res.bbs.total)} kg
+                {rateSet ? ` · ${hi ? "आपके रेट" : "your rates"}` : ""}
+              </p>
             </section>
             <div className="no-print flex flex-wrap gap-2">
               <button
@@ -438,7 +758,12 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
         <a
           href="#boq-total"
           className="no-print fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-3 bg-ink text-[#f5f3ef] shadow-[0_-4px_16px_rgba(0,0,0,0.25)] lg:hidden"
-          style={{ paddingTop: 10, paddingBottom: "max(10px, env(safe-area-inset-bottom))", paddingLeft: "max(16px, env(safe-area-inset-left))", paddingRight: "max(16px, env(safe-area-inset-right))" }}
+          style={{
+            paddingTop: 10,
+            paddingBottom: "max(10px, env(safe-area-inset-bottom))",
+            paddingLeft: "max(16px, env(safe-area-inset-left))",
+            paddingRight: "max(16px, env(safe-area-inset-right))",
+          }}
         >
           <span className="flex flex-col leading-tight">
             <span className="text-[11px] font-bold uppercase tracking-wide text-amber">
@@ -451,187 +776,245 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
       )}
       {res && (
         <>
-          <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="font-display text-[20px] font-bold">{hi ? "एब्स्ट्रैक्ट ऑफ़ कॉस्ट" : "Abstract of cost"}</h2>
-              <span className="text-[13px] text-muted">{hi ? "कोई भी रेट बदलें — कुल अपने आप बदलेगा" : "Edit any rate — totals update instantly"}</span>
-            </div>
-            <ul className="mt-4 flex flex-col gap-2">
-              {res.sections.map((s) => (
-                <li key={s.code} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 text-[14px] sm:grid-cols-[minmax(0,240px)_minmax(0,1fr)_120px]">
-                  <span className="font-semibold">
-                    {s.code}. {s.title[lang]}
-                  </span>
-                  <span className="order-3 col-span-2 h-2.5 rounded-full bg-[#f0ece5] sm:order-none sm:col-span-1">
-                    <span className="block h-2.5 rounded-full bg-amber" style={{ width: `${(s.subtotal / maxSub) * 100}%` }} />
-                  </span>
-                  <span className="text-right font-semibold">{rupees(s.subtotal)}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-6 flex flex-col gap-3">
-              {res.sections.map((s, si) => (
-                <details key={s.code} open={si === 0} className="rounded-xl border border-line">
-                  <summary className="flex cursor-pointer items-center justify-between gap-3 rounded-xl bg-[#fbf3de] px-4 py-3 text-[15px] font-bold">
-                    <span>
-                      {s.code}. {s.title[lang]}{" "}
-                      <span className="font-normal text-muted">
-                        · {s.items.length} {hi ? "आइटम" : "items"}
-                      </span>
-                    </span>
-                    <span>{rupees(s.subtotal)}</span>
-                  </summary>
-                  <ul className="divide-y divide-[#f0ece5]">
-                    {s.items.map((i) => (
-                      <li key={i.code} className="px-4 py-3">
-                        <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 sm:grid-cols-[48px_minmax(0,1fr)_120px_110px_120px] sm:items-center">
-                          <span className="hidden text-[13px] font-bold text-amber-dark sm:block">{i.code}</span>
-                          <span className="text-[14px]">
-                            <span className="mr-1.5 font-bold text-amber-dark sm:hidden">{i.code}</span>
-                            {i.desc}
-                          </span>
-                          <span className="text-right text-[14px] font-semibold">
-                            {i.qty} {i.unit}
-                          </span>
-                          <label className="flex items-center gap-2 text-[12px] text-muted sm:justify-end">
-                            <span>₹</span>
-                            <input
-                              aria-label={`${i.code} rate`}
-                              inputMode="decimal"
-                              className="h-9 w-24 rounded-md border border-[#cfc9be] px-2 text-right text-[14px] text-ink"
-                              value={rates[i.desc] ?? String(i.rate)}
-                              onChange={(e) => setRates((r) => ({ ...r, [i.desc]: e.target.value }))}
-                            />
-                            <span>/{i.unit}</span>
-                          </label>
-                          <span className="text-right text-[14px] font-bold">{rupees(i.amount)}</span>
-                        </div>
-                        <details className="mt-2">
-                          <summary className="cursor-pointer text-[13px] font-semibold text-steel">{hi ? "मेज़रमेंट देखें" : "Show measurement"}</summary>
-                          <p className="mt-1 text-[12px] italic text-muted">{i.basis}</p>
-                          <div className="mt-2 overflow-x-auto">
-                            <table className="w-full min-w-[520px] border-collapse text-[12.5px]">
-                              <thead>
-                                <tr className="bg-[#f5f3ef] text-left text-muted">
-                                  <th className="px-2 py-1.5 font-semibold">{hi ? "विवरण" : "Description"}</th>
-                                  <th className="px-2 py-1.5 text-right font-semibold">Nos</th>
-                                  <th className="px-2 py-1.5 text-right font-semibold">L</th>
-                                  <th className="px-2 py-1.5 text-right font-semibold">B</th>
-                                  <th className="px-2 py-1.5 text-right font-semibold">H/D</th>
-                                  <th className="px-2 py-1.5 text-right font-semibold">Qty</th>
-                                </tr>
-                              </thead>
-                              <tbody className="tabular-nums">
-                                {i.rows.map((x, k) => (
-                                  <tr key={k} className={"border-t border-[#f0ece5] " + (x.q < 0 ? "text-[#9a3b2e]" : "")}>
-                                    <td className="px-2 py-1.5">{x.desc}</td>
-                                    <td className="px-2 py-1.5 text-right">{x.n}</td>
-                                    <td className="px-2 py-1.5 text-right">{x.L !== undefined ? round(x.L, 3) : ""}</td>
-                                    <td className="px-2 py-1.5 text-right">{x.B !== undefined ? round(x.B, 3) : ""}</td>
-                                    <td className="px-2 py-1.5 text-right">{x.H !== undefined ? round(x.H, 3) : ""}</td>
-                                    <td className="px-2 py-1.5 text-right font-semibold">{round(x.q, Math.max(i.dec, 1))}</td>
-                                  </tr>
-                                ))}
-                                <tr className="border-t border-line bg-[#fce7b2]">
-                                  <td className="px-2 py-1.5 font-bold">TOTAL</td>
-                                  <td colSpan={4} />
-                                  <td className="px-2 py-1.5 text-right font-bold">
-                                    {i.qty} {i.unit}
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </details>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              ))}
-            </div>
-
-            <dl className="mt-5 flex flex-col gap-1.5 border-t border-line pt-4 text-[15px]">
-              <div className="flex justify-between gap-3">
-                <dt>{hi ? "सभी आइटम का जोड़" : "Total of all items"}</dt>
-                <dd className="font-semibold">{rupees(res.itemsTotal)}</dd>
-              </div>
-              <div className="flex justify-between gap-3">
-                <dt>{hi ? "आकस्मिक / अन्य 5%" : "Contingency / misc. 5%"}</dt>
-                <dd className="font-semibold">{rupees(res.contingency)}</dd>
-              </div>
-              <div className="flex justify-between gap-3 rounded-lg bg-[#fce7b2] px-3 py-2 text-[17px] font-extrabold">
-                <dt>{hi ? "कुल योग" : "Grand total"}</dt>
-                <dd>{rupees(res.grandTotal)}</dd>
-              </div>
-            </dl>
-          </section>
-
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <nav aria-label={hi ? "रिपोर्ट के हिस्से" : "Report sections"} className="sticky top-0 z-10 -mx-1 flex gap-1.5 overflow-x-auto bg-ground px-1 py-2">
+            {(
+              [
+                ["boq", hi ? "BOQ और MB" : "BOQ and MB"],
+                ["sketch", hi ? "नक्शा स्केच" : "Sketch"],
+                ["spec", hi ? "स्पेक शीट" : "Spec sheet"],
+                ["bbs", "BBS"],
+                ["plan", hi ? "प्लान, ख़रीद, EMI" : "Plan, purchase, EMI"],
+                ["compare", hi ? "तुलना" : "Compare"],
+              ] as const
+            ).map(([k, lbl]) => (
+              <button
+                key={k}
+                type="button"
+                aria-pressed={view === k}
+                onClick={() => setView(k)}
+                className={"shrink-0 rounded-full px-4 py-2 text-[14px] font-bold " + (view === k ? "bg-ink text-white" : "border border-line bg-white text-ink")}
+              >
+                {lbl}
+              </button>
+            ))}
+          </nav>
+          {view !== "boq" && (
             <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
-              <h2 className="font-display text-[19px] font-bold">{hi ? "सामग्री और थंब रूल जांच" : "Materials and thumb-rule check"}</h2>
-              <ul className="mt-4 flex flex-col divide-y divide-[#f0ece5] text-[14px]">
-                {res.thumb.map((tr) => {
-                  const off = Math.abs(tr.diffPct) > 25;
-                  return (
-                    <li key={tr.key} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-0.5 py-2.5">
-                      <span className="font-semibold">{name(tr.key, lang)}</span>
-                      <span className="text-right font-bold">
-                        {inr(tr.qty)} {name(tr.unit, lang)}
-                      </span>
-                      <span className="text-[12px] text-muted">
-                        {hi ? "थंब रूल" : "Thumb rule"} {tr.perSqft}/sqft = {inr(tr.thumbQty)}
-                      </span>
-                      <span className={"text-right text-[12px] font-bold " + (off ? "text-warn" : "text-good")}>
-                        {tr.diffPct >= 0 ? "+" : ""}
-                        {Math.round(tr.diffPct)}%
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-              <p className="mt-3 text-[12px] leading-relaxed text-muted">
-                {hi
-                  ? "25% से ज़्यादा फ़र्क पीले रंग में। एक-मंज़िला घर, 9 इंच की बाहरी दीवार और पैरापेट से ईंट थंब रूल से ज़्यादा आती है।"
-                  : "Differences over 25% are flagged. Low-rise houses with 9-inch outer walls and parapets need more bricks than the multi-storey thumb rule."}
-              </p>
+              {view === "sketch" && <SketchPanel r={res} lang={lang} names={(tp) => (tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp)} />}
+              {view === "spec" && <SpecPanel r={res} lang={lang} />}
+              {view === "bbs" && <BbsPanel r={res} lang={lang} />}
+              {view === "plan" && <PlanPanel r={res} lang={lang} />}
+              {view === "compare" && <ComparePanel r={res} lang={lang} run={runVariant} />}
             </section>
+          )}
+          {view === "boq" && (
+            <>
+              <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 className="font-display text-[20px] font-bold">{hi ? "एब्स्ट्रैक्ट ऑफ़ कॉस्ट" : "Abstract of cost"}</h2>
+                  <span className="text-[13px] text-muted">{hi ? "कोई भी रेट बदलें — कुल अपने आप बदलेगा" : "Edit any rate — totals update instantly"}</span>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-[#f5f3ef] px-3 py-2.5 text-[13px]">
+                  <span className="font-semibold">{hi ? "रेट सेट (SOR / DSR / अपने रेट):" : "Rate set (SOR / DSR / your own):"}</span>
+                  <button type="button" onClick={() => rateSheet("down")} className="rounded-md border border-steel bg-white px-2.5 py-1.5 font-semibold text-steel">
+                    {hi ? "रेट शीट डाउनलोड" : "Download rate sheet"}
+                  </button>
+                  <label className="cursor-pointer rounded-md border border-steel bg-white px-2.5 py-1.5 font-semibold text-steel">
+                    {hi ? "भरी हुई शीट अपलोड" : "Upload filled sheet"}
+                    <input type="file" accept=".xlsx,.xls,.csv" className="sr-only" onChange={(e) => e.target.files?.[0] && rateSheet("up", e.target.files[0])} />
+                  </label>
+                  {rateSet && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRateSet(null);
+                        setRateMsg("");
+                      }}
+                      className="font-semibold text-muted underline"
+                    >
+                      {hi ? "बाज़ार रेट पर वापस" : "Back to market rates"}
+                    </button>
+                  )}
+                  {rateMsg && <span className="font-semibold text-good">{rateMsg}</span>}
+                </div>
+                <ul className="mt-4 flex flex-col gap-2">
+                  {res.sections.map((s) => (
+                    <li key={s.code} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 text-[14px] sm:grid-cols-[minmax(0,240px)_minmax(0,1fr)_120px]">
+                      <span className="font-semibold">
+                        {s.code}. {s.title[lang]}
+                      </span>
+                      <span className="order-3 col-span-2 h-2.5 rounded-full bg-[#f0ece5] sm:order-none sm:col-span-1">
+                        <span className="block h-2.5 rounded-full bg-amber" style={{ width: `${(s.subtotal / maxSub) * 100}%` }} />
+                      </span>
+                      <span className="text-right font-semibold">{rupees(s.subtotal)}</span>
+                    </li>
+                  ))}
+                </ul>
 
-            <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
-              <h2 className="font-display text-[19px] font-bold">{hi ? "कमरों की सूची" : "Room schedule"}</h2>
-              {res.geometry.perFloor.map((p) => (
-                <div key={p.floor} className="mt-4">
-                  <h3 className="text-[14px] font-bold text-steel">
-                    {FLOOR_NAME(p.floor, hi)} ({floorLabel(p.floor, res.geometry.floors)}) · {inr(p.carpetSqft)} sqft {hi ? "कारपेट" : "carpet"}
-                  </h3>
-                  <ul className="mt-1 flex flex-col divide-y divide-[#f0ece5] text-[14px]">
-                    {res.rooms
-                      .filter((r) => r.floor === p.floor)
-                      .map((r) => (
-                        <li key={r.code} className="flex flex-wrap justify-between gap-x-3 py-2">
-                          <span>
-                            <span className="mr-2 font-bold text-amber-dark">{r.code}</span>
-                            {ROOM_DEFS[r.type].name[lang]}
+                <div className="mt-6 flex flex-col gap-3">
+                  {res.sections.map((s, si) => (
+                    <details key={s.code} open={si === 0} className="rounded-xl border border-line">
+                      <summary className="flex cursor-pointer items-center justify-between gap-3 rounded-xl bg-[#fbf3de] px-4 py-3 text-[15px] font-bold">
+                        <span>
+                          {s.code}. {s.title[lang]}{" "}
+                          <span className="font-normal text-muted">
+                            · {s.items.length} {hi ? "आइटम" : "items"}
                           </span>
-                          <span className="tabular-nums text-muted">
-                            {round(r.L * FT, 1)} × {round(r.B * FT, 1)} ft · {Math.round(r.area * SQFT)} sqft
+                        </span>
+                        <span>{rupees(s.subtotal)}</span>
+                      </summary>
+                      <ul className="divide-y divide-[#f0ece5]">
+                        {s.items.map((i) => (
+                          <li key={i.code} className="px-4 py-3">
+                            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 sm:grid-cols-[48px_minmax(0,1fr)_120px_110px_120px] sm:items-center">
+                              <span className="hidden text-[13px] font-bold text-amber-dark sm:block">{i.code}</span>
+                              <span className="text-[14px]">
+                                <span className="mr-1.5 font-bold text-amber-dark sm:hidden">{i.code}</span>
+                                {i.desc}
+                              </span>
+                              <span className="text-right text-[14px] font-semibold">
+                                {i.qty} {i.unit}
+                              </span>
+                              <label className="flex items-center gap-2 text-[12px] text-muted sm:justify-end">
+                                <span>₹</span>
+                                <input
+                                  aria-label={`${i.code} rate`}
+                                  inputMode="decimal"
+                                  className="h-9 w-24 rounded-md border border-[#cfc9be] px-2 text-right text-[14px] text-ink"
+                                  value={rates[i.desc] ?? String(i.rate)}
+                                  onChange={(e) => setRates((r) => ({ ...r, [i.desc]: e.target.value }))}
+                                />
+                                <span>/{i.unit}</span>
+                              </label>
+                              <span className="text-right text-[14px] font-bold">{rupees(i.amount)}</span>
+                            </div>
+                            <details className="mt-2">
+                              <summary className="cursor-pointer text-[13px] font-semibold text-steel">{hi ? "मेज़रमेंट देखें" : "Show measurement"}</summary>
+                              <p className="mt-1 text-[12px] italic text-muted">{i.basis}</p>
+                              <div className="mt-2 overflow-x-auto">
+                                <table className="w-full min-w-[520px] border-collapse text-[12.5px]">
+                                  <thead>
+                                    <tr className="bg-[#f5f3ef] text-left text-muted">
+                                      <th className="px-2 py-1.5 font-semibold">{hi ? "विवरण" : "Description"}</th>
+                                      <th className="px-2 py-1.5 text-right font-semibold">Nos</th>
+                                      <th className="px-2 py-1.5 text-right font-semibold">L</th>
+                                      <th className="px-2 py-1.5 text-right font-semibold">B</th>
+                                      <th className="px-2 py-1.5 text-right font-semibold">H/D</th>
+                                      <th className="px-2 py-1.5 text-right font-semibold">Qty</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="tabular-nums">
+                                    {i.rows.map((x, k) => (
+                                      <tr key={k} className={"border-t border-[#f0ece5] " + (x.q < 0 ? "text-[#9a3b2e]" : "")}>
+                                        <td className="px-2 py-1.5">{x.desc}</td>
+                                        <td className="px-2 py-1.5 text-right">{x.n}</td>
+                                        <td className="px-2 py-1.5 text-right">{x.L !== undefined ? round(x.L, 3) : ""}</td>
+                                        <td className="px-2 py-1.5 text-right">{x.B !== undefined ? round(x.B, 3) : ""}</td>
+                                        <td className="px-2 py-1.5 text-right">{x.H !== undefined ? round(x.H, 3) : ""}</td>
+                                        <td className="px-2 py-1.5 text-right font-semibold">{round(x.q, Math.max(i.dec, 1))}</td>
+                                      </tr>
+                                    ))}
+                                    <tr className="border-t border-line bg-[#fce7b2]">
+                                      <td className="px-2 py-1.5 font-bold">TOTAL</td>
+                                      <td colSpan={4} />
+                                      <td className="px-2 py-1.5 text-right font-bold">
+                                        {i.qty} {i.unit}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </details>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  ))}
+                </div>
+
+                <dl className="mt-5 flex flex-col gap-1.5 border-t border-line pt-4 text-[15px]">
+                  <div className="flex justify-between gap-3">
+                    <dt>{hi ? "सभी आइटम का जोड़" : "Total of all items"}</dt>
+                    <dd className="font-semibold">{rupees(res.itemsTotal)}</dd>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <dt>{hi ? "आकस्मिक / अन्य 5%" : "Contingency / misc. 5%"}</dt>
+                    <dd className="font-semibold">{rupees(res.contingency)}</dd>
+                  </div>
+                  <div className="flex justify-between gap-3 rounded-lg bg-[#fce7b2] px-3 py-2 text-[17px] font-extrabold">
+                    <dt>{hi ? "कुल योग" : "Grand total"}</dt>
+                    <dd>{rupees(res.grandTotal)}</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
+                  <h2 className="font-display text-[19px] font-bold">{hi ? "सामग्री और थंब रूल जांच" : "Materials and thumb-rule check"}</h2>
+                  <ul className="mt-4 flex flex-col divide-y divide-[#f0ece5] text-[14px]">
+                    {res.thumb.map((tr) => {
+                      const off = Math.abs(tr.diffPct) > 25;
+                      return (
+                        <li key={tr.key} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-0.5 py-2.5">
+                          <span className="font-semibold">{name(tr.key, lang)}</span>
+                          <span className="text-right font-bold">
+                            {inr(tr.qty)} {name(tr.unit, lang)}
+                          </span>
+                          <span className="text-[12px] text-muted">
+                            {hi ? "थंब रूल" : "Thumb rule"} {tr.perSqft}/sqft = {inr(tr.thumbQty)}
+                          </span>
+                          <span className={"text-right text-[12px] font-bold " + (off ? "text-warn" : "text-good")}>
+                            {tr.diffPct >= 0 ? "+" : ""}
+                            {Math.round(tr.diffPct)}%
                           </span>
                         </li>
-                      ))}
+                      );
+                    })}
                   </ul>
-                </div>
-              ))}
-            </section>
-          </div>
+                  <p className="mt-3 text-[12px] leading-relaxed text-muted">
+                    {hi
+                      ? "25% से ज़्यादा फ़र्क पीले रंग में। एक-मंज़िला घर, 9 इंच की बाहरी दीवार और पैरापेट से ईंट थंब रूल से ज़्यादा आती है।"
+                      : "Differences over 25% are flagged. Low-rise houses with 9-inch outer walls and parapets need more bricks than the multi-storey thumb rule."}
+                  </p>
+                </section>
 
-          <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
-            <h2 className="font-display text-[19px] font-bold">{d.assumptions}</h2>
-            <ul className="mt-3 list-disc space-y-1.5 pl-5 text-[13.5px] leading-relaxed text-body">
-              {res.assumptions.map((a) => (
-                <li key={a}>{a}</li>
-              ))}
-            </ul>
-          </section>
+                <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
+                  <h2 className="font-display text-[19px] font-bold">{hi ? "कमरों की सूची" : "Room schedule"}</h2>
+                  {res.geometry.perFloor.map((p) => (
+                    <div key={p.floor} className="mt-4">
+                      <h3 className="text-[14px] font-bold text-steel">
+                        {FLOOR_NAME(p.floor, hi)} ({floorLabel(p.floor, res.geometry.floors)}) · {inr(p.carpetSqft)} sqft {hi ? "कारपेट" : "carpet"}
+                      </h3>
+                      <ul className="mt-1 flex flex-col divide-y divide-[#f0ece5] text-[14px]">
+                        {res.rooms
+                          .filter((r) => r.floor === p.floor)
+                          .map((r) => (
+                            <li key={r.code} className="flex flex-wrap justify-between gap-x-3 py-2">
+                              <span>
+                                <span className="mr-2 font-bold text-amber-dark">{r.code}</span>
+                                {ROOM_DEFS[r.type].name[lang]}
+                              </span>
+                              <span className="tabular-nums text-muted">
+                                {round(r.L * FT, 1)} × {round(r.B * FT, 1)} ft · {Math.round(r.area * SQFT)} sqft
+                              </span>
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+              </div>
+
+              <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
+                <h2 className="font-display text-[19px] font-bold">{d.assumptions}</h2>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 text-[13.5px] leading-relaxed text-body">
+                  {res.assumptions.map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </section>
+            </>
+          )}
         </>
       )}
     </div>

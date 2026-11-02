@@ -4,6 +4,9 @@
  * Mirrors the founder's estimate format: sections A–I, sub-totals, 5% contingency, grand total.
  */
 import { CEMENT_BAG_M3, CFT_PER_M3, round, SQFT_PER_M2 } from "./units";
+import { BbsResult, calcBbs } from "./bbs";
+import { BoqQuality, QUALITY_RATE_OVERRIDES, SPEC_SHEET } from "./specs";
+import { sketchFloor, SketchRect } from "./plot";
 
 export type RoomType = "hall" | "dining" | "kitchen" | "bedroom" | "toilet" | "passage" | "balcony" | "pooja" | "store" | "study" | "utility" | "parking" | "shop";
 
@@ -236,11 +239,65 @@ export interface FloorPlan {
 
 /** Composite market rates (material + labour), tier-2 private work 2026, ₹ — editable. */
 export const BOQ_RATES = {
-  exc: 280, pcc: 4800, back: 150, termite: 60, murum: 900, rcc: 6500, steel: 72, sh_col: 320, sh_beam: 320, sh_slab: 280,
-  sh_foot: 280, brick: 6200, lintel: 16000, pl_int: 300, pl_ext: 380, pl_ceil: 320, pl_para: 380, vit: 1300, skirt: 130,
-  anti: 950, wtile: 950, toi_wp: 500, ter_wp: 420, granite: 4000, mdoor: 25000, bdoor: 12000, fdoor: 11000, pvc: 3800, alwin: 4800,
-  vent: 1500, ewc: 8500, iwc: 4500, basin: 3000, shower: 3500, taps: 2000, fdrain: 500, sink: 4000, cpvc: 280, swr110: 900,
-  swr75: 600, riser: 12000, elec: 800, p_int: 220, p_ext: 200, st_tile: 1600, st_soffit: 550, rail: 2500, shutter: 3200,
+  exc: 280,
+  pcc: 4800,
+  back: 150,
+  termite: 60,
+  murum: 900,
+  rcc: 6500,
+  steel: 72,
+  sh_col: 320,
+  sh_beam: 320,
+  sh_slab: 280,
+  sh_foot: 280,
+  brick: 6200,
+  lintel: 16000,
+  pl_int: 300,
+  pl_ext: 380,
+  pl_ceil: 320,
+  pl_para: 380,
+  vit: 1300,
+  skirt: 130,
+  anti: 950,
+  wtile: 950,
+  toi_wp: 500,
+  ter_wp: 420,
+  granite: 4000,
+  mdoor: 25000,
+  bdoor: 12000,
+  fdoor: 11000,
+  pvc: 3800,
+  alwin: 4800,
+  vent: 1500,
+  ewc: 8500,
+  iwc: 4500,
+  basin: 3000,
+  shower: 3500,
+  taps: 2000,
+  fdrain: 500,
+  sink: 4000,
+  cpvc: 280,
+  swr110: 900,
+  swr75: 600,
+  riser: 12000,
+  elec: 800,
+  p_int: 220,
+  p_ext: 200,
+  st_tile: 1600,
+  st_soffit: 550,
+  rail: 2500,
+  shutter: 3200,
+  aac: 5600,
+  ff_ceiling: 1200,
+  gate: 3500,
+  septic: 45000,
+  oht: 12000,
+  sump: 14000,
+  bore: 150,
+  pump: 28000,
+  elev: 1800,
+  rwh: 25000,
+  conn: 20000,
 } as const;
 export type RateKey = keyof typeof BOQ_RATES;
 
@@ -265,6 +322,8 @@ export interface BoqItem {
   qty: number;
   dec: number;
   amount: number;
+  /** Materials consumed by this item. */
+  mat: Partial<Record<MatKey, number>>;
 }
 
 export interface BoqSection {
@@ -284,7 +343,33 @@ export interface BoqSpec {
   plinth?: number;
   /** Staircase going up to the terrace (default true). */
   stairToTerrace?: boolean;
+  /** Outline length ÷ width (default 1.25; from the plot when given). */
+  aspect?: number;
+  /** Finish level (default standard). */
+  quality?: BoqQuality;
+  /** Wall material (default brick 230 / 115 mm; AAC 200 / 100 mm). */
+  wall?: "brick" | "aac";
+  /** Steel from bar bending schedule (default) or thumb rule kg/m³. */
+  steelFrom?: "bbs" | "thumb";
+  /** Buildable area of the plot (m²) — warns when a floor is bigger. */
+  buildableM2?: number;
 }
+
+/** Optional external works and services. Lengths in metres. */
+export interface BoqExtras {
+  boundary?: { length: number; height: number };
+  gate?: { width: number; height: number };
+  septic?: { users: number };
+  oht?: { litres: number };
+  sump?: { litres: number };
+  borewell?: { depthFt: number; pump: boolean };
+  elevation?: boolean;
+  falseCeiling?: boolean;
+  rwh?: boolean;
+  connections?: boolean;
+}
+
+export type MatKey = "cement" | "steel" | "sand" | "aggregate" | "bricks" | "blocks" | "tiles";
 
 export interface BoqInput {
   /** Rooms of each floor, ground floor first. When given, floors / plan / roomSizes are ignored. */
@@ -298,6 +383,9 @@ export interface BoqInput {
   locationFactor?: number;
   /** Rate overrides by item code (A1, B2…). */
   rateOverrides?: Record<string, number>;
+  /** A full rate set (e.g. imported SOR / DSR rates) by rate key — used as is, without location factor. */
+  rateSet?: Partial<Record<RateKey, number>>;
+  extras?: BoqExtras;
 }
 
 export interface Room {
@@ -417,10 +505,21 @@ export interface BoqResult {
   itemsTotal: number;
   contingency: number;
   grandTotal: number;
+  /** Building cost per sqft of built-up (external works excluded). */
   perSqft: number;
+  /** External works incl. their 5% contingency share (0 when none). */
+  externalTotal: number;
   materials: { key: string; unit: string; qty: number; basis: string }[];
   thumb: { key: string; unit: string; perSqft: number; thumbQty: number; qty: number; diffPct: number }[];
   assumptions: string[];
+  quality: BoqQuality;
+  wall: "brick" | "aac";
+  bbs: BbsResult;
+  /** Steel by thumb rule, for comparison with the BBS (kg, structure only). */
+  steelThumbKg: number;
+  specSheet: { key: string; item: { en: string; hi: string }; spec: { en: string; hi: string } }[];
+  sketch: { floor: number; L: number; B: number; rects: SketchRect[] }[];
+  warnings: string[];
 }
 
 export function floorLabel(f: number, total: number) {
@@ -447,8 +546,12 @@ export function calcBoq(input: BoqInput): BoqResult {
     BW = 0.23,
     BD = 0.4,
     SLAB = 0.125,
-    WE = 0.23,
-    WI = 0.115;
+    WE = spec.wall === "aac" ? 0.2 : 0.23,
+    WI = spec.wall === "aac" ? 0.1 : 0.115;
+  const AAC = spec.wall === "aac";
+  const WALLK: RateKey = AAC ? "aac" : "brick";
+  const quality: BoqQuality = spec.quality ?? "standard";
+  const ASPECT = Math.min(2.5, Math.max(0.5, spec.aspect ?? 1.25));
   const FH = round(spec.floorH ?? 3.0, 3);
   const PLINTH = round(spec.plinth ?? 0.45, 3);
   const WW = round(spec.winW ?? 1.5, 3),
@@ -466,7 +569,7 @@ export function calcBoq(input: BoqInput): BoqResult {
     const carpet = rs.reduce((a, r) => a + r.area, 0);
     const hasStair = f < F - 1 || terrace;
     const A = (carpet + (hasStair ? STAIR_FP : 0)) / 0.83;
-    const L = round(Math.sqrt(A * 1.25), 2);
+    const L = round(Math.sqrt(A * ASPECT), 2);
     const B = round(A / L, 2);
     const LC = L - COL,
       BC = B - COL;
@@ -535,6 +638,13 @@ export function calcBoq(input: BoqInput): BoqResult {
     SH = tot("sh");
   const avgFdW = FD ? round(geo.reduce((a, g) => a + g.fdW, 0) / FD, 2) : 0.9;
 
+  // ---------------- rates: imported set → quality preset → market, × location (not for imported)
+  const baseRate = (k: RateKey) => {
+    const imp = input.rateSet?.[k];
+    if (imp !== undefined && Number.isFinite(imp)) return imp;
+    return Math.round((QUALITY_RATE_OVERRIDES[quality][k] ?? BOQ_RATES[k]) * factor);
+  };
+
   // ---------------- items
   const sections: BoqSection[] = [];
   const sec = (code: string, en: string, hi: string) => sections.push({ code, title: { en, hi }, items: [], subtotal: 0 });
@@ -545,8 +655,8 @@ export function calcBoq(input: BoqInput): BoqResult {
       rows.reduce((a, r) => a + r.q, 0),
       dec,
     );
-    const rate = overrides[code] ?? Math.round(BOQ_RATES[rateKey] * factor);
-    const it: BoqItem = { code, desc, unit, rateKey, rate, basis, rows, qty, dec, amount: Math.round(qty * rate) };
+    const rate = overrides[code] ?? baseRate(rateKey);
+    const it: BoqItem = { code, desc, unit, rateKey, rate, basis, rows, qty, dec, amount: Math.round(qty * rate), mat: {} };
     s.items.push(it);
     return it;
   };
@@ -627,14 +737,43 @@ export function calcBoq(input: BoqInput): BoqResult {
     row("Slabs: m³ × 90 kg/m³", 1, slab.qty, KG.slab),
   ];
   stRows.push(qRow("Add 5% laps / wastage", round(stRows.reduce((a, r) => a + r.q, 0) * 0.05, 1)));
-  const steel = item(
-    "Reinforcement steel Fe500D (cut, bent, tied)",
-    "kg",
-    "steel",
-    "Thumb rule kg per m³ of concrete by member + 5%. Exact steel comes from the bar bending schedule.",
-    stRows,
+  const steelThumbKg = round(
+    stRows.reduce((a, r) => a + r.q, 0),
     1,
   );
+  const bbs = calcBbs({
+    floors: F,
+    footing: { n: NCOL, size: FOOT, depth: FOOT_D },
+    column: { n: NCOL, belowPlinth: round(colH + FOOT_D, 3), perFloor: geo.map((g) => ({ n: g.NCOL, h: FH })), floorH: FH },
+    plinth: {
+      lines: [...base.GA.map(() => base.L), ...base.GN.map(() => base.B)],
+      spans: [...base.GA.flatMap(() => Array(base.NBL).fill(base.CLL)), ...base.GN.flatMap(() => Array(base.NBB).fill(base.CLB))],
+    },
+    beams: geo.map((g) => ({
+      floor: flr(g.f),
+      lines: [...g.GA.map(() => g.L), ...g.GN.map(() => g.B)],
+      spans: [...g.GA.flatMap(() => Array(g.NBL).fill(g.CLL)), ...g.GN.flatMap(() => Array(g.NBB).fill(g.CLB))],
+    })),
+    slabs: geo.map((g) => ({ floor: flr(g.f), L: g.L, B: g.B })),
+  });
+  const useBbs = (spec.steelFrom ?? "bbs") === "bbs";
+  const steel = useBbs
+    ? item(
+        "Reinforcement steel Fe500D (cut, bent, tied)",
+        "kg",
+        "steel",
+        "From the bar bending schedule (BBS tab / sheet): footings, columns, plinth beams, beams, slabs + 3% wastage.",
+        [...bbs.byMember.map((m) => row(`${m.member} (BBS)`, 1, m.kg)), qRow("Add 3% cutting wastage", bbs.wastage)],
+        1,
+      )
+    : item(
+        "Reinforcement steel Fe500D (cut, bent, tied)",
+        "kg",
+        "steel",
+        "Thumb rule kg per m³ of concrete by member + 5%. Exact steel comes from the bar bending schedule.",
+        stRows,
+        1,
+      );
   const beamLen = round(
     bmRows.reduce((a, r) => a + r.n * (r.L ?? 0), 0),
     2,
@@ -673,12 +812,12 @@ export function calcBoq(input: BoqInput): BoqResult {
     2,
   );
 
-  sec("C", "Brickwork, parapet and lintels", "ईंट की चिनाई, पैरापेट और लिंटल");
+  sec("C", AAC ? "AAC block masonry, parapet and lintels" : "Brickwork, parapet and lintels", AAC ? "AAC ब्लॉक चिनाई, पैरापेट और लिंटल" : "ईंट की चिनाई, पैरापेट और लिंटल");
   const bwE = item(
-    "Brickwork 230 mm outer walls, CM 1:6",
+    AAC ? "AAC block masonry 200 mm outer walls, thin-bed adhesive" : "Brickwork 230 mm outer walls, CM 1:6",
     "m³",
-    "brick",
-    `Between columns × 0.23 × ${WALL_H} m; openings deducted.`,
+    WALLK,
+    `Between columns × ${WE} × ${WALL_H} m; openings deducted.`,
     geo.flatMap((g) => [
       row(`${flr(g.f)} long sides, ${g.NBL} spans × 2`, g.NBL * 2, g.CLL, WE, WALL_H),
       row(`${flr(g.f)} short sides, ${g.NBB} spans × 2`, g.NBB * 2, g.CLB, WE, WALL_H),
@@ -687,10 +826,10 @@ export function calcBoq(input: BoqInput): BoqResult {
     2,
   );
   const bwI = item(
-    "Brickwork 115 mm partitions, CM 1:6",
+    AAC ? "AAC block masonry 100 mm partitions, thin-bed adhesive" : "Brickwork 115 mm partitions, CM 1:6",
     "m³",
-    "brick",
-    `Partition length per floor from room perimeters × 0.115 × ${WALL_H} m.`,
+    WALLK,
+    `Partition length per floor from room perimeters × ${WI} × ${WALL_H} m.`,
     geo.flatMap((g) => [row(`${flr(g.f)} partitions ${g.part} m`, 1, g.part, WI, WALL_H), ...openRows(g, WI, "int")]),
     2,
   );
@@ -702,15 +841,15 @@ export function calcBoq(input: BoqInput): BoqResult {
     return [];
   });
   const paraLen = paraRows.reduce((a, r) => a + (r.L ?? 0), 0);
-  const para = item("Parapet 230 mm × 0.90 m, CM 1:6", "m³", "brick", "Centre-line length × 0.23 × 0.90.", paraRows, 2);
+  const para = item(`Parapet ${WE * 1000} mm × 0.90 m, ${AAC ? "AAC blocks" : "brick in CM 1:6"}`, "m³", WALLK, `Centre-line length × ${WE} × 0.90.`, paraRows, 2);
   const lintel = item("RCC lintels incl. steel and shuttering", "m³", "lintel", "Opening + 0.30 m × wall thickness × 0.15 m.", [
-    ...(WIN ? [row("Windows (230 wall)", WIN, round(WW + 0.3, 2), WE, 0.15)] : []),
-    ...(MD + BALD ? [row("Main / balcony doors (230 wall)", MD + BALD, 1.3, WE, 0.15)] : []),
-    ...(SH ? [row("Shutters (230 wall)", SH, 2.7, WE, 0.15)] : []),
+    ...(WIN ? [row("Windows (outer wall)", WIN, round(WW + 0.3, 2), WE, 0.15)] : []),
+    ...(MD + BALD ? [row("Main / balcony doors (outer wall)", MD + BALD, 1.3, WE, 0.15)] : []),
+    ...(SH ? [row("Shutters (outer wall)", SH, 2.7, WE, 0.15)] : []),
     ...(geo.some((g) => g.pk)
       ? [
           row(
-            "Parking opening beam (230 wall)",
+            "Parking opening beam (outer wall)",
             geo.reduce((a, g) => a + g.pk, 0),
             3.3,
             WE,
@@ -718,9 +857,9 @@ export function calcBoq(input: BoqInput): BoqResult {
           ),
         ]
       : []),
-    ...(VEN ? [row("Ventilators (230 wall)", VEN, 0.9, WE, 0.15)] : []),
-    ...(FD ? [row("Room doors (115 wall)", FD, round(avgFdW + 0.3, 2), WI, 0.15)] : []),
-    ...(TD ? [row("Toilet doors (115 wall)", TD, 1.05, WI, 0.15)] : []),
+    ...(VEN ? [row("Ventilators (outer wall)", VEN, 0.9, WE, 0.15)] : []),
+    ...(FD ? [row("Room doors (partition)", FD, round(avgFdW + 0.3, 2), WI, 0.15)] : []),
+    ...(TD ? [row("Toilet doors (partition)", TD, 1.05, WI, 0.15)] : []),
   ]);
 
   sec("D", "Plastering", "प्लास्टर");
@@ -1010,47 +1149,207 @@ export function calcBoq(input: BoqInput): BoqResult {
   );
   item("External weather-coat paint, primer + 2 coats", "m²", "p_ext", "External plaster + parapet.", [qRow("External plaster (D2)", plE.qty), qRow("Parapet (D4)", plP.qty)], 1);
 
+  // ---------------- external works and services (optional)
+  const ex = input.extras ?? {};
+  const anyExtra = ex.boundary || ex.gate || ex.septic || ex.oht || ex.sump || ex.borewell || ex.elevation || ex.falseCeiling || ex.rwh || ex.connections;
+  if (anyExtra) {
+    const next = String.fromCharCode(sections.at(-1)!.code.charCodeAt(0) + 1);
+    sec(next, "External works and services", "बाहरी काम और सुविधाएं");
+    if (ex.boundary && ex.boundary.length > 0) {
+      const Lb = round(ex.boundary.length, 2),
+        Hb = round(ex.boundary.height, 2);
+      item("Boundary wall – excavation for foundation 0.60 × 0.75 m", "m³", "exc", "Trench along the wall.", [row("Boundary wall trench", 1, Lb, 0.6, 0.75)], 2);
+      item("Boundary wall – PCC 1:4:8 bed 0.60 × 0.10 m", "m³", "pcc", "Below brick footing.", [row("PCC bed", 1, Lb, 0.6, 0.1)], 2);
+      item(
+        `Boundary wall – brickwork in CM 1:6, footing + ${round(Hb, 2)} m wall with piers @3 m`,
+        "m³",
+        "brick",
+        "Footing 2 steps (0.45 / 0.35 m wide) + 230 mm wall; piers 350 × 350 add 10%.",
+        [
+          row("Footing step 1", 1, Lb, 0.45, 0.3),
+          row("Footing step 2 up to GL", 1, Lb, 0.35, 0.35),
+          row("Wall above GL", 1, Lb, 0.23, Hb),
+          row("Piers (≈10%)", 1, round(Lb * 0.1, 2), 0.23, Hb),
+        ],
+        2,
+      );
+      item("Boundary wall – plaster both faces + coping", "m²", "pl_ext", "Two faces × height + coping.", [row("Both faces", 2, Lb, Hb), row("Coping", 1, Lb, 0.23)], 1);
+      item("Boundary wall – exterior paint both faces", "m²", "p_ext", "Same as plastered area.", [row("Both faces", 2, Lb, Hb), row("Coping", 1, Lb, 0.23)], 1);
+    }
+    if (ex.gate && ex.gate.width > 0)
+      item("MS main gate with frame, fabricated and painted", "m²", "gate", "Gate width × height.", [row("Main gate", 1, round(ex.gate.width, 2), round(ex.gate.height, 2))], 2);
+    if (ex.septic && ex.septic.users > 0) {
+      const big = ex.septic.users > 10 ? 2 : 1;
+      item(
+        `Septic tank for ${ex.septic.users} users with soak pit (IS 2470), brick masonry + RCC cover`,
+        "nos",
+        "septic",
+        "Composite unit; size as per IS 2470 for the users.",
+        [row(`Septic tank ${ex.septic.users} users`, big)],
+        0,
+      );
+    }
+    if (ex.oht && ex.oht.litres > 0)
+      item(
+        `Overhead PVC water tank ${ex.oht.litres} L with stand, inlet / outlet connections`,
+        "per 1000 L",
+        "oht",
+        "Rate per 1,000 litres.",
+        [row("Tank capacity (thousand litres)", 1, round(ex.oht.litres / 1000, 2))],
+        2,
+      );
+    if (ex.sump && ex.sump.litres > 0)
+      item(
+        `RCC underground sump ${ex.sump.litres} L with cover and waterproofing`,
+        "per 1000 L",
+        "sump",
+        "Rate per 1,000 litres.",
+        [row("Sump capacity (thousand litres)", 1, round(ex.sump.litres / 1000, 2))],
+        2,
+      );
+    if (ex.borewell && ex.borewell.depthFt > 0) {
+      item('Borewell drilling 6.5" with PVC casing', "rft", "bore", "Rate per running foot of depth.", [row("Borewell depth (ft)", 1, ex.borewell.depthFt)], 0);
+      if (ex.borewell.pump) item("Submersible pump with cable, panel and pipes", "nos", "pump", "One set.", [row("Pump set", 1)], 0);
+    }
+    if (ex.elevation) {
+      const eh = round(PLINTH + FH * F + 0.9, 2);
+      item(
+        "Front elevation features (cladding / grooves / ACP)",
+        "m²",
+        "elev",
+        "About 40% of the front face (width × height).",
+        [row("Front face × 40%", 1, round(g0.B, 2), eh, 0.4)],
+        1,
+      );
+    }
+    if (ex.falseCeiling) {
+      const fc = rooms.filter((r) => r.type === "hall" || r.type === "bedroom" || r.type === "dining");
+      item(
+        "Gypsum false ceiling with cove (hall, dining, bedrooms)",
+        "m²",
+        "ff_ceiling",
+        "Room L × B.",
+        fc.map((r) => row(`${flr(r.floor)} ${r.code} ${roomName(r.type)}`, 1, round(r.L, 2), round(r.B, 2))),
+        1,
+      );
+    }
+    if (ex.rwh) item("Rainwater harvesting / recharge pit with filter media", "LS", "rwh", "Lump sum.", [row("RWH pit", 1)], 0);
+    if (ex.connections) item("Electricity and water connection charges, meter", "LS", "conn", "Lump sum; actual fees vary by local body.", [row("Connections", 1)], 0);
+  }
+
   for (const s of sections) s.subtotal = s.items.reduce((a, i) => a + i.amount, 0);
   const itemsTotal = sections.reduce((a, s) => a + s.subtotal, 0);
   const contingency = Math.round(itemsTotal * 0.05);
   const grandTotal = itemsTotal + contingency;
+  const externalTotal = anyExtra ? Math.round(sections.at(-1)!.subtotal * 1.05) : 0;
   const builtUpSqft = geo.reduce((a, g) => a + g.A, 0) * SQFT_PER_M2;
   const carpetSqft = geo.reduce((a, g) => a + g.carpet, 0) * SQFT_PER_M2;
 
-  // ---------------- materials
-  const m20 = foot.qty + pbeam.qty + col.qty + beam.qty + slab.qty + (stc?.qty ?? 0) + lintel.qty;
-  const pcc = pccf.qty + pccfl.qty;
-  const brickV = bwE.qty + bwI.qty + para.qty;
-  const mortBw = brickV * 0.26;
-  const pl15 = (plI.qty + plC.qty) * 0.012 * 1.3;
-  const pl14 = (plE.qty + plP.qty) * 0.02 * 1.3;
-  const bed = (vit.qty + anti.qty + (stt?.qty ?? 0)) * 0.03;
-  const cement = m20 * 8.06 + pcc * 3.4 + mortBw * 5.7 + pl15 * 6.8 + pl14 * 8.1 + bed * 8.1;
-  const sand = m20 * 0.42 + pcc * 0.47 + (mortBw + pl15 + pl14 + bed) * 1.05;
-  const agg = m20 * 0.84 + pcc * 0.94;
-  const bricks = brickV * 500 * 1.03;
-  const steelT = steel.qty + (sts?.qty ?? 0);
-  const tilesSqft = (vit.qty + anti.qty + wt.qty + (stt?.qty ?? 0)) * 1.05 * SQFT_PER_M2;
+  // ---------------- materials, item by item
+  const C = CFT_PER_M3;
+  const PL12 = 0.012 * 1.3,
+    PL20 = 0.02 * 1.3,
+    BED = 0.03;
+  for (const sct of sections)
+    for (const it of sct.items) {
+      const q = it.qty;
+      const m: Partial<Record<MatKey, number>> = {};
+      switch (it.rateKey) {
+        case "rcc":
+        case "lintel":
+          Object.assign(m, { cement: q * 8.06, sand: q * 0.42 * C, aggregate: q * 0.84 * C });
+          break;
+        case "pcc":
+          Object.assign(m, { cement: q * 3.4, sand: q * 0.47 * C, aggregate: q * 0.94 * C });
+          break;
+        case "brick":
+          Object.assign(m, { bricks: q * 500 * 1.03, cement: q * 0.26 * 5.7, sand: q * 0.26 * 1.05 * C });
+          break;
+        case "aac":
+          Object.assign(m, { blocks: (q / (0.6 * 0.2 * 0.2)) * 1.03, cement: q * 0.35 });
+          break;
+        case "pl_int":
+        case "pl_ceil":
+        case "st_soffit":
+          Object.assign(m, { cement: q * PL12 * 6.8, sand: q * PL12 * 1.05 * C });
+          break;
+        case "pl_ext":
+        case "pl_para":
+          Object.assign(m, { cement: q * PL20 * 8.1, sand: q * PL20 * 1.05 * C });
+          break;
+        case "vit":
+        case "anti":
+        case "st_tile":
+          Object.assign(m, { tiles: q * 1.05 * SQFT_PER_M2, cement: q * BED * 8.1, sand: q * BED * 1.05 * C });
+          break;
+        case "wtile":
+          Object.assign(m, { tiles: q * 1.05 * SQFT_PER_M2 });
+          break;
+        case "steel":
+          m.steel = q;
+          break;
+      }
+      it.mat = m;
+    }
+  const matSum = (k: MatKey, filter: (i: BoqItem) => boolean = () => true) =>
+    sections
+      .flatMap((x) => x.items)
+      .filter(filter)
+      .reduce((a, i) => a + (i.mat[k] ?? 0), 0);
+  const houseOnly = (i: BoqItem) => !anyExtra || !i.code.startsWith(sections.at(-1)!.code);
+  const cement = matSum("cement"),
+    sand = matSum("sand"),
+    agg = matSum("aggregate"),
+    bricks = matSum("bricks"),
+    blocks = matSum("blocks"),
+    steelT = matSum("steel"),
+    tilesSqft = matSum("tiles");
+  const m20 =
+    sections
+      .flatMap((x) => x.items)
+      .filter((i) => i.rateKey === "rcc")
+      .reduce((a, i) => a + i.qty, 0) + lintel.qty;
   const materials = [
-    { key: "cement", unit: "bags", qty: cement, basis: "Concrete 8.06, PCC 3.4, masonry mortar 5.7, plaster 6.8 / 8.1 bags per m³" },
-    { key: "steel", unit: "kg", qty: steelT, basis: "Structure + staircase steel" },
-    { key: "sand", unit: "cft", qty: sand * CFT_PER_M3, basis: "Concrete share + 1.05 m³ per m³ of mortar" },
-    { key: "aggregate", unit: "cft", qty: agg * CFT_PER_M3, basis: "Concrete only" },
-    { key: "bricks", unit: "nos", qty: bricks, basis: "500 per m³ of brickwork + 3% breakage" },
+    { key: "cement", unit: "bags", qty: cement, basis: "Concrete 8.06, PCC 3.4, masonry mortar, plaster and tile bedding — item by item" },
+    { key: "steel", unit: "kg", qty: steelT, basis: useBbs ? "Bar bending schedule + staircase" : "Thumb rule kg/m³ + staircase" },
+    { key: "sand", unit: "cft", qty: sand, basis: "Concrete share + 1.05 m³ per m³ of mortar" },
+    { key: "aggregate", unit: "cft", qty: agg, basis: "Concrete and PCC" },
+    ...(bricks > 0 ? [{ key: "bricks", unit: "nos", qty: bricks, basis: "500 per m³ of brickwork + 3% breakage" }] : []),
+    ...(blocks > 0 ? [{ key: "blocks", unit: "nos", qty: blocks, basis: "AAC 600 × 200 × 200 blocks + 3% breakage" }] : []),
     { key: "tiles", unit: "sqft", qty: tilesSqft, basis: "Floor + wall + stair tiles + 5%" },
     { key: "rcc", unit: "m³", qty: m20, basis: "All M20 concrete incl. lintels and stairs" },
   ];
   const thumbDef: [string, string, number, number][] = [
-    ["cement", "bags", 0.4, cement],
+    ["cement", "bags", 0.4, matSum("cement", houseOnly)],
     ["steel", "kg", 4.0, steelT],
-    ["sand", "cft", 1.816, sand * CFT_PER_M3],
-    ["aggregate", "cft", 1.35, agg * CFT_PER_M3],
-    ["bricks", "nos", 8, bricks],
+    ["sand", "cft", 1.816, matSum("sand", houseOnly)],
+    ["aggregate", "cft", 1.35, matSum("aggregate", houseOnly)],
+    ...(AAC ? [] : ([["bricks", "nos", 8, matSum("bricks", houseOnly)]] as [string, string, number, number][])),
     ["tiles", "sqft", 1.3, tilesSqft],
   ];
   const thumb = thumbDef.map(([key, unit, perSqft, qty]) => {
     const thumbQty = perSqft * builtUpSqft;
     return { key, unit, perSqft, thumbQty, qty, diffPct: ((qty - thumbQty) / thumbQty) * 100 };
+  });
+
+  // ---------------- schematic sketch per floor
+  const sketch = geo.map((g) => ({
+    floor: g.f,
+    L: g.L,
+    B: g.B,
+    rects: sketchFloor(g.L, g.B, [
+      ...g.rs.map((r) => ({ key: r.code, label: r.code, type: r.type, area: r.area, L: r.L, B: r.B })),
+      ...(g.hasStair ? [{ key: `ST${g.f}`, label: "Stair", type: "stair" as const, area: STAIR_FP }] : []),
+    ]),
+  }));
+
+  const specSheet = SPEC_SHEET.map((l) => ({ key: l.key, item: l.item, spec: l.spec[quality] }));
+  specSheet.splice(2, 0, {
+    key: "walls",
+    item: { en: "Walls", hi: "दीवारें" },
+    spec: AAC
+      ? { en: "AAC blocks 200 mm outer / 100 mm inner, thin-bed adhesive", hi: "AAC ब्लॉक 200 mm बाहर / 100 mm अंदर, पतला एडहेसिव" }
+      : { en: "Red / fly-ash bricks 230 mm outer / 115 mm inner, CM 1:6", hi: "लाल / फ़्लाई-ऐश ईंट 230 mm बाहर / 115 mm अंदर, CM 1:6" },
   });
 
   const perFloor: FloorGeo[] = geo.map((g) => ({
@@ -1088,9 +1387,24 @@ export function calcBoq(input: BoqInput): BoqResult {
     itemsTotal,
     contingency,
     grandTotal,
-    perSqft: grandTotal / builtUpSqft,
+    perSqft: (grandTotal - externalTotal) / builtUpSqft,
+    externalTotal,
     materials,
     thumb,
+    quality,
+    wall: AAC ? "aac" : "brick",
+    bbs,
+    steelThumbKg,
+    specSheet,
+    sketch,
+    warnings: spec.buildableM2
+      ? geo
+          .filter((g) => g.A > spec.buildableM2! * 1.02)
+          .map(
+            (g) =>
+              `${flr(g.f)} needs about ${Math.round(g.A * SQFT_PER_M2)} sqft but the plot allows ${Math.round(spec.buildableM2! * SQFT_PER_M2)} sqft after setbacks — reduce rooms or sizes.`,
+          )
+      : [],
     assumptions: [
       `Each floor's outline is worked out from its own rooms (no drawing): carpet ≈ 83% of built-up incl. staircase ${STAIR_FP} m². ` +
         perFloor.map((p) => `${flr(p.floor)} ${p.L} × ${p.B} m`).join(", ") +
@@ -1099,7 +1413,10 @@ export function calcBoq(input: BoqInput): BoqResult {
       `Isolated footings ${FOOT} × ${FOOT} m at ${PIT_D} m depth — confirm by soil test / structural design.`,
       `Openings from rooms: ${WIN} windows ${WW} × ${WH} m, ${FD} room doors, ${TD} toilet doors, ${MD} main door(s), ${BALD} balcony door(s)${SH ? `, ${SH} shutters` : ""}, ${VEN} ventilators.`,
       NS > 0 ? `${NS} staircase flight set(s)${terrace ? " including terrace access" : ""}.` : "No staircase.",
-      "Steel by kg per m³ of concrete (footing 80, column 180, plinth beam 120, beam 150, slab 90, stair 90) + 5%.",
+      useBbs
+        ? "Steel from a typical bar bending schedule (see BBS) + 3% wastage; staircase steel 90 kg/m³."
+        : "Steel by kg per m³ of concrete (footing 80, column 180, plinth beam 120, beam 150, slab 90, stair 90) + 5%.",
+      `Finish level: ${quality}; walls: ${AAC ? "AAC blocks" : "bricks"}.`,
       "Composite market rates (material + labour) for private work in a tier-2 city, 2026 — edit any rate to match your city, contractor or SOR.",
       "Excludes land, approvals, interiors, fixtures, compound wall, borewell, water tank, septic tank, GST if extra.",
     ],

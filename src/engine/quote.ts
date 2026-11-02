@@ -59,7 +59,8 @@ export function checkQuote(input: QuoteInput): QuoteResult {
     .filter((k) => (input.items![k] ?? 0) > 0)
     .map((key) => {
       const b = ITEM_BENCHMARKS[key];
-      const min = Math.round(b.min * f), max = Math.round(b.max * f);
+      const min = Math.round(b.min * f),
+        max = Math.round(b.max * f);
       const rate = input.items![key]!;
       return { key, unit: b.unit, rate, min, max, status: rate < min ? ("low" as const) : rate > max ? ("high" as const) : ("ok" as const) };
     });

@@ -48,10 +48,7 @@ export function calcTiles(input: TileInput): CalcResult<{
       { label: "With cutting / breakage", formula: `${round(tilesNet, 1)} × (1 + ${round(w * 100)}%)`, value: `${tiles} tiles` },
       { label: "Boxes", formula: `${tiles} ÷ ${perBox} per box`, value: `${boxes} boxes` },
     ],
-    assumptions: [
-      `${s.w} × ${s.h} cm tiles, ${perBox} per box (check the brand's box).`,
-      `${round(w * 100)}% for cutting and breakage (use 10–12% for diagonal laying).`,
-    ],
+    assumptions: [`${s.w} × ${s.h} cm tiles, ${perBox} per box (check the brand's box).`, `${round(w * 100)}% for cutting and breakage (use 10–12% for diagonal laying).`],
   };
 }
 
