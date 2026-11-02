@@ -13,6 +13,8 @@ import PaintCalc from "@/components/calcs/PaintCalc";
 import PlasterCalc from "@/components/calcs/PlasterCalc";
 import SteelCalc from "@/components/calcs/SteelCalc";
 import TileCalc from "@/components/calcs/TileCalc";
+import BoqCalc from "@/components/calcs/BoqCalc";
+import QuoteCalc from "@/components/calcs/QuoteCalc";
 
 const COMPONENTS: Record<CalcSlug, ComponentType<{ lang: Lang }>> = {
   "house-construction-cost-calculator": HouseCalc,
@@ -24,6 +26,8 @@ const COMPONENTS: Record<CalcSlug, ComponentType<{ lang: Lang }>> = {
   "paint-calculator": PaintCalc,
   "excavation-calculator": ExcavationCalc,
   "construction-unit-converter": ConverterCalc,
+  "house-boq-estimate": BoqCalc,
+  "contractor-quote-checker": QuoteCalc,
 };
 
 export function CalculatorPage({ lang, slug }: { lang: Lang; slug: CalcSlug }) {

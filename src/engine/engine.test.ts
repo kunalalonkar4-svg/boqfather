@@ -129,3 +129,70 @@ describe("house cost", () => {
     expect(r.values.payments.at(-1)!.cumulative).toBeCloseTo(r.values.total, 2);
   });
 });
+
+import { calcBoq } from "./boq";
+
+describe("room-based BOQ", () => {
+  const base = { floors: 2, plan: { bedrooms: 2, toilets: 2, kitchen: true, dining: true, balconies: 0 } };
+  it("2BHK G+1 lands in realistic ranges", () => {
+    const r = calcBoq(base);
+    const sum = r.sections.reduce((a, s) => a + s.subtotal, 0);
+    expect(sum).toBe(r.itemsTotal);
+    expect(r.grandTotal).toBe(r.itemsTotal + r.contingency);
+    expect(r.geometry.builtUpSqftPerFloor).toBeGreaterThan(850);
+    expect(r.geometry.builtUpSqftPerFloor).toBeLessThan(1150);
+    const steel = r.thumb.find((t) => t.key === "steel")!;
+    expect(steel.qty / r.geometry.builtUpSqft).toBeGreaterThan(3);
+    expect(steel.qty / r.geometry.builtUpSqft).toBeLessThan(5);
+    const cement = r.thumb.find((t) => t.key === "cement")!;
+    expect(cement.qty / r.geometry.builtUpSqft).toBeGreaterThan(0.33);
+    expect(cement.qty / r.geometry.builtUpSqft).toBeLessThan(0.5);
+    expect(r.perSqft).toBeGreaterThan(1400);
+    expect(r.perSqft).toBeLessThan(2400);
+  });
+  it("more bedrooms → bigger house and cost", () => {
+    const a = calcBoq(base);
+    const b = calcBoq({ ...base, plan: { ...base.plan, bedrooms: 3, toilets: 3 } });
+    expect(b.geometry.builtUpSqft).toBeGreaterThan(a.geometry.builtUpSqft);
+    expect(b.grandTotal).toBeGreaterThan(a.grandTotal);
+  });
+  it("rate override and location factor apply", () => {
+    const a = calcBoq(base);
+    const c = a.sections[1].items[0];
+    const o = calcBoq({ ...base, rateOverrides: { [c.code]: 8000 } });
+    expect(o.sections[1].items[0].amount).toBe(Math.round(c.qty * 8000));
+    const f = calcBoq({ ...base, locationFactor: 1.1 });
+    expect(f.itemsTotal).toBeGreaterThan(a.itemsTotal * 1.09);
+  });
+  it("every item has measurement rows that add up to its quantity", () => {
+    const r = calcBoq({ floors: 3, plan: { bedrooms: 3, toilets: 2, kitchen: true, dining: false, balconies: 1 } });
+    for (const s of r.sections)
+      for (const i of s.items) expect(i.rows.reduce((a, x) => a + x.q, 0)).toBeCloseTo(i.qty, Math.max(0, i.dec - 1));
+  });
+});
+
+import { checkQuote, verdictFor } from "./quote";
+
+describe("quote checker", () => {
+  it("verdict bands", () => {
+    expect(verdictFor(-20)).toBe("too_low");
+    expect(verdictFor(-10)).toBe("good");
+    expect(verdictFor(0)).toBe("fair");
+    expect(verdictFor(15)).toBe("slightly_high");
+    expect(verdictFor(30)).toBe("high");
+  });
+  it("per sqft and lump sum agree", () => {
+    const a = checkQuote({ builtUpSqft: 2000, quality: "standard", location: "tier2", scope: "turnkey", mode: "sqft", quote: 2090 });
+    const b = checkQuote({ builtUpSqft: 2000, quality: "standard", location: "tier2", scope: "turnkey", mode: "lump", quote: 4_180_000 });
+    expect(a.benchPerSqft).toBe(1900);
+    expect(a.diffPct).toBeCloseTo(10, 5);
+    expect(b.quotePerSqft).toBe(2090);
+    expect(a.verdict).toBe("slightly_high");
+    expect(a.diffAmount).toBe(380_000);
+  });
+  it("flags item rates", () => {
+    const r = checkQuote({ builtUpSqft: 1000, quality: "standard", location: "tier2", scope: "labour", mode: "sqft", quote: 420, items: { steel: 90, cement: 380, tiles: 80 } });
+    expect(r.verdict).toBe("fair");
+    expect(Object.fromEntries(r.items.map((i) => [i.key, i.status]))).toEqual({ steel: "high", cement: "ok", tiles: "low" });
+  });
+});

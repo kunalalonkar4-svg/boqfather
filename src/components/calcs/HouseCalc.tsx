@@ -133,42 +133,45 @@ export default function HouseCalc({ lang }: { lang: Lang }) {
           <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
             <h2 className="font-display text-[19px] font-bold">{d.materials_needed}</h2>
             <p className="mt-1 text-[13px] text-muted">{lang === "hi" ? "रेट बदलकर अपना खर्च देखें।" : "Change any rate to see your own cost."}</p>
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[560px] border-collapse text-[14px]">
-                <thead>
-                  <tr className="border-b border-line text-left text-[12px] text-muted">
-                    <th className="py-2 pr-2 font-semibold">{d.material}</th>
-                    <th className="py-2 pr-2 text-right font-semibold">{lang === "hi" ? "थंब रूल / sqft" : "Thumb rule / sqft"}</th>
-                    <th className="py-2 pr-2 text-right font-semibold">{d.quantity}</th>
-                    <th className="py-2 pr-2 text-right font-semibold">{d.rate} (₹)</th>
-                    <th className="py-2 text-right font-semibold">{d.amount}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {v.materials.map((m) => (
-                    <tr key={m.key} className="border-b border-[#f0ece5]">
-                      <td className="py-2.5 pr-2 font-semibold">{name(m.key, lang)}</td>
-                      <td className="py-2.5 pr-2 text-right text-muted">
-                        {m.perSqft} {name(m.unit, lang)}
-                      </td>
-                      <td className="py-2.5 pr-2 text-right font-semibold">
-                        {inr(round(m.qty))} {name(m.unit, lang)}
-                      </td>
-                      <td className="py-1.5 pr-2 text-right">
-                        <input
-                          aria-label={`${name(m.key, lang)} ${d.rate}`}
-                          inputMode="decimal"
-                          className="h-9 w-20 rounded-md border border-[#cfc9be] px-2 text-right"
-                          value={matRates[m.key]}
-                          onChange={(e) => setMatRates((s) => ({ ...s, [m.key]: e.target.value }))}
-                        />
-                      </td>
-                      <td className="py-2.5 text-right font-semibold">{rupees(m.amount)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ul className="mt-4 flex flex-col divide-y divide-[#f0ece5] border-y border-line">
+              <li className="hidden grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_96px_minmax(0,1fr)] gap-3 py-2 text-[12px] font-semibold text-muted sm:grid">
+                <span>{d.material}</span>
+                <span className="text-right">{lang === "hi" ? "थंब रूल / sqft" : "Thumb rule / sqft"}</span>
+                <span className="text-right">{d.quantity}</span>
+                <span className="text-right">{d.rate} (₹)</span>
+                <span className="text-right">{d.amount}</span>
+              </li>
+              {v.materials.map((m) => (
+                <li
+                  key={m.key}
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 py-3 text-[14px] sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_96px_minmax(0,1fr)] sm:gap-3"
+                >
+                  <span className="font-semibold">
+                    {name(m.key, lang)}
+                    <span className="ml-2 text-[12px] font-normal text-muted sm:hidden">
+                      {m.perSqft} {name(m.unit, lang)}/sqft
+                    </span>
+                  </span>
+                  <span className="hidden text-right text-muted sm:block">
+                    {m.perSqft} {name(m.unit, lang)}
+                  </span>
+                  <span className="text-right font-semibold">
+                    {inr(round(m.qty))} {name(m.unit, lang)}
+                  </span>
+                  <label className="flex items-center gap-2 text-[12px] text-muted sm:justify-end">
+                    <span className="sm:hidden">{d.rate} ₹</span>
+                    <input
+                      aria-label={`${name(m.key, lang)} ${d.rate}`}
+                      inputMode="decimal"
+                      className="h-9 w-20 rounded-md border border-[#cfc9be] px-2 text-right text-[14px] text-ink"
+                      value={matRates[m.key]}
+                      onChange={(e) => setMatRates((s) => ({ ...s, [m.key]: e.target.value }))}
+                    />
+                  </label>
+                  <span className="text-right font-semibold">{rupees(m.amount)}</span>
+                </li>
+              ))}
+            </ul>
           </section>
 
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -177,7 +180,7 @@ export default function HouseCalc({ lang }: { lang: Lang }) {
               <ul className="mt-4 flex flex-col gap-2.5">
                 {v.phases.map((p) => (
                   <li key={p.key} className="grid grid-cols-[minmax(0,1fr)_88px] items-center gap-x-3 gap-y-1 text-[14px] sm:grid-cols-[minmax(0,170px)_minmax(0,1fr)_96px]">
-                    <span className="truncate">{name(p.key, lang)}</span>
+                    <span className="min-w-0">{name(p.key, lang)}</span>
                     <span className="order-3 col-span-2 h-2.5 rounded-full bg-[#f0ece5] sm:order-none sm:col-span-1">
                       <span className="block h-2.5 rounded-full bg-amber" style={{ width: `${(p.pct / maxPhase) * 100}%` }} />
                     </span>
@@ -211,7 +214,7 @@ export default function HouseCalc({ lang }: { lang: Lang }) {
               <section className="rounded-2xl border border-line bg-white p-5 sm:p-6">
                 <h2 className="font-display text-[19px] font-bold">{d.payment_schedule}</h2>
                 <div className="mt-3 overflow-x-auto">
-                  <table className="w-full min-w-[420px] border-collapse text-[14px]">
+                  <table className="w-full border-collapse text-[14px]">
                     <thead>
                       <tr className="border-b border-line text-left text-[12px] text-muted">
                         <th className="py-2 pr-2 font-semibold">{d.milestone}</th>
@@ -224,7 +227,7 @@ export default function HouseCalc({ lang }: { lang: Lang }) {
                         <tr key={i} className="border-b border-[#f0ece5]">
                           <td className="py-2 pr-2">{p.key === "slab" ? `${floorName(p.floor ?? 0, lang)} – ${name("slab", lang)}` : name(p.key, lang)}</td>
                           <td className="py-2 pr-2 text-right text-muted">{round(p.pct, 1)}%</td>
-                          <td className="py-2 text-right font-semibold">{rupees(p.amount)}</td>
+                          <td className="whitespace-nowrap py-2 text-right font-semibold">{rupees(p.amount)}</td>
                         </tr>
                       ))}
                     </tbody>

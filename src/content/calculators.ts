@@ -9,7 +9,9 @@ export type CalcSlug =
   | "tile-calculator"
   | "paint-calculator"
   | "excavation-calculator"
-  | "construction-unit-converter";
+  | "construction-unit-converter"
+  | "house-boq-estimate"
+  | "contractor-quote-checker";
 
 interface Copy {
   name: string;
@@ -33,7 +35,7 @@ export const CALCULATORS: CalcInfo[] = [
   {
     slug: "house-construction-cost-calculator",
     mark: "₹",
-    related: ["concrete-calculator", "brick-calculator", "steel-calculator"],
+    related: ["house-boq-estimate", "contractor-quote-checker", "steel-calculator"],
     en: {
       name: "House Construction Cost",
       short: "Total cost, materials, stages",
@@ -359,6 +361,128 @@ export const CALCULATORS: CalcInfo[] = [
         { q: "1 m³ में कितने cft होते हैं?", a: "1 m³ = 35.315 cft।" },
         { q: "सीमेंट की एक बोरी का आयतन कितना है?", a: "50 किलो की बोरी 1440 kg/m³ घनत्व पर लगभग 0.0347 m³ (1.226 cft)।" },
         { q: "13'-8\" को मीटर में कैसे बदलें?", a: "13 फ़ीट 8 इंच = 13.667 फ़ीट ÷ 3.2808 = 4.166 मीटर। लंबाई बॉक्स में 13'-8\" लिखें।" },
+      ],
+    },
+  },
+  {
+    slug: "house-boq-estimate",
+    mark: "BQ",
+    related: ["house-construction-cost-calculator", "contractor-quote-checker", "steel-calculator"],
+    en: {
+      name: "Item-wise House BOQ",
+      short: "Rooms → BOQ, measurement book, Excel",
+      h1: "House BOQ Estimate – Item-wise with Measurement Book",
+      metaTitle: "House BOQ Estimate in Excel – Item-wise Cost, Measurement Book | BOQFather",
+      metaDescription:
+        "Enter floors, bedrooms, toilets and kitchen to get an item-wise BOQ of your house: excavation, RCC, steel, brickwork, plaster, flooring, doors, plumbing, electrical — with measurement book, editable rates, Excel and PDF.",
+      intro:
+        "Tell us how many floors and rooms you want. BOQFather sizes the rooms, lays out columns and walls, and builds an item-wise BOQ with a measurement book (Nos × L × B × H) for every item. Change any rate and the total updates. Download Excel or PDF.",
+      faqs: [
+        {
+          q: "How is this different from the house cost calculator?",
+          a: "The cost calculator uses a single rate per sqft. This tool measures every item — excavation, footings, columns, beams, slab, brickwork, plaster, tiles, doors and windows, plumbing, electrical — and prices it item by item, like an engineer's estimate.",
+        },
+        {
+          q: "Do I need a plan or drawing?",
+          a: "No. It assumes standard room sizes (you can change them) and a typical RCC frame. For an estimate from your own plan, the Detailed Estimate with plan upload is coming in Pro.",
+        },
+        {
+          q: "Can I change the rates?",
+          a: "Yes. Every item rate is editable and the location setting adjusts all rates for your city type. Rates are composite (material + labour).",
+        },
+        {
+          q: "Can I download the BOQ in Excel?",
+          a: "Yes. The Excel file has four sheets: Abstract, Measurement Book, Materials and Rooms. A branded PDF is also available.",
+        },
+      ],
+    },
+    hi: {
+      name: "आइटम-वार घर का BOQ",
+      short: "कमरे → BOQ, मेज़रमेंट बुक, Excel",
+      h1: "घर का BOQ एस्टिमेट – आइटम-वार, मेज़रमेंट बुक के साथ",
+      metaTitle: "घर का BOQ एस्टिमेट Excel में – आइटम-वार खर्च, मेज़रमेंट बुक | BOQFather",
+      metaDescription:
+        "मंज़िल, बेडरूम, टॉयलेट और किचन डालें और घर का आइटम-वार BOQ पाएं: खुदाई, RCC, सरिया, ईंट, प्लास्टर, फ़्लोरिंग, दरवाज़े, प्लंबिंग, बिजली — मेज़रमेंट बुक, बदलने लायक रेट, Excel और PDF के साथ।",
+      intro:
+        "बताइए कितनी मंज़िल और कितने कमरे चाहिए। BOQFather कमरों का साइज़, कॉलम और दीवारें तय करके हर आइटम का मेज़रमेंट बुक (Nos × L × B × H) के साथ आइटम-वार BOQ बनाता है। कोई भी रेट बदलें, टोटल अपने आप बदलेगा। Excel या PDF डाउनलोड करें।",
+      faqs: [
+        {
+          q: "यह घर खर्च कैलकुलेटर से अलग कैसे है?",
+          a: "खर्च कैलकुलेटर एक ही प्रति sqft रेट लगाता है। यह टूल हर आइटम नापता है — खुदाई, फ़ुटिंग, कॉलम, बीम, स्लैब, ईंट, प्लास्टर, टाइल, दरवाज़े-खिड़की, प्लंबिंग, बिजली — और इंजीनियर के एस्टिमेट की तरह हर आइटम का रेट लगाता है।",
+        },
+        {
+          q: "क्या नक्शा चाहिए?",
+          a: "नहीं। यह स्टैंडर्ड कमरों के साइज़ (जिन्हें आप बदल सकते हैं) और सामान्य RCC फ्रेम मानता है। अपने नक्शे से एस्टिमेट के लिए प्लान अपलोड वाला विस्तृत एस्टिमेट Pro में आ रहा है।",
+        },
+        {
+          q: "क्या रेट बदल सकते हैं?",
+          a: "हाँ। हर आइटम का रेट बदल सकते हैं और लोकेशन सेटिंग आपके शहर के हिसाब से सभी रेट बदल देती है। रेट माल + मज़दूरी मिलाकर हैं।",
+        },
+        {
+          q: "क्या BOQ Excel में मिलेगा?",
+          a: "हाँ। Excel में चार शीट हैं: Abstract, Measurement Book, Materials और Rooms। ब्रांडेड PDF भी मिलता है।",
+        },
+      ],
+    },
+  },
+  {
+    slug: "contractor-quote-checker",
+    mark: "✓",
+    related: ["house-boq-estimate", "house-construction-cost-calculator", "steel-calculator"],
+    en: {
+      name: "Contractor Quote Checker",
+      short: "Is your contractor's rate fair?",
+      h1: "Contractor Quote Checker – Is Your Construction Rate Fair?",
+      metaTitle: "Contractor Rate Checker India – Is ₹/sqft Construction Quote Fair? | BOQFather",
+      metaDescription:
+        "Check if your contractor's construction quote is fair. Compare ₹/sqft for turnkey or labour-only contracts with market benchmarks for your city and quality, check item rates, and get a checklist before signing.",
+      intro:
+        "Enter the contractor's rate per sqft (or total amount), the built-up area, quality and city type. BOQFather compares it with the market benchmark, flags item rates that are too high or suspiciously low, and gives you the questions to ask before you sign.",
+      faqs: [
+        {
+          q: "What is a fair turnkey construction rate in India?",
+          a: "For an RCC framed house with standard finishes, about ₹1,800–2,200 per sqft in tier-2 cities in 2026; metros are 10–20% higher, small towns and villages lower.",
+        },
+        {
+          q: "What is a fair labour-only rate?",
+          a: "Labour-only contracts (owner buys material) are typically ₹330–520 per sqft depending on quality and city.",
+        },
+        {
+          q: "Why is a very low quote a warning sign?",
+          a: "A rate far below market usually means cheaper materials, missing items such as waterproofing or electrical points, or extra bills later. Always ask for the inclusions and brands in writing.",
+        },
+        {
+          q: "How can I compare two contractors properly?",
+          a: "Ask both for an item-wise BOQ on the same specification, then compare item by item. Our item-wise BOQ tool gives you a reference BOQ to compare against.",
+        },
+      ],
+    },
+    hi: {
+      name: "ठेकेदार रेट चेकर",
+      short: "ठेकेदार का रेट सही है या नहीं?",
+      h1: "ठेकेदार रेट चेकर – आपका कंस्ट्रक्शन रेट सही है?",
+      metaTitle: "ठेकेदार रेट चेकर – ₹/sqft कंस्ट्रक्शन रेट सही है या ज़्यादा? | BOQFather",
+      metaDescription:
+        "जांचें कि ठेकेदार का कंस्ट्रक्शन रेट सही है या नहीं। टर्नकी या सिर्फ़ मज़दूरी के ₹/sqft रेट को अपने शहर और क्वालिटी के बाज़ार रेट से मिलाएं, आइटम रेट जांचें और साइन करने से पहले की चेकलिस्ट पाएं।",
+      intro:
+        "ठेकेदार का प्रति sqft रेट (या कुल रकम), बिल्ट-अप एरिया, क्वालिटी और शहर डालें। BOQFather इसे बाज़ार बेंचमार्क से मिलाता है, बहुत ज़्यादा या शक वाले कम आइटम रेट बताता है, और साइन करने से पहले पूछने वाले सवाल देता है।",
+      faqs: [
+        {
+          q: "भारत में सही टर्नकी कंस्ट्रक्शन रेट क्या है?",
+          a: "स्टैंडर्ड फ़िनिश वाले RCC फ्रेम घर के लिए 2026 में टियर-2 शहरों में लगभग ₹1,800–2,200 प्रति sqft; मेट्रो में 10–20% ज़्यादा, छोटे शहर और गांव में कम।",
+        },
+        {
+          q: "सिर्फ़ मज़दूरी का सही रेट क्या है?",
+          a: "सिर्फ़ मज़दूरी के ठेके (माल मालिक ख़रीदे) आमतौर पर क्वालिटी और शहर के हिसाब से ₹330–520 प्रति sqft होते हैं।",
+        },
+        {
+          q: "बहुत कम रेट ख़तरे की निशानी क्यों है?",
+          a: "बाज़ार से बहुत कम रेट का मतलब अक्सर सस्ता माल, छूटे हुए आइटम जैसे वॉटरप्रूफिंग या बिजली पॉइंट्स, या बाद में अलग बिल होता है। हमेशा क्या शामिल है और ब्रांड लिखित में लें।",
+        },
+        {
+          q: "दो ठेकेदारों की सही तुलना कैसे करें?",
+          a: "दोनों से एक ही स्पेसिफ़िकेशन पर आइटम-वार BOQ मांगें, फिर हर आइटम मिलाएं। हमारा आइटम-वार BOQ टूल तुलना के लिए एक रेफ़रेंस BOQ देता है।",
+        },
       ],
     },
   },

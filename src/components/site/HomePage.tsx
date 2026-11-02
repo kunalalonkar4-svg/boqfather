@@ -44,6 +44,29 @@ export function HomePage({ lang }: { lang: Lang }) {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+          <h2 className="font-display text-[26px] font-extrabold tracking-tight">{lang === "hi" ? "एडवांस्ड टूल्स — फ़्री" : "Advanced tools — free"}</h2>
+          <ul className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {([
+              ["house-boq-estimate", lang === "hi" ? "कमरे बताइए — हर आइटम का नाप, रेट और टोटल। मेज़रमेंट बुक, Excel और PDF।" : "Tell us your rooms — every item measured, priced and totalled. Measurement book, Excel and PDF."],
+              ["contractor-quote-checker", lang === "hi" ? "ठेकेदार का रेट बाज़ार से मिलाएं, ज़्यादा रेट पकड़ें, साइन से पहले 14 सवाल।" : "Compare a contractor's rate with the market, catch overpricing, 14 questions to ask before signing."],
+            ] as const).map(([slug, desc]) => {
+              const c = CALCULATORS.find((x) => x.slug === slug)!;
+              return (
+                <li key={slug}>
+                  <Link href={langPath(lang, slug)} className="flex h-full gap-4 rounded-2xl border-2 border-amber bg-white p-5 transition hover:-translate-y-0.5">
+                    <span className="font-display flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ink text-[15px] font-extrabold text-amber">{c.mark}</span>
+                    <span className="flex min-w-0 flex-col gap-1">
+                      <span className="text-[17px] font-bold">{c[lang].name} →</span>
+                      <span className="text-[14px] leading-snug text-body">{desc}</span>
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <h2 className="font-display text-[26px] font-extrabold tracking-tight">{d.home_popular}</h2>
             <Link href={langPath(lang, "calculators")} className="text-[15px] font-semibold text-steel hover:text-ink">
@@ -51,7 +74,7 @@ export function HomePage({ lang }: { lang: Lang }) {
             </Link>
           </div>
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {CALCULATORS.filter((c) => c.slug !== "house-construction-cost-calculator").map((c) => (
+            {CALCULATORS.filter((c) => !["house-construction-cost-calculator", "house-boq-estimate", "contractor-quote-checker"].includes(c.slug)).map((c) => (
               <li key={c.slug}>
                 <Link href={langPath(lang, c.slug)} className="flex h-full flex-col gap-3 rounded-2xl border border-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-amber">
                   <span className="font-display flex h-10 w-10 items-center justify-center rounded-lg bg-amber-tint text-[15px] font-extrabold text-amber-dark">{c.mark}</span>

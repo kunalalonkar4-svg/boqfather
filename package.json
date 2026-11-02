@@ -13,13 +13,16 @@
     "jspdf-autotable": "^5.0.9",
     "next": "15.5.28",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.28.2",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.2.7"
