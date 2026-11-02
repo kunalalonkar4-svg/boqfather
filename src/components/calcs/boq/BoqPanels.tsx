@@ -13,15 +13,27 @@ const FLOOR = (i: number, lang: Lang) =>
 
 /** Architect-style planning sketch of every floor (front / road at the bottom). */
 export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; names: (t: string) => string }) {
-  const nm = (t: string) => (t === "stair" ? L(lang, "Stair", "सीढ़ी") : names(t));
+  const EXTRA: Record<string, [string, string]> = {
+    stair: ["Stair", "सीढ़ी"],
+    corridor: ["Passage", "पैसेज"],
+    lobby: ["Lobby", "लॉबी"],
+    porch: ["Porch", "पोर्च"],
+    open: ["Open sit-out", "खुला सिट-आउट"],
+    dress: ["Dress", "ड्रेस"],
+    wash: ["Wash", "वॉश"],
+  };
+  const nm = (t: string) =>
+    EXTRA[t]
+      ? L(lang, EXTRA[t][0], EXTRA[t][1])
+      : names(t).replace(" / living", "").replace(" / bath", "").replace(" / lobby", "").replace(" / लिविंग", "").replace(" / बाथ", "").replace(" / लॉबी", "");
   const rgb = (c?: [number, number, number]) => (c ? `rgb(${c[0]},${c[1]},${c[2]})` : "none");
   return (
     <div className="flex flex-col gap-5">
       <p className="text-[13px] text-muted">
         {L(
           lang,
-          "Planning sketch drawn from your rooms: road at the bottom, living and parking at the front, kitchen and dining in the middle, bedrooms at the back with toilets back-to-back, staircase at the front right on every floor. Sizes are in proportion — get the final drawing from your architect.",
-          "आपके कमरों से बना प्लानिंग स्केच: नीचे सड़क, आगे हॉल और पार्किंग, बीच में किचन-डाइनिंग, पीछे बेडरूम और उनके बीच बैक-टू-बैक टॉयलेट, हर मंज़िल पर सीढ़ी आगे दाईं तरफ़। साइज़ अनुपात में हैं — फ़ाइनल ड्रॉइंग आर्किटेक्ट से बनवाएं।",
+          "Plan drawn to scale from your rooms: road at the bottom, parking and hall at the front, staircase at the front right, kitchen with dining in the middle, bedrooms at the back with attached toilets; every room opens on the passage, hall or lobby, and walls sit on the column lines. The house depth comes from this plan, so the BOQ matches it. Have your architect finalise it and check local bye-laws.",
+          "आपके कमरों से स्केल पर बना प्लान: नीचे सड़क, आगे पार्किंग और हॉल, सीढ़ी आगे दाईं तरफ़, बीच में किचन-डाइनिंग, पीछे बेडरूम और अटैच्ड टॉयलेट; हर कमरा पैसेज, हॉल या लॉबी में खुलता है और दीवारें कॉलम लाइन पर हैं। घर की गहराई इसी प्लान से निकलती है, इसलिए BOQ इसी से मेल खाता है। फ़ाइनल ड्रॉइंग आर्किटेक्ट से बनवाएं और लोकल नियम जांचें।",
         )}
       </p>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

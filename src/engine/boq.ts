@@ -6,7 +6,7 @@
 import { CEMENT_BAG_M3, CFT_PER_M3, round, SQFT_PER_M2 } from "./units";
 import { BbsResult, calcBbs } from "./bbs";
 import { BoqQuality, QUALITY_RATE_OVERRIDES, SPEC_SHEET } from "./specs";
-import { layoutFloor, SketchRect } from "./plot";
+import { layoutFloor, requiredDepth, SketchRect } from "./plot";
 
 export type RoomType = "hall" | "dining" | "kitchen" | "bedroom" | "toilet" | "passage" | "balcony" | "pooja" | "store" | "study" | "utility" | "parking" | "shop";
 
@@ -364,6 +364,8 @@ export interface BoqSpec {
   steelFrom?: "bbs" | "thumb";
   /** Buildable area of the plot (m²) — warns when a floor is bigger. */
   buildableM2?: number;
+  /** Buildable width of the plot (m): the house uses the full width; depth comes from the plan. */
+  widthM?: number;
 }
 
 /** Optional external works and services. Lengths in metres. */
@@ -581,8 +583,16 @@ export function calcBoq(input: BoqInput): BoqResult {
     const carpet = rs.reduce((a, r) => a + r.area, 0);
     const hasStair = f < F - 1 || terrace;
     const A = (carpet + (hasStair ? STAIR_FP : 0)) / 0.83;
-    const L = round(Math.sqrt(A * ASPECT), 2);
-    const B = round(A / L, 2);
+    // width from the area and plot shape; depth from the planned layout (rooms keep their sizes, plus passage / porch / stair)
+    const B = spec.widthM ? round(spec.widthM, 2) : round(A / Math.sqrt(A * ASPECT), 2);
+    const need = requiredDepth(
+      B,
+      rs.map((r) => ({ key: r.code, type: r.type, area: r.area, L: r.L, B: r.B, windows: r.windows, vents: r.vents })),
+      hasStair ? STAIR_FP : 0,
+      f === 0,
+      WE,
+    );
+    const L = round(spec.widthM ? need : Math.max(A / B, need), 2);
     const LC = L - COL,
       BC = B - COL;
     const NBL = Math.max(1, Math.ceil(LC / 4.2)),

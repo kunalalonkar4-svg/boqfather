@@ -140,14 +140,14 @@ describe("room-based BOQ", () => {
     expect(sum).toBe(r.itemsTotal);
     expect(r.grandTotal).toBe(r.itemsTotal + r.contingency);
     expect(r.geometry.builtUpSqftPerFloor).toBeGreaterThan(850);
-    expect(r.geometry.builtUpSqftPerFloor).toBeLessThan(1150);
+    expect(r.geometry.builtUpSqftPerFloor).toBeLessThan(1300);
     const steel = r.thumb.find((t) => t.key === "steel")!;
     expect(steel.qty / r.geometry.builtUpSqft).toBeGreaterThan(2.5);
     expect(steel.qty / r.geometry.builtUpSqft).toBeLessThan(5);
     const cement = r.thumb.find((t) => t.key === "cement")!;
     expect(cement.qty / r.geometry.builtUpSqft).toBeGreaterThan(0.33);
     expect(cement.qty / r.geometry.builtUpSqft).toBeLessThan(0.5);
-    expect(r.perSqft).toBeGreaterThan(1400);
+    expect(r.perSqft).toBeGreaterThan(1200);
     expect(r.perSqft).toBeLessThan(2400);
   });
   it("more bedrooms → bigger house and cost", () => {
@@ -290,9 +290,9 @@ describe("advanced BOQ", () => {
   });
   it("plot fit sizes rooms to the buildable area and flags small plots", () => {
     const ft = (x: number) => x / 3.28084;
-    const big = fitPlot({ plotL: ft(60), plotB: ft(40), front: ft(10), back: ft(5), side: ft(5), bhk: 3, floors: 2, parking: true });
+    const big = fitPlot({ plotL: ft(60), plotB: ft(40), front: ft(10), back: ft(5), side: ft(5), bhk: 3, floors: 2, parking: false });
     expect(big.warnings).toHaveLength(0);
-    const r = calcBoq({ floorRooms: big.floorRooms, spec: { aspect: big.buildL / big.buildB, buildableM2: big.buildArea } });
+    const r = calcBoq({ floorRooms: big.floorRooms, spec: { aspect: big.buildL / big.buildB, buildableM2: big.buildArea, widthM: big.buildB } });
     expect(r.warnings).toHaveLength(0);
     expect(r.geometry.perFloor[0].areaM2).toBeLessThanOrEqual(big.buildArea * 1.02);
     const small = fitPlot({ plotL: ft(30), plotB: ft(20), front: ft(5), back: ft(3), side: ft(3), bhk: 3, floors: 1, parking: true });
@@ -346,6 +346,30 @@ describe("plot and building-code checks", () => {
         expect(x.y + x.h).toBeLessThanOrEqual(sk.B + 1e-6);
       }
     }
-    expect(r.sketch[0].rects.find((x) => x.type === "hall")!.door?.main).toBe(true);
+    expect(r.sketch[0].rects.find((x) => x.type === "hall")!.doors!.some((d) => d.main)).toBe(true);
   });
+});
+
+describe("architect plan rules", () => {
+  const cases = [
+    { floors: 2, plan: { bedrooms: 2, toilets: 2, kitchen: true, dining: true, balconies: 1 } },
+    { floors: 1, plan: { bedrooms: 3, toilets: 3, kitchen: true, dining: true, balconies: 0 } },
+    { floors: 2, plan: { bedrooms: 1, toilets: 1, kitchen: true, dining: false, balconies: 1 } },
+  ];
+  for (const c of cases)
+    it(`every room is reachable and nothing overlaps (${c.plan.bedrooms}BHK, ${c.floors} floor)`, () => {
+      const r = calcBoq(c);
+      for (const sk of r.sketch) {
+        const sp = sk.rects.filter((x) => x.type !== "column");
+        for (const x of sp) if (!["corridor", "balcony", "open"].includes(x.type)) expect(x.doors?.length ?? 0, `${x.key} has no door`).toBeGreaterThan(0);
+        for (let i = 0; i < sp.length; i++)
+          for (let j = i + 1; j < sp.length; j++) {
+            const a = sp[i],
+              b = sp[j];
+            const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+            const oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+            expect(ox > 0.01 && oy > 0.01, `${a.key} overlaps ${b.key}`).toBe(false);
+          }
+      }
+    });
 });

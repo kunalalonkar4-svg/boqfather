@@ -28,7 +28,12 @@ function drawPlan(doc: Pdf, P: Primitives, ox: number, oy: number, sc: number) {
       .setFont("helvetica", t.bold ? "bold" : "normal")
       .setFontSize(Math.max(4.5, t.size * sc * 2.83))
       .setTextColor(...t.color);
-    doc.text(t.text.replace(/×/g, "x"), X(t.x), Y(t.y), { align: t.anchor === "start" ? "left" : t.anchor === "end" ? "right" : "center", angle: t.rotate ? -t.rotate : 0 });
+    const txt = t.text.replace(/×/g, "x");
+    if (t.rotate) {
+      // jsPDF rotates about the start of the baseline: shift so the text is centred like the SVG
+      const tw = doc.getTextWidth(txt);
+      doc.text(txt, X(t.x), Y(t.y) + (t.anchor === "middle" ? tw / 2 : 0), { angle: -t.rotate });
+    } else doc.text(txt, X(t.x), Y(t.y), { align: t.anchor === "start" ? "left" : t.anchor === "end" ? "right" : "center" });
   }
 }
 
@@ -385,8 +390,8 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     columnStyles: { 0: { cellWidth: 42, fontStyle: "bold" } },
   });
   // Floor plans (planning sketch), one floor per half page
-  const nm = (t: string) =>
-    t === "stair" ? "Stair" : (ROOM_DEFS[t as keyof typeof ROOM_DEFS]?.name.en ?? t).replace(" / living", "").replace(" / bath", "").replace(" / lobby", "");
+  const EXTRA: Record<string, string> = { stair: "Stair", corridor: "Passage", lobby: "Lobby", porch: "Porch", open: "Open sit-out", dress: "Dress", wash: "Wash" };
+  const nm = (t: string) => EXTRA[t] ?? (ROOM_DEFS[t as keyof typeof ROOM_DEFS]?.name.en ?? t).replace(" / living", "").replace(" / bath", "").replace(" / lobby", "");
   const floorNames = ["GROUND FLOOR PLAN", "FIRST FLOOR PLAN", "SECOND FLOOR PLAN", "THIRD FLOOR PLAN"];
   r.sketch.forEach((sk, i) => {
     const top = i % 2 === 0;
@@ -407,7 +412,7 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
         .setFont("helvetica", "normal")
         .setFontSize(7)
         .setTextColor(92, 90, 85)
-        .text("Planning sketch from the room list - areas in proportion; final drawing by your architect", W - M, boxY + 3, { align: "right" });
+        .text("Drawn to scale from the room list - finalise with your architect and local bye-laws", W - M, boxY + 3, { align: "right" });
     const sc = Math.min((W - 2 * M) / P.bounds.w, (boxH - 6) / P.bounds.h);
     const ox = M + (W - 2 * M - P.bounds.w * sc) / 2 - P.bounds.x * sc;
     const oy = boxY + 6 - P.bounds.y * sc;

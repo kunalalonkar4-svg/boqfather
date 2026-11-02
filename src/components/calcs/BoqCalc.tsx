@@ -109,7 +109,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
   const [busy, setBusy] = useState<"" | "pdf" | "xls">("");
   // plot-first start
   const [plot, setPlot] = useState({ L: "40", B: "30", front: "5", back: "3", side: "3", bhk: "2", parking: "no" as "yes" | "no" });
-  const [plotFit, setPlotFit] = useState<{ aspect: number; buildableM2: number; perimeterM: number; warnings: string[] } | null>(null);
+  const [plotFit, setPlotFit] = useState<{ aspect: number; buildableM2: number; widthM: number; perimeterM: number; warnings: string[] } | null>(null);
   // finish level, walls, extras, imported rates
   const [quality, setQuality] = useState<BoqQuality>("standard");
   const [wall, setWall] = useState<"brick" | "aac">("brick");
@@ -166,7 +166,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
       stairToTerrace: terrace === "yes",
       quality,
       wall,
-      ...(plotFit ? { aspect: plotFit.aspect, buildableM2: plotFit.buildableM2 } : {}),
+      ...(plotFit ? { aspect: plotFit.aspect, buildableM2: plotFit.buildableM2, widthM: plotFit.widthM } : {}),
     };
   }, [floorH, winW, winH, plinth, terrace, quality, wall, plotFit]);
 
@@ -214,7 +214,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     if (!(pL > 3 && pB > 3)) return;
     const fit = fitPlot({ plotL: pL, plotB: pB, front: m(plot.front), back: m(plot.back), side: m(plot.side), bhk: Number(plot.bhk), floors: 4, parking: plot.parking === "yes" });
     setPlans(fit.floorRooms.map((list) => list.map((r) => mk(r.type, { L: ft(r.L), B: ft(r.B), ...(r.wc ? { wc: r.wc } : {}) }))));
-    setPlotFit({ aspect: fit.buildL / fit.buildB, buildableM2: fit.buildArea, perimeterM: 2 * (pL + pB), warnings: fit.warnings });
+    setPlotFit({ aspect: fit.buildL / fit.buildB, buildableM2: fit.buildArea, widthM: fit.buildB, perimeterM: 2 * (pL + pB), warnings: fit.warnings });
     setTab(0);
   };
 
