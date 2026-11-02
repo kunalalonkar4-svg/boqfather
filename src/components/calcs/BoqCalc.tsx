@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BOQ_RATES,
   BoqExtras,
@@ -136,7 +136,9 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
   });
   const [rateSet, setRateSet] = useState<Partial<Record<RateKey, number>> | null>(null);
   const [rateMsg, setRateMsg] = useState("");
-  const [view, setView] = useState<"boq" | "sketch" | "spec" | "bbs" | "plan" | "compare">("boq");
+  const [view, setView] = useState<"boq" | "sketch" | "spec" | "bbs" | "plan" | "compare">("sketch");
+  // plot-first by default: every change to the plot re-plans the rooms, the drawing and the estimate
+  const [plotLive, setPlotLive] = useState(true);
   const setE = (patch: Partial<typeof ex>) => setEx((e) => ({ ...e, ...patch }));
 
   const F = Number(floorCount);
@@ -215,8 +217,13 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     const fit = fitPlot({ plotL: pL, plotB: pB, front: m(plot.front), back: m(plot.back), side: m(plot.side), bhk: Number(plot.bhk), floors: 4, parking: plot.parking === "yes" });
     setPlans(fit.floorRooms.map((list) => list.map((r) => mk(r.type, { L: ft(r.L), B: ft(r.B), ...(r.wc ? { wc: r.wc } : {}) }))));
     setPlotFit({ aspect: fit.buildL / fit.buildB, buildableM2: fit.buildArea, widthM: fit.buildB, perimeterM: 2 * (pL + pB), warnings: fit.warnings });
-    setTab(0);
   };
+  useEffect(() => {
+    if (!plotLive) return;
+    const t = setTimeout(applyPlot, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plot, plotLive]);
 
   const rateSheet = async (kind: "down" | "up", file?: File) => {
     const m = await import("@/lib/boqExport");
@@ -266,7 +273,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     <div className="flex flex-col gap-5 pb-20 lg:pb-0">
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-5 rounded-2xl border border-line bg-white p-4 sm:p-6">
-          <details className="group rounded-xl border-2 border-dashed border-amber bg-amber-tint/40 p-3" open={!plotFit}>
+          <details className="group rounded-xl border-2 border-dashed border-amber bg-amber-tint/40 p-3" open>
             <summary className="cursor-pointer list-none text-[14px] font-extrabold text-amber-dark">
               {hi ? "⚡ प्लॉट साइज़ से शुरू करें (आसान)" : "⚡ Start from your plot size (easiest)"}
               {plotFit && (
@@ -317,12 +324,32 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                 />
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <button type="button" onClick={applyPlot} className="inline-flex h-11 items-center rounded-lg bg-ink px-4 text-[14px] font-extrabold text-white">
-                  {hi ? "कमरे अपने आप बनाएं →" : "Make rooms for this plot →"}
-                </button>
-                {plotFit && (
-                  <button type="button" onClick={() => setPlotFit(null)} className="text-[13px] font-semibold text-muted underline">
-                    {hi ? "प्लॉट हटाएं" : "Clear plot"}
+                {plotLive ? (
+                  <span className="inline-flex items-center gap-2 rounded-lg bg-[#e5f4ec] px-3 py-2 text-[13px] font-bold text-good">
+                    ● {hi ? "प्लॉट बदलते ही नक्शा और एस्टिमेट अपने आप बनते हैं" : "Plan and estimate update as you change the plot"}
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPlotLive(true);
+                      applyPlot();
+                    }}
+                    className="inline-flex h-11 items-center rounded-lg bg-ink px-4 text-[14px] font-extrabold text-white"
+                  >
+                    {hi ? "प्लॉट से फिर प्लान बनाएं →" : "Plan from the plot again →"}
+                  </button>
+                )}
+                {plotLive && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPlotLive(false);
+                      setPlotFit(null);
+                    }}
+                    className="text-[13px] font-semibold text-muted underline"
+                  >
+                    {hi ? "प्लॉट के बिना खुद कमरे डालें" : "Enter rooms without a plot"}
                   </button>
                 )}
               </div>

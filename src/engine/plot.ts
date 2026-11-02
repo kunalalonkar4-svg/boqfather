@@ -180,7 +180,7 @@ function laneTotal(l: Slot[]) {
   return l.reduce((t, x) => t + x.depth, 0) + IW * Math.max(0, l.length - 1);
 }
 
-const MIN_D: Partial<Record<RoomType, number>> = { bedroom: 2.7, hall: 3.0, kitchen: 2.1, dining: 2.1, toilet: 1.2, study: 2.4, pooja: 1.0, store: 1.0, utility: 1.0, shop: 3.0 };
+const MIN_D: Partial<Record<RoomType, number>> = { bedroom: 2.7, hall: 3.0, kitchen: 2.1, dining: 2.1, toilet: 1.2, study: 2.4, pooja: 1.5, store: 1.2, utility: 1.2, shop: 3.0 };
 
 /** Distribute the rooms of one floor into lanes (front to back) and size the lanes so both come out about equally deep. */
 function makeLanes(W: number, idTarget: number, rooms: LayoutRoom[], stairArea: number, ground: boolean, wall: number): Lanes {
@@ -247,7 +247,7 @@ function makeLanes(W: number, idTarget: number, rooms: LayoutRoom[], stairArea: 
           let tw = 1.5;
           for (let k = 0; k < 3; k++) {
             const d = Math.max(x.minD, x.area / (w - tw - IW));
-            tw = Math.max(1.2, Math.min(1.7, x.side.area / d));
+            tw = Math.max(1.2, Math.min(1.7, w - 2.5 - IW, x.side.area / d));
             x.depth = d;
           }
           x.sideW = tw;
@@ -272,8 +272,9 @@ function makeLanes(W: number, idTarget: number, rooms: LayoutRoom[], stairArea: 
     }
     // choose the lane split so both lanes come out equally deep (stair lane ≥ 2.3 m, parking lane ≥ 3 m)
     const minA = by("parking").length ? 3.0 : 2.7;
-    let lo = right.some((x) => x.kind === "bedroom" || x.kind === "study") ? 2.5 : STAIR_W,
-      hi = Math.max(STAIR_W, avail - minA);
+    // keep the lanes in proportion (each 40–60% of the width) so no lane turns into a strip
+    let lo = Math.max(right.some((x) => x.kind === "bedroom" || x.kind === "study") ? 2.5 : STAIR_W, avail * 0.4),
+      hi = Math.max(lo, Math.min(avail - minA, avail * 0.6));
     for (let it = 0; it < 24; it++) {
       b = (lo + hi) / 2;
       a = avail - b;
@@ -347,9 +348,7 @@ function makeLanes(W: number, idTarget: number, rooms: LayoutRoom[], stairArea: 
     const st = lane.find((x) => x.kind === "stair");
     if (st && w - STAIR_W - IW >= 1.5) {
       const pool = two ? [...right, ...left] : left;
-      const pick =
-        pool.find((x) => x.room && ["utility", "store", "pooja"].includes(x.room.type) && !x.side) ??
-        (ground && by("parking").length ? undefined : pool.find((x) => x.room?.type === "toilet" && !x.attachedTo && !x.side));
+      const pick = pool.find((x) => x.room && ["utility", "store", "pooja"].includes(x.room.type) && !x.side);
       if (pick) {
         for (const l of [left, right]) {
           const k = l.indexOf(pick);
@@ -359,9 +358,122 @@ function makeLanes(W: number, idTarget: number, rooms: LayoutRoom[], stairArea: 
       } else st.side = { kind: "corridor", key: "LOBBY", depth: 0, area: 0, minD: 0 };
     }
   }
-  size();
+  // keep the lane widths found above; drop any second space that ended up too narrow
+  applyWidths();
+  for (const [lane, w] of lanesW) {
+    for (let i = 0; i < lane.length; i++) {
+      const x = lane[i];
+      if (!x.side) continue;
+      const sw = x.sideW ?? 0;
+      const mainW = w - sw - IW;
+      const ok = x.kind === "stair" ? sw >= 1.5 || (x.side.key === "LOBBY" && sw >= 0.9) : x.side.kind === "kitchen" ? sw >= 2.1 && mainW >= 2.4 : sw >= 1.2 && mainW >= 2.5;
+      if (ok) continue;
+      const side = x.side;
+      x.side = undefined;
+      x.sideW = undefined;
+      if (side.room) {
+        if (side.kind === "kitchen") lane.splice(i, 0, side);
+        else lane.splice(i + 1, 0, side);
+        i++;
+      }
+    }
+  }
+  applyWidths();
   void idTarget;
   return { two, a, b, c, left, right };
+}
+
+/** Shared edge between two spaces separated by one wall: side of `p` it is on and the overlap span along that edge (relative to p). */
+function sharedEdge(p: SketchRect, q: SketchRect): { side: Side; from: number; to: number } | null {
+  const G = 0.2; // a wall between them (115 / 230 mm)
+  const ox0 = Math.max(p.x, q.x),
+    ox1 = Math.min(p.x + p.w, q.x + q.w);
+  const oy0 = Math.max(p.y, q.y),
+    oy1 = Math.min(p.y + p.h, q.y + q.h);
+  if (ox1 - ox0 > 0.05) {
+    const gapTop = p.y - (q.y + q.h);
+    if (gapTop >= -0.01 && gapTop <= G) return { side: "top", from: ox0 - p.x, to: ox1 - p.x };
+    const gapBot = q.y - (p.y + p.h);
+    if (gapBot >= -0.01 && gapBot <= G) return { side: "bottom", from: ox0 - p.x, to: ox1 - p.x };
+  }
+  if (oy1 - oy0 > 0.05) {
+    const gapL = p.x - (q.x + q.w);
+    if (gapL >= -0.01 && gapL <= G) return { side: "left", from: oy0 - p.y, to: oy1 - p.y };
+    const gapR = q.x - (p.x + p.w);
+    if (gapR >= -0.01 && gapR <= G) return { side: "right", from: oy0 - p.y, to: oy1 - p.y };
+  }
+  return null;
+}
+
+const OPEN_KINDS: SketchKind[] = ["corridor", "dining", "porch", "dress", "open"];
+/** Preferred spaces to open into (circulation first, private rooms last). */
+const VIA_RANK: Partial<Record<SketchKind, number>> = { corridor: 0, hall: 1, dining: 2, porch: 3, stair: 4, dress: 5, kitchen: 6, study: 7, bedroom: 8, toilet: 9 };
+
+/** Which spaces cannot be reached from the entrance (ground floor) or the staircase (upper floors). */
+export function unreachableSpaces(rects: SketchRect[], W: number, D: number, wall: number): string[] {
+  return reach(rects, W, D, wall).unreached.map((r) => r.key);
+}
+
+function reach(rects: SketchRect[], W: number, D: number, wall: number) {
+  const sp = rects.filter((r) => r.type !== "column");
+  const links = new Map<SketchRect, Set<SketchRect>>();
+  const link = (a: SketchRect, b: SketchRect) => {
+    if (!links.has(a)) links.set(a, new Set());
+    if (!links.has(b)) links.set(b, new Set());
+    links.get(a)!.add(b);
+    links.get(b)!.add(a);
+  };
+  const roots: SketchRect[] = [];
+  for (const p of sp) {
+    for (const d of p.doors ?? []) {
+      const ext =
+        (d.side === "bottom" && p.y + p.h >= D - wall - 0.05) ||
+        (d.side === "top" && p.y <= wall + 0.05) ||
+        (d.side === "left" && p.x <= wall + 0.05) ||
+        (d.side === "right" && p.x + p.w >= W - wall - 0.05);
+      if (ext) roots.push(p);
+      for (const q of sp) {
+        if (q === p) continue;
+        const e = sharedEdge(p, q);
+        if (e && e.side === d.side && Math.min(e.to, d.at + d.width) - Math.max(e.from, d.at) > 0.25) link(p, q);
+      }
+    }
+  }
+  const stair = sp.find((r) => r.type === "stair");
+  if (stair) roots.push(stair);
+  const seen = new Set<SketchRect>(roots);
+  const queue = [...roots];
+  while (queue.length) {
+    const x = queue.shift()!;
+    for (const y of links.get(x) ?? []) if (!seen.has(y)) (seen.add(y), queue.push(y));
+  }
+  return { sp, seen, unreached: sp.filter((r) => !seen.has(r) && r.type !== "open") };
+}
+
+/** Make sure every space can be reached: open a door from each cut-off space into its best reachable neighbour. */
+function connectAll(rects: SketchRect[], W: number, D: number, wall: number) {
+  for (let guard = 0; guard < 20; guard++) {
+    const { sp, seen, unreached } = reach(rects, W, D, wall);
+    if (!unreached.length) return;
+    let changed = false;
+    for (const p of unreached) {
+      const cands = sp
+        .filter((q) => q !== p && seen.has(q) && q.type !== "open" && q.type !== "toilet")
+        .map((q) => ({ q, e: sharedEdge(p, q) }))
+        .filter((c): c is { q: SketchRect; e: { side: Side; from: number; to: number } } => !!c.e && c.e.to - c.e.from >= 0.7)
+        .sort((x, y) => (VIA_RANK[x.q.type] ?? 5) - (VIA_RANK[y.q.type] ?? 5) || y.e.to - y.e.from - (x.e.to - x.e.from));
+      const c = cands[0];
+      if (!c) continue;
+      const open = OPEN_KINDS.includes(p.type) || (OPEN_KINDS.includes(c.q.type) && p.type !== "toilet" && p.type !== "bedroom" && p.type !== "kitchen");
+      const want = p.type === "toilet" ? 0.75 : open ? 1.0 : 0.9;
+      const wd = Math.min(want, c.e.to - c.e.from - 0.1);
+      p.doors = p.doors ?? [];
+      p.doors.push({ side: c.e.side, at: c.e.from + Math.max(0.05, Math.min(0.15, c.e.to - c.e.from - wd - 0.05)), width: wd, ...(open ? { open: true } : {}) });
+      seen.add(p);
+      changed = true;
+    }
+    if (!changed) return;
+  }
 }
 
 const twoLanes = (W: number, wall: number) => W - 2 * wall >= 2.7 + IW + 1.0 + IW + STAIR_W;
@@ -421,31 +533,39 @@ function hubFloor(W: number, D: number | null, rooms: LayoutRoom[], stairArea: n
   if (stairArea > 0 && !stairBeside) mid.push({ key: "STAIR", kind: "stair", area: 0, fixedW: Math.min(STAIR_W, iw * 0.45) });
   if (!by("dining").length && mid.length) mid.push({ key: "HUB", kind: "corridor", area: 3 });
   if (mid.length) rows.push({ ...split(mid, stairBeside ? 2.4 : STAIR_D), flex: true });
-  // toilets / pooja / store / wash either side of a 1 m lobby
+  // back zone
   const smalls = [...by("toilet"), ...by("pooja"), ...by("store"), ...by("utility"), ...by("study")];
   const bedrooms = [...by("bedroom")].sort((x, y) => y.area - x.area);
-  if (smalls.length || bedrooms.length) {
-    const lobbyW = 1.7;
-    const half = (iw - lobbyW - 2 * IW) / 2;
-    const L: LayoutRoom[] = [],
-      Rr: LayoutRoom[] = [];
-    smalls.forEach((x, i) => (i % 2 === 0 ? L : Rr).push(x));
-    const sideCells = (list: LayoutRoom[]): Cell[] => list.map((x) => ({ key: x.key, kind: x.type, room: x, w: (half - IW * (list.length - 1)) / list.length }));
-    const cells: Cell[] = [
-      ...(L.length ? sideCells(L) : [{ key: "OPEN-L", kind: "open" as SketchKind, w: half }]),
-      { key: "LOBBY", kind: "corridor", w: lobbyW },
-      ...(Rr.length ? sideCells(Rr) : [{ key: "OPEN-R", kind: "open" as SketchKind, w: half }]),
-    ];
-    const depth = Math.max(1.5, Math.min(2.4, ...cells.filter((c) => c.room).map((c) => c.room!.area / c.w)));
-    rows.push({ cells, depth });
-  }
-  // bedrooms in pairs; a lobby continues between them when more rows follow
-  for (let i = 0; i < bedrooms.length; i += 2) {
-    const pair = bedrooms.slice(i, i + 2);
-    const more = i + 2 < bedrooms.length;
-    const cells = pair.map((b) => cellOf(b));
-    const withLobby: CellIn[] = more ? [cells[0], { key: `LOBBY${i}`, kind: "corridor", area: 0, fixedW: 1.0 }, ...cells.slice(1)] : cells;
-    rows.push({ ...split(withLobby, 2.7), flex: true });
+  if (bedrooms.length <= 2 && smalls.length <= 2) {
+    // up to 2 bedrooms: toilets either side of a lobby, then the two bedrooms side by side, both opening on the lobby
+    if (smalls.length || bedrooms.length) {
+      const lobbyW = 1.7;
+      const half = (iw - lobbyW - 2 * IW) / 2;
+      const cells: Cell[] = [
+        smalls[0] ? { key: smalls[0].key, kind: smalls[0].type, room: smalls[0], w: half } : { key: "OPEN-L", kind: "open", w: half },
+        { key: "LOBBY", kind: "corridor", w: lobbyW },
+        smalls[1] ? { key: smalls[1].key, kind: smalls[1].type, room: smalls[1], w: half } : { key: "OPEN-R", kind: "open", w: half },
+      ];
+      const depth = Math.max(1.5, Math.min(2.4, ...cells.filter((c) => c.room).map((c) => c.room!.area / c.w)));
+      rows.push({ cells, depth });
+    }
+    if (bedrooms.length) {
+      const bw = bedrooms.length === 2 ? (iw - IW) / 2 : iw;
+      const depth = Math.max(2.7, ...bedrooms.map((bd) => bd.area / bw));
+      rows.push({ cells: bedrooms.map((bd) => ({ key: bd.key, kind: "bedroom", room: bd, w: bw })), depth, flex: true });
+    }
+  } else {
+    // more rooms: a 1 m side passage along the right wall; toilets in pairs and bedrooms one per row beside it
+    const roomW = iw - 1.0 - IW;
+    let n = 0;
+    const lobby = (): Cell => ({ key: n++ === 0 ? "LOBBY" : `LOBBY${n}`, kind: "corridor", w: 1.0 });
+    for (let i = 0; i < smalls.length; i += 2) {
+      const pair = smalls.slice(i, i + 2);
+      const w = pair.length === 2 ? (roomW - IW) / 2 : roomW;
+      const depth = Math.max(1.5, Math.min(2.4, ...pair.map((x) => x.area / w)));
+      rows.push({ cells: [...pair.map((x) => ({ key: x.key, kind: x.type, room: x, w })), lobby()], depth });
+    }
+    for (const bd of bedrooms) rows.push({ cells: [{ key: bd.key, kind: "bedroom", room: bd, w: roomW }, lobby()], depth: Math.max(2.7, bd.area / roomW), flex: true });
   }
 
   const total = () => rows.reduce((t, r) => t + r.depth, 0) + IW * Math.max(0, rows.length - 1);
@@ -560,6 +680,7 @@ function hubFloor(W: number, D: number | null, rooms: LayoutRoom[], stairArea: n
       for (let i = 0; i < room.vents && pref.length; i++) r.windows!.push({ side: pref[(nW + i) % pref.length], vent: true });
     }
   }
+  connectAll(out, W, D, wall);
   // columns on the side walls every ≤ 4.2 m
   const nY = Math.max(1, Math.ceil(D / 4.2));
   for (let i = 0; i <= nY; i++) {
@@ -635,7 +756,7 @@ export function layoutFloor(W: number, D: number, rooms: LayoutRoom[], stairArea
         mx = sideOnLeft ? x + sw + IW : x;
         ww = ww - sw - IW;
         const td = s.side.kind === "toilet" ? Math.max(1.5, Math.min(2.4, s.side.area / sw)) : s.depth;
-        if (s.side.kind === "toilet" && s.depth - td - IW >= 0.9) {
+        if (s.side.kind === "toilet" && s.kind === "bedroom" && s.depth - td - IW >= 0.9) {
           // toilet at the back of the strip, walk-in dress in front of it (opens to the bedroom)
           out.push({
             key: s.side.key,
@@ -885,6 +1006,8 @@ export function layoutFloor(W: number, D: number, rooms: LayoutRoom[], stairArea
     void at;
   }
   for (const r of out) delete (r as SketchRect & { slot?: Slot }).slot;
+
+  connectAll(out, W, D, wall);
 
   // ---- columns on the lane walls and outer walls, spaced ≤ 4.2 m along the depth
   const colX = two ? [X0 - wall / 2, X0 + a + IW / 2, X0 + a + IW + c + IW / 2, X0 + iw + wall / 2] : [X0 - wall / 2, X0 + a + IW / 2, X0 + iw + wall / 2];
