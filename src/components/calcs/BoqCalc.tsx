@@ -1346,7 +1346,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
         </div>
 
         {res ? (
-          <div className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-4">
+          <div className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-20">
             <section
               id="boq-total"
               aria-live="polite"
@@ -1504,7 +1504,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
         <>
           <nav
             aria-label={hi ? "रिपोर्ट के हिस्से" : "Report sections"}
-            className="sticky top-0 z-10 -mx-1 flex gap-1.5 overflow-x-auto bg-ground px-1 py-2"
+            className="sticky top-16 z-10 -mx-1 flex gap-1.5 overflow-x-auto bg-ground px-1 py-2"
           >
             {(
               [

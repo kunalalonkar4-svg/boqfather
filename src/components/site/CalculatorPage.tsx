@@ -85,8 +85,16 @@ export function CalculatorPage({ lang, slug }: { lang: Lang; slug: CalcSlug }) {
         lang={lang}
         altPath={langPath(lang === "en" ? "hi" : "en", slug)}
       />
-      <main lang={lang} className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6">
-        <nav aria-label="Breadcrumb" className="text-[13px] text-muted">
+      <main lang={lang} className="relative">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[380px] bg-[radial-gradient(circle_at_1px_1px,rgba(22,24,26,0.07)_1px,transparent_0)] [background-size:22px_22px] [mask-image:linear-gradient(to_bottom,black,transparent)]"
+        />
+        <div className="relative mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6 sm:pt-10">
+        <nav
+          aria-label="Breadcrumb"
+          className="w-fit max-w-full truncate rounded-full border border-line bg-white/80 px-3.5 py-1.5 text-[13px] text-muted shadow-sm"
+        >
           <Link href={langPath(lang)} className="hover:text-ink">
             {SITE_NAME}
           </Link>
@@ -97,23 +105,23 @@ export function CalculatorPage({ lang, slug }: { lang: Lang; slug: CalcSlug }) {
           <span className="mx-1.5">/</span>
           <span className="text-ink">{c.name}</span>
         </nav>
-        <div className="mt-4 mb-6 flex max-w-3xl flex-col gap-2">
-          <h1 className="font-display text-[28px] font-extrabold leading-tight tracking-tight sm:text-[36px]">
+        <div className="mb-8 mt-6 flex max-w-3xl flex-col gap-3">
+          <h1 className="font-display text-[32px] font-extrabold leading-[1.06] tracking-tight [text-wrap:balance] sm:text-[46px]">
             {c.h1}
           </h1>
-          <p className="text-[16px] leading-relaxed text-body">{c.intro}</p>
+          <p className="text-[17px] leading-relaxed text-body">{c.intro}</p>
         </div>
 
         <Calc lang={lang} />
 
         <section className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           <div>
-            <h2 className="font-display text-[22px] font-bold">{d.faq}</h2>
+            <h2 className="font-display text-[26px] font-extrabold tracking-tight">{d.faq}</h2>
             <div className="mt-4 flex flex-col gap-2">
               {c.faqs.map((f) => (
                 <details
                   key={f.q}
-                  className="group rounded-xl border border-line bg-white px-4 py-3 open:pb-4"
+                  className="group rounded-2xl border border-line bg-white px-5 py-4 open:pb-5 open:shadow-sm"
                 >
                   <summary className="cursor-pointer list-none text-[15px] font-semibold marker:hidden">
                     <span className="flex items-start justify-between gap-3">
@@ -134,7 +142,7 @@ export function CalculatorPage({ lang, slug }: { lang: Lang; slug: CalcSlug }) {
             </div>
           </div>
           <aside>
-            <h2 className="font-display text-[22px] font-bold">{d.related}</h2>
+            <h2 className="font-display text-[26px] font-extrabold tracking-tight">{d.related}</h2>
             <ul className="mt-4 flex flex-col gap-2">
               {calc.related.map((s) => {
                 const r = getCalc(s)!;
@@ -142,7 +150,7 @@ export function CalculatorPage({ lang, slug }: { lang: Lang; slug: CalcSlug }) {
                   <li key={s}>
                     <Link
                       href={langPath(lang, s)}
-                      className="flex items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 hover:border-amber"
+                      className="flex items-center gap-3 rounded-2xl border border-line bg-white px-4 py-3 transition hover:-translate-y-0.5 hover:border-amber hover:shadow-md"
                     >
                       <span className="font-display flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-tint text-[14px] font-extrabold text-amber-dark">
                         {r.mark}
@@ -165,6 +173,8 @@ export function CalculatorPage({ lang, slug }: { lang: Lang; slug: CalcSlug }) {
             </p>
           </aside>
         </section>
+        <div className="h-16" />
+        </div>
       </main>
       <SiteFooter lang={lang} />
       <script

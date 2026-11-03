@@ -18,67 +18,101 @@ export function Logo() {
   );
 }
 
-/** Top bar. `altPath` is the same page in the other language. */
+/** Top bar: white, stays on top while scrolling. `altPath` is the same page in the other language. */
 export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const d = t(lang);
+  const hi = lang === "hi";
+  const links: { href: string; label: string; strong?: boolean; pro?: boolean }[] = [
+    { href: langPath(lang, "naksha"), label: hi ? "नक्शे" : "Naksha", strong: true },
+    { href: langPath(lang, "house-boq-estimate"), label: hi ? "BOQ एस्टिमेट" : "BOQ estimate" },
+    { href: langPath(lang, "plan-to-estimate"), label: hi ? "नक्शे से एस्टिमेट" : "Plan → Estimate", pro: true },
+    { href: langPath(lang, "house-construction-cost"), label: d.nav_house },
+    { href: langPath(lang, "calculators"), label: d.nav_calculators },
+    { href: langPath(lang, "house-construction-guide"), label: hi ? "गाइड" : "Guide" },
+  ];
+  const langBtn = (
+    <Link
+      href={altPath}
+      hrefLang={lang === "en" ? "hi" : "en"}
+      className="rounded-full border border-line bg-white px-3.5 py-1.5 text-[14px] font-semibold text-ink hover:border-ink"
+    >
+      {d.lang_switch}
+    </Link>
+  );
   return (
-    <header className="bg-ink text-[#f5f3ef]">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link href={langPath(lang)} aria-label="BOQFather home">
+    <header className="sticky top-0 z-40 border-b border-line/80 bg-white/85 text-ink backdrop-blur-xl supports-[backdrop-filter]:bg-white/75">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+        <Link href={langPath(lang)} aria-label="BOQFather home" className="shrink-0">
           <Logo />
         </Link>
-        <nav
-          aria-label="Main"
-          className="flex flex-wrap items-center gap-1 text-[14px]"
-        >
-          <Link
-            href={langPath(lang, "calculators")}
-            className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
-          >
-            {d.nav_calculators}
-          </Link>
-          <Link
-            href={langPath(lang, "naksha")}
-            className="rounded-lg px-3 py-2 font-semibold text-amber hover:text-white"
-          >
-            {lang === "hi" ? "नक्शे" : "Naksha"}
-          </Link>
-          <Link
-            href={langPath(lang, "house-construction-cost")}
-            className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
-          >
-            {d.nav_house}
-          </Link>
-          <Link
-            href={langPath(lang, "house-construction-guide")}
-            className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
-          >
-            {lang === "hi" ? "गाइड" : "Guide"}
-          </Link>
-          <Link
-            href={langPath(lang, "plan-to-estimate")}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
-          >
-            {lang === "hi" ? "नक्शे से एस्टिमेट" : "Plan → Estimate"}
-            <span className="rounded bg-amber px-1 text-[10px] font-extrabold text-ink">
-              PRO
-            </span>
-          </Link>
+        <nav aria-label="Main" className="hidden items-center gap-0.5 text-[14.5px] lg:flex">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`flex items-center gap-1.5 rounded-full px-3 py-2 hover:bg-[#f1eee8] ${l.strong ? "font-bold" : "font-medium text-body hover:text-ink"}`}
+            >
+              {l.label}
+              {l.pro && (
+                <span className="rounded bg-amber px-1 text-[10px] font-extrabold text-ink">
+                  PRO
+                </span>
+              )}
+            </Link>
+          ))}
+        </nav>
+        <div className="flex items-center gap-2">
           <Link
             href={langPath(lang, "pro")}
-            className="rounded-lg px-3 py-2 font-extrabold text-amber hover:text-white"
+            className="hidden rounded-full px-3 py-2 text-[14.5px] font-extrabold text-amber-dark hover:bg-amber-tint sm:inline-flex"
           >
             Pro
           </Link>
-          <AccountButton lang={lang} />
-          <Link
-            href={altPath}
-            hrefLang={lang === "en" ? "hi" : "en"}
-            className="ml-1 rounded-full border border-[#4a4c50] px-3 py-1.5 font-semibold text-white hover:border-amber"
-          >
-            {d.lang_switch}
-          </Link>
-        </nav>
+          <span className="hidden sm:inline-flex">
+            <AccountButton lang={lang} />
+          </span>
+          {langBtn}
+          <details className="group relative lg:hidden">
+            <summary
+              aria-label={hi ? "मेनू" : "Menu"}
+              className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-white [&::-webkit-details-marker]:hidden"
+            >
+              <span aria-hidden="true" className="flex flex-col gap-[5px]">
+                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:translate-y-[7px] group-open:rotate-45" />
+                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:opacity-0" />
+                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:-translate-y-[7px] group-open:-rotate-45" />
+              </span>
+            </summary>
+            <nav
+              aria-label="Main"
+              className="absolute right-0 top-12 flex w-[min(86vw,320px)] flex-col gap-1 rounded-2xl border border-line bg-white p-2 shadow-[0_24px_60px_-20px_rgba(22,24,26,0.35)]"
+            >
+              {links.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="flex items-center justify-between rounded-xl px-4 py-3 text-[16px] font-semibold hover:bg-[#f4f1ea]"
+                >
+                  {l.label}
+                  {l.pro && (
+                    <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold text-ink">
+                      PRO
+                    </span>
+                  )}
+                </Link>
+              ))}
+              <Link
+                href={langPath(lang, "pro")}
+                className="rounded-xl px-4 py-3 text-[16px] font-extrabold text-amber-dark hover:bg-amber-tint"
+              >
+                Pro
+              </Link>
+              <div className="border-t border-line px-2 pt-2 sm:hidden">
+                <AccountButton lang={lang} />
+              </div>
+            </nav>
+          </details>
+        </div>
       </div>
     </header>
   );

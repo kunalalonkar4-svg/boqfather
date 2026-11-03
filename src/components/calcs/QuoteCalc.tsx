@@ -221,7 +221,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
         </div>
 
         {res && v ? (
-          <div className="flex flex-col gap-3 lg:sticky lg:top-4">
+          <div className="flex flex-col gap-3 lg:sticky lg:top-20">
             <section
               aria-live="polite"
               className="rounded-2xl bg-ink p-5 text-[#f5f3ef] sm:p-6"

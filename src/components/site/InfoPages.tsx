@@ -430,7 +430,7 @@ export function ProPage({ lang }: { lang: Lang }) {
         </p>
       }
     >
-      <div className="grid max-w-4xl gap-4 sm:grid-cols-3">
+      <div className="grid max-w-5xl items-stretch gap-5 md:grid-cols-3">
         {(
           [
             [
@@ -461,21 +461,44 @@ export function ProPage({ lang }: { lang: Lang }) {
               ),
             ],
           ] as const
-        ).map(([t, p, d]) => (
-          <div
-            key={t}
-            className="flex flex-col gap-2 rounded-2xl border border-line bg-white p-5"
-          >
-            <span className="text-[13px] font-bold uppercase tracking-wide text-muted">
-              {t}
-            </span>
-            <span className="font-display text-[30px] font-extrabold">{p}</span>
-            <span className="text-[14px] leading-relaxed text-body">{d}</span>
-          </div>
-        ))}
+        ).map(([t, p, d], i) => {
+          const hot = i === 1;
+          return (
+            <div
+              key={t}
+              className={`relative flex flex-col gap-3 rounded-[24px] p-6 transition hover:-translate-y-1 ${hot ? "bg-ink text-white shadow-[0_30px_60px_-24px_rgba(22,24,26,0.6)]" : "border border-line bg-white shadow-[0_10px_30px_-20px_rgba(22,24,26,0.3)]"}`}
+            >
+              {hot && (
+                <span className="absolute -top-3 left-6 rounded-full bg-amber px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-ink">
+                  {L(lang, "For engineers", "इंजीनियर के लिए")}
+                </span>
+              )}
+              <span
+                className={`text-[13px] font-bold uppercase tracking-[0.08em] ${hot ? "text-amber" : "text-muted"}`}
+              >
+                {t}
+              </span>
+              <span className="font-display text-[42px] font-extrabold leading-none">
+                {p}
+                {i === 1 && (
+                  <span
+                    className={`ml-1 text-[16px] font-semibold ${hot ? "text-[#cfcbc2]" : "text-muted"}`}
+                  >
+                    / {L(lang, "month", "महीना")}
+                  </span>
+                )}
+              </span>
+              <span
+                className={`text-[15px] leading-relaxed ${hot ? "text-[#e7e3dc]" : "text-body"}`}
+              >
+                {d}
+              </span>
+            </div>
+          );
+        })}
       </div>
-      <div className="max-w-4xl overflow-x-auto rounded-2xl border border-line bg-white">
-        <table className="w-full min-w-[480px] text-[14px]">
+      <div className="max-w-5xl overflow-x-auto rounded-[24px] border border-line bg-white shadow-[0_10px_30px_-22px_rgba(22,24,26,0.35)]">
+        <table className="w-full min-w-[480px] text-[15px]">
           <thead>
             <tr className="bg-[#f4f1ea] text-left">
               <th className="px-4 py-2.5">{L(lang, "Feature", "फ़ीचर")}</th>
@@ -488,9 +511,9 @@ export function ProPage({ lang }: { lang: Lang }) {
           <tbody>
             {rows.map(([f, , free, pro]) => (
               <tr key={f} className="border-t border-line">
-                <td className="px-4 py-2.5">{f}</td>
-                <td className="px-4 py-2.5 text-center">{free ? "✓" : "–"}</td>
-                <td className="px-4 py-2.5 text-center font-bold text-[#1d7a46]">
+                <td className="px-5 py-3.5">{f}</td>
+                <td className="px-5 py-3.5 text-center text-muted">{free ? "✓" : "–"}</td>
+                <td className="px-5 py-3.5 text-center font-bold text-[#1d7a46]">
                   {pro ? "✓" : "–"}
                 </td>
               </tr>

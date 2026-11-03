@@ -92,8 +92,16 @@ export function Shell({
         lang={lang}
         altPath={langPath(lang === "en" ? "hi" : "en", path)}
       />
-      <main lang={lang} className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6">
-        <nav aria-label="Breadcrumb" className="text-[13px] text-muted">
+      <main lang={lang} className="relative">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(circle_at_1px_1px,rgba(22,24,26,0.07)_1px,transparent_0)] [background-size:22px_22px] [mask-image:linear-gradient(to_bottom,black,transparent)]"
+        />
+        <div className="relative mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6 sm:pt-12">
+        <nav
+          aria-label="Breadcrumb"
+          className="w-fit max-w-full truncate rounded-full border border-line bg-white/80 px-3.5 py-1.5 text-[13px] text-muted shadow-sm"
+        >
           {all.map((c, i) => (
             <span key={c.name}>
               {i > 0 && <span className="mx-1.5">/</span>}
@@ -107,17 +115,20 @@ export function Shell({
             </span>
           ))}
         </nav>
-        <div className="mt-4 mb-6 flex max-w-3xl flex-col gap-2">
-          <h1 className="font-display text-[28px] font-extrabold leading-tight tracking-tight [text-wrap:balance] sm:text-[36px]">
+        <div className="mb-10 mt-6 flex max-w-3xl flex-col gap-4">
+          <h1 className="font-display text-[34px] font-extrabold leading-[1.06] tracking-tight [text-wrap:balance] sm:text-[48px]">
             {h1}
           </h1>
-          <div className="text-[16px] leading-relaxed text-body">{intro}</div>
+          <div className="text-[17px] leading-relaxed text-body sm:text-[18px]">
+            {intro}
+          </div>
         </div>
-        <div className="flex flex-col gap-10">{children}</div>
+        <div className="flex flex-col gap-14">{children}</div>
         {faqs?.length && !faqsHidden ? <Faqs lang={lang} faqs={faqs} /> : null}
-        <p className="mt-8 max-w-3xl rounded-xl bg-warn-tint px-4 py-3 text-[13px] leading-relaxed text-[#4a3b12]">
+        <p className="mb-16 mt-12 max-w-3xl rounded-2xl border border-[#f0dfae] bg-warn-tint px-5 py-4 text-[13px] leading-relaxed text-[#4a3b12]">
           {t(lang).disclaimer}
         </p>
+        </div>
       </main>
       <SiteFooter lang={lang} />
       <script
@@ -130,7 +141,7 @@ export function Shell({
 
 export function H2({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-display text-[22px] font-bold tracking-tight [text-wrap:balance]">
+    <h2 className="font-display text-[26px] font-extrabold leading-tight tracking-tight [text-wrap:balance] sm:text-[32px]">
       {children}
     </h2>
   );
@@ -144,20 +155,20 @@ export function Faqs({
   faqs: { q: string; a: string }[];
 }) {
   return (
-    <section className="mt-10 max-w-3xl">
+    <section className="mt-16 max-w-3xl">
       <H2>{t(lang).faq}</H2>
       <div className="mt-4 flex flex-col gap-2">
         {faqs.map((f) => (
           <details
             key={f.q}
-            className="group rounded-xl border border-line bg-white px-4 py-3 open:pb-4"
+            className="group rounded-2xl border border-line bg-white px-5 py-4 transition open:pb-5 open:shadow-sm hover:border-[#d6d0c4]"
           >
-            <summary className="cursor-pointer list-none text-[15px] font-semibold marker:hidden">
+            <summary className="cursor-pointer list-none text-[16px] font-semibold marker:hidden [&::-webkit-details-marker]:hidden">
               <span className="flex items-start justify-between gap-3">
                 {f.q}
                 <span
                   aria-hidden="true"
-                  className="text-amber-dark transition group-open:rotate-45"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-tint text-[18px] text-amber-dark transition group-open:rotate-45"
                 >
                   +
                 </span>
@@ -177,12 +188,12 @@ export function Stats({ items }: { items: [string, string][] }) {
       {items.map(([k, v]) => (
         <div
           key={k}
-          className="flex flex-col gap-1 rounded-2xl border border-line bg-white px-4 py-3"
+          className="flex flex-col gap-1.5 rounded-[20px] border border-line bg-white px-5 py-4 shadow-[0_8px_24px_-16px_rgba(22,24,26,0.25)]"
         >
-          <dt className="text-[12px] font-semibold uppercase tracking-wide text-muted">
+          <dt className="text-[12px] font-bold uppercase tracking-[0.08em] text-muted">
             {k}
           </dt>
-          <dd className="font-display text-[20px] font-extrabold leading-tight">
+          <dd className="font-display text-[22px] font-extrabold leading-tight sm:text-[26px]">
             {v}
           </dd>
         </div>
@@ -201,7 +212,7 @@ export function Table({
   caption?: string;
 }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+    <div className="overflow-x-auto rounded-[20px] border border-line bg-white shadow-[0_8px_24px_-18px_rgba(22,24,26,0.3)]">
       <table className="w-full min-w-[480px] border-collapse text-[14px]">
         {caption && <caption className="sr-only">{caption}</caption>}
         <thead>
@@ -245,7 +256,7 @@ export function Cta({ href, children }: { href: string; children: ReactNode }) {
   return (
     <Link
       href={href}
-      className="inline-flex w-fit items-center gap-2 rounded-xl bg-ink px-5 py-3 text-[15px] font-semibold text-white hover:bg-[#2c2e31]"
+      className="inline-flex h-12 w-fit items-center gap-2 rounded-2xl bg-ink px-6 text-[15px] font-bold text-white shadow-[0_10px_30px_-12px_rgba(22,24,26,0.6)] transition hover:-translate-y-0.5"
     >
       {children}
     </Link>
@@ -265,7 +276,7 @@ export function LinkGrid({
             href={l.href}
             aria-current={l.current ? "page" : undefined}
             className={
-              "flex h-full flex-col gap-0.5 rounded-xl border bg-white px-4 py-3 transition hover:border-amber " +
+              "flex h-full flex-col gap-0.5 rounded-2xl border bg-white px-4 py-3.5 transition hover:-translate-y-0.5 hover:border-amber hover:shadow-md " +
               (l.current ? "border-amber" : "border-line")
             }
           >

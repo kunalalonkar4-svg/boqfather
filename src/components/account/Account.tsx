@@ -435,7 +435,7 @@ export function AccountButton({ lang }: { lang: Lang }) {
       <button
         type="button"
         onClick={() => a.openLogin()}
-        className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
+        className="rounded-full px-3 py-2 text-[14.5px] font-semibold text-ink hover:bg-[#f1eee8]"
       >
         {L(lang, "Log in", "लॉगिन")}
       </button>
@@ -443,7 +443,7 @@ export function AccountButton({ lang }: { lang: Lang }) {
   return (
     <a
       href={lang === "hi" ? "/hi/account/" : "/account/"}
-      className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-white"
+      className="flex items-center gap-1.5 rounded-full px-3 py-2 text-[14.5px] font-semibold text-ink hover:bg-[#f1eee8]"
     >
       {a.pro && (
         <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold text-ink">

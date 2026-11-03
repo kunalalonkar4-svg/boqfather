@@ -14,6 +14,7 @@ import {
 import type { Lang } from "@/lib/site";
 import { planPrimitives } from "@/lib/planDraw";
 import { downloadPlanPdf, downloadPlanPng } from "@/lib/planDownload";
+import { Plan3D } from "./Plan3D";
 
 const FT = 3.28084;
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
@@ -42,6 +43,7 @@ export function SketchPanel({
 }) {
   const grid = useRef<HTMLDivElement>(null);
   const [dl, setDl] = useState("");
+  const [mode, setMode] = useState<"2d" | "3d">("2d");
   const download = async (kind: "png" | "pdf") => {
     const svgs = Array.from(
       grid.current?.querySelectorAll<SVGSVGElement>("figure svg") ?? [],
@@ -105,7 +107,26 @@ export function SketchPanel({
           "आपके कमरों से स्केल पर बना प्लान: नीचे सड़क, आगे पार्किंग और हॉल, बीच में किचन-डाइनिंग, पीछे या ऊपर टॉयलेट वाले बेडरूम; हर कमरा पैसेज, हॉल या लॉबी में खुलता है और दीवारें कॉलम लाइन पर हैं। सड़क की दिशा पता हो तो प्लान उस तरफ़ रखा जाता है जो वास्तु के ज़्यादा अनुकूल हो। घर का साइज़ इसी प्लान से निकलता है, इसलिए BOQ इसी से मेल खाता है। फ़ाइनल ड्रॉइंग आर्किटेक्ट से बनवाएं और लोकल नियम जांचें।",
         )}
       </p>
-      <div className="no-print flex flex-wrap gap-2">
+      <div className="no-print flex flex-wrap items-center gap-2">
+        <div
+          role="tablist"
+          className="mr-1 flex rounded-full border border-line bg-white p-1"
+        >
+          {(["2d", "3d"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              role="tab"
+              aria-selected={mode === m}
+              onClick={() => setMode(m)}
+              className={`rounded-full px-4 py-2 text-[14px] font-bold transition ${mode === m ? "bg-ink text-white" : "text-ink hover:bg-[#f1eee8]"}`}
+            >
+              {m === "2d"
+                ? L(lang, "2D plan", "2D नक्शा")
+                : L(lang, "3D view", "3D व्यू")}
+            </button>
+          ))}
+        </div>
         <button
           type="button"
           onClick={() => void download("pdf")}
@@ -123,9 +144,26 @@ export function SketchPanel({
           ⬇ {dl === "png" ? "…" : L(lang, "Download image (PNG)", "इमेज डाउनलोड (PNG)")}
         </button>
       </div>
+      {mode === "3d" && (
+        <Plan3D
+          lang={lang}
+          sketch={r.sketch}
+          names={nm}
+          facingLabel={
+            r.facing
+              ? L(
+                  lang,
+                  `ROAD — ${{ N: "NORTH", E: "EAST", S: "SOUTH", W: "WEST" }[r.facing]} FACING`,
+                  `सड़क — ${{ N: "उत्तर", E: "पूर्व", S: "दक्षिण", W: "पश्चिम" }[r.facing]} मुखी`,
+                )
+              : L(lang, "ROAD", "सड़क")
+          }
+        />
+      )}
       <div
         ref={grid}
         data-plan-grid
+        hidden={mode === "3d"}
         className="grid grid-cols-1 gap-6 md:grid-cols-2"
       >
         {r.sketch.map((s) => {

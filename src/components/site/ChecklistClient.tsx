@@ -59,7 +59,7 @@ export function Checklist({ lang }: { lang: Lang }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="sticky top-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-b border-line bg-ground/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-16 z-10 -mx-4 flex flex-wrap items-center gap-3 border-b border-line bg-ground/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <div className="flex min-w-[180px] flex-1 flex-col gap-1">
           <span className="text-[14px] font-semibold">
             {L(

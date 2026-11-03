@@ -67,10 +67,10 @@ export function NakshaGallery({
       (!kind || c.kind === kind),
   );
   const sel =
-    "rounded-lg border border-line bg-white px-3 py-2 text-[14px] font-semibold";
+    "h-11 rounded-xl border border-line bg-white px-3 text-[15px] font-semibold text-ink";
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-line bg-white p-4">
+      <div className="sticky top-16 z-20 flex flex-wrap items-end gap-3 rounded-[20px] border border-line bg-white/90 p-4 shadow-[0_12px_30px_-20px_rgba(22,24,26,0.4)] backdrop-blur">
         <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted">
           {L(lang, "Plot size", "प्लॉट साइज़")}
           <select
@@ -120,24 +120,24 @@ export function NakshaGallery({
           {L(lang, `${shown.length} plans`, `${shown.length} नक्शे`)}
         </span>
       </div>
-      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c) => (
           <li key={c.slug} hidden={!shown.includes(c)}>
             <Link
               href={c.href}
-              className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white transition hover:-translate-y-0.5 hover:border-amber"
+              className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-24px_rgba(22,24,26,0.45)]"
             >
-              <span className="flex aspect-[4/3] items-center justify-center bg-[#faf8f4] p-2">
+              <span className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-[#faf8f4] p-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={c.img}
                   alt={c.alt}
                   loading="lazy"
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.04]"
                 />
               </span>
-              <span className="flex flex-col gap-1 p-4">
-                <span className="text-[16px] font-bold leading-snug">
+              <span className="flex flex-col gap-1 p-5">
+                <span className="text-[17px] font-bold leading-snug">
                   {c.title}
                 </span>
                 <span className="text-[13px] text-muted">{c.sub}</span>

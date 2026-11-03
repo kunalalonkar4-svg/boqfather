@@ -136,7 +136,7 @@ export function CalcFrame(props: {
         <div className="rounded-2xl border border-line bg-white p-5 sm:p-6">
           <div className="flex flex-col gap-4">{props.form}</div>
         </div>
-        <div className="flex flex-col gap-3 lg:sticky lg:top-4">
+        <div className="flex flex-col gap-3 lg:sticky lg:top-20">
           {props.result}
         </div>
       </div>
