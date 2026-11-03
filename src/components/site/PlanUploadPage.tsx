@@ -305,7 +305,7 @@ export function PlanUploadPage({ lang }: { lang: Lang }) {
         <div className="overflow-x-auto rounded-2xl border border-line bg-white">
           <table className="w-full min-w-[560px] text-[14px]">
             <thead>
-              <tr className="bg-[#f4f1ea] text-left">
+              <tr className="bg-[#eef4fb] text-left">
                 <th className="px-4 py-2.5">{L(lang, "Format", "फ़ॉर्मेट")}</th>
                 <th className="px-4 py-2.5">{L(lang, "Files", "फ़ाइल")}</th>
                 <th className="px-4 py-2.5">{L(lang, "Plan", "प्लान")}</th>

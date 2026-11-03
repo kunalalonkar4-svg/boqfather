@@ -148,7 +148,7 @@ export function BoqShowcase({
                 <p className="max-w-md text-[12px] leading-relaxed text-white/45">{caption}</p>
                 <Link
                   href={href}
-                  className="inline-flex h-11 items-center rounded-full bg-amber px-5 text-[14px] font-bold text-night hover:brightness-110"
+                  className="inline-flex h-11 items-center rounded-full bg-amber px-5 text-[14px] font-bold text-white hover:brightness-110"
                 >
                   {L(lang, "Make my BOQ →", "मेरा BOQ बनाएं →")}
                 </Link>

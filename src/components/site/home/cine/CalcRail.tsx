@@ -212,7 +212,7 @@ export function CalcRail({ lang, cards, allHref }: { lang: Lang; cards: CalcCard
             >
               <span
                 aria-hidden="true"
-                className="absolute inset-0 bg-[linear-gradient(rgba(198,244,50,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(198,244,50,0.05)_1px,transparent_1px)] [background-size:22px_22px] opacity-0 transition group-hover:opacity-100"
+                className="absolute inset-0 bg-[linear-gradient(rgba(23,105,210,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(23,105,210,0.05)_1px,transparent_1px)] [background-size:22px_22px] opacity-0 transition group-hover:opacity-100"
               />
               <span className="font-mono relative text-[12px] text-white/40">{String(i + 1).padStart(2, "0")}</span>
               <span className="relative h-32 opacity-80 transition group-hover:opacity-100">

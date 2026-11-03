@@ -205,7 +205,7 @@ export function BuildJourney({
             </div>
             <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
               <div
-                className="h-full rounded-full bg-amber shadow-[0_0_12px_#c6f432]"
+                className="h-full rounded-full bg-amber shadow-[0_0_12px_#3b82f6]"
                 style={{ width: `${(stages[i].costSoFar / total) * 100}%`, transition: "width 400ms ease" }}
               />
             </div>

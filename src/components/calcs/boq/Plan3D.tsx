@@ -81,7 +81,7 @@ export function Plan3D({
         const FT = 0.3048;
         const ft = (m: number) => formatFtIn(m).replace(/'-0"$/, "'").replace(/'-(\d+)"$/, "'$1\"");
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x6f9a4c);
+        scene.background = new THREE.Color(0xe4e9ef);
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.0;
 
@@ -120,7 +120,7 @@ export function Plan3D({
         controls.autoRotate = false;
         controls.update();
 
-        scene.add(new THREE.HemisphereLight(0xffffff, 0x6d7a5a, 1.7));
+        scene.add(new THREE.HemisphereLight(0xffffff, 0xb8c2cf, 1.9));
         const sun = new THREE.DirectionalLight(0xfff1dc, 2.6);
         sun.position.set(cx - span * 0.7, floorY + span * 1.6, cz - span * 0.9);
         sun.target.position.set(cx, floorY, cz);
@@ -142,7 +142,7 @@ export function Plan3D({
           if (s.floor !== top) continue;
           for (const r of s.rects.filter((x) => x.type !== "column" && x.type !== "stair" && x.type !== "parking" && x.w * x.h > 2.2)) {
             const h = Math.max(0.24, Math.min(0.46, r.w / 7, r.h / 4));
-            const lb = groundText(namesRef.current(r.type), h, { sub: `(${ft(r.w)} × ${ft(r.h)})`, weight: 700 });
+            const lb = groundText(namesRef.current(r.type), h, { sub: `${ft(r.w)} × ${ft(r.h)}`, weight: 700, color: "#15263b" });
             lb.position.set(r.x + r.w / 2, s.floor * STOREY + 0.03, r.y + r.h / 2 + (r.h > 3 ? 0.45 : 0));
             labelGroup.add(lb);
           }
@@ -203,7 +203,7 @@ export function Plan3D({
   }, [sketch, show, facingLabel, plot]);
 
   const chip = (on: boolean) =>
-    `rounded-full px-3.5 py-1.5 text-[13px] font-bold transition ${on ? "bg-ink text-white" : "bg-white text-ink hover:bg-[#f1eee8]"}`;
+    `rounded-full px-3.5 py-1.5 text-[13px] font-bold transition ${on ? "bg-ink text-white" : "bg-white text-ink hover:bg-[#eaf3ff]"}`;
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -233,15 +233,15 @@ export function Plan3D({
       <div
         ref={host}
         data-plan3d
-        className="relative h-[420px] w-full touch-none overflow-hidden rounded-[22px] border border-line bg-[#f5f3ef] sm:h-[540px]"
+        className="relative h-[420px] w-full touch-none overflow-hidden rounded-[22px] border border-line bg-[#f7fafe] sm:h-[540px]"
       >
         {plot && state === "ready" && (
-          <div className="pointer-events-none absolute right-3 top-3 rounded-xl border border-white/20 bg-[#13294b]/90 px-3.5 py-2.5 text-white shadow-lg">
+          <div className="pointer-events-none absolute right-3 top-3 rounded-lg border border-line bg-white/95 px-3.5 py-2.5 text-ink shadow-sm">
             <p className="text-[12px] font-bold">{L(lang, "Residential plot", "रिहायशी प्लॉट")}</p>
             <p className="font-display text-[16px] font-extrabold leading-tight">
               {plot.w}&apos; × {plot.d}&apos;
             </p>
-            <p className="text-[11px] text-white/75">
+            <p className="text-[11px] text-muted">
               ≈ {Math.round(plot.w * plot.d * 0.0929)} m² · {Math.round((plot.w * plot.d) / 9)} {L(lang, "gaj", "गज़")}
             </p>
           </div>

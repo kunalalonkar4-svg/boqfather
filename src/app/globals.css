@@ -2,27 +2,27 @@
 
 /* BOQFather brand tokens */
 :root {
-  --ink: #16181a;
-  --ground: #f5f3ef;
+  /* BOQFather engineering palette: navy, blue, white */
+  --ink: #15263b;
+  --ground: #f7fafe;
   --surface: #ffffff;
-  --line: #e2ded6;
-  --muted: #6b675f;
-  --body: #4a4740;
-  /* brand accent: electric lime (token names kept so every page follows) */
-  --amber: #c6f432;
-  --amber-dark: #4a6b00;
-  --amber-tint: #f1fad6;
-  /* cinematic dark surfaces */
-  --night: #08090b;
-  --night-2: #111317;
-  --night-3: #1a1d22;
-  --night-line: #262a31;
-  --mist: #93a1b0;
-  --glow: #3d8bff;
-  --steel: #2f4b66;
-  --good: #1f7a4d;
+  --line: #e3eaf2;
+  --muted: #66758a;
+  --body: #3d4d63;
+  /* accent (token names kept so every page follows): engineering blue */
+  --amber: #1769d2;
+  --amber-dark: #1769d2;
+  --amber-tint: #eaf3ff;
+  --steel: #12345a;
+  --good: #15966b;
   --warn: #b45309;
   --warn-tint: #fff4d6;
+  --night: #0b1626;
+  --night-2: #12203a;
+  --night-3: #1a2b48;
+  --night-line: #263a5a;
+  --mist: #93a1b0;
+  --glow: #3b82f6;
 }
 
 @theme inline {
@@ -46,7 +46,7 @@
   --color-mist: var(--mist);
   --color-glow: var(--glow);
   --font-sans: "Inter", "Noto Sans Devanagari", system-ui, sans-serif;
-  --font-display: "Archivo", "Noto Sans Devanagari", system-ui, sans-serif;
+  --font-display: "Manrope", "Noto Sans Devanagari", system-ui, sans-serif;
 }
 
 html {

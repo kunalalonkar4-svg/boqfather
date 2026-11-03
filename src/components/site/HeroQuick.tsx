@@ -58,10 +58,10 @@ export default function HeroQuick({ lang }: { lang: Lang }) {
       {v && (
         <div
           aria-live="polite"
-          className="mt-5 rounded-xl bg-ink p-4 text-[#f5f3ef]"
+          className="mt-5 rounded-xl bg-ink p-4 text-[#f7fafe]"
         >
           <div className="flex items-baseline justify-between gap-3">
-            <span className="text-[12px] text-[#cfcbc2]">{d.total_cost}</span>
+            <span className="text-[12px] text-[#c3cfdd]">{d.total_cost}</span>
             <span className="text-[13px] font-bold text-amber">
               {rupees(v.ratePerSqft)} {d.per_sqft}
             </span>
@@ -69,7 +69,7 @@ export default function HeroQuick({ lang }: { lang: Lang }) {
           <div className="font-display mt-1 text-[30px] font-extrabold leading-tight">
             {rupees(v.total)}
           </div>
-          <div className="mt-1 text-[13px] text-[#cfcbc2]">
+          <div className="mt-1 text-[13px] text-[#c3cfdd]">
             ≈ ₹{lakhWords(v.total)} · {d.cement}{" "}
             {inr(round(v.materials[0].qty))} {d.bags} · {d.steel}{" "}
             {inr(round(v.materials[1].qty))} kg
@@ -78,7 +78,7 @@ export default function HeroQuick({ lang }: { lang: Lang }) {
       )}
       <Link
         href={langPath(lang, "house-construction-cost-calculator")}
-        className="font-display mt-4 flex h-12 items-center justify-center rounded-xl bg-amber text-[16px] font-extrabold text-ink hover:brightness-105"
+        className="font-display mt-4 flex h-12 items-center justify-center rounded-xl bg-amber text-[16px] font-extrabold text-white hover:brightness-105"
       >
         {lang === "hi"
           ? "पूरी रिपोर्ट + PDF देखें →"

@@ -8,7 +8,7 @@ import { Lang, langPath } from "@/lib/site";
 export function Logo() {
   return (
     <span className="flex items-center gap-2.5">
-      <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-amber text-[14px] font-extrabold text-ink">
+      <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-amber text-[14px] font-extrabold text-white">
         BF
       </span>
       <span className="font-display text-[20px] font-extrabold tracking-tight">
@@ -36,7 +36,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const cta = (
     <Link
       href={langPath(lang, "house-boq-estimate")}
-      className="inline-flex h-10 items-center rounded-full bg-ink px-4 text-[14px] font-bold text-white transition hover:bg-[#2c2e31]"
+      className="inline-flex h-10 items-center rounded-full bg-ink px-4 text-[14px] font-bold text-white transition hover:bg-[#1d3352]"
     >
       {hi ? "मुफ़्त एस्टिमेट" : "Start Free Estimate"}
     </Link>
@@ -54,11 +54,11 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
               <Link
                 key={l.href}
                 href={l.href}
-                className="flex items-center gap-1.5 rounded-full px-3 py-2 font-medium text-body transition hover:bg-[#f1eee8] hover:text-ink"
+                className="flex items-center gap-1.5 rounded-full px-3 py-2 font-medium text-body transition hover:bg-[#eaf3ff] hover:text-ink"
               >
                 {l.label}
                 {l.pro && (
-                  <span className="rounded bg-amber px-1 text-[10px] font-extrabold text-night">
+                  <span className="rounded bg-amber px-1 text-[10px] font-extrabold text-white">
                     PRO
                   </span>
                 )}
@@ -96,11 +96,11 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="flex items-center justify-between rounded-xl px-4 py-3 text-[16px] font-semibold text-ink hover:bg-[#f4f1ea]"
+                  className="flex items-center justify-between rounded-xl px-4 py-3 text-[16px] font-semibold text-ink hover:bg-[#eef4fb]"
                 >
                   {l.label}
                   {l.pro && (
-                    <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold text-night">
+                    <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold text-white">
                       PRO
                     </span>
                   )}
@@ -121,20 +121,20 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
 export function SiteFooter({ lang }: { lang: Lang }) {
   const d = t(lang);
   return (
-    <footer className="mt-16 bg-ink text-[#cfcbc2]">
+    <footer className="mt-16 border-t border-[#1d3a60] bg-[#0f2440] text-[#b8c6d8]">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.2fr_2fr]">
         <div className="flex flex-col gap-3">
           <span className="text-white">
             <Logo />
           </span>
           <p className="max-w-sm text-[14px] leading-relaxed">{d.tagline}</p>
-          <p className="max-w-sm text-[12px] leading-relaxed text-[#9c968b]">
+          <p className="max-w-sm text-[12px] leading-relaxed text-[#7f93ad]">
             {d.disclaimer}
           </p>
         </div>
         <div className="flex flex-col gap-8">
           <div>
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
+            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[#8fb8ee]">
               {d.all_calculators}
             </h2>
             <ul className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2">
@@ -152,7 +152,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
           </div>
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
+              <h2 className="text-[13px] font-bold uppercase tracking-wide text-[#8fb8ee]">
                 <Link
                   href={langPath(lang, "house-plan")}
                   className="hover:text-white"
@@ -174,7 +174,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
               </ul>
             </div>
             <div>
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
+              <h2 className="text-[13px] font-bold uppercase tracking-wide text-[#8fb8ee]">
                 <Link
                   href={langPath(lang, "house-construction-cost")}
                   className="hover:text-white"
@@ -200,7 +200,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
               <p className="mt-4 text-[14px]">
                 <Link
                   href={langPath(lang, "house-construction-guide")}
-                  className="font-semibold text-white hover:text-amber"
+                  className="font-semibold text-white hover:text-[#8fb8ee]"
                 >
                   {lang === "hi"
                     ? "घर बनाने की पूरी गाइड →"
@@ -210,7 +210,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
               <p className="mt-2 text-[14px]">
                 <Link
                   href={langPath(lang, "house-construction-cost-in")}
-                  className="font-semibold text-white hover:text-amber"
+                  className="font-semibold text-white hover:text-[#8fb8ee]"
                 >
                   {lang === "hi" ? "शहर के हिसाब से खर्च →" : "Cost by city →"}
                 </Link>
@@ -218,7 +218,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
               <p className="mt-2 text-[14px]">
                 <Link
                   href={langPath(lang, "house-construction-guide/checklist")}
-                  className="font-semibold text-white hover:text-amber"
+                  className="font-semibold text-white hover:text-[#8fb8ee]"
                 >
                   {lang === "hi"
                     ? "घर बनाने की चेकलिस्ट (82 पॉइंट) →"
@@ -230,7 +230,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
         </div>
       </div>
       <div className="border-t border-[#2e3033]">
-        <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-4 text-[12px] text-[#9c968b] sm:px-6">
+        <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-4 text-[12px] text-[#7f93ad] sm:px-6">
           <span className="flex flex-wrap gap-x-4 gap-y-1">
             <span>© 2026 BOQFather</span>
             {(

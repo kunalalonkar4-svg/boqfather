@@ -306,7 +306,7 @@ export function Cinematic({ lang }: { lang: Lang }) {
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               <Link
                 href={langPath(lang, "house-boq-estimate")}
-                className="inline-flex h-16 items-center rounded-full bg-amber px-9 text-[17px] font-extrabold uppercase tracking-wide text-night shadow-[0_0_60px_-10px_rgba(198,244,50,0.8)] transition hover:brightness-110"
+                className="inline-flex h-16 items-center rounded-full bg-amber px-9 text-[17px] font-extrabold uppercase tracking-wide text-white shadow-[0_0_60px_-10px_rgba(23,105,210,0.8)] transition hover:brightness-110"
               >
                 {L(lang, "Start your house estimate", "अपना एस्टिमेट शुरू करें")}
               </Link>

@@ -101,7 +101,7 @@ function MiniStep(props: {
         aria-label={`${props.label} −`}
         disabled={props.value <= props.min}
         onClick={() => props.onChange(Math.max(props.min, props.value - 1))}
-        className="flex h-8 w-8 items-center justify-center rounded-md bg-[#efece6] text-[17px] font-bold disabled:opacity-40"
+        className="flex h-8 w-8 items-center justify-center rounded-md bg-[#eef3f9] text-[17px] font-bold disabled:opacity-40"
       >
         −
       </button>
@@ -113,7 +113,7 @@ function MiniStep(props: {
         aria-label={`${props.label} +`}
         disabled={props.value >= props.max}
         onClick={() => props.onChange(Math.min(props.max, props.value + 1))}
-        className="flex h-8 w-8 items-center justify-center rounded-md bg-[#efece6] text-[17px] font-bold disabled:opacity-40"
+        className="flex h-8 w-8 items-center justify-center rounded-md bg-[#eef3f9] text-[17px] font-bold disabled:opacity-40"
       >
         +
       </button>
@@ -752,7 +752,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   className={
                     "inline-flex h-12 items-center rounded-lg px-5 text-[15px] font-extrabold " +
                     (plotChanged || !plotLive
-                      ? "bg-amber text-ink"
+                      ? "bg-amber text-white"
                       : "bg-ink text-white")
                   }
                 >
@@ -870,7 +870,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   onClick={() => setTab(f)}
                   className={
                     "shrink-0 rounded-lg px-3 py-2 text-left " +
-                    (cur === f ? "bg-ink text-white" : "bg-[#efece6] text-ink")
+                    (cur === f ? "bg-ink text-white" : "bg-[#eef3f9] text-ink")
                   }
                 >
                   <span className="block text-[14px] font-bold">
@@ -879,7 +879,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   <span
                     className={
                       "block text-[11.5px] " +
-                      (cur === f ? "text-[#cfcbc2]" : "text-muted")
+                      (cur === f ? "text-[#c3cfdd]" : "text-muted")
                     }
                   >
                     {plans[f].length} {hi ? "कमरे" : "rooms"} ·{" "}
@@ -1364,20 +1364,20 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
             <section
               id="boq-total"
               aria-live="polite"
-              className="scroll-mt-4 rounded-2xl bg-ink p-5 text-[#f5f3ef] sm:p-6"
+              className="scroll-mt-4 rounded-2xl bg-ink p-5 text-[#f7fafe] sm:p-6"
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="text-[13px] font-bold uppercase tracking-wide text-amber">
                   {floorTag} · {hi ? "आइटम-वार BOQ" : "Item-wise BOQ"}
                 </span>
-                <span className="rounded-full bg-[#2a2c2f] px-2.5 py-1 text-[11px] font-semibold text-[#cfcbc2]">
+                <span className="rounded-full bg-[#2a2c2f] px-2.5 py-1 text-[11px] font-semibold text-[#c3cfdd]">
                   {d.preliminary}
                 </span>
               </div>
               <div className="font-display mt-2 text-[38px] font-extrabold leading-none sm:text-[44px]">
                 {rupees(res.grandTotal)}
               </div>
-              <div className="mt-1 text-[14px] text-[#cfcbc2]">
+              <div className="mt-1 text-[14px] text-[#c3cfdd]">
                 ≈ ₹{lakhWords(res.grandTotal)} ·{" "}
                 {hi ? "5% आकस्मिक खर्च सहित" : "incl. 5% contingency"}
                 {res.externalTotal > 0 && (
@@ -1391,7 +1391,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
               </div>
               <dl className="mt-4 grid grid-cols-3 gap-2">
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">
+                  <dt className="text-[12px] text-[#c3cfdd]">
                     {d.per_sqft}
                     {res.externalTotal > 0 ? (hi ? " (घर)" : " (house)") : ""}
                   </dt>
@@ -1400,7 +1400,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   </dd>
                 </div>
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">
+                  <dt className="text-[12px] text-[#c3cfdd]">
                     {hi ? "कुल बिल्ट-अप" : "Total built-up"}
                   </dt>
                   <dd className="text-[17px] font-bold">
@@ -1408,7 +1408,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   </dd>
                 </div>
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">
+                  <dt className="text-[12px] text-[#c3cfdd]">
                     {hi ? "BOQ आइटम" : "BOQ items"}
                   </dt>
                   <dd className="text-[17px] font-bold">
@@ -1425,7 +1425,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                     <span className="font-semibold">
                       {FLOOR_NAME(p.floor, hi)}
                     </span>
-                    <span className="text-[#cfcbc2]">
+                    <span className="text-[#c3cfdd]">
                       {inr(p.builtUpSqft)} sqft · {round(p.L * FT, 1)} ×{" "}
                       {round(p.B * FT, 1)} ft · {p.columns}{" "}
                       {hi ? "कॉलम" : "columns"}
@@ -1443,7 +1443,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   ))}
                 </div>
               )}
-              <p className="mt-3 text-[12px] text-[#cfcbc2]">
+              <p className="mt-3 text-[12px] text-[#c3cfdd]">
                 {hi ? "क्वालिटी" : "Finish"}:{" "}
                 {
                   {
@@ -1493,7 +1493,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
       {res && (
         <a
           href="#boq-total"
-          className="no-print fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-3 bg-ink text-[#f5f3ef] shadow-[0_-4px_16px_rgba(0,0,0,0.25)] lg:hidden"
+          className="no-print fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-3 bg-ink text-[#f7fafe] shadow-[0_-4px_16px_rgba(0,0,0,0.25)] lg:hidden"
           style={{
             paddingTop: 10,
             paddingBottom: "max(10px, env(safe-area-inset-bottom))",
@@ -1509,7 +1509,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
               {rupees(res.grandTotal)}
             </span>
           </span>
-          <span className="rounded-lg bg-amber px-3 py-2 text-[13px] font-extrabold text-ink">
+          <span className="rounded-lg bg-amber px-3 py-2 text-[13px] font-extrabold text-white">
             {hi ? "BOQ देखें ↑" : "See BOQ ↑"}
           </span>
         </a>
@@ -1579,7 +1579,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                       : "Edit any rate — totals update instantly"}
                   </span>
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-[#f5f3ef] px-3 py-2.5 text-[13px]">
+                <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-[#f7fafe] px-3 py-2.5 text-[13px]">
                   <span className="font-semibold">
                     {hi
                       ? "रेट सेट (SOR / DSR / अपने रेट):"
@@ -1704,7 +1704,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                               <div className="mt-2 overflow-x-auto">
                                 <table className="w-full min-w-[520px] border-collapse text-[12.5px]">
                                   <thead>
-                                    <tr className="bg-[#f5f3ef] text-left text-muted">
+                                    <tr className="bg-[#f7fafe] text-left text-muted">
                                       <th className="px-2 py-1.5 font-semibold">
                                         {hi ? "विवरण" : "Description"}
                                       </th>

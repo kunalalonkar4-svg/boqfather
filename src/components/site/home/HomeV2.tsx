@@ -170,7 +170,7 @@ export function HomeV2({ lang }: { lang: Lang }) {
         }[v];
   const tone = (diff: number) =>
     diff > 20
-      ? "bg-[#fbe9e5] text-[#a8321f]"
+      ? "bg-[#fdecea] text-[#a8321f]"
       : diff > 10
         ? "bg-warn-tint text-warn"
         : "bg-[#e8f4ec] text-[#1d7a46]";
@@ -232,8 +232,8 @@ export function HomeV2({ lang }: { lang: Lang }) {
     </div>
   );
   const planRead = (
-    <div className="absolute inset-0 flex flex-col items-end gap-3 bg-[#faf8f4] py-5 pl-[44%] pr-4 sm:pr-6">
-      <span className="absolute right-4 top-4 rounded-full bg-amber px-3 py-1 text-[12px] font-bold text-ink">
+    <div className="absolute inset-0 flex flex-col items-end gap-3 bg-[#f7fafe] py-5 pl-[44%] pr-4 sm:pr-6">
+      <span className="absolute right-4 top-4 rounded-full bg-amber px-3 py-1 text-[12px] font-bold text-white">
         {L(lang, "Estimate", "एस्टिमेट")}
       </span>
       <div className="mt-8 flex w-full flex-col gap-1.5 text-[12px] sm:text-[13px]">
@@ -273,7 +273,7 @@ export function HomeV2({ lang }: { lang: Lang }) {
         <div className="font-display text-[24px] font-extrabold sm:text-[28px]">
           {lakh(info.total, lang)}
         </div>
-        <div className="text-[12px] text-[#cfcbc2]">
+        <div className="text-[12px] text-[#c3cfdd]">
           {L(lang, "Steel", "सरिया")}{" "}
           {(mat("steel") / 1000).toLocaleString("en-IN", {
             maximumFractionDigits: 1,
@@ -494,7 +494,7 @@ export function HomeV2({ lang }: { lang: Lang }) {
                 {topSections.map((s) => (
                   <li key={s.code} className="flex flex-col gap-1.5">
                     <span className="flex justify-between gap-3 text-[13px]">
-                      <span className="truncate text-[#e7e3dc]">
+                      <span className="truncate text-[#dbe4ef]">
                         {s.code}. {s.title[lang]}
                       </span>
                       <span className="tabular-nums font-semibold">
@@ -538,11 +538,11 @@ export function HomeV2({ lang }: { lang: Lang }) {
             }}
             visual={
               <div className="overflow-hidden rounded-[24px] border border-line bg-white shadow-[0_30px_70px_-30px_rgba(22,24,26,0.4)]">
-                <div className="flex items-center justify-between border-b border-line bg-[#faf8f4] px-5 py-3">
+                <div className="flex items-center justify-between border-b border-line bg-[#f7fafe] px-5 py-3">
                   <span className="text-[14px] font-bold">
                     {L(lang, "Contractor's quote", "ठेकेदार का कोटेशन")}
                   </span>
-                  <span className="rounded-full bg-[#ece8df] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-muted">
+                  <span className="rounded-full bg-[#e3eaf2] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-muted">
                     {L(lang, "Example", "उदाहरण")}
                   </span>
                 </div>
@@ -745,7 +745,7 @@ export function HomeV2({ lang }: { lang: Lang }) {
                 <li key={g.slug} className="w-[270px] shrink-0 snap-start">
                   <Link
                     href={langPath(lang, `naksha/${g.slug}`)}
-                    className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-[#faf8f4] transition hover:-translate-y-1 hover:shadow-xl"
+                    className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-[#f7fafe] transition hover:-translate-y-1 hover:shadow-xl"
                   >
                     <span className="block aspect-[4/3] overflow-hidden bg-white">
                       <img
@@ -776,7 +776,7 @@ export function HomeV2({ lang }: { lang: Lang }) {
         </section>
 
         {/* ---------- quick cost ---------- */}
-        <section className="bg-ink text-[#f5f3ef]">
+        <section className="bg-ink text-[#f7fafe]">
           <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_1fr] lg:py-20">
             <Reveal>
               <div className="flex flex-col gap-4">
@@ -788,7 +788,7 @@ export function HomeV2({ lang }: { lang: Lang }) {
                     "सिर्फ़ sq ft पता है? यहां से शुरू करें",
                   )}
                 </h2>
-                <p className="max-w-lg text-[17px] leading-relaxed text-[#cfcbc2]">
+                <p className="max-w-lg text-[17px] leading-relaxed text-[#c3cfdd]">
                   {d.home_sub}
                 </p>
               </div>

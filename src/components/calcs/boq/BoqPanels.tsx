@@ -129,7 +129,7 @@ export function SketchPanel({
               role="tab"
               aria-selected={mode === m}
               onClick={() => setMode(m)}
-              className={`rounded-full px-4 py-2 text-[14px] font-bold transition ${mode === m ? "bg-ink text-white" : "text-ink hover:bg-[#f1eee8]"}`}
+              className={`rounded-full px-4 py-2 text-[14px] font-bold transition ${mode === m ? "bg-ink text-white" : "text-ink hover:bg-[#eaf3ff]"}`}
             >
               {m === "2d"
                 ? L(lang, "2D plan", "2D नक्शा")
@@ -330,7 +330,7 @@ export function VastuChart({
     ],
     bad: [
       "✕",
-      "text-[#a8321f] bg-[#fbe9e5]",
+      "text-[#a8321f] bg-[#fdecea]",
       L(lang, "Not ideal", "वास्तु के अनुकूल नहीं"),
     ],
   } as const;
@@ -351,7 +351,7 @@ export function VastuChart({
       <div className="overflow-x-auto rounded-xl border border-line">
         <table className="w-full min-w-[520px] border-collapse text-[13px]">
           <thead>
-            <tr className="bg-[#f4f1ea] text-left">
+            <tr className="bg-[#eef4fb] text-left">
               <th className="px-3 py-2 font-semibold">
                 {L(lang, "Room", "कमरा")}
               </th>
@@ -479,7 +479,7 @@ export function BbsPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
       <div className="overflow-x-auto rounded-xl border border-line">
         <table className="w-full min-w-[640px] border-collapse text-[12.5px]">
           <thead>
-            <tr className="bg-[#f5f3ef] text-left text-muted">
+            <tr className="bg-[#f7fafe] text-left text-muted">
               <th className="px-2 py-2 font-semibold">
                 {L(lang, "Member", "सदस्य")}
               </th>
@@ -601,7 +601,7 @@ export function PlanPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
                     {mats.map(([k, q]) => (
                       <span
                         key={k}
-                        className="rounded-full bg-[#efece6] px-2 py-0.5 text-[12px]"
+                        className="rounded-full bg-[#eef3f9] px-2 py-0.5 text-[12px]"
                       >
                         {MAT_LABEL[k]?.[lang] ?? k} {inr(q ?? 0)}{" "}
                         {MAT_LABEL[k]?.unit}
@@ -704,7 +704,7 @@ export function PlanPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[480px] border-collapse text-[12.5px] tabular-nums">
             <thead>
-              <tr className="bg-[#f5f3ef] text-left text-muted">
+              <tr className="bg-[#f7fafe] text-left text-muted">
                 <th className="px-2 py-1.5">{L(lang, "Month", "महीना")}</th>
                 <th className="px-2 py-1.5 text-right">
                   {L(lang, "Spend", "खर्च")}
@@ -783,7 +783,7 @@ export function ComparePanel({
       <div className="overflow-x-auto rounded-xl border border-line">
         <table className="w-full min-w-[420px] border-collapse">
           <thead>
-            <tr className="bg-[#f5f3ef] text-left text-[13px] text-muted">
+            <tr className="bg-[#f7fafe] text-left text-[13px] text-muted">
               <th className="px-3 py-2">
                 {L(lang, "Finish level", "क्वालिटी")}
               </th>

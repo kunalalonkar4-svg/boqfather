@@ -38,7 +38,7 @@ export function PlansGallery({
   const [flat, setFlat] = useState<Record<string, boolean>>({});
   const shown = plans.filter((p) => (!facing || p.facing === facing) && (!bhk || p.bhk === bhk)).slice(0, 18);
   const chip = (on: boolean) =>
-    `rounded-full border px-4 py-2 text-[14px] font-bold transition ${on ? "border-amber bg-amber text-night" : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"}`;
+    `rounded-full border px-4 py-2 text-[14px] font-bold transition ${on ? "border-amber bg-amber text-white" : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"}`;
   const bhks = [...new Set(plans.map((p) => p.bhk))].sort();
 
   return (
@@ -102,7 +102,7 @@ export function PlansGallery({
                         key={m}
                         type="button"
                         onClick={() => setFlat((x) => ({ ...x, [p.slug]: m === "2D" }))}
-                        className={`rounded-full px-3 py-1 ${(m === "2D") === two ? "bg-amber text-night" : "text-white/70"}`}
+                        className={`rounded-full px-3 py-1 ${(m === "2D") === two ? "bg-amber text-white" : "text-white/70"}`}
                       >
                         {m}
                       </button>

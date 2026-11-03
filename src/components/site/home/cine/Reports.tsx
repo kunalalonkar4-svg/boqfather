@@ -72,7 +72,7 @@ export function Reports({
                 setAuto(false);
               }}
               className={`relative shrink-0 overflow-hidden rounded-full border px-4 py-2.5 text-[14px] font-bold transition ${
-                k === i ? "border-amber bg-amber text-night" : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
+                k === i ? "border-amber bg-amber text-white" : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
               }`}
             >
               {x.label}

@@ -125,7 +125,7 @@ export function AboutPage({ lang }: { lang: Lang }) {
             className="h-24 w-24 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="font-display flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-amber text-[26px] font-extrabold text-ink">
+          <span className="font-display flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-amber text-[26px] font-extrabold text-white">
             {initials}
           </span>
         )}
@@ -469,7 +469,7 @@ export function ProPage({ lang }: { lang: Lang }) {
               className={`relative flex flex-col gap-3 rounded-[24px] p-6 transition hover:-translate-y-1 ${hot ? "bg-ink text-white shadow-[0_30px_60px_-24px_rgba(22,24,26,0.6)]" : "border border-line bg-white shadow-[0_10px_30px_-20px_rgba(22,24,26,0.3)]"}`}
             >
               {hot && (
-                <span className="absolute -top-3 left-6 rounded-full bg-amber px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-ink">
+                <span className="absolute -top-3 left-6 rounded-full bg-amber px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white">
                   {L(lang, "For engineers", "इंजीनियर के लिए")}
                 </span>
               )}
@@ -482,14 +482,14 @@ export function ProPage({ lang }: { lang: Lang }) {
                 {p}
                 {i === 1 && (
                   <span
-                    className={`ml-1 text-[16px] font-semibold ${hot ? "text-[#cfcbc2]" : "text-muted"}`}
+                    className={`ml-1 text-[16px] font-semibold ${hot ? "text-[#c3cfdd]" : "text-muted"}`}
                   >
                     / {L(lang, "month", "महीना")}
                   </span>
                 )}
               </span>
               <span
-                className={`text-[15px] leading-relaxed ${hot ? "text-[#e7e3dc]" : "text-body"}`}
+                className={`text-[15px] leading-relaxed ${hot ? "text-[#dbe4ef]" : "text-body"}`}
               >
                 {d}
               </span>
@@ -500,7 +500,7 @@ export function ProPage({ lang }: { lang: Lang }) {
       <div className="max-w-5xl overflow-x-auto rounded-[24px] border border-line bg-white shadow-[0_10px_30px_-22px_rgba(22,24,26,0.35)]">
         <table className="w-full min-w-[480px] text-[15px]">
           <thead>
-            <tr className="bg-[#f4f1ea] text-left">
+            <tr className="bg-[#eef4fb] text-left">
               <th className="px-4 py-2.5">{L(lang, "Feature", "फ़ीचर")}</th>
               <th className="px-4 py-2.5 text-center">
                 {L(lang, "Free", "फ़्री")}

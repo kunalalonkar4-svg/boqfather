@@ -81,7 +81,7 @@ export function Segmented<T extends string>(props: {
       <div
         role="radiogroup"
         aria-label={props.label}
-        className="flex flex-wrap gap-1 rounded-xl bg-[#efece6] p-1"
+        className="flex flex-wrap gap-1 rounded-xl bg-[#eef3f9] p-1"
       >
         {props.options.map((o) => {
           const on = o.value === props.value;

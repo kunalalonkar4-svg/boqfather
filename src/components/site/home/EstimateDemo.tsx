@@ -71,7 +71,7 @@ export function EstimateDemo({
       />
       <div className="hero-float relative overflow-hidden rounded-[28px] border border-line bg-white shadow-[0_30px_80px_-20px_rgba(22,24,26,0.35)]">
         {/* inputs */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-[#faf8f4] px-4 py-3 text-[13px]">
+        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-[#f7fafe] px-4 py-3 text-[13px]">
           <span className="flex items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-1.5 font-semibold">
             <span className="text-muted">{L(lang, "Plot", "प्लॉट")}</span>
             <span className="font-display min-w-[56px] text-[15px] font-extrabold">
@@ -87,7 +87,7 @@ export function EstimateDemo({
             {L(lang, "Standard", "स्टैंडर्ड")}
           </span>
           <span
-            className={`ml-auto rounded-lg px-3 py-1.5 font-bold transition-colors duration-500 ${done ? "bg-amber text-ink" : "bg-[#ece8df] text-muted"}`}
+            className={`ml-auto rounded-lg px-3 py-1.5 font-bold transition-colors duration-500 ${done ? "bg-amber text-white" : "bg-[#e3eaf2] text-muted"}`}
           >
             {L(lang, "Estimate →", "एस्टिमेट →")}
           </span>
@@ -125,7 +125,7 @@ export function EstimateDemo({
                   <span className="truncate text-body">{h.label}</span>
                   <span className="font-semibold tabular-nums">{h.value}</span>
                 </span>
-                <span className="h-2 overflow-hidden rounded-full bg-[#f1eee8]">
+                <span className="h-2 overflow-hidden rounded-full bg-[#eaf3ff]">
                   <span
                     className="block h-full rounded-full bg-amber transition-[width] duration-1000 ease-out"
                     style={{
@@ -141,7 +141,7 @@ export function EstimateDemo({
             {materials.map((m, i) => (
               <div
                 key={m.label}
-                className={`rounded-xl bg-[#faf8f4] px-3 py-2.5 transition duration-500 ${done ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
+                className={`rounded-xl bg-[#f7fafe] px-3 py-2.5 transition duration-500 ${done ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
                 style={{ transitionDelay: `${900 + i * 120}ms` }}
               >
                 <div className="text-[11px] font-semibold uppercase tracking-wide text-muted">

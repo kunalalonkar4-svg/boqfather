@@ -12,7 +12,7 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
   const H = doc.internal.pageSize.getHeight();
   const M = 14;
   const INK: [number, number, number] = [22, 24, 26];
-  const AMBER: [number, number, number] = [232, 163, 23];
+  const AMBER: [number, number, number] = [23, 105, 210];
   const GROUND: [number, number, number] = [245, 243, 239];
   const rs = (n: number) => `Rs. ${inr(n)}`;
   const today = new Date();

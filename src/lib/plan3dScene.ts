@@ -8,6 +8,9 @@ import type { Side, SketchRect } from "@/engine";
 import { planPrimitives, type Furniture } from "@/lib/planDraw";
 import { floorBlocks } from "@/lib/plan3d";
 
+/** Clean architectural model: no trees, flowers or palms (white-model presentation). */
+const PRESENTATION = true;
+
 export const CUT_H = 1.15; // walls are cut here, so the rooms can be seen from above
 const LEVEL = 3.05;
 
@@ -120,7 +123,7 @@ export function makeMaterials(): Materials {
     new THREE.MeshStandardMaterial({ color, roughness: rough, ...extra });
   return {
     wall: S("#f4f3f0", 0.9),
-    cap: S("#26282b", 0.7),
+    cap: S("#1c2f4a", 0.7),
     column: S("#f4f3f0", 0.9),
     glass: new THREE.MeshStandardMaterial({ color: "#a9c8e3", roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.45 }),
     frame: S("#2b2d31", 0.5),
@@ -147,7 +150,7 @@ export function makeMaterials(): Materials {
     granite: S("#2e3033", 0.3),
     steel: S("#b9bcc0", 0.25, { metalness: 0.8 }),
     ceramic: S("#ffffff", 0.2),
-    car: S("#f6f6f4", 0.25, { metalness: 0.3 }),
+    car: S("#dfe4ea", 0.3, { metalness: 0.2 }),
     tyre: S("#1c1c1e", 0.8),
     carGlass: S("#1e2630", 0.08, { metalness: 0.7 }),
     leaf: S("#3f7a3a", 0.8),
@@ -502,16 +505,16 @@ export function buildSite(
   const g = new THREE.Group();
   const r = rnd(Math.round(W * 31 + D * 7));
   const S = (color: string, rough = 0.9) => new THREE.MeshStandardMaterial({ color, roughness: rough });
-  const grass = S("#5f9a3e"),
-    grass2 = S("#6fae47"),
+  const grass = S("#e4e9ef"),
+    grass2 = S("#f1f4f7"),
     soil = S("#6b4b33"),
-    asphalt = S("#3a3d42", 0.95),
-    kerb = S("#c9b98f"),
-    wallM = S("#ede6da", 0.85),
-    capM = S("#b9ad98", 0.8),
+    asphalt = S("#b9c1cb", 0.95),
+    kerb = S("#d3d9e0"),
+    wallM = S("#ffffff", 0.85),
+    capM = S("#c9d2dc", 0.8),
     paver = S("#c4c0b8", 0.85),
     paverJoint = S("#a9a59d", 0.9),
-    white = new THREE.MeshBasicMaterial({ color: "#ffffff" }),
+    white = new THREE.MeshBasicMaterial({ color: "#12345a" }),
     leafA = S("#3e7b2f"),
     leafB = S("#4f9136"),
     trunk = S("#6e4b2e");
@@ -553,7 +556,7 @@ export function buildSite(
   plane(kerb, X0 - span * 3, Z1 + 0.25, span * 7, 1.4, -0.14);
   plane(asphalt, X0 - span * 3, Z1 + 1.65, span * 7, 7, -0.13);
   for (let x = X0 - span * 3; x < X1 + span * 3; x += 3) plane(white, x, Z1 + 5.1, 1.5, 0.14, -0.12);
-  const road = groundText(roadLabel, 1.0, { color: "#f4f4f4", shadow: true });
+  const road = groundText(roadLabel, 0.8, { color: "#12345a" });
   road.position.set((X0 + X1) / 2, -0.11, Z1 + 3.3);
   g.add(road);
 
@@ -596,7 +599,7 @@ export function buildSite(
 
   // flower beds along the boundary where there is room, shrubs and a palm at the corners
   const bed = (x: number, z: number, w: number, d: number) => {
-    if (w < 0.35 || d < 0.35) return;
+    if (w < 0.35 || d < 0.35 || PRESENTATION) return;
     plane(soil, x, z, w, d, 0.005);
     const n = Math.floor((w * d) / 0.12);
     for (let i = 0; i < Math.min(n, 140); i++)
@@ -618,7 +621,7 @@ export function buildSite(
     if (g0 - X0 > 0.8) bed(X0 + 0.1, Z1 - 0.65, g0 - X0 - 0.2, 0.55);
     if (X1 - g1 > 0.8) bed(g1 + 0.1, Z1 - 0.65, X1 - g1 - 0.2, 0.55);
     const palmX = X1 - g1 > 1.4 ? X1 - 0.9 : X0 + 0.9;
-    if (Math.abs(palmX - gateC) > gateW / 2 + 0.8) {
+    if (!PRESENTATION && Math.abs(palmX - gateC) > gateW / 2 + 0.8) {
       const t = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 2.6, 8), trunk);
       t.position.set(palmX, 1.3, Z1 - 1.0);
       t.castShadow = true;
@@ -642,11 +645,11 @@ export function buildSite(
     for (let i = 0; i < 4; i++)
       sphere(i % 2 ? leafA : leafB, x + (r() - 0.5) * 1.2 * s, (1.9 + r() * 0.8) * s, z + (r() - 0.5) * 1.2 * s, (0.8 + r() * 0.4) * s);
   };
-  for (let z = Z0 - 1; z < Z1; z += 3.2 + r() * 1.5) {
+  for (let z = Z0 - 1; !PRESENTATION && z < Z1; z += 3.2 + r() * 1.5) {
     tree(X0 - 2.4 - r() * 2, z, 1 + r() * 0.3);
     tree(X1 + 2.4 + r() * 2, z + 1.2, 1 + r() * 0.3);
   }
-  for (let x = X0; x < X1; x += 3.5 + r() * 1.5) tree(x, Z0 - 2.6 - r() * 1.5, 1 + r() * 0.3);
+  for (let x = X0; !PRESENTATION && x < X1; x += 3.5 + r() * 1.5) tree(x, Z0 - 2.6 - r() * 1.5, 1 + r() * 0.3);
 
   // plot dimensions in white, with arrows, outside the boundary
   const arrow = (x0: number, z0: number, x1: number, z1: number) => {
@@ -670,13 +673,13 @@ export function buildSite(
       g.add(head);
     }
   };
-  const dimW = groundText(`${ft(X1 - X0)}  (${(X1 - X0).toFixed(2)} m)`, 0.62, { color: "#ffffff", shadow: true });
+  const dimW = groundText(`${ft(X1 - X0)}  (${(X1 - X0).toFixed(2)} m)`, 0.5, { color: "#12345a" });
   const zTop = Z0 - 1.25;
   arrow(X0, zTop, X1, zTop);
   dimW.position.set((X0 + X1) / 2, 0.06, zTop);
   // keep the label off the arrow: put it on a dark band
   g.add(dimW);
-  const dimD = groundText(`${ft(Z1 - Z0)}  (${(Z1 - Z0).toFixed(2)} m)`, 0.62, { color: "#ffffff", shadow: true });
+  const dimD = groundText(`${ft(Z1 - Z0)}  (${(Z1 - Z0).toFixed(2)} m)`, 0.5, { color: "#12345a" });
   const xR = X1 + 1.1;
   arrow(xR, Z0, xR, Z1);
   dimD.rotation.z = Math.PI / 2;

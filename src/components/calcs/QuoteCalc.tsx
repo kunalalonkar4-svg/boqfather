@@ -224,7 +224,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
           <div className="flex flex-col gap-3 lg:sticky lg:top-20">
             <section
               aria-live="polite"
-              className="rounded-2xl bg-ink p-5 text-[#f5f3ef] sm:p-6"
+              className="rounded-2xl bg-ink p-5 text-[#f7fafe] sm:p-6"
             >
               <span className="block text-[13px] font-bold uppercase tracking-wide text-amber">
                 {hi ? "फ़ैसला" : "Verdict"}
@@ -237,7 +237,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
               >
                 {v[lang]}
               </div>
-              <p className="mt-3 text-[14px] leading-relaxed text-[#e7e3dc]">
+              <p className="mt-3 text-[14px] leading-relaxed text-[#dbe4ef]">
                 {hi ? v.hiD : v.enD}
               </p>
 
@@ -254,7 +254,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
                     style={{ left: `${pos}%` }}
                   />
                 </div>
-                <div className="mt-1.5 flex justify-between text-[11px] text-[#cfcbc2]">
+                <div className="mt-1.5 flex justify-between text-[11px] text-[#c3cfdd]">
                   <span>−30%</span>
                   <span>{hi ? "बाज़ार" : "Market"}</span>
                   <span>+30%</span>
@@ -263,24 +263,24 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
 
               <dl className="mt-4 grid grid-cols-2 gap-2">
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">
+                  <dt className="text-[12px] text-[#c3cfdd]">
                     {hi ? "ठेकेदार" : "Quote"}
                   </dt>
                   <dd className="text-[18px] font-bold">
                     {rupees(res.quotePerSqft)}/sqft
                   </dd>
-                  <dd className="text-[12px] text-[#cfcbc2]">
+                  <dd className="text-[12px] text-[#c3cfdd]">
                     ₹{lakhWords(res.quoteTotal)}
                   </dd>
                 </div>
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">
+                  <dt className="text-[12px] text-[#c3cfdd]">
                     {hi ? "BOQFather बेंचमार्क" : "BOQFather benchmark"}
                   </dt>
                   <dd className="text-[18px] font-bold text-amber">
                     {rupees(res.benchPerSqft)}/sqft
                   </dd>
-                  <dd className="text-[12px] text-[#cfcbc2]">
+                  <dd className="text-[12px] text-[#c3cfdd]">
                     ₹{lakhWords(res.benchTotal)}
                   </dd>
                 </div>

@@ -77,7 +77,7 @@ export function PlanToEstimate({
         <img src={img2d} alt={L(lang, "2D floor plan", "2D फ़्लोर प्लान")} className="h-full w-full object-contain" loading="lazy" />
       </div>
       <div
-        className="absolute inset-0 overflow-hidden rounded-[22px] border border-white/10 shadow-[0_50px_120px_-40px_rgba(198,244,50,0.35)]"
+        className="absolute inset-0 overflow-hidden rounded-[22px] border border-white/10 shadow-[0_50px_120px_-40px_rgba(23,105,210,0.35)]"
         style={{ opacity: pinned ? to3d : 1, transform: pinned ? `scale(${0.9 + to3d * 0.1})` : undefined }}
         hidden={!pinned}
       >
@@ -151,7 +151,7 @@ export function PlanToEstimate({
             </ol>
             <Link
               href={href}
-              className="mt-8 inline-flex h-12 items-center rounded-full bg-amber px-6 text-[15px] font-bold text-night hover:brightness-110"
+              className="mt-8 inline-flex h-12 items-center rounded-full bg-amber px-6 text-[15px] font-bold text-white hover:brightness-110"
             >
               {L(lang, "Upload a plan →", "नक्शा अपलोड करें →")}
             </Link>

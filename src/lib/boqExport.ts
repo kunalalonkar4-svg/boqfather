@@ -495,7 +495,7 @@ export async function downloadBoqPdf(
     H = doc.internal.pageSize.getHeight(),
     M = 14;
   const INK: [number, number, number] = [22, 24, 26],
-    AMBER: [number, number, number] = [232, 163, 23];
+    AMBER: [number, number, number] = [23, 105, 210];
   const today = new Date();
   const date = `${String(today.getDate()).padStart(2, "0")}-${String(today.getMonth() + 1).padStart(2, "0")}-${today.getFullYear()}`;
   const estNo = `BF-BQ-${today.getFullYear()}-${String(Math.floor(today.getTime() / 1000) % 100000).padStart(5, "0")}`;

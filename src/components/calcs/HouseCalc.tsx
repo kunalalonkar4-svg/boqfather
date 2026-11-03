@@ -161,31 +161,31 @@ export default function HouseCalc({
           <div className="flex flex-col gap-3 lg:sticky lg:top-20">
             <section
               aria-live="polite"
-              className="rounded-2xl bg-ink p-5 text-[#f5f3ef] sm:p-6"
+              className="rounded-2xl bg-ink p-5 text-[#f7fafe] sm:p-6"
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="text-[13px] font-bold uppercase tracking-wide text-amber">
                   {d.total_cost}
                 </span>
-                <span className="rounded-full bg-[#2a2c2f] px-2.5 py-1 text-[11px] font-semibold text-[#cfcbc2]">
+                <span className="rounded-full bg-[#2a2c2f] px-2.5 py-1 text-[11px] font-semibold text-[#c3cfdd]">
                   {d.preliminary}
                 </span>
               </div>
               <div className="font-display mt-2 text-[38px] font-extrabold leading-none sm:text-[44px]">
                 {rupees(v.total)}
               </div>
-              <div className="mt-1 text-[14px] text-[#cfcbc2]">
+              <div className="mt-1 text-[14px] text-[#c3cfdd]">
                 ≈ ₹{lakhWords(v.total)}
               </div>
               <dl className="mt-4 grid grid-cols-3 gap-2">
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">{d.per_sqft}</dt>
+                  <dt className="text-[12px] text-[#c3cfdd]">{d.per_sqft}</dt>
                   <dd className="text-[18px] font-bold text-amber">
                     {rupees(v.ratePerSqft)}
                   </dd>
                 </div>
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">
+                  <dt className="text-[12px] text-[#c3cfdd]">
                     {lang === "hi" ? "बिल्ट-अप" : "Built-up"}
                   </dt>
                   <dd className="text-[18px] font-bold">
@@ -193,13 +193,13 @@ export default function HouseCalc({
                   </dd>
                 </div>
                 <div className="rounded-xl bg-[#222427] p-3">
-                  <dt className="text-[12px] text-[#cfcbc2]">{d.timeline}</dt>
+                  <dt className="text-[12px] text-[#c3cfdd]">{d.timeline}</dt>
                   <dd className="text-[18px] font-bold">
                     ~{v.months} {d.months}
                   </dd>
                 </div>
               </dl>
-              <p className="mt-3 text-[13px] text-[#cfcbc2]">
+              <p className="mt-3 text-[13px] text-[#c3cfdd]">
                 {d.likely_range}: {rupees(v.low)} – {rupees(v.high)}
               </p>
             </section>
@@ -208,7 +208,7 @@ export default function HouseCalc({
                 type="button"
                 onClick={pdf}
                 disabled={busy}
-                className="inline-flex h-11 items-center justify-center rounded-lg bg-amber px-4 text-[14px] font-extrabold text-ink hover:brightness-105 disabled:opacity-60"
+                className="inline-flex h-11 items-center justify-center rounded-lg bg-amber px-4 text-[14px] font-extrabold text-white hover:brightness-105 disabled:opacity-60"
               >
                 {busy ? "…" : d.download_pdf}
               </button>

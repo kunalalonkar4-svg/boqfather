@@ -52,7 +52,7 @@ export function PlanTabs({
         ))}
       </div>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-        <div className="relative min-w-0 overflow-hidden rounded-[28px] border border-line bg-[#eef1ea]">
+        <div className="relative min-w-0 overflow-hidden rounded-[28px] border border-line bg-[#eef3f9]">
           <img
             key={p.href + (two ? "2" : "3")}
             src={two ? p.img2d : p.img3d}

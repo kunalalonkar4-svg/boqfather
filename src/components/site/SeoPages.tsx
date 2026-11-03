@@ -216,7 +216,7 @@ export function Table({
       <table className="w-full min-w-[480px] border-collapse text-[14px]">
         {caption && <caption className="sr-only">{caption}</caption>}
         <thead>
-          <tr className="bg-[#f4f1ea] text-left">
+          <tr className="bg-[#eef4fb] text-left">
             {head.map((h, i) => (
               <th
                 key={h}
@@ -1074,7 +1074,7 @@ export function GuidePage({ lang }: { lang: Lang }) {
         href={langPath(lang, `${GUIDE_BASE}/checklist`)}
         className="flex max-w-3xl flex-col gap-2 rounded-2xl border-2 border-amber bg-amber-tint p-5 transition hover:-translate-y-0.5 sm:p-6"
       >
-        <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-ink">
+        <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-white">
           {L(
             lang,
             `${CHECKLIST_COUNT} POINTS · WITH VIDEOS`,

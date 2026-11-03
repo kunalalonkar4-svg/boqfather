@@ -29,7 +29,7 @@ const num = (x: number, d = 0) => x.toLocaleString("en-IN", { maximumFractionDig
 function Tick({ children }: { children: ReactNode }) {
   return (
     <li className="flex gap-3 text-[16px] leading-relaxed text-body">
-      <span aria-hidden="true" className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber text-[11px] font-black text-ink">
+      <span aria-hidden="true" className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber text-[11px] font-black text-white">
         ✓
       </span>
       <span>{children}</span>
@@ -37,7 +37,7 @@ function Tick({ children }: { children: ReactNode }) {
   );
 }
 const btnDark =
-  "inline-flex h-12 items-center rounded-full bg-ink px-6 text-[15px] font-bold text-white transition hover:bg-[#2c2e31]";
+  "inline-flex h-12 items-center rounded-full bg-ink px-6 text-[15px] font-bold text-white transition hover:bg-[#1d3352]";
 const btnLight =
   "inline-flex h-12 items-center rounded-full border border-line bg-white px-6 text-[15px] font-bold text-ink transition hover:border-ink";
 
@@ -62,7 +62,7 @@ function Split({
   id?: string;
 }) {
   return (
-    <section id={id} className={tint ? "bg-[#f6f5f2]" : "bg-white"}>
+    <section id={id} className={tint ? "bg-[#f7fafe]" : "bg-white"}>
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:py-20">
         <Reveal className={`min-w-0 ${flip ? "lg:order-2" : ""}`}>
           <div className="flex flex-col gap-4">
@@ -85,8 +85,8 @@ function Split({
 /** A screenshot of the tool in a light browser frame. */
 function Shot({ src, alt, url }: { src: string; alt: string; url: string }) {
   return (
-    <div className="overflow-hidden rounded-[22px] border border-line bg-white shadow-[0_30px_70px_-35px_rgba(22,24,26,0.45)]">
-      <div className="flex items-center gap-2 border-b border-line bg-[#f6f5f2] px-4 py-2.5">
+    <div className="overflow-hidden rounded-[16px] border border-line bg-white shadow-[0_30px_70px_-35px_rgba(22,24,26,0.45)]">
+      <div className="flex items-center gap-2 border-b border-line bg-[#f7fafe] px-4 py-2.5">
         <span className="flex gap-1.5" aria-hidden="true">
           <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
@@ -199,14 +199,27 @@ export function HomeLight({ lang }: { lang: Lang }) {
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
       <main lang={lang} className="overflow-x-clip bg-white">
         {/* hero */}
-        <section className="bg-white">
-          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:pb-20 lg:pt-16">
+        <section className="relative bg-[linear-gradient(180deg,#eaf3ff_0%,#ffffff_70%)]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(23,105,210,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(23,105,210,0.06)_1px,transparent_1px)] [background-size:40px_40px] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
+          />
+          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:pb-20 lg:pt-16">
             <div className="flex min-w-0 flex-col gap-5">
-              <h1 className="font-display text-[34px] font-extrabold leading-[1.08] tracking-tight [text-wrap:balance] sm:text-[48px]">
-                {L(lang, "BOQFather — know the full cost of your house before you build", "BOQFather — घर बनाने से पहले उसका पूरा खर्च जानिए")}
+              <span className="w-fit rounded-full border border-line bg-white px-3 py-1 text-[13px] font-semibold text-steel">
+                {L(lang, "Construction planning · Quantity estimation · BOQ", "निर्माण प्लानिंग · मात्रा का हिसाब · BOQ")}
+              </span>
+              <h1 className="font-display text-[34px] font-extrabold leading-[1.08] tracking-[-0.02em] text-steel [text-wrap:balance] sm:text-[50px]">
+                {L(lang, "Plan your house.", "घर का नक्शा बनाइए।")}
+                <br />
+                {L(lang, "Measure every detail.", "हर चीज़ का नाप लीजिए।")}
+                <br />
+                <span className="bg-gradient-to-r from-[#1769d2] to-[#3b82f6] bg-clip-text text-transparent">
+                  {L(lang, "Know your construction cost.", "निर्माण का खर्च जानिए।")}
+                </span>
               </h1>
               <p className="text-[18px] leading-relaxed text-body">
-                {L(lang, "Free construction estimates for India, item by item, in Hindi and English:", "भारत के लिए फ़्री कंस्ट्रक्शन एस्टिमेट, आइटम-दर-आइटम, हिंदी और अंग्रेज़ी में:")}
+                {L(lang, "From architectural planning to quantity estimation and BOQ generation, manage your entire house construction journey in one place.", "नक्शे से लेकर मात्रा के हिसाब और BOQ तक, घर बनाने का पूरा काम एक ही जगह।")}
               </p>
               <ul className="flex flex-col gap-2.5">
                 <Tick>{L(lang, "Start from your plot size, a ready Vastu plan, or your own drawing", "अपने प्लॉट साइज़, तैयार वास्तु नक्शे, या अपनी ड्रॉइंग से शुरू करें")}</Tick>
@@ -214,11 +227,11 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 <Tick>{L(lang, "See the plan in 2D and 3D, download PDF and Excel", "नक्शा 2D और 3D में देखें, PDF और Excel डाउनलोड करें")}</Tick>
               </ul>
               <div className="mt-1 flex flex-wrap gap-3">
-                <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-full bg-amber px-7 text-[16px] font-extrabold text-ink shadow-[0_10px_30px_-12px_rgba(120,160,0,0.7)] transition hover:brightness-105">
-                  {L(lang, "Make my estimate — free", "मेरा एस्टिमेट बनाएं — फ़्री")}
+                <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-full bg-amber px-7 text-[16px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(23,105,210,0.7)] transition hover:brightness-105">
+                  {L(lang, "Start free estimate", "मुफ़्त एस्टिमेट शुरू करें")}
                 </Link>
                 <Link href={langPath(lang, "naksha")} className="inline-flex h-14 items-center rounded-full border border-line bg-white px-6 text-[16px] font-bold transition hover:border-ink">
-                  {L(lang, "See house plans", "घर के नक्शे देखें")}
+                  {L(lang, "Explore house plans", "घर के नक्शे देखें")}
                 </Link>
               </div>
               <p className="text-[14px] text-muted">
@@ -227,7 +240,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
             </div>
             {/* collage: a 3D plan, the BOQ on a phone, a floating cost card */}
             <div className="relative min-w-0">
-              <div className="overflow-hidden rounded-[28px] border border-line bg-[#eef1ea] shadow-[0_40px_80px_-40px_rgba(22,24,26,0.45)]">
+              <div className="overflow-hidden rounded-[18px] border border-line bg-[#eef3f9] shadow-[0_40px_80px_-40px_rgba(22,24,26,0.45)]">
                 <img src={nakshaPreview(n).src} alt={nakshaTitle(n, lang)} className="aspect-[16/11] w-full object-cover" fetchPriority="high" />
               </div>
               <div className="absolute -bottom-8 -left-3 w-[44%] max-w-[230px] overflow-hidden rounded-[26px] border-[6px] border-ink bg-white shadow-2xl sm:-left-8">
@@ -243,7 +256,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
         </section>
 
         {/* numbers */}
-        <section className="border-y border-line bg-[#f6f5f2]">
+        <section className="border-y border-line bg-[#f7fafe]">
           <div className="mx-auto grid max-w-6xl grid-cols-2 gap-y-6 px-4 py-8 sm:px-6 md:grid-cols-5">
             {stats.map(([v, k]) => (
               <div key={k} className="flex flex-col items-center text-center">
@@ -272,7 +285,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <ul className="mt-10 grid auto-rows-[150px] grid-cols-2 gap-3 sm:auto-rows-[190px] sm:grid-cols-4">
               {mosaic.slice(0, 9).map((x, i) => (
                 <li key={x.slug} className={i === 0 ? "col-span-2 row-span-2" : ""}>
-                  <Link href={langPath(lang, `naksha/${x.slug}`)} className="group relative block h-full overflow-hidden rounded-2xl bg-[#eef1ea]">
+                  <Link href={langPath(lang, `naksha/${x.slug}`)} className="group relative block h-full overflow-hidden rounded-2xl bg-[#eef3f9]">
                     <img src={nakshaPreview(x).src} alt={nakshaTitle(x, lang)} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                     <span className="absolute bottom-2 left-2 rounded-full bg-white/95 px-3 py-1 text-[12px] font-bold shadow">
                       {x.plot.w}×{x.plot.d} · {facing(x)}
@@ -389,7 +402,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
               {L(lang, "Plan the whole house — before you pay for a single brick", "पूरा घर प्लान करें — एक भी ईंट ख़रीदने से पहले")}
             </h2>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-12 items-center rounded-full bg-amber px-7 text-[15px] font-extrabold text-ink">
+              <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-12 items-center rounded-full bg-amber px-7 text-[15px] font-extrabold text-white">
                 {L(lang, "Start free estimate", "मुफ़्त एस्टिमेट शुरू करें")}
               </Link>
               <Link href={langPath(lang, "pro")} className="inline-flex h-12 items-center rounded-full border border-white/30 px-6 text-[15px] font-bold hover:border-white">
@@ -408,8 +421,8 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {who.map((w, i) => (
                 <Reveal key={w.t} delay={i * 70}>
-                  <li className="flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white transition hover:-translate-y-1 hover:shadow-lg">
-                    <img src={w.img} alt="" loading="lazy" className="aspect-[4/3] w-full bg-[#eef1ea] object-cover object-left-top" />
+                  <li className="flex h-full flex-col overflow-hidden rounded-[16px] border border-line bg-white transition hover:-translate-y-1 hover:shadow-lg">
+                    <img src={w.img} alt="" loading="lazy" className="aspect-[4/3] w-full bg-[#eef3f9] object-cover object-left-top" />
                     <div className="flex flex-1 flex-col gap-2 p-5">
                       <h3 className="font-display text-[20px] font-extrabold">{w.t}</h3>
                       <p className="text-[14px] leading-relaxed text-body">{w.d}</p>
@@ -425,7 +438,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
         </section>
 
         {/* plans by type */}
-        <section className="bg-[#f6f5f2]">
+        <section className="bg-[#f7fafe]">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
             <h2 className="font-display mb-8 text-center text-[28px] font-extrabold tracking-tight sm:text-[36px]">
               {L(lang, "See house plans by type", "प्रकार के हिसाब से नक्शे देखें")}
@@ -462,11 +475,11 @@ export function HomeLight({ lang }: { lang: Lang }) {
         </section>
 
         {/* FAQ */}
-        <section className="bg-[#f6f5f2]">
+        <section className="bg-[#f7fafe]">
           <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:py-20">
             <div className="flex min-w-0 flex-col gap-4">
               <h2 className="font-display text-[28px] font-extrabold tracking-tight sm:text-[36px]">{d.faq}</h2>
-              <img src={nakshaPreview(mosaic[2] ?? n).src} alt="" loading="lazy" className="hidden aspect-[4/3] w-full rounded-[22px] object-cover lg:block" />
+              <img src={nakshaPreview(mosaic[2] ?? n).src} alt="" loading="lazy" className="hidden aspect-[4/3] w-full rounded-[16px] object-cover lg:block" />
             </div>
             <div className="flex min-w-0 flex-col gap-2">
               {faqs.map(([q, a]) => (
@@ -485,12 +498,12 @@ export function HomeLight({ lang }: { lang: Lang }) {
         {/* closing */}
         <section className="bg-white">
           <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-4 py-20 text-center sm:px-6">
-            <span className="font-display flex h-16 w-16 items-center justify-center rounded-2xl bg-amber text-[24px] font-extrabold text-ink">BF</span>
+            <span className="font-display flex h-16 w-16 items-center justify-center rounded-2xl bg-amber text-[24px] font-extrabold text-white">BF</span>
             <h2 className="font-display text-[28px] font-extrabold tracking-tight sm:text-[40px]">
               {L(lang, "Plan your own house on BOQFather", "अपना घर BOQFather पर प्लान करें")}
             </h2>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-full bg-amber px-8 text-[16px] font-extrabold text-ink">
+              <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-full bg-amber px-8 text-[16px] font-extrabold text-white">
                 {L(lang, "Make my estimate — free", "मेरा एस्टिमेट बनाएं — फ़्री")}
               </Link>
               <Link href={langPath(lang, "calculators")} className={btnLight}>{d.all_calculators}</Link>

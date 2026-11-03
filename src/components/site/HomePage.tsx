@@ -25,7 +25,7 @@ export function HomePage({ lang }: { lang: Lang }) {
     <>
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
       <main lang={lang}>
-        <section className="bg-ink text-[#f5f3ef]">
+        <section className="bg-ink text-[#f7fafe]">
           <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:pb-20 lg:pt-16">
             <div className="flex flex-col gap-5">
               <span className="self-start rounded-full border border-[#4a4c50] px-3 py-1 text-[12px] font-semibold tracking-wide text-amber">
@@ -34,10 +34,10 @@ export function HomePage({ lang }: { lang: Lang }) {
               <h1 className="font-display text-[36px] font-extrabold leading-[1.1] tracking-tight sm:text-[52px]">
                 {d.home_h1}
               </h1>
-              <p className="max-w-xl text-[17px] leading-relaxed text-[#cfcbc2]">
+              <p className="max-w-xl text-[17px] leading-relaxed text-[#c3cfdd]">
                 {d.home_sub}
               </p>
-              <ul className="mt-1 flex flex-col gap-2 text-[15px] text-[#e7e3dc]">
+              <ul className="mt-1 flex flex-col gap-2 text-[15px] text-[#dbe4ef]">
                 {[d.home_why_1, d.home_why_2, d.home_why_3].map((w) => (
                   <li key={w} className="flex gap-2.5">
                     <span
@@ -226,7 +226,7 @@ export function HomePage({ lang }: { lang: Lang }) {
             href={langPath(lang, "house-boq-estimate")}
             className="flex flex-col gap-3 rounded-2xl border-2 border-amber bg-amber-tint p-6 transition hover:-translate-y-0.5 sm:p-8"
           >
-            <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-ink">
+            <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-white">
               {lang === "hi" ? "मुफ़्त · अभी इस्तेमाल करें" : "FREE · LIVE NOW"}
             </span>
             <h2 className="font-display text-[24px] font-extrabold leading-tight">

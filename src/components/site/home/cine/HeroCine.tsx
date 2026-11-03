@@ -108,7 +108,7 @@ export function HeroCine({
       />
       <div ref={copy} className="mx-auto w-full max-w-7xl px-5 pb-8 pt-24 sm:px-8 lg:pb-10">
         <p className="reveal-up mb-6 inline-flex max-w-full items-center gap-2 rounded-2xl border border-amber/40 bg-amber/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-amber sm:rounded-full sm:text-[12px] sm:tracking-[0.22em]">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber shadow-[0_0_10px_#c6f432]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-amber shadow-[0_0_10px_#3b82f6]" />
           {L(lang, "The engineer's way to build smarter", "समझदारी से घर बनाने का इंजीनियर वाला तरीका")}
         </p>
         <h1 className="font-display max-w-4xl text-[34px] font-black leading-[0.95] tracking-[-0.02em] sm:text-[50px] lg:text-[64px]">
@@ -136,7 +136,7 @@ export function HeroCine({
         <div className="reveal-up mt-8 flex flex-wrap gap-3" style={{ animationDelay: "800ms" }}>
           <Link
             href={estimateHref}
-            className="group inline-flex h-14 items-center gap-3 rounded-full bg-amber pl-7 pr-2 text-[16px] font-bold text-night shadow-[0_0_40px_-8px_rgba(198,244,50,0.7)] transition hover:brightness-110"
+            className="group inline-flex h-14 items-center gap-3 rounded-full bg-amber pl-7 pr-2 text-[16px] font-bold text-white shadow-[0_0_40px_-8px_rgba(23,105,210,0.7)] transition hover:brightness-110"
           >
             {L(lang, "Make my estimate", "मेरा एस्टिमेट बनाएं")}
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-night text-amber transition-transform group-hover:translate-x-1">

@@ -21,25 +21,25 @@ export function ResultPanel(props: {
   return (
     <section
       aria-live="polite"
-      className="rounded-2xl bg-ink p-5 text-[#f5f3ef] sm:p-6"
+      className="rounded-2xl bg-ink p-5 text-[#f7fafe] sm:p-6"
     >
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
           {props.title ?? d.results}
         </h2>
-        <span className="rounded-full bg-[#2a2c2f] px-2.5 py-1 text-[11px] font-semibold text-[#cfcbc2]">
+        <span className="rounded-full bg-[#2a2c2f] px-2.5 py-1 text-[11px] font-semibold text-[#c3cfdd]">
           {d.preliminary}
         </span>
       </div>
       <dl className="grid grid-cols-2 gap-3">
         {props.stats.map((s) => (
           <div key={s.label} className="rounded-xl bg-[#222427] p-3.5">
-            <dt className="text-[12px] text-[#cfcbc2]">{s.label}</dt>
+            <dt className="text-[12px] text-[#c3cfdd]">{s.label}</dt>
             <dd className="font-display mt-0.5 text-[22px] font-extrabold leading-tight">
               {s.value}
             </dd>
             {s.sub && (
-              <dd className="mt-0.5 text-[12px] text-[#cfcbc2]">{s.sub}</dd>
+              <dd className="mt-0.5 text-[12px] text-[#c3cfdd]">{s.sub}</dd>
             )}
           </div>
         ))}

@@ -289,7 +289,7 @@ function LoginDialog({
             else setStep("code");
           }}
         >
-          <span className="rounded-lg border border-line bg-[#f4f1ea] px-3 py-2 text-[15px]">
+          <span className="rounded-lg border border-line bg-[#eef4fb] px-3 py-2 text-[15px]">
             +91
           </span>
           <input
@@ -435,7 +435,7 @@ export function AccountButton({ lang }: { lang: Lang }) {
       <button
         type="button"
         onClick={() => a.openLogin()}
-        className="rounded-full px-3 py-2 text-[14px] font-semibold text-ink hover:bg-[#f1eee8]"
+        className="rounded-full px-3 py-2 text-[14px] font-semibold text-ink hover:bg-[#eaf3ff]"
       >
         {L(lang, "Log in", "लॉगिन")}
       </button>
@@ -443,10 +443,10 @@ export function AccountButton({ lang }: { lang: Lang }) {
   return (
     <a
       href={lang === "hi" ? "/hi/account/" : "/account/"}
-      className="flex items-center gap-1.5 rounded-full px-3 py-2 text-[14px] font-semibold text-ink hover:bg-[#f1eee8]"
+      className="flex items-center gap-1.5 rounded-full px-3 py-2 text-[14px] font-semibold text-ink hover:bg-[#eaf3ff]"
     >
       {a.pro && (
-        <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold text-ink">
+        <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold text-white">
           PRO
         </span>
       )}

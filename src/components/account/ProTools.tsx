@@ -212,7 +212,7 @@ export function ProTools({
           onClick={() => onExport("xls", exportOpts())}
           disabled={!!busy}
           className={
-            btn + " bg-amber font-extrabold text-ink hover:brightness-105"
+            btn + " bg-amber font-extrabold text-white hover:brightness-105"
           }
         >
           {busy === "xls" ? "…" : L(lang, "Download Excel", "Excel डाउनलोड")}

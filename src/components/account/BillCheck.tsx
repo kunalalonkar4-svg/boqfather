@@ -258,7 +258,7 @@ export function BillCheck({ lang }: { lang: Lang }) {
           <div className="overflow-x-auto rounded-xl border border-line">
             <table className="w-full min-w-[640px] text-[13px]">
               <thead>
-                <tr className="bg-[#f4f1ea] text-left">
+                <tr className="bg-[#eef4fb] text-left">
                   <th className="px-3 py-2">{L(lang, "Item", "आइटम")}</th>
                   <th className="px-3 py-2 text-right">
                     {L(lang, "Bill rate", "बिल रेट")}
@@ -330,7 +330,7 @@ export function BillCheck({ lang }: { lang: Lang }) {
             </table>
           </div>
           {extraTotal > 0 && (
-            <p className="rounded-lg bg-[#fbe9e5] px-3 py-2 text-[14px] font-semibold text-[#a8321f]">
+            <p className="rounded-lg bg-[#fdecea] px-3 py-2 text-[14px] font-semibold text-[#a8321f]">
               {L(
                 lang,
                 `Items charged more than 10% above market add up to about ₹${Math.round(extraTotal).toLocaleString("en-IN")} extra — ask the contractor about these.`,
