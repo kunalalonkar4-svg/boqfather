@@ -164,6 +164,16 @@ export function SiteFooter({ lang }: { lang: Lang }) {
                   {lang === "hi" ? "शहर के हिसाब से खर्च →" : "Cost by city →"}
                 </Link>
               </p>
+              <p className="mt-2 text-[14px]">
+                <Link
+                  href={langPath(lang, "house-construction-guide/checklist")}
+                  className="font-semibold text-white hover:text-amber"
+                >
+                  {lang === "hi"
+                    ? "घर बनाने की चेकलिस्ट (82 पॉइंट) →"
+                    : "House checklist (82 points) →"}
+                </Link>
+              </p>
             </div>
           </div>
         </div>

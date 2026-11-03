@@ -7,6 +7,10 @@ type T = { en: string; hi: string };
 
 export interface GuideItem {
   t: T;
+  /** YouTube search words for videos on this point (Hindi / Hinglish). */
+  yt?: string;
+  /** A specific YouTube video instead of the search. */
+  video?: string;
   /** Tool or page that does this (site path without language prefix). */
   link?: string;
 }
@@ -28,30 +32,35 @@ export const GUIDE: GuideSection[] = [
     },
     items: [
       {
+        yt: "plot registry kaise check kare",
         t: {
           en: "Registered sale deed in your name, and the chain of earlier deeds (ideally 30 years).",
           hi: "आपके नाम की रजिस्टर्ड रजिस्ट्री, और पिछली रजिस्ट्रियों की चेन (हो सके तो 30 साल)।",
         },
       },
       {
+        yt: "khasra khatauni namantaran kaise kare",
         t: {
           en: "Land record (7/12, khasra-khatauni, RTC — the name differs by state) and mutation (namantaran) in your name.",
           hi: "भू-अभिलेख (7/12, खसरा-खतौनी, RTC — राज्य के हिसाब से नाम) और आपके नाम पर नामांतरण।",
         },
       },
       {
+        yt: "plot diversion NA approved layout",
         t: {
           en: "Non-agricultural (NA / diversion) order and an approved layout if the plot is in a colony.",
           hi: "डायवर्शन / NA आदेश, और कॉलोनी में प्लॉट हो तो स्वीकृत लेआउट।",
         },
       },
       {
+        yt: "encumbrance certificate kya hai",
         t: {
           en: "Encumbrance certificate (no loan or case on the land), property tax paid, boundary stones matching the deed.",
           hi: "बोझ-मुक्त प्रमाणपत्र (ज़मीन पर कोई लोन या केस नहीं), संपत्ति कर जमा, और रजिस्ट्री के हिसाब से मुनारे / सीमा।",
         },
       },
       {
+        yt: "plot kharidne se pehle kya check kare",
         t: {
           en: "Road width in front, which way the road faces, and whether water, sewer and power lines reach the plot.",
           hi: "सामने सड़क कितनी चौड़ी है, किस दिशा में है, और पानी, सीवर, बिजली की लाइन प्लॉट तक है या नहीं।",
@@ -68,6 +77,7 @@ export const GUIDE: GuideSection[] = [
     },
     items: [
       {
+        yt: "setback kya hota hai ghar",
         t: {
           en: "Setbacks — the open space to leave in front, at the back and on the sides (depends on plot size and road width).",
           hi: "सेटबैक — आगे, पीछे और बगल में कितनी खुली जगह छोड़नी है (प्लॉट साइज़ और सड़क की चौड़ाई पर निर्भर)।",
@@ -75,24 +85,28 @@ export const GUIDE: GuideSection[] = [
         link: "house-plan",
       },
       {
+        yt: "FAR FSI kya hota hai",
         t: {
           en: "Ground coverage and FAR / FSI — how much floor area in total you may build; this caps the number of floors.",
           hi: "ग्राउंड कवरेज और FAR / FSI — कुल कितना फ़्लोर एरिया बना सकते हैं; इसी से मंज़िलों की गिनती तय होती है।",
         },
       },
       {
+        yt: "naksha pass kaise karaye",
         t: {
           en: "Building permission (naksha pass) before you start: drawings signed by a registered architect or engineer.",
           hi: "काम शुरू करने से पहले नक्शा पास: रजिस्टर्ड आर्किटेक्ट या इंजीनियर के साइन वाली ड्रॉइंग।",
         },
       },
       {
+        yt: "rainwater harvesting ghar me kaise kare",
         t: {
           en: "Temporary power and water connection for construction; rainwater harvesting where the bye-laws ask for it.",
           hi: "निर्माण के लिए अस्थायी बिजली और पानी कनेक्शन; जहां नियम कहें वहां वर्षा जल संचयन।",
         },
       },
       {
+        yt: "completion certificate kaise milta hai",
         t: {
           en: "Completion / occupancy certificate at the end — needed for the permanent connections and for a resale.",
           hi: "आख़िर में कंप्लीशन / ऑक्युपेंसी सर्टिफ़िकेट — स्थायी कनेक्शन और आगे बेचने के लिए ज़रूरी।",
@@ -109,6 +123,7 @@ export const GUIDE: GuideSection[] = [
     },
     items: [
       {
+        yt: "ghar ka naksha kaise banaye planning",
         t: {
           en: "How many BHK, how many floors now and later — if you will add a floor later, design the columns and footings for it today.",
           hi: "कितने BHK, अभी कितनी मंज़िल और बाद में कितनी — बाद में मंज़िल बढ़ानी है तो कॉलम और नींव आज ही उसके हिसाब से बनवाएं।",
@@ -116,18 +131,21 @@ export const GUIDE: GuideSection[] = [
         link: "house-plan",
       },
       {
+        yt: "ghar me seedhi kaha banaye toilet kitchen planning",
         t: {
           en: "Parking, staircase position, kitchen and toilets near each other (shorter pipes), light and cross-ventilation in every room.",
           hi: "पार्किंग, सीढ़ी की जगह, किचन और टॉयलेट पास-पास (पाइप छोटे), हर कमरे में रोशनी और हवा का आर-पार रास्ता।",
         },
       },
       {
+        yt: "vastu ke anusar ghar ka naksha",
         t: {
           en: "Vastu preferences (if any) decided before the drawing, not after.",
           hi: "वास्तु की पसंद (अगर है) ड्रॉइंग से पहले तय करें, बाद में नहीं।",
         },
       },
       {
+        yt: "soil test structural drawing ghar",
         t: {
           en: "Soil test (bearing capacity) and a structural drawing from an engineer: footing sizes, column and beam sizes, and the bar bending schedule.",
           hi: "मिट्टी की जांच (भार क्षमता) और इंजीनियर से स्ट्रक्चरल ड्रॉइंग: फ़ुटिंग, कॉलम, बीम के साइज़ और सरिया की कटिंग लिस्ट (BBS)।",
@@ -135,6 +153,7 @@ export const GUIDE: GuideSection[] = [
         link: "steel-calculator",
       },
       {
+        yt: "ghar ki wiring plumbing planning",
         t: {
           en: "Electrical and plumbing layout on the drawing — point positions decided before the walls are plastered.",
           hi: "बिजली और प्लंबिंग का लेआउट ड्रॉइंग पर — प्लास्टर से पहले पॉइंट की जगह तय।",
@@ -151,6 +170,7 @@ export const GUIDE: GuideSection[] = [
     },
     items: [
       {
+        yt: "ghar banane ka kharcha per sqft",
         t: {
           en: "Rough cost: built-up area × rate per sqft (finish level and city change the rate).",
           hi: "मोटा खर्च: बिल्ट-अप एरिया × per sqft रेट (फ़िनिश लेवल और शहर से रेट बदलता है)।",
@@ -158,6 +178,7 @@ export const GUIDE: GuideSection[] = [
         link: "house-construction-cost-calculator",
       },
       {
+        yt: "BOQ kaise banaye ghar ka",
         t: {
           en: "Detailed BOQ: every item measured — excavation, concrete, steel, brickwork, plaster, flooring, doors, windows, electrical, plumbing, paint.",
           hi: "डिटेल BOQ: हर आइटम का नाप — खुदाई, कंक्रीट, सरिया, चिनाई, प्लास्टर, फ़र्श, दरवाज़े, खिड़की, बिजली, प्लंबिंग, पेंट।",
@@ -165,6 +186,7 @@ export const GUIDE: GuideSection[] = [
         link: "house-boq-estimate",
       },
       {
+        yt: "1000 sqft me kitna cement sariya",
         t: {
           en: "Material quantities — cement bags, steel kg, sand, aggregate, bricks — so you can buy in time and check deliveries.",
           hi: "सामग्री की मात्रा — सीमेंट बोरी, सरिया किलो, रेत, गिट्टी, ईंट — ताकि समय पर ख़रीद सकें और सप्लाई जांच सकें।",
@@ -172,12 +194,14 @@ export const GUIDE: GuideSection[] = [
         link: "house-construction-cost",
       },
       {
+        yt: "ghar banane ka budget kaise banaye",
         t: {
           en: "Keep 8–10% extra for price rises and changes; land, approvals, interiors and furniture are on top.",
           hi: "दाम बढ़ने और बदलाव के लिए 8–10% अलग रखें; ज़मीन, मंज़ूरी, इंटीरियर और फ़र्नीचर अलग से।",
         },
       },
       {
+        yt: "home construction loan pre emi",
         t: {
           en: "Cash flow: how much money is needed at each stage, and the loan EMI or pre-EMI during construction.",
           hi: "पैसों का प्लान: हर स्टेज पर कितना पैसा चाहिए, और निर्माण के दौरान लोन की EMI या प्री-EMI।",
@@ -195,24 +219,28 @@ export const GUIDE: GuideSection[] = [
     },
     items: [
       {
+        yt: "labour contract vs material contract",
         t: {
           en: "Choose the contract type: labour only (you buy material), or material + labour (turnkey) at a rate per sqft.",
           hi: "ठेका किस तरह का: सिर्फ़ लेबर (सामग्री आप ख़रीदें), या सामग्री + लेबर (टर्नकी) per sqft रेट पर।",
         },
       },
       {
+        yt: "construction material brand kaun sa le",
         t: {
           en: "Write down the brands and grades: cement, steel (Fe500D), tiles, doors, windows, wires, pipes, sanitary and paint.",
           hi: "ब्रांड और ग्रेड लिखित में: सीमेंट, सरिया (Fe500D), टाइल्स, दरवाज़े, खिड़की, तार, पाइप, सैनिटरी और पेंट।",
         },
       },
       {
+        yt: "thekedar ko payment kaise kare",
         t: {
           en: "Payments linked to stages (plinth, each slab, brickwork, plaster, finishing), never in advance of the work.",
           hi: "भुगतान स्टेज से जुड़ा (प्लिंथ, हर स्लैब, चिनाई, प्लास्टर, फ़िनिशिंग), काम से पहले कभी नहीं।",
         },
       },
       {
+        yt: "contractor quotation compare kaise kare",
         t: {
           en: "Compare the contractor's rate with the market before signing, and keep a measurement book (MB) for running bills.",
           hi: "साइन करने से पहले ठेकेदार का रेट बाज़ार से मिलाएं, और चालू बिलों के लिए मेज़रमेंट बुक (MB) रखें।",
@@ -233,6 +261,7 @@ export const GUIDE: GuideSection[] = [
     },
     items: [
       {
+        yt: "house layout kaise kare diagonal check",
         t: {
           en: "Layout: check the centre lines and the diagonals of the marking against the drawing before digging.",
           hi: "लेआउट: खुदाई से पहले सेंटर लाइन और मार्किंग के विकर्ण (डायगोनल) ड्रॉइंग से मिलाएं।",
@@ -240,12 +269,14 @@ export const GUIDE: GuideSection[] = [
         link: "excavation-calculator",
       },
       {
+        yt: "footing reinforcement kaise check kare",
         t: {
           en: "Foundation: footing depth reached firm soil, PCC under the footing, steel mesh size and spacing as per drawing, 50 mm cover.",
           hi: "नींव: फ़ुटिंग की गहराई पक्की मिट्टी तक, फ़ुटिंग के नीचे PCC, सरिया की जाली का साइज़ और दूरी ड्रॉइंग के हिसाब से, 50 mm कवर।",
         },
       },
       {
+        yt: "column slab casting se pehle kya check kare",
         t: {
           en: "Columns and slab before concreting: bar count and diameter, stirrup spacing, cover blocks, shuttering in level and propped.",
           hi: "कॉलम और स्लैब की ढलाई से पहले: सरिया की गिनती और मोटाई, रिंग की दूरी, कवर ब्लॉक, शटरिंग लेवल में और टेक लगी हुई।",
@@ -253,6 +284,7 @@ export const GUIDE: GuideSection[] = [
         link: "steel-calculator",
       },
       {
+        yt: "M20 concrete mix ratio cube test",
         t: {
           en: "Concrete: mix (M20 ≈ 1:1.5:3), little water, vibrator used, cubes cast for 7- and 28-day tests.",
           hi: "कंक्रीट: मसाला (M20 ≈ 1:1.5:3), पानी कम, वाइब्रेटर चला, 7 और 28 दिन के टेस्ट के लिए क्यूब भरे।",
@@ -260,12 +292,14 @@ export const GUIDE: GuideSection[] = [
         link: "concrete-calculator",
       },
       {
+        yt: "curing kitne din kare slab",
         t: {
           en: "Curing: keep concrete wet at least 7 days (10 days with PPC cement); slab props stay 7–14 days depending on span.",
           hi: "तराई: कंक्रीट को कम से कम 7 दिन गीला रखें (PPC सीमेंट में 10 दिन); स्पैन के हिसाब से स्लैब की टेक 7–14 दिन रहे।",
         },
       },
       {
+        yt: "brick work kaise kare sahi tarika",
         t: {
           en: "Brickwork: bricks soaked, joints 10–12 mm and filled, walls in plumb; lintels over every opening.",
           hi: "चिनाई: ईंटें भीगी हुईं, जोड़ 10–12 mm और भरे हुए, दीवार साहुल में; हर खुलने वाली जगह पर लिंटल।",
@@ -273,6 +307,7 @@ export const GUIDE: GuideSection[] = [
         link: "brick-calculator",
       },
       {
+        yt: "plumbing pressure test before plaster",
         t: {
           en: "Before plaster: electrical conduits and plumbing lines fixed and pressure-tested; toilet and terrace waterproofing done.",
           hi: "प्लास्टर से पहले: बिजली की कंड्यूट और प्लंबिंग लाइन फ़िट और प्रेशर टेस्ट; टॉयलेट और छत की वॉटरप्रूफ़िंग पूरी।",
@@ -280,6 +315,7 @@ export const GUIDE: GuideSection[] = [
         link: "plaster-calculator",
       },
       {
+        yt: "tiles hollow check flooring",
         t: {
           en: "Finishing: floor slopes towards the drains, tile joints and hollowness, doors closing freely, paint coats as agreed.",
           hi: "फ़िनिशिंग: फ़र्श का ढलान नाली की ओर, टाइल के जोड़ और खोखलापन, दरवाज़े आराम से बंद हों, पेंट के कोट तय हिसाब से।",
@@ -300,6 +336,7 @@ export const GUIDE: GuideSection[] = [
     },
     items: [
       {
+        yt: "thumb rule cement steel per sqft",
         t: {
           en: "Per sqft of built-up area (RCC house): cement ≈ 0.4 bag, steel ≈ 4 kg, sand ≈ 1.8 cft, aggregate ≈ 1.35 cft, bricks ≈ 8.",
           hi: "बिल्ट-अप के प्रति sqft (RCC घर): सीमेंट ≈ 0.4 बोरी, सरिया ≈ 4 किलो, रेत ≈ 1.8 cft, गिट्टी ≈ 1.35 cft, ईंट ≈ 8।",
@@ -307,6 +344,7 @@ export const GUIDE: GuideSection[] = [
         link: "house-construction-cost-calculator",
       },
       {
+        yt: "concrete mix ratio calculation",
         t: {
           en: "Concrete mixes: M15 ≈ 1:2:4, M20 ≈ 1:1.5:3; dry volume = wet volume × 1.54; one cement bag = 50 kg = 0.0347 m³.",
           hi: "कंक्रीट मसाला: M15 ≈ 1:2:4, M20 ≈ 1:1.5:3; सूखा आयतन = गीला × 1.54; एक बोरी सीमेंट = 50 किलो = 0.0347 m³।",
@@ -314,6 +352,7 @@ export const GUIDE: GuideSection[] = [
         link: "concrete-calculator",
       },
       {
+        yt: "steel weight formula d2/162",
         t: {
           en: "Steel weight per metre = d²/162 kg (d in mm): 8 mm 0.395, 10 mm 0.617, 12 mm 0.889, 16 mm 1.58 kg/m.",
           hi: "सरिया का वज़न प्रति मीटर = d²/162 किलो (d mm में): 8 mm 0.395, 10 mm 0.617, 12 mm 0.889, 16 mm 1.58 किलो/मी.।",
@@ -321,12 +360,14 @@ export const GUIDE: GuideSection[] = [
         link: "steel-calculator",
       },
       {
+        yt: "clear cover in footing column beam slab",
         t: {
           en: "Clear cover: footing 50 mm, column 40 mm, beam 25 mm, slab 20 mm; lap length about 50 × bar diameter.",
           hi: "कवर: फ़ुटिंग 50 mm, कॉलम 40 mm, बीम 25 mm, स्लैब 20 mm; लैप की लंबाई लगभग 50 × सरिये की मोटाई।",
         },
       },
       {
+        yt: "brick calculation per cubic meter",
         t: {
           en: "Brickwork: about 500 bricks per m³ (9-inch wall); plaster 12 mm inside (1:6), 20 mm outside (1:4).",
           hi: "चिनाई: लगभग 500 ईंट प्रति m³ (9 इंच दीवार); प्लास्टर अंदर 12 mm (1:6), बाहर 20 mm (1:4)।",
@@ -334,6 +375,7 @@ export const GUIDE: GuideSection[] = [
         link: "brick-calculator",
       },
       {
+        yt: "unit conversion civil engineering",
         t: {
           en: "Units: 1 m = 3.281 ft, 1 m² = 10.764 sqft, 1 m³ = 35.31 cft, 1 gaj (sq yard) = 9 sqft.",
           hi: "इकाई: 1 m = 3.281 ft, 1 m² = 10.764 sqft, 1 m³ = 35.31 cft, 1 गज़ = 9 sqft।",

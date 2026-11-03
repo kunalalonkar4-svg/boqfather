@@ -27,6 +27,8 @@ import { name, t } from "@/i18n/ui";
 import { FACING_NAME, NAKSHE } from "@/content/naksha";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import HouseCalc from "@/components/calcs/HouseCalc";
+import { CHECKLIST, CHECKLIST_COUNT, ytUrl } from "@/content/checklist";
+import { Checklist } from "./ChecklistClient";
 import { SiteFooter, SiteHeader } from "./Chrome";
 import { PlotPlanPreview } from "./PlotPlanPreview";
 
@@ -1057,6 +1059,32 @@ export function GuidePage({ lang }: { lang: Lang }) {
         </p>
       }
     >
+      <Link
+        href={langPath(lang, `${GUIDE_BASE}/checklist`)}
+        className="flex max-w-3xl flex-col gap-2 rounded-2xl border-2 border-amber bg-amber-tint p-5 transition hover:-translate-y-0.5 sm:p-6"
+      >
+        <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-ink">
+          {L(
+            lang,
+            `${CHECKLIST_COUNT} POINTS · WITH VIDEOS`,
+            `${CHECKLIST_COUNT} पॉइंट · वीडियो के साथ`,
+          )}
+        </span>
+        <span className="font-display text-[22px] font-extrabold leading-tight">
+          {L(
+            lang,
+            "The complete checklist, plot to handover →",
+            "पूरी चेकलिस्ट, प्लॉट से हैंडओवर तक →",
+          )}
+        </span>
+        <span className="text-[15px] text-body">
+          {L(
+            lang,
+            "Tick each check as the work goes on; every point has YouTube videos showing how it is done.",
+            "काम के साथ हर जांच पर टिक करें; हर पॉइंट के साथ YouTube वीडियो हैं जिनमें काम होते दिखता है।",
+          )}
+        </span>
+      </Link>
       <section className="flex flex-col gap-4">
         <H2>{L(lang, "Step by step", "क़दम-दर-क़दम")}</H2>
         <CardList
@@ -1227,14 +1255,31 @@ export function GuideItemPage({ lang, slug }: { lang: Lang; slug: string }) {
                   <span className="text-[15px] leading-relaxed">
                     {it.t[lang]}
                   </span>
-                  {it.link && (
-                    <Link
-                      href={langPath(lang, it.link)}
-                      className="w-fit text-[13px] font-semibold text-steel hover:text-ink"
-                    >
-                      {L(lang, "Work it out →", "हिसाब निकालें →")}
-                    </Link>
-                  )}
+                  <span className="flex flex-wrap gap-x-4 gap-y-1 text-[13px] font-semibold">
+                    {it.yt && (
+                      <a
+                        href={ytUrl(it)}
+                        target="_blank"
+                        rel="noopener"
+                        className="text-[#b3261e] hover:underline"
+                      >
+                        ▶{" "}
+                        {L(
+                          lang,
+                          "Watch videos on YouTube",
+                          "YouTube पर वीडियो देखें",
+                        )}
+                      </a>
+                    )}
+                    {it.link && (
+                      <Link
+                        href={langPath(lang, it.link)}
+                        className="text-steel hover:text-ink"
+                      >
+                        {L(lang, "Work it out →", "हिसाब निकालें →")}
+                      </Link>
+                    )}
+                  </span>
                 </span>
               </li>
             ))}
@@ -1284,6 +1329,66 @@ export function GuideItemPage({ lang, slug }: { lang: Lang; slug: string }) {
         <Cta href={langPath(lang, q.tool.path)}>{q.tool.label[lang]}</Cta>
       )}
       <GuideNext lang={lang} slug={slug} />
+    </Shell>
+  );
+}
+
+/* ---------------------------------------------------------------- checklist */
+
+export const checklistTitle = (lang: Lang) =>
+  L(
+    lang,
+    `House Construction Checklist: ${CHECKLIST_COUNT} Points from Plot to Handover`,
+    `घर बनाने की चेकलिस्ट: प्लॉट से हैंडओवर तक ${CHECKLIST_COUNT} पॉइंट`,
+  );
+export const checklistDescription = (lang: Lang) =>
+  L(
+    lang,
+    `The ${CHECKLIST_COUNT} checks a house owner must do — plot papers, design, budget, contractor, foundation, columns, slab, concrete, handover — each with YouTube videos showing how it is done.`,
+    `घर मालिक को करनी चाहिए ये ${CHECKLIST_COUNT} जांच — प्लॉट के कागज़, डिज़ाइन, बजट, ठेकेदार, नींव, कॉलम, स्लैब, कंक्रीट, हैंडओवर — हर पॉइंट के साथ YouTube वीडियो।`,
+  );
+
+export function ChecklistPage({ lang }: { lang: Lang }) {
+  const faqs = CHECKLIST.slice(0, 5).map((s) => ({
+    q: L(
+      lang,
+      `What to check at "${s.title.en.split("·")[1].trim()}"?`,
+      `"${s.title.hi.split("·")[1].trim()}" में क्या जांचें?`,
+    ),
+    a: s.points.map((pt) => pt.t[lang]).join("; "),
+  }));
+  return (
+    <Shell
+      lang={lang}
+      path="house-construction-guide/checklist"
+      crumbs={[
+        {
+          name: L(lang, "House building guide", "घर बनाने की गाइड"),
+          path: "house-construction-guide",
+        },
+        { name: L(lang, "Checklist", "चेकलिस्ट") },
+      ]}
+      h1={checklistTitle(lang)}
+      faqs={faqs}
+      faqsHidden
+      intro={
+        <p>
+          {L(
+            lang,
+            `The main ${CHECKLIST_COUNT} things to check, in the order they come up. Tick them as you go (ticks stay in this browser), and open the YouTube videos with each point to see how the work should be done — useful even when the engineer is not on site.`,
+            `जांचने वाली ${CHECKLIST_COUNT} मुख्य बातें, उसी क्रम में जिसमें काम आता है। जैसे-जैसे पूरा हो, टिक करते जाएं (टिक इसी ब्राउज़र में सेव रहते हैं), और हर पॉइंट के साथ YouTube वीडियो खोलकर देखें कि काम कैसे होना चाहिए — इंजीनियर साइट पर न हो तब भी काम आएगा।`,
+          )}
+        </p>
+      }
+    >
+      <Checklist lang={lang} />
+      <p className="max-w-3xl rounded-xl bg-[#f3efe7] px-4 py-3 text-[13px] leading-relaxed text-body">
+        {L(
+          lang,
+          "The video links open YouTube results for each topic; the videos are made by others, so check that what you watch matches your drawings. Structural work must follow your engineer's drawing.",
+          "वीडियो लिंक हर विषय के YouTube नतीजे खोलते हैं; वीडियो दूसरों के बनाए हैं, इसलिए देखें कि जो दिख रहा है वो आपकी ड्रॉइंग से मेल खाता है। स्ट्रक्चर का काम इंजीनियर की ड्रॉइंग के अनुसार ही करें।",
+        )}
+      </p>
     </Shell>
   );
 }
