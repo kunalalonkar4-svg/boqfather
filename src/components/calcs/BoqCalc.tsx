@@ -555,6 +555,20 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploaded]);
 
+  // the plot as last applied, for the site around the 3D house (none when rooms were typed in or uploaded)
+  const sitePlot = useMemo(() => {
+    if (!plotLive || !applied) return undefined;
+    try {
+      const p = JSON.parse(applied) as { B: string; L: string; back: string };
+      const w = Number(p.B),
+        d = Number(p.L),
+        back = Number(p.back);
+      return w > 0 && d > 0 ? { w, d, back: back >= 0 ? back : 0 } : undefined;
+    } catch {
+      return undefined;
+    }
+  }, [plotLive, applied]);
+
   const rows = plans[cur];
   const maxSub = res ? Math.max(...res.sections.map((s) => s.subtotal)) : 1;
   const carpetOf = (f: number) =>
@@ -1538,6 +1552,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                 <SketchPanel
                   r={res}
                   lang={lang}
+                  plot={sitePlot}
                   names={(tp) =>
                     tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
                   }

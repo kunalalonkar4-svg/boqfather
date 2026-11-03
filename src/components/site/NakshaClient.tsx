@@ -15,6 +15,7 @@ const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
 export function NakshaPlanView({ lang, slug }: { lang: Lang; slug: string }) {
   const n = getNaksha(slug);
   const r = useMemo(() => (n ? nakshaPlan(n).res : null), [n]);
+  const plot = useMemo(() => (n ? { w: n.plot.w, d: n.plot.d, back: n.plot.back } : undefined), [n]);
   if (!r || !n) return null;
   return (
     <SketchPanel
@@ -27,6 +28,7 @@ export function NakshaPlanView({ lang, slug }: { lang: Lang; slug: string }) {
         `प्लॉट ${n.plot.w} × ${n.plot.d} फ़ीट · हर ड्रॉइंग में सड़क नीचे`,
       )}
       fileName={`${slug}-naksha-boqfather`}
+      plot={plot}
       names={(tp) =>
         tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
       }

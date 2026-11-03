@@ -25,6 +25,7 @@ export function Plan3D({
   facingLabel,
   still,
   onError,
+  plot,
 }: {
   lang: Lang;
   sketch: { floor: number; L: number; B: number; rects: SketchRect[] }[];
@@ -34,11 +35,13 @@ export function Plan3D({
   still?: boolean;
   /** WebGL not available: the parent shows the 2D plan instead. */
   onError?: () => void;
+  /** Plot frontage, depth and back setback, feet (for the site around the house). */
+  plot?: { w: number; d: number; back: number };
 }) {
   const host = useRef<HTMLDivElement>(null);
   const [show, setShow] = useState<number>(0); // ground floor first; -1 = whole house
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
-  const [labels, setLabels] = useState(false);
+  const [labels, setLabels] = useState(true);
   const labelsRef = useRef(labels);
   labelsRef.current = labels;
   const onErrorRef = useRef(onError);
@@ -73,100 +76,87 @@ export function Plan3D({
         renderer.outputColorSpace = THREE.SRGBColorSpace;
         el.appendChild(renderer.domElement);
 
-        const { buildFloor, makeMaterials, CUT_H } = await import("@/lib/plan3dScene");
+        const { buildFloor, buildSite, groundText, makeMaterials, CUT_H } = await import("@/lib/plan3dScene");
+        const { formatFtIn } = await import("@/engine");
+        const FT = 0.3048;
+        const ft = (m: number) => formatFtIn(m).replace(/'-0"$/, "'").replace(/'-(\d+)"$/, "'$1\"");
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x8c8d90);
+        scene.background = new THREE.Color(0x6f9a4c);
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.05;
-        const camera = new THREE.PerspectiveCamera(30, el.clientWidth / el.clientHeight, 0.1, 400);
-        const span = Math.max(W, D);
-        const floorY = top * STOREY;
-        const k = still ? 0.86 : 1.0;
-        // high, from the front-left corner: the "3D floor plan" view
-        camera.position.set(W / 2 - span * 0.62 * k, floorY + span * 1.55 * k, D / 2 + span * 1.05 * k);
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.target.set(W / 2, floorY + 0.4, D / 2);
-        controls.enableDamping = true;
-        controls.maxPolarAngle = Math.PI * 0.46;
-        controls.minDistance = 4;
-        controls.maxDistance = span * 4;
-        controls.autoRotate = !still;
-        controls.autoRotateSpeed = 0.6;
-        controls.addEventListener("start", () => (controls.autoRotate = false));
+        renderer.toneMappingExposure = 1.0;
 
-        scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 1.9));
-        const sun = new THREE.DirectionalLight(0xfff4e6, 2.4);
-        sun.position.set(W / 2 - span * 0.6, floorY + span * 2.2, D / 2 - span * 0.5);
-        sun.target.position.set(W / 2, floorY, D / 2);
+        // the plot around the house (from the plot size, or a modest garden when not known)
+        const site = plot
+          ? { w: plot.w * FT, d: plot.d * FT, back: plot.back * FT }
+          : { w: W + 3, d: D + 4, back: 1 };
+        const mats = makeMaterials();
+        const { group: siteGroup, extents: E } = buildSite(mats, W, D, site, sketch[0].rects, facingLabel, ft);
+        scene.add(siteGroup);
+
+        // aerial view from the road side, slightly tilted
+        const cx = (E.X0 + E.X1) / 2,
+          cz = (E.Z0 + E.Z1) / 2 + 1.6;
+        // what has to be in frame: the plot with its dimension lines, and a strip of the road
+        const needW = E.X1 - E.X0 + 3.5,
+          needH = E.Z1 - E.Z0 + 6;
+        const span = Math.max(needW, needH);
+        const floorY = top * STOREY;
+        const camera = new THREE.PerspectiveCamera(30, el.clientWidth / el.clientHeight, 0.1, 500);
+        const fit = () => {
+          const a = el.clientWidth / el.clientHeight;
+          // distance that fits the site in both directions
+          const t = Math.tan((15 * Math.PI) / 180);
+          const dist = Math.max(needH / 2 / t, needW / 2 / (t * a)) * (still ? 0.92 : 1);
+          const tilt = (24 * Math.PI) / 180; // from straight down
+          camera.position.set(cx, floorY + dist * Math.cos(tilt), cz + dist * Math.sin(tilt));
+        };
+        fit();
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.target.set(cx, floorY, cz);
+        controls.enableDamping = true;
+        controls.maxPolarAngle = Math.PI * 0.45;
+        controls.minDistance = 4;
+        controls.maxDistance = span * 5;
+        controls.autoRotate = false;
+        controls.update();
+
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x6d7a5a, 1.7));
+        const sun = new THREE.DirectionalLight(0xfff1dc, 2.6);
+        sun.position.set(cx - span * 0.7, floorY + span * 1.6, cz - span * 0.9);
+        sun.target.position.set(cx, floorY, cz);
         sun.castShadow = true;
         sun.shadow.mapSize.set(2048, 2048);
         sun.shadow.bias = -0.0005;
-        sun.shadow.radius = 4;
+        sun.shadow.radius = 3;
         const sc = sun.shadow.camera;
-        sc.left = sc.bottom = -span;
-        sc.right = sc.top = span;
-        sc.far = span * 8;
+        sc.left = sc.bottom = -span * 0.9;
+        sc.right = sc.top = span * 0.9;
+        sc.far = span * 6;
         scene.add(sun, sun.target);
-        const fill = new THREE.DirectionalLight(0xdfe8ff, 0.6);
-        fill.position.set(W + span, floorY + span, D + span);
-        scene.add(fill);
 
-        // neutral studio floor under the model
-        const ground = new THREE.Mesh(
-          new THREE.PlaneGeometry(span * 10, span * 10),
-          new THREE.MeshStandardMaterial({ color: 0x96979a, roughness: 1 }),
-        );
-        ground.rotation.x = -Math.PI / 2;
-        ground.position.set(W / 2, -0.15, D / 2);
-        ground.receiveShadow = true;
-        scene.add(ground);
-
-        const textSprite = (text: string, size = 0.42) => {
-          const c = document.createElement("canvas");
-          const ctx = c.getContext("2d")!;
-          const font = `700 64px "Noto Sans Devanagari", Inter, Arial, sans-serif`;
-          ctx.font = font;
-          const w = Math.ceil(ctx.measureText(text).width) + 40;
-          c.width = w;
-          c.height = 96;
-          ctx.font = font;
-          ctx.fillStyle = "rgba(22,24,26,0.92)";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(text, w / 2, 50);
-          const tex = new THREE.CanvasTexture(c);
-          tex.colorSpace = THREE.SRGBColorSpace;
-          const m = new THREE.Mesh(
-            new THREE.PlaneGeometry((size * w) / 96, size),
-            new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }),
-          );
-          m.rotation.x = -Math.PI / 2;
-          m.renderOrder = 10;
-          return m;
-        };
-        void facingLabel;
-
-        const mats = makeMaterials();
         const labelGroup = new THREE.Group();
         for (const s of floors) {
           // only the top floor shown is cut open; floors below are full height
           const g = buildFloor(mats, s.L, s.B, s.rects, s.floor, { cut: s.floor === top });
           scene.add(g);
           if (s.floor !== top) continue;
-          for (const r of s.rects.filter((x) => x.type !== "column" && x.type !== "stair" && x.w * x.h > 2.5)) {
-            const lb = textSprite(namesRef.current(r.type).toUpperCase(), Math.min(0.42, r.w / 6));
-            lb.position.set(r.x + r.w / 2, s.floor * STOREY + CUT_H + 0.05, r.y + r.h / 2);
+          for (const r of s.rects.filter((x) => x.type !== "column" && x.type !== "stair" && x.type !== "parking" && x.w * x.h > 2.2)) {
+            const h = Math.max(0.24, Math.min(0.46, r.w / 7, r.h / 4));
+            const lb = groundText(namesRef.current(r.type), h, { sub: `(${ft(r.w)} × ${ft(r.h)})`, weight: 700 });
+            lb.position.set(r.x + r.w / 2, s.floor * STOREY + 0.03, r.y + r.h / 2 + (r.h > 3 ? 0.45 : 0));
             labelGroup.add(lb);
           }
         }
         scene.add(labelGroup);
         const matList = Object.values(mats);
+        void CUT_H;
 
         const resize = () => {
           if (!el.clientWidth) return;
           renderer.setSize(el.clientWidth, el.clientHeight);
           camera.aspect = el.clientWidth / el.clientHeight;
           camera.updateProjectionMatrix();
+          fit();
         };
         const ro = new ResizeObserver(resize);
         ro.observe(el);
@@ -210,7 +200,7 @@ export function Plan3D({
       stop = true;
       cleanup();
     };
-  }, [sketch, show, facingLabel]);
+  }, [sketch, show, facingLabel, plot]);
 
   const chip = (on: boolean) =>
     `rounded-full px-3.5 py-1.5 text-[13px] font-bold transition ${on ? "bg-ink text-white" : "bg-white text-ink hover:bg-[#f1eee8]"}`;
@@ -245,6 +235,17 @@ export function Plan3D({
         data-plan3d
         className="relative h-[420px] w-full touch-none overflow-hidden rounded-[22px] border border-line bg-[#f5f3ef] sm:h-[540px]"
       >
+        {plot && state === "ready" && (
+          <div className="pointer-events-none absolute right-3 top-3 rounded-xl border border-white/20 bg-[#13294b]/90 px-3.5 py-2.5 text-white shadow-lg">
+            <p className="text-[12px] font-bold">{L(lang, "Residential plot", "रिहायशी प्लॉट")}</p>
+            <p className="font-display text-[16px] font-extrabold leading-tight">
+              {plot.w}&apos; × {plot.d}&apos;
+            </p>
+            <p className="text-[11px] text-white/75">
+              ≈ {Math.round(plot.w * plot.d * 0.0929)} m² · {Math.round((plot.w * plot.d) / 9)} {L(lang, "gaj", "गज़")}
+            </p>
+          </div>
+        )}
         {state !== "ready" && (
           <div className="absolute inset-0 flex items-center justify-center text-[14px] font-semibold text-muted">
             {state === "error"
@@ -256,8 +257,8 @@ export function Plan3D({
       <p className="text-[13px] text-muted">
         {L(
           lang,
-          "Drag to turn, pinch or scroll to zoom. A massing model from the same plan — walls, doors, windows, stair; finishes and elevation are indicative.",
-          "घुमाने के लिए खींचें, ज़ूम के लिए पिंच या स्क्रॉल करें। उसी नक्शे से बना ढांचा मॉडल — दीवारें, दरवाज़े, खिड़कियां, सीढ़ी; रंग और एलिवेशन सिर्फ़ अंदाज़े के लिए।",
+          "Drag to turn, pinch or scroll to zoom. Made from the same plan — rooms, walls, doors, windows and furniture to scale; finishes and landscaping are indicative.",
+          "घुमाने के लिए खींचें, ज़ूम के लिए पिंच या स्क्रॉल करें। उसी नक्शे से बना — कमरे, दीवारें, दरवाज़े, खिड़कियां और फ़र्नीचर स्केल पर; रंग और बगीचा सिर्फ़ अंदाज़े के लिए।",
         )}
       </p>
     </div>

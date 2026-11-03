@@ -20,6 +20,10 @@ export function PlotPlanPreview({
     const p = getPlot(slug);
     return p ? plotEstimate(p, floors).res : null;
   }, [slug, floors]);
+  const plot = useMemo(() => {
+    const p = getPlot(slug);
+    return p ? { w: p.w, d: p.d, back: p.back } : undefined;
+  }, [slug]);
   if (!r) return null;
   return (
     <SketchPanel
@@ -31,6 +35,7 @@ export function PlotPlanPreview({
           : `${slug.replace("x", " × ")} ft house plan`
       }
       fileName={`${slug}-house-plan-boqfather`}
+      plot={plot}
       names={(tp) =>
         tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
       }

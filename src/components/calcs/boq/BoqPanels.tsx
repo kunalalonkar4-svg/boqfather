@@ -32,8 +32,11 @@ export function SketchPanel({
   title,
   subtitle,
   fileName,
+  plot,
 }: {
   r: BoqResult;
+  /** Plot frontage, depth and back setback in feet, for the 3D site. */
+  plot?: { w: number; d: number; back: number };
   lang: Lang;
   names: (t: string) => string;
   /** Heading printed on the downloaded sheet. */
@@ -155,6 +158,7 @@ export function SketchPanel({
         <Plan3D
           key={still ? "still" : "live"}
           still={still}
+          plot={plot}
           onError={() => setMode("2d")}
           lang={lang}
           sketch={r.sketch}
