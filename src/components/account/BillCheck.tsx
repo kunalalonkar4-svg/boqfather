@@ -118,7 +118,7 @@ export function BillCheck({ lang }: { lang: Lang }) {
   const [loc, setLoc] = useState<Location>("tier2");
 
   const pick = async (file: File) => {
-    if (!a.payReady)
+    if (!a.aiReady)
       return alertBox(
         L(lang, "Bill reading opens soon.", "बिल पढ़ना जल्द शुरू होगा।"),
       );
@@ -138,7 +138,17 @@ export function BillCheck({ lang }: { lang: Lang }) {
       setLines(j.items);
     } catch (e) {
       const m = e instanceof Error ? e.message : "";
-      if (/Pro feature/i.test(m)) setNeedPro(true);
+      if (/Pro feature/i.test(m)) {
+        if (a.payReady) setNeedPro(true);
+        else
+          alertBox(
+            L(
+              lang,
+              "This opens with Pro very soon.",
+              "यह प्रो के साथ बहुत जल्द शुरू होगा।",
+            ),
+          );
+      }
       else alertBox(m || "Could not read the bill");
     } finally {
       setBusy(false);

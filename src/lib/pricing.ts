@@ -17,6 +17,12 @@ export const AI_DAILY_LIMIT = 15;
 /** Payments are live once the Razorpay key is set in Vercel (NEXT_PUBLIC_RAZORPAY_KEY_ID). */
 export const PAY_READY = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
+/**
+ * AI reading (plan / bill photos) is switched on once ANTHROPIC_API_KEY is set and NEXT_PUBLIC_AI_READY=1 in Vercel.
+ * Before payments are live, only the emails in ADMIN_EMAILS (Vercel, comma-separated) can use it — for testing.
+ */
+export const AI_READY = !!process.env.NEXT_PUBLIC_AI_READY;
+
 export const supabaseConfigured = () =>
   !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
   !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { PAY_READY, PLANS, type PlanKey } from "@/lib/pricing";
+import { AI_READY, PAY_READY, PLANS, type PlanKey } from "@/lib/pricing";
 import { api, supabase } from "@/lib/supabase";
 import type { Lang } from "@/lib/site";
 
@@ -36,6 +36,8 @@ interface Ctx {
   pro: boolean;
   /** Pro can be bought (payments set up). */
   payReady: boolean;
+  /** AI photo / PDF reading switched on (may still need Pro or an admin email). */
+  aiReady: boolean;
   openLogin: (then?: () => void) => void;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -160,6 +162,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     ready,
     enabled: !!sb,
     payReady: PAY_READY,
+    aiReady: AI_READY,
     user,
     profile,
     pro,

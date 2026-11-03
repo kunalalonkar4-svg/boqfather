@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       file?: { mime?: string; base64?: string };
       projectId?: string;
     };
-    if (!(await isPro(user.id, body.projectId)))
+    if (!(await isPro(user.id, body.projectId, user.email)))
       throw new HttpError(402, "Reading plan photos is a Pro feature");
     const file = checkUpload(body.file);
     await countRead(user.id);

@@ -41,7 +41,13 @@ export async function requireUser(req: Request): Promise<User> {
 export async function isPro(
   userId: string,
   projectId?: string,
+  email?: string | null,
 ): Promise<boolean> {
+  const admins = (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((x) => x.trim().toLowerCase())
+    .filter(Boolean);
+  if (email && admins.includes(email.toLowerCase())) return true;
   const db = adminDb();
   const { data: p } = await db
     .from("profiles")

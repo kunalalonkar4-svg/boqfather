@@ -74,7 +74,7 @@ export function PlanImport({
       else setPlan(p);
       return;
     }
-    if (!a.payReady)
+    if (!a.aiReady)
       return alertBox(
         L(
           lang,
@@ -94,7 +94,17 @@ export function PlanImport({
       setPlan(await api<ReadPlan>("/api/read-plan", { file: f, projectId }));
     } catch (e) {
       const m = e instanceof Error ? e.message : "";
-      if (/Pro feature/i.test(m)) setNeedPro(true);
+      if (/Pro feature/i.test(m)) {
+        if (a.payReady) setNeedPro(true);
+        else
+          alertBox(
+            L(
+              lang,
+              "This opens with Pro very soon.",
+              "यह प्रो के साथ बहुत जल्द शुरू होगा।",
+            ),
+          );
+      }
       else alertBox(m || "Could not read the plan");
     } finally {
       setBusy(false);

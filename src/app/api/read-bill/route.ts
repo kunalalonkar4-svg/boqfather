@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     const body = (await req.json()) as {
       file?: { mime?: string; base64?: string };
     };
-    if (!(await isPro(user.id)))
+    if (!(await isPro(user.id, undefined, user.email)))
       throw new HttpError(402, "Reading bills is a Pro feature");
     const file = checkUpload(body.file);
     await countRead(user.id);
