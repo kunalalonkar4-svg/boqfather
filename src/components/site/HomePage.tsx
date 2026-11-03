@@ -222,9 +222,12 @@ export function HomePage({ lang }: { lang: Lang }) {
               {d.home_trust_d}
             </p>
           </div>
-          <div className="flex flex-col gap-3 rounded-2xl border-2 border-dashed border-amber bg-amber-tint p-6 sm:p-8">
+          <Link
+            href={langPath(lang, "house-boq-estimate")}
+            className="flex flex-col gap-3 rounded-2xl border-2 border-amber bg-amber-tint p-6 transition hover:-translate-y-0.5 sm:p-8"
+          >
             <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-ink">
-              PRO · {lang === "hi" ? "जल्द" : "SOON"}
+              {lang === "hi" ? "मुफ़्त · अभी इस्तेमाल करें" : "FREE · LIVE NOW"}
             </span>
             <h2 className="font-display text-[24px] font-extrabold leading-tight">
               {d.home_pro_t}
@@ -232,7 +235,10 @@ export function HomePage({ lang }: { lang: Lang }) {
             <p className="text-[15px] leading-relaxed text-body">
               {d.home_pro_d}
             </p>
-          </div>
+            <span className="text-[15px] font-semibold text-amber-dark">
+              {lang === "hi" ? "नक्शा बनाएं →" : "Make my plan →"}
+            </span>
+          </Link>
         </section>
       </main>
       <SiteFooter lang={lang} />

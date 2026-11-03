@@ -156,13 +156,39 @@ export function SiteFooter({ lang }: { lang: Lang }) {
                     : "House building guide →"}
                 </Link>
               </p>
+              <p className="mt-2 text-[14px]">
+                <Link
+                  href={langPath(lang, "house-construction-cost-in")}
+                  className="font-semibold text-white hover:text-amber"
+                >
+                  {lang === "hi" ? "शहर के हिसाब से खर्च →" : "Cost by city →"}
+                </Link>
+              </p>
             </div>
           </div>
         </div>
       </div>
       <div className="border-t border-[#2e3033]">
         <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-4 text-[12px] text-[#9c968b] sm:px-6">
-          <span>© 2026 BOQFather</span>
+          <span className="flex flex-wrap gap-x-4 gap-y-1">
+            <span>© 2026 BOQFather</span>
+            {(
+              [
+                ["about", "About", "हमारे बारे में"],
+                ["contact", "Contact", "संपर्क"],
+                ["privacy", "Privacy", "प्राइवेसी"],
+                ["terms", "Terms", "नियम और शर्तें"],
+              ] as const
+            ).map(([p, en, hi]) => (
+              <Link
+                key={p}
+                href={langPath(lang, p)}
+                className="hover:text-white"
+              >
+                {lang === "hi" ? hi : en}
+              </Link>
+            ))}
+          </span>
           <span>
             {lang === "hi" ? "भारत के लिए बना" : "Made in India, for India"}
           </span>

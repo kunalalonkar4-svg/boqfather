@@ -63,9 +63,9 @@ const en = {
   home_trust_t: "Made by a civil engineer, not just a developer",
   home_trust_d:
     "Every formula follows IS 456 / IS 1200 practice and shows its working, so engineers and contractors can check it line by line.",
-  home_pro_t: "Coming soon: Detailed estimate from your plan",
+  home_pro_t: "Naksha and item-wise BOQ from your plot",
   home_pro_d:
-    "Upload your plan — get abstract of cost, measurement book and bar bending schedule automatically.",
+    "Enter plot size and road direction — get a Vastu-checked naksha to scale, abstract of cost, measurement book and bar bending schedule.",
   home_why_t: "Why BOQFather",
   home_why_1: "Other calculators give a guess. BOQFather gives the working.",
   home_why_2: "Hindi and English, metric and feet-inch.",
@@ -103,7 +103,7 @@ const en = {
   timeline: "Approx. construction time",
   months: "months",
   detailed_cta:
-    "Need item-wise BOQ with measurement book? Detailed estimate is coming soon.",
+    "Need an item-wise BOQ with measurement book, BBS and a drawn plan? Use the Item-wise House BOQ →",
 };
 
 type Dict = typeof en;
@@ -170,9 +170,9 @@ const hi: Dict = {
   home_trust_t: "सिर्फ़ डेवलपर नहीं, सिविल इंजीनियर ने बनाया",
   home_trust_d:
     "हर फ़ॉर्मूला IS 456 / IS 1200 के अनुसार है और पूरी गणना दिखाता है, ताकि इंजीनियर और ठेकेदार लाइन-दर-लाइन जांच सकें।",
-  home_pro_t: "जल्द आ रहा है: नक्शे से विस्तृत एस्टिमेट",
+  home_pro_t: "आपके प्लॉट से नक्शा और आइटम-वार BOQ",
   home_pro_d:
-    "अपना नक्शा अपलोड करें — एब्स्ट्रैक्ट ऑफ़ कॉस्ट, मेज़रमेंट बुक और BBS अपने आप।",
+    "प्लॉट साइज़ और सड़क की दिशा डालें — स्केल पर वास्तु-जांचा नक्शा, एब्स्ट्रैक्ट ऑफ़ कॉस्ट, मेज़रमेंट बुक और BBS।",
   home_why_t: "BOQFather क्यों",
   home_why_1: "बाकी कैलकुलेटर अंदाज़ा देते हैं, BOQFather पूरी गणना देता है।",
   home_why_2: "हिंदी और अंग्रेज़ी, मीटर और फ़ीट-इंच दोनों में।",
@@ -209,7 +209,7 @@ const hi: Dict = {
   timeline: "निर्माण का अनुमानित समय",
   months: "महीने",
   detailed_cta:
-    "मेज़रमेंट बुक के साथ आइटम-वार BOQ चाहिए? विस्तृत एस्टिमेट जल्द आ रहा है।",
+    "मेज़रमेंट बुक, BBS और नक्शे के साथ आइटम-वार BOQ चाहिए? आइटम-वार हाउस BOQ खोलें →",
 };
 
 const dicts: Record<Lang, Dict> = { en, hi };

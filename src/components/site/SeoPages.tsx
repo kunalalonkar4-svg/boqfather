@@ -968,6 +968,13 @@ export function SqftIndexPage({ lang }: { lang: Lang }) {
       }
     >
       <SqftLinks lang={lang} />
+      <Cta href={langPath(lang, "house-construction-cost-in")}>
+        {L(
+          lang,
+          "Construction cost in your city →",
+          "अपने शहर में निर्माण खर्च →",
+        )}
+      </Cta>
       <section className="flex flex-col gap-4">
         <H2>
           {L(lang, "House plans by plot size", "प्लॉट साइज़ के हिसाब से नक्शे")}

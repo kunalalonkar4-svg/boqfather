@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   calcHouse,
@@ -16,7 +17,7 @@ import {
   THUMB_RULES,
 } from "@/engine";
 import { floorName, name, t } from "@/i18n/ui";
-import type { Lang } from "@/lib/site";
+import { langPath, type Lang } from "@/lib/site";
 import {
   NumberField,
   num,
@@ -31,8 +32,11 @@ export default function HouseCalc({
   lang,
   initialArea = 1000,
   initialFloors = 2,
+  initialRate,
 }: {
   lang: Lang;
+  /** Standard rate ₹/sqft to start with (a city's rate). */
+  initialRate?: number;
   /** Built-up area per floor (sqft) and floors to start with. */
   initialArea?: number;
   initialFloors?: 1 | 2 | 3 | 4;
@@ -44,7 +48,9 @@ export default function HouseCalc({
   );
   const [quality, setQuality] = useState<Quality>("standard");
   const [location, setLocation] = useState<Location>("tier2");
-  const [rate, setRate] = useState(String(QUALITY_RATES.standard));
+  const [rate, setRate] = useState(
+    String(initialRate ?? QUALITY_RATES.standard),
+  );
   const [matRates, setMatRates] = useState<Record<Material, string>>(
     Object.fromEntries(
       (Object.keys(THUMB_RULES) as Material[]).map((k) => [
@@ -78,7 +84,9 @@ export default function HouseCalc({
 
   const pickQuality = (q: Quality) => {
     setQuality(q);
-    setRate(String(QUALITY_RATES[q]));
+    // a city page starts from its own level; other finishes keep that level
+    const k = (initialRate ?? QUALITY_RATES.standard) / QUALITY_RATES.standard;
+    setRate(String(Math.round((QUALITY_RATES[q] * k) / 10) * 10));
   };
 
   const pdf = async () => {
@@ -404,9 +412,12 @@ export default function HouseCalc({
             assumptions={res.assumptions}
           />
 
-          <div className="rounded-2xl border border-dashed border-[#b8b1a4] bg-white px-5 py-4 text-[14px] text-body">
+          <Link
+            href={langPath(lang, "house-boq-estimate")}
+            className="rounded-2xl border border-amber bg-white px-5 py-4 text-[14px] font-semibold text-body hover:bg-amber-tint"
+          >
             {d.detailed_cta}
-          </div>
+          </Link>
         </>
       )}
     </div>

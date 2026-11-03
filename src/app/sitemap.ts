@@ -3,6 +3,7 @@ import { CALCULATORS } from "@/content/calculators";
 import { PLOTS, plotSlug, SQFT_SIZES, sqftSlug } from "@/content/plots";
 import { GUIDE_BASE, QUESTIONS, TOPICS } from "@/content/guideTopics";
 import { GAJ, NAKSHE } from "@/content/naksha";
+import { CITIES } from "@/content/cities";
 import { langPath, SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -21,6 +22,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "naksha",
     ...NAKSHE.map((n) => `naksha/${n.slug}`),
     ...GAJ.map((g) => `naksha/gaj/${g.slug}`),
+    "house-construction-cost-in",
+    ...CITIES.map((c) => `house-construction-cost-in/${c.slug}`),
+    "about",
+    "contact",
+    "privacy",
+    "terms",
   ];
   const lastModified = new Date("2026-11-03");
   return paths.flatMap((p) =>
