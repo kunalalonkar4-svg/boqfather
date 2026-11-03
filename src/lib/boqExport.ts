@@ -200,13 +200,31 @@ export async function readRateSheet(
   return out;
 }
 
+/** Free downloads carry a "free version" mark; Pro downloads are clean and can carry the user's own name. */
+export interface ExportOpts {
+  watermark?: boolean;
+  /** Firm / engineer name printed on Pro reports. */
+  brand?: string;
+}
+
 /** Excel workbook: Abstract, Measurement Book, Materials, Rooms, Spec, BBS, Plan. */
-export async function downloadBoqExcel(r: BoqResult, title: string) {
+export async function downloadBoqExcel(
+  r: BoqResult,
+  title: string,
+  opts: ExportOpts = {},
+) {
   const XLSX = await import("xlsx");
   const wb = XLSX.utils.book_new();
 
   const abs: (string | number)[][] = [
-    ["BOQFather – " + title],
+    [(opts.brand ? opts.brand + " – " : "BOQFather – ") + title],
+    ...(opts.watermark
+      ? [
+          [
+            "FREE VERSION – made with BOQFather (boqfather.vercel.app). Get Pro for a clean report with your name.",
+          ],
+        ]
+      : []),
     ...r.warnings.map((w) => ["", "CHECK", w.en]),
     [],
     ["Sr", "Item", "Description", "Unit", "Qty", "Rate (Rs.)", "Amount (Rs.)"],
@@ -458,7 +476,11 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
 }
 
 /** PDF: abstract of cost + measurement book, BOQFather branding. */
-export async function downloadBoqPdf(r0: BoqResult, title: string) {
+export async function downloadBoqPdf(
+  r0: BoqResult,
+  title: string,
+  opts: ExportOpts = {},
+) {
   // Standard PDF fonts have no "−" (U+2212) or "≈" glyphs — swap them for plain characters.
   const r: BoqResult = JSON.parse(
     JSON.stringify(r0)
@@ -975,6 +997,24 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
         H - 8.5,
       );
     doc.text(`Page ${p} of ${pages}`, W - M, H - 8.5, { align: "right" });
+    if (opts.brand)
+      doc
+        .setFont("helvetica", "bold")
+        .setFontSize(8)
+        .setTextColor(...INK)
+        .text(`Prepared by: ${opts.brand}`, W - M, 22, { align: "right" });
+    if (opts.watermark) {
+      // light diagonal mark across the page
+      doc.saveGraphicsState();
+      // @ts-expect-error GState comes with jsPDF
+      doc.setGState(new doc.GState({ opacity: 0.08 }));
+      doc
+        .setFont("helvetica", "bold")
+        .setFontSize(54)
+        .setTextColor(...INK)
+        .text("BOQFather FREE", W / 2, H / 2, { align: "center", angle: 35 });
+      doc.restoreGraphicsState();
+    }
   }
   doc.save(`BOQFather_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.pdf`);
 }

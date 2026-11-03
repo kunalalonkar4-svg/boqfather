@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CALCULATORS } from "@/content/calculators";
+import { AccountButton } from "@/components/account/Account";
 import { PLOTS, plotSlug, SQFT_SIZES, sqftSlug } from "@/content/plots";
 import { t } from "@/i18n/ui";
 import { Lang, langPath } from "@/lib/site";
@@ -54,6 +55,13 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
           >
             {lang === "hi" ? "गाइड" : "Guide"}
           </Link>
+          <Link
+            href={langPath(lang, "pro")}
+            className="rounded-lg px-3 py-2 font-extrabold text-amber hover:text-white"
+          >
+            Pro
+          </Link>
+          <AccountButton lang={lang} />
           <Link
             href={altPath}
             hrefLang={lang === "en" ? "hi" : "en"}

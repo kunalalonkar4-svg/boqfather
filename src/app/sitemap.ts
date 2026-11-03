@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...GAJ.map((g) => `naksha/gaj/${g.slug}`),
     "house-construction-cost-in",
     ...CITIES.map((c) => `house-construction-cost-in/${c.slug}`),
+    "pro",
     "about",
     "contact",
     "privacy",

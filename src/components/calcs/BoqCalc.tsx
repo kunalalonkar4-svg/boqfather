@@ -1,6 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ProTools, type ExportOptions } from "@/components/account/ProTools";
+import { PlanImport } from "@/components/account/PlanImport";
+import type { ReadPlan } from "@/lib/planRead";
 import {
   BOQ_RATES,
   BoqExtras,
@@ -391,7 +394,13 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     applyPlot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pending]);
+  // a restored project keeps its own rooms: skip the re-plan that the floor-count change would trigger
+  const skipReplan = useRef(false);
   useEffect(() => {
+    if (skipReplan.current) {
+      skipReplan.current = false;
+      return;
+    }
     if (plotLive && applied) applyPlot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [floorCount]);
@@ -438,16 +447,88 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     ? `${bhkLabel} ${floorTag} house – ${Math.round(res.geometry.builtUpSqft)} sqft`
     : "";
 
-  const run = async (kind: "pdf" | "xls") => {
+  const run = async (
+    kind: "pdf" | "xls",
+    o: ExportOptions = { watermark: false },
+  ) => {
     if (!res) return;
     setBusy(kind);
     try {
       const m = await import("@/lib/boqExport");
-      if (kind === "pdf") await m.downloadBoqPdf(res, title);
-      else await m.downloadBoqExcel(res, title);
+      if (kind === "pdf") await m.downloadBoqPdf(res, title, o);
+      else await m.downloadBoqExcel(res, title, o);
     } finally {
       setBusy("");
     }
+  };
+
+  // ---- save / open projects: the whole input state as one object
+  const snapshot = () => ({
+    v: 1,
+    floorCount,
+    plans,
+    location,
+    floorH,
+    winW,
+    winH,
+    plinth,
+    terrace,
+    rates,
+    plot,
+    quality,
+    wall,
+    ex,
+    plotLive,
+    plotFit,
+    applied,
+  });
+  const restore = useCallback((d0: unknown) => {
+    const d = d0 as ReturnType<typeof snapshot>;
+    if (!d || d.v !== 1) return;
+    setFloorCount((prev) => {
+      skipReplan.current = prev !== d.floorCount;
+      return d.floorCount;
+    });
+    setPlans(d.plans);
+    setLocation(d.location);
+    setFloorH(d.floorH);
+    setWinW(d.winW);
+    setWinH(d.winH);
+    setPlinth(d.plinth);
+    setTerrace(d.terrace);
+    setRates(d.rates ?? {});
+    setPlot(d.plot);
+    setQuality(d.quality);
+    setWall(d.wall);
+    setEx(d.ex);
+    setPlotLive(d.plotLive);
+    setPlotFit(d.plotFit);
+    setApplied(d.applied);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // rooms read from an uploaded plan replace the planned ones; the plot planner is switched off
+  const usePlan = (p: ReadPlan) => {
+    const made = p.floors.map((f) =>
+      f.map((r) =>
+        mk(r.type, {
+          L: String(r.L),
+          B: String(r.B),
+          ...(r.type === "toilet" ? { wc: "ewc" as const } : {}),
+        }),
+      ),
+    );
+    const n = Math.min(4, Math.max(1, made.length));
+    setFloorCount((prev) => {
+      skipReplan.current = prev !== String(n);
+      return String(n) as "1" | "2" | "3" | "4";
+    });
+    setPlans((old) => [0, 1, 2, 3].map((i) => made[i] ?? old[i]));
+    setPlotLive(false);
+    setPlotFit(null);
+    if (p.facing) setPlot((x) => ({ ...x, facing: p.facing! }));
+    setTab(0);
+    setView("boq");
   };
 
   const rows = plans[cur];
@@ -459,6 +540,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     <div className="flex flex-col gap-5 pb-20 lg:pb-0">
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-5 rounded-2xl border border-line bg-white p-4 sm:p-6">
+          <PlanImport lang={lang} onApply={usePlan} />
           <details
             className="group rounded-xl border-2 border-dashed border-amber bg-amber-tint/40 p-3"
             open
@@ -1337,27 +1419,16 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                 {rateSet ? ` · ${hi ? "आपके रेट" : "your rates"}` : ""}
               </p>
             </section>
-            <div className="no-print flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => run("xls")}
-                disabled={!!busy}
-                className="inline-flex h-11 items-center justify-center rounded-lg bg-amber px-4 text-[14px] font-extrabold text-ink hover:brightness-105 disabled:opacity-60"
-              >
-                {busy === "xls" ? "…" : hi ? "Excel डाउनलोड" : "Download Excel"}
-              </button>
-              <button
-                type="button"
-                onClick={() => run("pdf")}
-                disabled={!!busy}
-                className="inline-flex h-11 items-center justify-center rounded-lg border border-ink bg-white px-4 text-[14px] font-bold disabled:opacity-60"
-              >
-                {busy === "pdf"
-                  ? "…"
-                  : hi
-                    ? "PDF (एब्स्ट्रैक्ट + MB)"
-                    : "PDF (abstract + MB)"}
-              </button>
+            <ProTools
+              lang={lang}
+              kind="boq"
+              title={title}
+              snapshot={snapshot}
+              restore={restore}
+              onExport={(kd, o) => void run(kd, o)}
+              busy={busy}
+            />
+            <div className="no-print">
               <WhatsAppShare
                 lang={lang}
                 text={`BOQFather – ${title}: item-wise BOQ ${rupees(res.grandTotal)} (${rupees(res.perSqft)}/sqft)`}

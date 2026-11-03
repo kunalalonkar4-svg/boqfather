@@ -9,6 +9,8 @@ import {
   WHATSAPP_NUMBER,
 } from "@/lib/site";
 import { CustomNakshaForm } from "./NakshaClient";
+import { ProBuy } from "@/components/account/ProBuy";
+import { AccountView } from "@/components/account/AccountPage";
 import { H2, Shell } from "./SeoPages";
 
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
@@ -22,7 +24,7 @@ function Prose({ children }: { children: ReactNode }) {
 }
 
 export const INFO_META: Record<
-  "about" | "contact" | "privacy" | "terms",
+  "about" | "contact" | "privacy" | "terms" | "pro" | "account",
   { title: [string, string]; description: [string, string] }
 > = {
   about: {
@@ -50,6 +52,23 @@ export const INFO_META: Record<
     description: [
       "What BOQFather collects (almost nothing), what stays in your browser, and how contact requests are handled.",
       "BOQFather क्या जानकारी लेता है (लगभग कुछ नहीं), क्या आपके ब्राउज़र में रहता है, और संपर्क अनुरोध कैसे संभाले जाते हैं।",
+    ],
+  },
+  pro: {
+    title: [
+      "BOQFather Pro — clean reports, plan & bill reading",
+      "BOQFather प्रो — बिना निशान रिपोर्ट, नक्शा और बिल पढ़ना",
+    ],
+    description: [
+      "Pro: PDF / Excel with your name, saved projects, plan photo to estimate, contractor bill checker. ₹199 a project or ₹499 a month.",
+      "प्रो: आपके नाम के साथ PDF / Excel, सेव प्रोजेक्ट, नक्शे की फ़ोटो से एस्टिमेट, ठेकेदार बिल चेकर। ₹199 प्रति प्रोजेक्ट या ₹499 महीना।",
+    ],
+  },
+  account: {
+    title: ["My account — BOQFather", "मेरा अकाउंट — BOQFather"],
+    description: [
+      "Your saved projects and Pro plan.",
+      "आपके सेव प्रोजेक्ट और प्रो प्लान।",
     ],
   },
   terms: {
@@ -322,6 +341,185 @@ export function TermsPage({ lang }: { lang: Lang }) {
           )}
         </p>
       </Prose>
+    </Shell>
+  );
+}
+
+export function ProPage({ lang }: { lang: Lang }) {
+  const rows: [string, string, boolean, boolean][] = [
+    [
+      L(
+        lang,
+        "Plan from plot size, item-wise BOQ, BBS, MB",
+        "प्लॉट से नक्शा, आइटम-वार BOQ, BBS, MB",
+      ),
+      "",
+      true,
+      true,
+    ],
+    [
+      L(
+        lang,
+        "84 Vastu-checked nakshe, city rates, calculators",
+        "84 वास्तु-जांचे नक्शे, शहर के रेट, कैलकुलेटर",
+      ),
+      "",
+      true,
+      true,
+    ],
+    [
+      L(lang, "Read your AutoCAD DXF plan", "अपनी AutoCAD DXF फ़ाइल पढ़ें"),
+      "",
+      true,
+      true,
+    ],
+    [
+      L(
+        lang,
+        "PDF / Excel without the free mark, with your firm's name",
+        "बिना निशान PDF / Excel, आपकी फ़र्म के नाम के साथ",
+      ),
+      "",
+      false,
+      true,
+    ],
+    [
+      L(
+        lang,
+        "Save projects and share a link",
+        "प्रोजेक्ट सेव करें और लिंक शेयर करें",
+      ),
+      "",
+      true,
+      true,
+    ],
+    [
+      L(
+        lang,
+        "Upload a plan photo / PDF → estimate (AI reads the rooms)",
+        "नक्शे की फ़ोटो / PDF अपलोड → एस्टिमेट (AI कमरे पढ़ता है)",
+      ),
+      "",
+      false,
+      true,
+    ],
+    [
+      L(
+        lang,
+        "Contractor bill checker: every line vs market rate",
+        "ठेकेदार बिल चेकर: हर लाइन बाज़ार रेट से",
+      ),
+      "",
+      false,
+      true,
+    ],
+  ];
+  return (
+    <Shell
+      lang={lang}
+      path="pro"
+      crumbs={[{ name: "Pro" }]}
+      h1={L(lang, "BOQFather Pro", "BOQFather प्रो")}
+      intro={
+        <p>
+          {L(
+            lang,
+            "Everything for planning your house stays free. Pro is for the reports you hand over, reading your own drawings and bills, and checking what the contractor charges.",
+            "घर की प्लानिंग का सब कुछ फ़्री रहेगा। प्रो उन रिपोर्ट के लिए है जो आप आगे देते हैं, अपनी ड्रॉइंग और बिल पढ़ने के लिए, और ठेकेदार के रेट जांचने के लिए।",
+          )}
+        </p>
+      }
+    >
+      <div className="grid max-w-4xl gap-4 sm:grid-cols-3">
+        {(
+          [
+            [
+              L(lang, "One project", "एक प्रोजेक्ट"),
+              "₹199",
+              L(
+                lang,
+                "Clean reports and AI reading for one saved project, for good.",
+                "एक सेव प्रोजेक्ट के लिए बिना निशान रिपोर्ट और AI रीडिंग, हमेशा के लिए।",
+              ),
+            ],
+            [
+              L(lang, "Monthly", "मासिक"),
+              "₹499",
+              L(
+                lang,
+                "All Pro features on every project for 30 days — for engineers and contractors.",
+                "30 दिन हर प्रोजेक्ट पर सारे प्रो फ़ीचर — इंजीनियर और ठेकेदार के लिए।",
+              ),
+            ],
+            [
+              L(lang, "Custom naksha", "कस्टम नक्शा"),
+              "₹2,999",
+              L(
+                lang,
+                "Your plot's plan + item-wise BOQ by an expert in 3 days, 2 rounds of changes.",
+                "एक्सपर्ट से आपके प्लॉट का नक्शा + आइटम-वार BOQ 3 दिन में, 2 बार बदलाव।",
+              ),
+            ],
+          ] as const
+        ).map(([t, p, d]) => (
+          <div
+            key={t}
+            className="flex flex-col gap-2 rounded-2xl border border-line bg-white p-5"
+          >
+            <span className="text-[13px] font-bold uppercase tracking-wide text-muted">
+              {t}
+            </span>
+            <span className="font-display text-[30px] font-extrabold">{p}</span>
+            <span className="text-[14px] leading-relaxed text-body">{d}</span>
+          </div>
+        ))}
+      </div>
+      <div className="max-w-4xl overflow-x-auto rounded-2xl border border-line bg-white">
+        <table className="w-full min-w-[480px] text-[14px]">
+          <thead>
+            <tr className="bg-[#f4f1ea] text-left">
+              <th className="px-4 py-2.5">{L(lang, "Feature", "फ़ीचर")}</th>
+              <th className="px-4 py-2.5 text-center">
+                {L(lang, "Free", "फ़्री")}
+              </th>
+              <th className="px-4 py-2.5 text-center">Pro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(([f, , free, pro]) => (
+              <tr key={f} className="border-t border-line">
+                <td className="px-4 py-2.5">{f}</td>
+                <td className="px-4 py-2.5 text-center">{free ? "✓" : "–"}</td>
+                <td className="px-4 py-2.5 text-center font-bold text-[#1d7a46]">
+                  {pro ? "✓" : "–"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ProBuy lang={lang} />
+      <p className="max-w-3xl text-[13px] text-muted">
+        {L(
+          lang,
+          "Payments by UPI, card or net banking through Razorpay. AI reading: up to 15 uploads a day.",
+          "पेमेंट Razorpay से UPI, कार्ड या नेट बैंकिंग। AI रीडिंग: दिन में 15 अपलोड तक।",
+        )}
+      </p>
+    </Shell>
+  );
+}
+
+export function AccountShell({ lang }: { lang: Lang }) {
+  return (
+    <Shell
+      lang={lang}
+      path="account"
+      crumbs={[{ name: L(lang, "My account", "मेरा अकाउंट") }]}
+      h1={L(lang, "My account", "मेरा अकाउंट")}
+      intro={null}
+    >
+      <AccountView lang={lang} />
     </Shell>
   );
 }

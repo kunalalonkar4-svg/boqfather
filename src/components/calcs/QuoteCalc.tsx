@@ -24,6 +24,7 @@ import {
   SelectField,
 } from "@/components/ui/Fields";
 import { Invalid, WhatsAppShare } from "@/components/ui/Results";
+import { BillCheck } from "@/components/account/BillCheck";
 
 const VERDICT: Record<
   Verdict,
@@ -387,6 +388,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
           ))}
         </ul>
       </section>
+      <BillCheck lang={lang} />
     </div>
   );
 }

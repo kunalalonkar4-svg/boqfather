@@ -6,6 +6,8 @@ import { ROOM_DEFS, RoomType } from "@/engine";
 import { SketchPanel } from "@/components/calcs/boq/BoqPanels";
 import { getNaksha, nakshaPlan } from "@/content/naksha";
 import { Lang, WHATSAPP_NUMBER } from "@/lib/site";
+import { useAccount } from "@/components/account/Account";
+import { PLANS } from "@/lib/pricing";
 
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
 
@@ -161,6 +163,8 @@ export function CustomNakshaForm({
     need: "",
   });
   const [sent, setSent] = useState(false);
+  const acc = useAccount();
+  const [paid, setPaid] = useState(false);
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) =>
     setF((x) => ({ ...x, [k]: e.target.value }));
   const msg = [
@@ -256,12 +260,54 @@ export function CustomNakshaForm({
         />
       </label>
       <div className="flex flex-col gap-2 sm:col-span-2">
-        <button
-          type="submit"
-          className="w-fit rounded-xl bg-[#1d7a46] px-5 py-3 text-[15px] font-semibold text-white hover:bg-[#17633a]"
-        >
-          {L(lang, "Send on WhatsApp", "WhatsApp पर भेजें")}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          {acc.enabled && (
+            <button
+              type="button"
+              disabled={!f.name || !f.size}
+              onClick={async () => {
+                const ok = await acc
+                  .buy("custom", { details: f })
+                  .catch(() => false);
+                if (ok) {
+                  setPaid(true);
+                  if (url) window.open(url, "_blank", "noopener");
+                }
+              }}
+              className="w-fit rounded-xl bg-ink px-5 py-3 text-[15px] font-semibold text-white disabled:opacity-50"
+            >
+              {L(
+                lang,
+                `Order custom naksha · ₹${PLANS.custom.inr.toLocaleString("en-IN")}`,
+                `कस्टम नक्शा ऑर्डर करें · ₹${PLANS.custom.inr.toLocaleString("en-IN")}`,
+              )}
+            </button>
+          )}
+          <button
+            type="submit"
+            className="w-fit rounded-xl bg-[#1d7a46] px-5 py-3 text-[15px] font-semibold text-white hover:bg-[#17633a]"
+          >
+            {L(lang, "Ask on WhatsApp", "WhatsApp पर पूछें")}
+          </button>
+        </div>
+        {acc.enabled && (
+          <p className="text-[12px] text-muted">
+            {L(
+              lang,
+              "Custom naksha: plan + item-wise BOQ for your plot in 3 days, up to 2 rounds of changes.",
+              "कस्टम नक्शा: आपके प्लॉट का नक्शा + आइटम-वार BOQ 3 दिन में, 2 बार बदलाव तक।",
+            )}
+          </p>
+        )}
+        {paid && (
+          <p className="rounded-lg bg-[#e6f4ec] px-3 py-2 text-[14px] font-semibold text-[#1d7a46]">
+            {L(
+              lang,
+              "Order received! We will contact you within a day. You can see it under My account.",
+              "ऑर्डर मिल गया! हम एक दिन में संपर्क करेंगे। इसे 'मेरा अकाउंट' में देख सकते हैं।",
+            )}
+          </p>
+        )}
         {sent &&
           (url ? (
             <p className="text-[14px]">

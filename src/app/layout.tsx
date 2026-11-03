@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Script from "next/script";
+import { AccountProvider } from "@/components/account/Account";
 import { GA_ID, GSC_VERIFICATION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -41,7 +42,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen antialiased">
-        {children}
+        <AccountProvider>{children}</AccountProvider>
         {GA_ID && (
           <>
             <Script
