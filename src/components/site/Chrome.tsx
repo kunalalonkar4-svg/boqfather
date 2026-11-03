@@ -36,13 +36,13 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const cta = (
     <Link
       href={langPath(lang, "house-boq-estimate")}
-      className="inline-flex h-10 items-center rounded-full bg-amber px-4 text-[14px] font-bold text-night shadow-[0_0_24px_-4px_rgba(198,244,50,0.6)] transition hover:brightness-110"
+      className="inline-flex h-10 items-center rounded-full bg-ink px-4 text-[14px] font-bold text-white transition hover:bg-[#2c2e31]"
     >
       {hi ? "मुफ़्त एस्टिमेट" : "Start Free Estimate"}
     </Link>
   );
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-night/80 text-white backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-line/80 bg-white/90 text-ink backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href={langPath(lang)} aria-label="BOQFather home" className="shrink-0">
           <Logo />
@@ -54,7 +54,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
               <Link
                 key={l.href}
                 href={l.href}
-                className="flex items-center gap-1.5 rounded-full px-3 py-2 font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+                className="flex items-center gap-1.5 rounded-full px-3 py-2 font-medium text-body transition hover:bg-[#f1eee8] hover:text-ink"
               >
                 {l.label}
                 {l.pro && (
@@ -72,7 +72,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
           <Link
             href={altPath}
             hrefLang={lang === "en" ? "hi" : "en"}
-            className="rounded-full border border-white/20 px-3 py-1.5 text-[13px] font-semibold text-white/90 hover:border-white/60"
+            className="rounded-full border border-line px-3 py-1.5 text-[13px] font-semibold text-ink hover:border-ink"
           >
             {d.lang_switch}
           </Link>
@@ -80,23 +80,23 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
           <details className="group relative xl:hidden">
             <summary
               aria-label={hi ? "मेनू" : "Menu"}
-              className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-white/20 [&::-webkit-details-marker]:hidden"
+              className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-white [&::-webkit-details-marker]:hidden"
             >
               <span aria-hidden="true" className="flex flex-col gap-[5px]">
-                <span className="block h-0.5 w-5 rounded bg-white transition group-open:translate-y-[7px] group-open:rotate-45" />
-                <span className="block h-0.5 w-5 rounded bg-white transition group-open:opacity-0" />
-                <span className="block h-0.5 w-5 rounded bg-white transition group-open:-translate-y-[7px] group-open:-rotate-45" />
+                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:translate-y-[7px] group-open:rotate-45" />
+                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:opacity-0" />
+                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:-translate-y-[7px] group-open:-rotate-45" />
               </span>
             </summary>
             <nav
               aria-label="Main"
-              className="absolute right-0 top-12 flex w-[min(88vw,340px)] flex-col gap-0.5 rounded-2xl border border-white/10 bg-night-2 p-2 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
+              className="absolute right-0 top-12 flex w-[min(88vw,340px)] flex-col gap-0.5 rounded-2xl border border-line bg-white p-2 shadow-[0_24px_60px_-20px_rgba(22,24,26,0.35)]"
             >
               {links.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="flex items-center justify-between rounded-xl px-4 py-3 text-[16px] font-semibold text-white/85 hover:bg-white/5 hover:text-white"
+                  className="flex items-center justify-between rounded-xl px-4 py-3 text-[16px] font-semibold text-ink hover:bg-[#f4f1ea]"
                 >
                   {l.label}
                   {l.pro && (
@@ -106,7 +106,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
                   )}
                 </Link>
               ))}
-              <div className="mt-1 flex flex-wrap items-center gap-2 border-t border-white/10 px-2 pt-3">
+              <div className="mt-1 flex flex-wrap items-center gap-2 border-t border-line px-2 pt-3">
                 <AccountButton lang={lang} />
                 <span className="sm:hidden">{cta}</span>
               </div>
