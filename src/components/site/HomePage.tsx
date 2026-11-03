@@ -103,8 +103,8 @@ export function HomePage({ lang }: { lang: Lang }) {
           <div className="flex flex-wrap items-end justify-between gap-3">
             <h2 className="font-display text-[26px] font-extrabold tracking-tight">
               {lang === "hi"
-                ? "प्लॉट साइज़ से नक्शा और खर्च"
-                : "House plan and cost by plot size"}
+                ? "घर का नक्शा — हर साइज़, हर दिशा, वास्तु अनुसार"
+                : "Ghar ka naksha — every size and facing, as per Vastu"}
             </h2>
             <Link
               href={langPath(lang, "house-construction-guide")}
@@ -119,13 +119,21 @@ export function HomePage({ lang }: { lang: Lang }) {
             {PLOTS.map((p) => (
               <li key={plotSlug(p)}>
                 <Link
-                  href={langPath(lang, `house-plan/${plotSlug(p)}`)}
+                  href={langPath(lang, `naksha/${plotSlug(p)}-east-facing`)}
                   className="font-display inline-flex rounded-xl border border-line bg-white px-4 py-2.5 text-[17px] font-extrabold hover:border-amber"
                 >
                   {p.w}×{p.d}
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href={langPath(lang, "naksha")}
+                className="inline-flex rounded-xl border border-amber bg-amber-tint px-4 py-2.5 text-[15px] font-semibold text-ink hover:border-ink"
+              >
+                {lang === "hi" ? "सभी नक्शे देखें →" : "All nakshe →"}
+              </Link>
+            </li>
             <li>
               <Link
                 href={langPath(lang, "house-construction-cost")}

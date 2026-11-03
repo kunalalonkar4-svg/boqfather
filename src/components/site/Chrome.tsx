@@ -37,10 +37,10 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
             {d.nav_calculators}
           </Link>
           <Link
-            href={langPath(lang, "house-plan")}
-            className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
+            href={langPath(lang, "naksha")}
+            className="rounded-lg px-3 py-2 font-semibold text-amber hover:text-white"
           >
-            {lang === "hi" ? "घर के नक्शे" : "House plans"}
+            {lang === "hi" ? "नक्शे" : "Naksha"}
           </Link>
           <Link
             href={langPath(lang, "house-construction-cost")}

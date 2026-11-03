@@ -17,6 +17,8 @@ export interface PlotInput {
   floors: number;
   /** Keep a car parking on the ground floor. */
   parking: boolean;
+  /** A shop with a rolling shutter at the front of the ground floor (family house above and behind it). */
+  shop?: boolean;
   /** One family house (BHK = whole house, bedrooms spread over the floors, one kitchen) or a separate unit on every floor. */
   layout?: "family" | "units";
 }
@@ -77,6 +79,7 @@ function familyTemplate(
   bhk: number,
   floors: number,
   parking: boolean,
+  shop = false,
 ): RoomSpec[][] {
   const t = (
     type: RoomType,
@@ -106,6 +109,7 @@ function familyTemplate(
   for (let f = 0; f < F; f++) {
     const list: RoomSpec[] = [];
     if (f === 0) {
+      if (shop) list.push(t("shop"));
       if (parking) list.push(t("parking"));
       list.push(t("hall", 4.8, 3.9));
       list.push(t("kitchen", 3.3, 2.7));
@@ -299,7 +303,7 @@ export function fitPlot(p: PlotInput): PlotFit {
         buildB + 0.05);
   const family =
     (p.layout ?? "family") === "family"
-      ? familyTemplate(p.bhk, Math.max(1, p.floors), p.parking)
+      ? familyTemplate(p.bhk, Math.max(1, p.floors), p.parking, !!p.shop)
       : null;
   const notes: { en: string; hi: string }[] = [];
   // trim only when the floor is really short of area (the layout estimate is cautious on wider plots)
@@ -1044,10 +1048,24 @@ function hubFloor(
       ? extraCand
       : [];
   for (const x of extraSmall) mid.push(cellOf(x, Math.max(1.5, x.area / 2.4)));
+  // no bedroom on this floor and a single toilet: it sits in the kitchen row beside the open dining space (no extra row at the back)
+  let toiletInMid: LayoutRoom | null = null;
+  if (
+    !by("bedroom").length &&
+    by("toilet").length === 1 &&
+    mid.some((c) => c.key === "HUB")
+  ) {
+    const tw = Math.max(1.2, by("toilet")[0].area / 2.1);
+    const used = mid.reduce((t, c) => t + (c.fixedW ?? 0) + IW, 0);
+    if (iw - used - tw - IW >= 1.2) {
+      toiletInMid = by("toilet")[0];
+      mid.push(cellOf(toiletInMid, tw));
+    }
+  }
   if (mid.length) rows.push({ ...split(mid, stairBeside ? 2.4 : STAIR_D) }); // kitchen + dining keep their size; slack goes to hall / bedrooms
   // back zone
   const smalls = [
-    ...by("toilet"),
+    ...by("toilet").filter((x) => x !== toiletInMid),
     ...(extraSmall.length
       ? []
       : [...by("pooja"), ...by("store"), ...by("utility"), ...by("study")]),

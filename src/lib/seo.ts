@@ -7,6 +7,8 @@ export function pageMeta(opts: {
   path: string;
   title: string;
   description: string;
+  /** Site path of a preview image, e.g. /naksha/img/x.png */
+  image?: string;
 }): Metadata {
   const url = `${SITE_URL}${langPath(opts.lang, opts.path)}`;
   return {
@@ -27,9 +29,10 @@ export function pageMeta(opts: {
       siteName: SITE_NAME,
       locale: opts.lang === "hi" ? "hi_IN" : "en_IN",
       type: "website",
+      ...(opts.image ? { images: [{ url: `${SITE_URL}${opts.image}` }] } : {}),
     },
     twitter: {
-      card: "summary",
+      card: opts.image ? "summary_large_image" : "summary",
       title: opts.title,
       description: opts.description,
     },

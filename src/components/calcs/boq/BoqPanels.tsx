@@ -59,11 +59,11 @@ export function SketchPanel({
       <p className="text-[13px] text-muted">
         {L(
           lang,
-          "Plan drawn to scale from your rooms: road at the bottom, parking and hall at the front, staircase at the front right, kitchen with dining in the middle, bedrooms at the back with attached toilets; every room opens on the passage, hall or lobby, and walls sit on the column lines. The house depth comes from this plan, so the BOQ matches it. Have your architect finalise it and check local bye-laws.",
-          "आपके कमरों से स्केल पर बना प्लान: नीचे सड़क, आगे पार्किंग और हॉल, सीढ़ी आगे दाईं तरफ़, बीच में किचन-डाइनिंग, पीछे बेडरूम और अटैच्ड टॉयलेट; हर कमरा पैसेज, हॉल या लॉबी में खुलता है और दीवारें कॉलम लाइन पर हैं। घर की गहराई इसी प्लान से निकलती है, इसलिए BOQ इसी से मेल खाता है। फ़ाइनल ड्रॉइंग आर्किटेक्ट से बनवाएं और लोकल नियम जांचें।",
+          "Plan drawn to scale from your rooms: road at the bottom, parking and hall at the front, kitchen with dining in the middle, bedrooms with toilets behind or upstairs; every room opens on the passage, hall or lobby, and walls sit on the column lines. With the road direction known, the plan is set the way that suits Vastu better. The house size comes from this plan, so the BOQ matches it. Have your architect finalise it and check local bye-laws.",
+          "आपके कमरों से स्केल पर बना प्लान: नीचे सड़क, आगे पार्किंग और हॉल, बीच में किचन-डाइनिंग, पीछे या ऊपर टॉयलेट वाले बेडरूम; हर कमरा पैसेज, हॉल या लॉबी में खुलता है और दीवारें कॉलम लाइन पर हैं। सड़क की दिशा पता हो तो प्लान उस तरफ़ रखा जाता है जो वास्तु के ज़्यादा अनुकूल हो। घर का साइज़ इसी प्लान से निकलता है, इसलिए BOQ इसी से मेल खाता है। फ़ाइनल ड्रॉइंग आर्किटेक्ट से बनवाएं और लोकल नियम जांचें।",
         )}
       </p>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div data-plan-grid className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {r.sketch.map((s) => {
           const face = r.facing
             ? {
@@ -166,7 +166,136 @@ export function SketchPanel({
           );
         })}
       </div>
+      {r.vastu && <VastuChart r={r} lang={lang} names={nm} />}
     </div>
+  );
+}
+
+const ZONE: Record<string, [string, string]> = {
+  NE: ["North-east", "ईशान (उत्तर-पूर्व)"],
+  N: ["North", "उत्तर"],
+  NW: ["North-west", "वायव्य (उत्तर-पश्चिम)"],
+  E: ["East", "पूर्व"],
+  C: ["Centre", "ब्रह्मस्थान (बीच)"],
+  W: ["West", "पश्चिम"],
+  SE: ["South-east", "आग्नेय (दक्षिण-पूर्व)"],
+  S: ["South", "दक्षिण"],
+  SW: ["South-west", "नैऋत्य (दक्षिण-पश्चिम)"],
+};
+export const zoneName = (z: string, lang: Lang) =>
+  ZONE[z] ? L(lang, ZONE[z][0], ZONE[z][1]) : z;
+const ROLE: Record<string, [string, string]> = {
+  entrance: ["Main entrance", "मुख्य द्वार"],
+  master: ["Master bedroom", "मास्टर बेडरूम"],
+};
+
+/** Vastu check of the drawn plan: every room, the direction it sits in, what Vastu recommends. */
+export function VastuChart({
+  r,
+  lang,
+  names,
+}: {
+  r: BoqResult;
+  lang: Lang;
+  names: (t: string) => string;
+}) {
+  const v = r.vastu!;
+  const floors = r.sketch.length;
+  const mark = {
+    good: [
+      "✓",
+      "text-[#1d7a46] bg-[#e6f4ec]",
+      L(lang, "As per Vastu", "वास्तु अनुसार"),
+    ],
+    ok: [
+      "△",
+      "text-[#8a5a00] bg-[#fdf3dc]",
+      L(lang, "Acceptable", "चल सकता है"),
+    ],
+    bad: [
+      "✕",
+      "text-[#a8321f] bg-[#fbe9e5]",
+      L(lang, "Not ideal", "वास्तु के अनुकूल नहीं"),
+    ],
+  } as const;
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 className="font-display text-[18px] font-bold">
+          {L(lang, "Vastu check", "वास्तु जांच")}
+        </h3>
+        <span className="text-[14px] font-semibold">
+          {L(
+            lang,
+            `${v.pct}% of rooms as per Vastu or acceptable`,
+            `${v.pct}% कमरे वास्तु अनुसार या चलने लायक़`,
+          )}
+        </span>
+      </div>
+      <div className="overflow-x-auto rounded-xl border border-line">
+        <table className="w-full min-w-[520px] border-collapse text-[13px]">
+          <thead>
+            <tr className="bg-[#f4f1ea] text-left">
+              <th className="px-3 py-2 font-semibold">
+                {L(lang, "Room", "कमरा")}
+              </th>
+              <th className="px-3 py-2 font-semibold">
+                {L(lang, "Direction in this plan", "इस नक्शे में दिशा")}
+              </th>
+              <th className="px-3 py-2 font-semibold">
+                {L(lang, "Vastu recommends", "वास्तु में सही दिशा")}
+              </th>
+              <th className="px-3 py-2 font-semibold">
+                {L(lang, "Status", "स्थिति")}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {v.rows.map((x, i) => {
+              const m = mark[x.status];
+              const room = ROLE[x.role]
+                ? L(lang, ROLE[x.role][0], ROLE[x.role][1])
+                : names(x.role);
+              return (
+                <tr key={i} className="border-t border-line">
+                  <td className="px-3 py-2 font-medium">
+                    {room}
+                    {floors > 1 && (
+                      <span className="text-muted">
+                        {" "}
+                        · {FLOOR(x.floor, lang)}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">{zoneName(x.zone, lang)}</td>
+                  <td className="px-3 py-2 text-muted">
+                    {x.ideal.map((z) => zoneName(z, lang)).join(", ")}
+                  </td>
+                  <td className="px-3 py-2">
+                    <span
+                      className={
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold " +
+                        m[1]
+                      }
+                    >
+                      <span aria-hidden="true">{m[0]}</span>
+                      {m[2]}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-[12px] text-muted">
+        {L(
+          lang,
+          "Directions are worked out from the road direction and each room's centre. Vastu practice varies between experts; rooms marked ✕ can be moved in a custom plan.",
+          "दिशा सड़क की दिशा और हर कमरे के बीच के हिस्से से निकाली गई है। वास्तु के जानकारों की राय में फ़र्क़ होता है; ✕ वाले कमरे कस्टम नक्शे में बदले जा सकते हैं।",
+        )}
+      </p>
+    </section>
   );
 }
 

@@ -10,3 +10,6 @@ export function langPath(lang: Lang, path = "/"): string {
   const clean = path === "/" ? "/" : `/${path.replace(/^\/|\/$/g, "")}/`;
   return lang === "en" ? clean : `/hi${clean === "/" ? "/" : clean}`;
 }
+
+/** WhatsApp number for custom naksha requests, with country code and no "+" (e.g. "9198xxxxxxxx"). Empty = form shown, sending disabled. */
+export const WHATSAPP_NUMBER = "";

@@ -24,6 +24,7 @@ import {
   sqftSlug,
 } from "@/content/plots";
 import { name, t } from "@/i18n/ui";
+import { FACING_NAME, NAKSHE } from "@/content/naksha";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import HouseCalc from "@/components/calcs/HouseCalc";
 import { SiteFooter, SiteHeader } from "./Chrome";
@@ -37,7 +38,7 @@ const num = (n: number, d = 0) =>
 
 type Crumb = { name: string; path?: string };
 
-function Shell({
+export function Shell({
   lang,
   path,
   crumbs,
@@ -125,7 +126,7 @@ function Shell({
   );
 }
 
-function H2({ children }: { children: ReactNode }) {
+export function H2({ children }: { children: ReactNode }) {
   return (
     <h2 className="font-display text-[22px] font-bold tracking-tight [text-wrap:balance]">
       {children}
@@ -133,7 +134,7 @@ function H2({ children }: { children: ReactNode }) {
   );
 }
 
-function Faqs({
+export function Faqs({
   lang,
   faqs,
 }: {
@@ -168,7 +169,7 @@ function Faqs({
   );
 }
 
-function Stats({ items }: { items: [string, string][] }) {
+export function Stats({ items }: { items: [string, string][] }) {
   return (
     <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       {items.map(([k, v]) => (
@@ -188,7 +189,7 @@ function Stats({ items }: { items: [string, string][] }) {
   );
 }
 
-function Table({
+export function Table({
   head,
   rows,
   caption,
@@ -238,7 +239,7 @@ function Table({
   );
 }
 
-function Cta({ href, children }: { href: string; children: ReactNode }) {
+export function Cta({ href, children }: { href: string; children: ReactNode }) {
   return (
     <Link
       href={href}
@@ -249,7 +250,7 @@ function Cta({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-function LinkGrid({
+export function LinkGrid({
   links,
 }: {
   links: { href: string; title: string; sub: string; current?: boolean }[];
@@ -477,6 +478,29 @@ export function PlotPage({ lang, slug }: { lang: Lang; slug: string }) {
             )}
           </span>
         </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <H2>
+          {L(
+            lang,
+            `${s} naksha for every road direction (Vastu)`,
+            `${s} का हर दिशा का नक्शा (वास्तु अनुसार)`,
+          )}
+        </H2>
+        <LinkGrid
+          links={NAKSHE.filter((x) => plotSlug(x.plot) === slug).map((x) => ({
+            href: langPath(lang, `naksha/${x.slug}`),
+            title:
+              lang === "hi"
+                ? FACING_NAME[x.facing].hi
+                : FACING_NAME[x.facing].en,
+            sub:
+              x.kind === "shop"
+                ? L(lang, "with shop", "दुकान के साथ")
+                : L(lang, "with parking", "पार्किंग के साथ"),
+          }))}
+        />
       </section>
 
       <section className="flex flex-col gap-4">

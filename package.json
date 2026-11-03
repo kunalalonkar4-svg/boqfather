@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "vitest run"
+    "test": "vitest run",
+    "naksha-images": "next build && node scripts/naksha-images.mjs"
   },
   "dependencies": {
     "jspdf": "^4.2.1",

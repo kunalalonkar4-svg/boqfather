@@ -3,6 +3,7 @@
  * Rooms → assumed RCC frame layout → measurement book rows (Nos × L × B × H) → abstract of cost.
  * Mirrors the founder's estimate format: sections A–I, sub-totals, 5% contingency, grand total.
  */
+import { mirrorRects, vastuReport, type VastuReport } from "./vastu";
 import { CEMENT_BAG_M3, CFT_PER_M3, round, SQFT_PER_M2 } from "./units";
 import { BbsResult, calcBbs } from "./bbs";
 import { BoqQuality, QUALITY_RATE_OVERRIDES, SPEC_SHEET } from "./specs";
@@ -394,6 +395,8 @@ export interface BoqSpec {
   depthM?: number;
   /** Direction the road side faces (for the north arrow). */
   facing?: "N" | "E" | "S" | "W";
+  /** Draw the plan or its mirror image, whichever suits Vastu better for the facing (default true). */
+  vastu?: boolean;
 }
 
 /** Optional external works and services. Lengths in metres. */
@@ -636,6 +639,8 @@ export interface BoqResult {
     spec: { en: string; hi: string };
   }[];
   sketch: { floor: number; L: number; B: number; rects: SketchRect[] }[];
+  /** Vastu check of the drawn plan (when the facing is known). */
+  vastu?: VastuReport;
   /** Plot and building-code checks (English / Hindi). */
   warnings: { en: string; hi: string }[];
 }
@@ -2195,7 +2200,7 @@ export function calcBoq(input: BoqInput): BoqResult {
   });
 
   // ---------------- schematic sketch per floor
-  const sketch = geo.map((g) => ({
+  const drawn = geo.map((g) => ({
     floor: g.f,
     // drawn with the front (road) at the bottom: width across the front, depth front to back
     L: g.B,
@@ -2218,6 +2223,22 @@ export function calcBoq(input: BoqInput): BoqResult {
       g.wide,
     ),
   }));
+
+  // the plan or its mirror image (same rooms and structure) — whichever sits better with Vastu for this facing
+  let sketch = drawn;
+  let vastu: VastuReport | undefined;
+  if (spec.facing) {
+    const a = vastuReport(drawn, spec.facing);
+    const flipped = drawn.map((d) => ({
+      ...d,
+      rects: mirrorRects(d.rects, d.L),
+    }));
+    const b = vastuReport(flipped, spec.facing);
+    if (spec.vastu !== false && b.score > a.score) {
+      sketch = flipped;
+      vastu = b;
+    } else vastu = a;
+  }
 
   const specSheet = SPEC_SHEET.map((l) => ({
     key: l.key,
@@ -2284,6 +2305,7 @@ export function calcBoq(input: BoqInput): BoqResult {
     steelThumbKg,
     specSheet,
     sketch,
+    vastu,
     warnings: [
       ...(spec.buildableM2
         ? geo

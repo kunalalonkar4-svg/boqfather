@@ -12,3 +12,4 @@ export * from "./specs";
 export * from "./plot";
 export * from "./bbs";
 export * from "./plan";
+export * from "./vastu";

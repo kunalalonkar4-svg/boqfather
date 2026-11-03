@@ -22,8 +22,8 @@ const cfg = (w: number, d: number, bhk: number): PlotCfg => ({
   w,
   d,
   bhk,
-  // small plots in Indian towns usually keep 3 ft in front and build to the back wall
-  front: d >= 60 ? 10 : d > 40 ? 5 : 3,
+  // small and narrow plots in Indian towns usually keep 3 ft in front; short plots build to the back wall
+  front: w <= 25 && d <= 50 ? 3 : d >= 60 ? 10 : d > 40 ? 5 : 3,
   back: d > 40 ? 3 : 0,
   side: w >= 30 ? 3 : 0,
 });
@@ -31,11 +31,13 @@ const cfg = (w: number, d: number, bhk: number): PlotCfg => ({
 /** The plot sizes people search for most, frontage × depth. */
 export const PLOTS: PlotCfg[] = [
   cfg(20, 40, 2),
+  cfg(20, 45, 3),
   cfg(20, 50, 3),
   cfg(20, 60, 3),
   cfg(25, 40, 3),
   cfg(25, 50, 3),
   cfg(30, 40, 3),
+  cfg(30, 45, 3),
   cfg(30, 50, 3),
   cfg(30, 60, 4),
   cfg(40, 50, 4),
@@ -50,10 +52,17 @@ const FT = 0.3048;
 const SQM_TO_SQFT = 10.7639;
 
 /** Plan and estimate for one plot (family house, parking on), one result per floor count. */
+export interface PlanOpts {
+  facing?: Facing;
+  /** Shop at the front of the ground floor instead of the car parking. */
+  shop?: boolean;
+}
+
 export function plotEstimate(
   p: PlotCfg,
   floors: number,
   quality: BoqQuality = "standard",
+  opts: PlanOpts = {},
 ) {
   const fit = fitPlot({
     plotL: p.d * FT,
@@ -63,7 +72,8 @@ export function plotEstimate(
     side: p.side * FT,
     bhk: p.bhk,
     floors,
-    parking: true,
+    parking: !opts.shop,
+    shop: !!opts.shop,
     layout: "family",
   });
   const res = calcBoq({
@@ -73,7 +83,7 @@ export function plotEstimate(
       buildableM2: fit.buildArea,
       widthM: fit.buildB,
       depthM: fit.buildL,
-      facing: "E",
+      facing: opts.facing ?? "E",
       quality,
       // same defaults as the estimate tool (10 ft floors, 5 × 4 ft windows, 1.5 ft plinth)
       floorH: 10 * FT,
