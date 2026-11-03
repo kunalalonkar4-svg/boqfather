@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ROOM_DEFS, ROOM_TYPES, type RoomType } from "@/engine";
 import { roomsFromDxf } from "@/lib/dxf";
 import type { ReadPlan } from "@/lib/planRead";
@@ -49,6 +49,14 @@ export function PlanImport({
   const [plan, setPlan] = useState<ReadPlan | null>(null);
   const [busy, setBusy] = useState(false);
   const [needPro, setNeedPro] = useState(false);
+  const box = useRef<HTMLDetailsElement>(null);
+  // opened from the Pro page link (#upload-plan)
+  useEffect(() => {
+    if (window.location.hash === "#upload-plan" && box.current) {
+      box.current.open = true;
+      box.current.scrollIntoView({ block: "start" });
+    }
+  }, []);
 
   const pick = async (file: File) => {
     setNeedPro(false);
@@ -110,7 +118,10 @@ export function PlanImport({
   const inp = "w-16 rounded border border-line px-1.5 py-1 text-[13px]";
 
   return (
-    <details className="group rounded-xl border-2 border-dashed border-steel/40 bg-[#f3f6f9] p-3">
+    <details
+      id="upload-plan"
+      ref={box}
+      className="group scroll-mt-24 rounded-xl border-2 border-dashed border-steel/40 bg-[#f3f6f9] p-3">
       <summary className="cursor-pointer list-none text-[14px] font-extrabold text-steel">
         📄{" "}
         {L(

@@ -172,7 +172,9 @@ export function BillCheck({ lang }: { lang: Lang }) {
             : "text-[#1d7a46]";
 
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border-2 border-amber bg-white p-5">
+    <section
+      id="bill-check"
+      className="flex scroll-mt-24 flex-col gap-3 rounded-2xl border-2 border-amber bg-white p-5">
       <div className="flex flex-wrap items-center gap-2">
         <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold">
           PRO
