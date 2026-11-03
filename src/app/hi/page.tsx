@@ -1,4 +1,4 @@
-import { HomeV2 as HomePage } from "@/components/site/home/HomeV2";
+import { Cinematic as HomePage } from "@/components/site/home/Cinematic";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({

@@ -18,97 +18,97 @@ export function Logo() {
   );
 }
 
-/** Top bar: white, stays on top while scrolling. `altPath` is the same page in the other language. */
+/** Top bar: dark glass, stays on top while scrolling. `altPath` is the same page in the other language. */
 export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const d = t(lang);
   const hi = lang === "hi";
-  const links: { href: string; label: string; strong?: boolean; pro?: boolean }[] = [
-    { href: langPath(lang, "calculators"), label: d.nav_calculators, strong: true },
-    { href: langPath(lang, "house-boq-estimate"), label: hi ? "BOQ एस्टिमेट" : "BOQ estimate", strong: true },
+  const links: { href: string; label: string; pro?: boolean; desk?: boolean }[] = [
+    { href: langPath(lang), label: hi ? "होम" : "Home", desk: true },
+    { href: `${langPath(lang)}#features`, label: hi ? "फ़ीचर" : "Features", desk: true },
+    { href: langPath(lang, "naksha"), label: hi ? "घर के नक्शे" : "House Plans", desk: true },
+    { href: langPath(lang, "calculators"), label: d.nav_calculators, desk: true },
+    { href: langPath(lang, "plan-to-estimate"), label: hi ? "नक्शे से एस्टिमेट" : "Plan → Estimate", pro: true, desk: true },
+    { href: langPath(lang, "pro"), label: hi ? "प्राइसिंग" : "Pricing", desk: true },
+    { href: langPath(lang, "house-boq-estimate"), label: hi ? "आइटम-वार BOQ" : "Item-wise BOQ" },
     { href: langPath(lang, "house-construction-cost"), label: d.nav_house },
-    { href: langPath(lang, "plan-to-estimate"), label: hi ? "नक्शे से एस्टिमेट" : "Plan → Estimate", pro: true },
-    { href: langPath(lang, "naksha"), label: hi ? "नक्शे" : "Naksha" },
     { href: langPath(lang, "house-construction-guide"), label: hi ? "गाइड" : "Guide" },
   ];
-  const langBtn = (
+  const cta = (
     <Link
-      href={altPath}
-      hrefLang={lang === "en" ? "hi" : "en"}
-      className="rounded-full border border-line bg-white px-3.5 py-1.5 text-[14px] font-semibold text-ink hover:border-ink"
+      href={langPath(lang, "house-boq-estimate")}
+      className="inline-flex h-10 items-center rounded-full bg-amber px-4 text-[14px] font-bold text-night shadow-[0_0_24px_-4px_rgba(198,244,50,0.6)] transition hover:brightness-110"
     >
-      {d.lang_switch}
+      {hi ? "मुफ़्त एस्टिमेट" : "Start Free Estimate"}
     </Link>
   );
   return (
-    <header className="sticky top-0 z-40 border-b border-line/80 bg-white/85 text-ink backdrop-blur-xl supports-[backdrop-filter]:bg-white/75">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-night/80 text-white backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href={langPath(lang)} aria-label="BOQFather home" className="shrink-0">
           <Logo />
         </Link>
-        <nav aria-label="Main" className="hidden items-center gap-0.5 text-[14.5px] lg:flex">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-2 hover:bg-[#f1eee8] ${l.strong ? "font-bold" : "font-medium text-body hover:text-ink"}`}
-            >
-              {l.label}
-              {l.pro && (
-                <span className="rounded bg-amber px-1 text-[10px] font-extrabold text-ink">
-                  PRO
-                </span>
-              )}
-            </Link>
-          ))}
+        <nav aria-label="Main" className="hidden items-center gap-0.5 text-[14px] xl:flex">
+          {links
+            .filter((l) => l.desk)
+            .map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="flex items-center gap-1.5 rounded-full px-3 py-2 font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+              >
+                {l.label}
+                {l.pro && (
+                  <span className="rounded bg-amber px-1 text-[10px] font-extrabold text-night">
+                    PRO
+                  </span>
+                )}
+              </Link>
+            ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link
-            href={langPath(lang, "pro")}
-            className="hidden rounded-full px-3 py-2 text-[14.5px] font-extrabold text-amber-dark hover:bg-amber-tint sm:inline-flex"
-          >
-            Pro
-          </Link>
-          <span className="hidden sm:inline-flex">
+          <span className="hidden md:inline-flex">
             <AccountButton lang={lang} />
           </span>
-          {langBtn}
-          <details className="group relative lg:hidden">
+          <Link
+            href={altPath}
+            hrefLang={lang === "en" ? "hi" : "en"}
+            className="rounded-full border border-white/20 px-3 py-1.5 text-[13px] font-semibold text-white/90 hover:border-white/60"
+          >
+            {d.lang_switch}
+          </Link>
+          <span className="hidden sm:inline-flex">{cta}</span>
+          <details className="group relative xl:hidden">
             <summary
               aria-label={hi ? "मेनू" : "Menu"}
-              className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-white [&::-webkit-details-marker]:hidden"
+              className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-white/20 [&::-webkit-details-marker]:hidden"
             >
               <span aria-hidden="true" className="flex flex-col gap-[5px]">
-                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:translate-y-[7px] group-open:rotate-45" />
-                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:opacity-0" />
-                <span className="block h-0.5 w-5 rounded bg-ink transition group-open:-translate-y-[7px] group-open:-rotate-45" />
+                <span className="block h-0.5 w-5 rounded bg-white transition group-open:translate-y-[7px] group-open:rotate-45" />
+                <span className="block h-0.5 w-5 rounded bg-white transition group-open:opacity-0" />
+                <span className="block h-0.5 w-5 rounded bg-white transition group-open:-translate-y-[7px] group-open:-rotate-45" />
               </span>
             </summary>
             <nav
               aria-label="Main"
-              className="absolute right-0 top-12 flex w-[min(86vw,320px)] flex-col gap-1 rounded-2xl border border-line bg-white p-2 shadow-[0_24px_60px_-20px_rgba(22,24,26,0.35)]"
+              className="absolute right-0 top-12 flex w-[min(88vw,340px)] flex-col gap-0.5 rounded-2xl border border-white/10 bg-night-2 p-2 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
             >
               {links.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="flex items-center justify-between rounded-xl px-4 py-3 text-[16px] font-semibold hover:bg-[#f4f1ea]"
+                  className="flex items-center justify-between rounded-xl px-4 py-3 text-[16px] font-semibold text-white/85 hover:bg-white/5 hover:text-white"
                 >
                   {l.label}
                   {l.pro && (
-                    <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold text-ink">
+                    <span className="rounded bg-amber px-1.5 text-[11px] font-extrabold text-night">
                       PRO
                     </span>
                   )}
                 </Link>
               ))}
-              <Link
-                href={langPath(lang, "pro")}
-                className="rounded-xl px-4 py-3 text-[16px] font-extrabold text-amber-dark hover:bg-amber-tint"
-              >
-                Pro
-              </Link>
-              <div className="border-t border-line px-2 pt-2 sm:hidden">
+              <div className="mt-1 flex flex-wrap items-center gap-2 border-t border-white/10 px-2 pt-3">
                 <AccountButton lang={lang} />
+                <span className="sm:hidden">{cta}</span>
               </div>
             </nav>
           </details>
