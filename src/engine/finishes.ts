@@ -96,9 +96,7 @@ export interface PaintInput {
   puttyCoverageSqftPerKg?: number;
 }
 
-export function calcPaint(
-  input: PaintInput,
-): CalcResult<{
+export function calcPaint(input: PaintInput): CalcResult<{
   areaSqft: number;
   paintL: number;
   primerL: number;

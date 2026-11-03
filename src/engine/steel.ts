@@ -12,9 +12,7 @@ export interface BarWeightInput {
   nos: number;
 }
 
-export function calcBarWeight(
-  input: BarWeightInput,
-): CalcResult<{
+export function calcBarWeight(input: BarWeightInput): CalcResult<{
   kgPerM: number;
   totalLengthM: number;
   kg: number;

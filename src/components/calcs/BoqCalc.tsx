@@ -157,6 +157,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     depthM: number;
     perimeterM: number;
     warnings: string[];
+    notes: { en: string; hi: string }[];
   } | null>(null);
   // finish level, walls, extras, imported rates
   const [quality, setQuality] = useState<BoqQuality>("standard");
@@ -205,19 +206,17 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
 
   const floorRooms: RoomSpec[][] = useMemo(
     () =>
-      plans
-        .slice(0, F)
-        .map((rows) =>
-          rows
-            .map((r) => ({
-              type: r.type,
-              L: dimToM(r.L, "ft"),
-              B: dimToM(r.B, "ft"),
-              windows: r.windows,
-              wc: r.wc,
-            }))
-            .filter((r) => r.L > 0.3 && r.B > 0.3),
-        ),
+      plans.slice(0, F).map((rows) =>
+        rows
+          .map((r) => ({
+            type: r.type,
+            L: dimToM(r.L, "ft"),
+            B: dimToM(r.B, "ft"),
+            windows: r.windows,
+            wc: r.wc,
+          }))
+          .filter((r) => r.L > 0.3 && r.B > 0.3),
+      ),
     [plans, F],
   );
   const valid = floorRooms.every((f) => f.length > 0);
@@ -351,15 +350,47 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
       depthM: fit.buildL,
       perimeterM: 2 * (pL + pB),
       warnings: fit.warnings,
+      notes: fit.notes,
     });
     setApplied(JSON.stringify(plot));
     setView("sketch");
   };
-  // plan once on load from the default plot; after that the user presses "Make plan"
+  // plan once on load from the default plot (or the plot in the link, e.g. ?w=30&d=50&bhk=3&floors=2); after that the user presses "Make plan"
+  const [pending, setPending] = useState(false);
   useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const w = q.get("w"),
+      dd = q.get("d");
+    const okNum = (v: string | null) => v !== null && Number(v) >= 0;
+    if (okNum(w) && okNum(dd)) {
+      const fc = q.get("facing");
+      setPlot((p) => ({
+        ...p,
+        B: w!,
+        L: dd!,
+        ...(okNum(q.get("front")) ? { front: q.get("front")! } : {}),
+        ...(okNum(q.get("back")) ? { back: q.get("back")! } : {}),
+        ...(okNum(q.get("side")) ? { side: q.get("side")! } : {}),
+        ...(okNum(q.get("bhk")) ? { bhk: q.get("bhk")! } : {}),
+        ...(fc && ["N", "E", "S", "W"].includes(fc)
+          ? { facing: fc as "N" | "E" | "S" | "W" }
+          : {}),
+      }));
+      const fl = q.get("floors");
+      if (fl && ["1", "2", "3", "4"].includes(fl))
+        setFloorCount(fl as "1" | "2" | "3" | "4");
+      setPending(true);
+      return;
+    }
     if (plotLive) applyPlot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    if (!pending) return;
+    setPending(false);
+    applyPlot();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pending]);
   useEffect(() => {
     if (plotLive && applied) applyPlot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -623,6 +654,14 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                   </button>
                 )}
               </div>
+              {plotFit?.notes.map((n) => (
+                <p
+                  key={n.en}
+                  className="rounded-lg bg-amber-tint px-3 py-2 text-[13px] text-ink"
+                >
+                  {hi ? n.hi : n.en}
+                </p>
+              ))}
               {plotFit?.warnings.map((w) => (
                 <p
                   key={w}

@@ -729,9 +729,13 @@ export function calcBoq(input: BoqInput): BoqResult {
     // narrowest width (from a compact start) at which every floor fits the plot depth; the rest of the width stays open as a side garden.
     // If no width fits, keep the compact width (well-proportioned rooms) and let the plot warning speak.
     houseW = round(wT, 2);
-    for (let w = wT; w <= spec.widthM + 1e-6; w += 0.3)
-      if (fitsAt(Math.min(w, spec.widthM))) {
-        houseW = round(Math.min(w, spec.widthM), 2);
+    // try every 0.3 m from the compact width, and always the full buildable width last
+    const tries: number[] = [];
+    for (let w = wT; w < spec.widthM - 0.05; w += 0.3) tries.push(w);
+    tries.push(spec.widthM);
+    for (const w of tries)
+      if (fitsAt(w)) {
+        houseW = round(w, 2);
         break;
       }
   }

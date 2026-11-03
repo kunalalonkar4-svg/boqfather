@@ -53,7 +53,10 @@ describe("plan sweep: every plot input gives a sound plan", () => {
                     )
                       problems.push(`${tag} F${sk.floor}: ${x.key} outside`);
                     if (
-                      !["corridor", "balcony", "open"].includes(x.type) &&
+                      // the upstairs lounge can open only onto the stair / lobby (their openings); reachability is checked below
+                      !["corridor", "balcony", "open", "hall"].includes(
+                        x.type,
+                      ) &&
                       !x.doors?.length
                     )
                       problems.push(
@@ -113,6 +116,7 @@ describe("plan sweep: every plot input gives a sound plan", () => {
       ),
     ];
     console.log(`cases ${n}, problems ${problems.length}`);
+    if (process.env.RAW) console.log("RAW\n" + problems.join("\n"));
     const agg = new Map<string, number>();
     for (const pr of problems) {
       const [tag, rest] = pr.split(": ");

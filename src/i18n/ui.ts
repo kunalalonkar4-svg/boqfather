@@ -225,6 +225,8 @@ export const NAMES: Record<string, { en: string; hi: string }> = {
   bricks: { en: "Bricks", hi: "ईंट" },
   tiles: { en: "Tiles", hi: "टाइल्स" },
   paint: { en: "Paint", hi: "पेंट" },
+  rcc: { en: "RCC concrete (M20)", hi: "RCC कंक्रीट (M20)" },
+  blocks: { en: "AAC blocks", hi: "AAC ब्लॉक" },
   bags: { en: "bags", hi: "बोरी" },
   kg: { en: "kg", hi: "किलो" },
   cft: { en: "cft", hi: "cft" },

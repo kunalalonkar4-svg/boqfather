@@ -30,6 +30,8 @@ export interface PlotFit {
   /** Room scale applied to default sizes (1 = default). */
   scale: number;
   warnings: string[];
+  /** Changes made so the rooms fit a small plot (English / Hindi). */
+  notes: { en: string; hi: string }[];
 }
 
 const STAIR_FP = 6.83;
@@ -130,6 +132,110 @@ function familyTemplate(
   return floorsOut;
 }
 
+/**
+ * Small plot: take rooms out the way an architect would, one step at a time, until every floor fits —
+ * ground floor: pooja → bedroom moves upstairs → dining joins the hall → parking;
+ * upper floors: balcony → bedrooms share a toilet → a bedroom moves up (or the house loses one); the lounge stays as the stair landing.
+ */
+function trimToFit(
+  floors: RoomSpec[][],
+  parking: boolean,
+  fits: (list: RoomSpec[], f: number) => boolean,
+  notes: { en: string; hi: string }[],
+) {
+  const F = floors.length;
+  const note = (en: string, hi: string) => {
+    notes.push({ en, hi });
+    return true;
+  };
+  const take = (list: RoomSpec[], pred: (r: RoomSpec) => boolean) => {
+    const i = list.findIndex(pred);
+    return i >= 0 ? list.splice(i, 1)[0] : undefined;
+  };
+  const isType = (t: RoomType) => (r: RoomSpec) => r.type === t;
+  const ownToilet = (r: RoomSpec) => r.type === "toilet" && r.wc !== "iwc";
+  const flr = (f: number) =>
+    f === 0
+      ? ["ground floor", "ग्राउंड फ़्लोर"]
+      : f === 1
+        ? ["first floor", "पहली मंज़िल"]
+        : f === 2
+          ? ["second floor", "दूसरी मंज़िल"]
+          : ["third floor", "तीसरी मंज़िल"];
+  // move a bedroom (with its toilet) to the floor above, or drop it on the top floor
+  const moveBedroomUp = (f: number) => {
+    const list = floors[f];
+    const beds = list.filter(isType("bedroom")).length;
+    if (!beds || (f === F - 1 && beds <= 1)) return false;
+    const bed = take(list, isType("bedroom"))!;
+    const toilet =
+      list.filter((r) => r.type === "toilet").length > 1
+        ? take(list, ownToilet)
+        : undefined;
+    if (f < F - 1) {
+      floors[f + 1].splice(1, 0, bed, ...(toilet ? [toilet] : []));
+      const [a, b] = flr(f + 1);
+      const [c, d] = flr(f);
+      return note(
+        `Plot is small: one bedroom moved from the ${c} to the ${a}.`,
+        `प्लॉट छोटा है: एक बेडरूम ${d} से ${b} पर रखा।`,
+      );
+    }
+    return note(
+      "Plot is too small for this many bedrooms: one bedroom left out — add a floor to get it back.",
+      "इतने बेडरूम के लिए प्लॉट छोटा है: एक बेडरूम कम किया — एक मंज़िल बढ़ाएं तो वापस आएगा।",
+    );
+  };
+  for (let f = 0; f < F; f++) {
+    const list = floors[f];
+    const steps: (() => boolean)[] =
+      f === 0
+        ? [
+            () =>
+              !!take(list, isType("pooja")) &&
+              note(
+                "Plot is small: pooja room left out (a pooja niche in the hall works).",
+                "प्लॉट छोटा है: पूजा रूम हटाया (हॉल में पूजा का आला बना सकते हैं)।",
+              ),
+            () => F > 1 && moveBedroomUp(0),
+            () =>
+              !!take(list, isType("dining")) &&
+              note(
+                "Plot is small: no separate dining room — the dining table goes in the open space beside the kitchen.",
+                "प्लॉट छोटा है: अलग डाइनिंग रूम नहीं — डाइनिंग टेबल किचन के पास की खुली जगह में।",
+              ),
+            () =>
+              parking &&
+              !!take(list, isType("parking")) &&
+              note(
+                "Plot is too small for car parking with these rooms: parking left out (try fewer bedrooms or one more floor).",
+                "इन कमरों के साथ कार पार्किंग की जगह नहीं: पार्किंग हटाई (कम बेडरूम या एक मंज़िल और आज़माएं)।",
+              ),
+            () => moveBedroomUp(0),
+          ]
+        : [
+            () =>
+              !!take(list, isType("balcony")) &&
+              note(
+                `Plot is small: no balcony on the ${flr(f)[0]}.`,
+                `प्लॉट छोटा है: ${flr(f)[1]} पर बालकनी नहीं।`,
+              ),
+            () => {
+              const toilets = list.filter((r) => r.type === "toilet");
+              if (toilets.length < 2) return false;
+              take(list, ownToilet);
+              return note(
+                `Plot is small: bedrooms on the ${flr(f)[0]} share a toilet.`,
+                `प्लॉट छोटा है: ${flr(f)[1]} के बेडरूम एक टॉयलेट शेयर करेंगे।`,
+              );
+            },
+            () => moveBedroomUp(f),
+          ];
+    let s = 0;
+    while (s < steps.length && !fits(list, f)) if (!steps[s]()) s++;
+  }
+}
+
 const FIXED: RoomType[] = ["toilet", "parking", "pooja", "store", "utility"];
 
 /** Fit a BHK layout into the buildable part of a plot. */
@@ -195,6 +301,19 @@ export function fitPlot(p: PlotInput): PlotFit {
     (p.layout ?? "family") === "family"
       ? familyTemplate(p.bhk, Math.max(1, p.floors), p.parking)
       : null;
+  const notes: { en: string; hi: string }[] = [];
+  // trim only when the floor is really short of area (the layout estimate is cautious on wider plots)
+  const tight = (list: RoomSpec[]) =>
+    buildB < 7.0 || // narrow plots: the row-by-row estimate is exact
+    (scaleList(list, 0.8).reduce((t, r) => t + r.L * r.B, 0) + STAIR_FP) / 0.6 >
+      buildArea;
+  if (family)
+    trimToFit(
+      family,
+      p.parking,
+      (list, f) => !tight(list) || fitsFor(scaleList(list, 0.8), f === 0),
+      notes,
+    );
   for (let f = 0; f < Math.max(1, p.floors); f++) {
     const list = family ? family[f] : template(p.bhk, f === 0, p.parking);
     // largest room scale (0.8–1.3) whose planned layout still fits the buildable depth
@@ -209,7 +328,7 @@ export function fitPlot(p: PlotInput): PlotFit {
     if (f === 0) scale = k;
     floorRooms.push(scaleList(list, k));
   }
-  return { buildL, buildB, buildArea, floorRooms, scale, warnings };
+  return { buildL, buildB, buildArea, floorRooms, scale, warnings, notes };
 }
 
 export type Side = "top" | "bottom" | "left" | "right";

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CALCULATORS } from "@/content/calculators";
+import { PLOTS, plotSlug, SQFT_SIZES, sqftSlug } from "@/content/plots";
 import { t } from "@/i18n/ui";
 import { Lang, langPath } from "@/lib/site";
 
@@ -36,10 +37,22 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
             {d.nav_calculators}
           </Link>
           <Link
-            href={langPath(lang, "house-construction-cost-calculator")}
+            href={langPath(lang, "house-plan")}
+            className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
+          >
+            {lang === "hi" ? "घर के नक्शे" : "House plans"}
+          </Link>
+          <Link
+            href={langPath(lang, "house-construction-cost")}
             className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
           >
             {d.nav_house}
+          </Link>
+          <Link
+            href={langPath(lang, "house-construction-guide")}
+            className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
+          >
+            {lang === "hi" ? "गाइड" : "Guide"}
           </Link>
           <Link
             href={altPath}
@@ -68,22 +81,83 @@ export function SiteFooter({ lang }: { lang: Lang }) {
             {d.disclaimer}
           </p>
         </div>
-        <div>
-          <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
-            {d.all_calculators}
-          </h2>
-          <ul className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2">
-            {CALCULATORS.map((c) => (
-              <li key={c.slug}>
+        <div className="flex flex-col gap-8">
+          <div>
+            <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
+              {d.all_calculators}
+            </h2>
+            <ul className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2">
+              {CALCULATORS.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={langPath(lang, c.slug)}
+                    className="hover:text-white"
+                  >
+                    {c[lang].name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
                 <Link
-                  href={langPath(lang, c.slug)}
+                  href={langPath(lang, "house-plan")}
                   className="hover:text-white"
                 >
-                  {c[lang].name}
+                  {lang === "hi" ? "घर के नक्शे" : "House plans"}
                 </Link>
-              </li>
-            ))}
-          </ul>
+              </h2>
+              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[14px]">
+                {PLOTS.map((p) => (
+                  <li key={plotSlug(p)}>
+                    <Link
+                      href={langPath(lang, `house-plan/${plotSlug(p)}`)}
+                      className="hover:text-white"
+                    >
+                      {p.w}×{p.d}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
+                <Link
+                  href={langPath(lang, "house-construction-cost")}
+                  className="hover:text-white"
+                >
+                  {lang === "hi" ? "निर्माण खर्च" : "Construction cost"}
+                </Link>
+              </h2>
+              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[14px]">
+                {SQFT_SIZES.map((n) => (
+                  <li key={n}>
+                    <Link
+                      href={langPath(
+                        lang,
+                        `house-construction-cost/${sqftSlug(n)}`,
+                      )}
+                      className="hover:text-white"
+                    >
+                      {n} sq ft
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 text-[14px]">
+                <Link
+                  href={langPath(lang, "house-construction-guide")}
+                  className="font-semibold text-white hover:text-amber"
+                >
+                  {lang === "hi"
+                    ? "घर बनाने की पूरी गाइड →"
+                    : "House building guide →"}
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
       <div className="border-t border-[#2e3033]">

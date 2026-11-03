@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PLOTS, plotSlug } from "@/content/plots";
 import { CALCULATORS } from "@/content/calculators";
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -95,6 +96,44 @@ export function HomePage({ lang }: { lang: Lang }) {
                 </li>
               );
             })}
+          </ul>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="font-display text-[26px] font-extrabold tracking-tight">
+              {lang === "hi"
+                ? "प्लॉट साइज़ से नक्शा और खर्च"
+                : "House plan and cost by plot size"}
+            </h2>
+            <Link
+              href={langPath(lang, "house-construction-guide")}
+              className="text-[15px] font-semibold text-steel hover:text-ink"
+            >
+              {lang === "hi"
+                ? "घर बनाने की पूरी गाइड →"
+                : "House building guide →"}
+            </Link>
+          </div>
+          <ul className="mt-5 flex flex-wrap gap-2">
+            {PLOTS.map((p) => (
+              <li key={plotSlug(p)}>
+                <Link
+                  href={langPath(lang, `house-plan/${plotSlug(p)}`)}
+                  className="font-display inline-flex rounded-xl border border-line bg-white px-4 py-2.5 text-[17px] font-extrabold hover:border-amber"
+                >
+                  {p.w}×{p.d}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href={langPath(lang, "house-construction-cost")}
+                className="inline-flex rounded-xl border border-dashed border-line px-4 py-2.5 text-[15px] font-semibold text-steel hover:border-amber"
+              >
+                {lang === "hi" ? "sq ft से खर्च →" : "Cost by sq ft →"}
+              </Link>
+            </li>
           </ul>
         </section>
 

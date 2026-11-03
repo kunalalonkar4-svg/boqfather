@@ -27,10 +27,21 @@ import { Invalid, WhatsAppShare, Working } from "@/components/ui/Results";
 
 const FLOOR_OPTS = ["1", "2", "3", "4"] as const;
 
-export default function HouseCalc({ lang }: { lang: Lang }) {
+export default function HouseCalc({
+  lang,
+  initialArea = 1000,
+  initialFloors = 2,
+}: {
+  lang: Lang;
+  /** Built-up area per floor (sqft) and floors to start with. */
+  initialArea?: number;
+  initialFloors?: 1 | 2 | 3 | 4;
+}) {
   const d = t(lang);
-  const [area, setArea] = useState("1000");
-  const [floors, setFloors] = useState<(typeof FLOOR_OPTS)[number]>("2");
+  const [area, setArea] = useState(String(initialArea));
+  const [floors, setFloors] = useState<(typeof FLOOR_OPTS)[number]>(
+    String(initialFloors) as (typeof FLOOR_OPTS)[number],
+  );
   const [quality, setQuality] = useState<Quality>("standard");
   const [location, setLocation] = useState<Location>("tier2");
   const [rate, setRate] = useState(String(QUALITY_RATES.standard));
