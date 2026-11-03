@@ -39,7 +39,7 @@ const FACING_SLUG: Record<Facing, string> = {
 };
 
 /** Plot sizes that also get a house-with-shop plan. */
-const SHOP_SIZES = ["20x50", "25x50", "30x50", "30x60"];
+const SHOP_SIZES = ["25x50", "30x50", "30x60"]; // 20 ft is too narrow for a shop plus a separate house entrance
 
 export const NAKSHE: Naksha[] = [
   ...PLOTS.flatMap((plot) =>

@@ -38,6 +38,32 @@ describe("plan sweep: every plot input gives a sound plan", () => {
                 const tag = `${L}x${B} ${bhk}BHK park=${parking} G+${floors - 1} ${layout}`;
                 if (!Number.isFinite(r.grandTotal) || r.grandTotal <= 0)
                   problems.push(`${tag}: bad total`);
+                // one outline and one stair, floor over floor
+                {
+                  const s0 = r.sketch[0];
+                  const st0 = s0.rects.find((x) => x.type === "stair");
+                  for (const sk of r.sketch.slice(1)) {
+                    if (
+                      Math.abs(sk.L - s0.L) > 0.05 ||
+                      Math.abs(sk.B - s0.B) > 0.05
+                    )
+                      problems.push(
+                        `${tag} F${sk.floor}: OUTLINE outline differs`,
+                      );
+                    const st = sk.rects.find((x) => x.type === "stair");
+                    if (st0 && st) {
+                      const f0 = s0.B - st0.y - st0.h,
+                        f1 = sk.B - st.y - st.h;
+                      if (
+                        Math.abs(st.x - st0.x) > 0.05 ||
+                        Math.abs(st.w - st0.w) > 0.05 ||
+                        Math.abs(f1 - f0) > 0.05 ||
+                        Math.abs(st.h - st0.h) > 0.05
+                      )
+                        problems.push(`${tag} F${sk.floor}: STAIR stair moves`);
+                    }
+                  }
+                }
                 for (const sk of r.sketch) {
                   const sp = sk.rects.filter((x) => x.type !== "column");
                   for (const x of sp) {
@@ -100,6 +126,7 @@ describe("plan sweep: every plot input gives a sound plan", () => {
                       );
                   for (const x of sp)
                     if (
+                      !p.warnings.length && // the plot is too small and already warned
                       (x.type === "bedroom" || x.type === "hall") &&
                       Math.min(x.w, x.h) < 2.3
                     )

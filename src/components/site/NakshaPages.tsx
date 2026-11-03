@@ -38,7 +38,10 @@ const ROOM_EXTRA: Record<string, [string, string]> = {
   porch: ["Porch", "पोर्च"],
   dress: ["Dress", "ड्रेस"],
 };
-const roomLabel = (type: string, floor: number, lang: Lang) => {
+const roomLabel = (type: string, floor: number, lang: Lang, m = 9) => {
+  if (type === "open" && floor > 0 && m < 1.6)
+    return L(lang, "Dry balcony", "ड्राई बालकनी");
+  if (type === "porch" && m < 1.5) return L(lang, "Entrance", "प्रवेश");
   if (type === "open")
     return floor > 0
       ? L(lang, "Open terrace", "खुली छत")
@@ -366,7 +369,9 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
                       key={k}
                       className="flex justify-between gap-3 border-t border-line py-1.5 first:border-t-0"
                     >
-                      <span>{roomLabel(x.type, fl.floor, lang)}</span>
+                      <span>
+                        {roomLabel(x.type, fl.floor, lang, Math.min(x.w, x.h))}
+                      </span>
                       <span className="tabular-nums text-muted">
                         {ftIn(x.w / FT)} × {ftIn(x.h / FT)} ·{" "}
                         {num((x.w * x.h) / (FT * FT))} sq ft

@@ -696,6 +696,8 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     dress: "Dress",
     wash: "Wash",
     terrace: "Open terrace",
+    dry: "Dry balcony",
+    entry: "Entrance",
   };
   const nm = (t: string) =>
     EXTRA[t] ??

@@ -285,7 +285,10 @@ const ROOM_EXTRA: Record<string, [string, string]> = {
   open: ["Open sit-out", "खुला सिट-आउट"],
   dress: ["Dress", "ड्रेस"],
 };
-const roomLabel = (type: string, floor: number, lang: Lang) => {
+const roomLabel = (type: string, floor: number, lang: Lang, mFt = 30) => {
+  if (type === "open" && floor > 0 && mFt < 5.25)
+    return L(lang, "Dry balcony", "ड्राई बालकनी");
+  if (type === "porch" && mFt < 4.9) return L(lang, "Entrance", "प्रवेश");
   if (type === "open" && floor > 0) return L(lang, "Open terrace", "खुली छत");
   if (ROOM_EXTRA[type]) return L(lang, ...ROOM_EXTRA[type]);
   if (type in ROOM_DEFS)
@@ -518,7 +521,9 @@ export function PlotPage({ lang, slug }: { lang: Lang; slug: string }) {
                     key={i}
                     className="flex justify-between gap-3 border-t border-line py-1.5 first:border-t-0"
                   >
-                    <span>{roomLabel(r.type, f.floor, lang)}</span>
+                    <span>
+                      {roomLabel(r.type, f.floor, lang, Math.min(r.a, r.b))}
+                    </span>
                     <span className="tabular-nums text-muted">
                       {ftIn(r.a)} × {ftIn(r.b)}
                     </span>

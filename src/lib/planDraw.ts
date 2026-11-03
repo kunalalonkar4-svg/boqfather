@@ -389,8 +389,14 @@ export function planPrimitives(
         : r.key.startsWith("WASH")
           ? "wash"
           : r.type === "open" && opts.upper
-            ? "terrace"
-            : r.type,
+            ? Math.min(r.w, r.h) < 1.6
+              ? "dry" // a strip at the back upstairs: drying balcony
+              : "terrace"
+            : r.type === "porch" &&
+                Math.min(r.w, r.h) < 1.5 &&
+                Math.max(r.w, r.h) > 3
+              ? "entry" // narrow walkway beside the parking to the main door
+              : r.type,
     ).toUpperCase();
     const size = `${formatFtIn(r.w)} × ${formatFtIn(r.h)}`;
     const vertical = r.h > r.w * 1.8 && r.w < 1.6;

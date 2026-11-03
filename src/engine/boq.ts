@@ -10,6 +10,7 @@ import { BoqQuality, QUALITY_RATE_OVERRIDES, SPEC_SHEET } from "./specs";
 import {
   isWidePlot,
   layoutFloor,
+  stairLaneWidth,
   requiredDepth,
   requiredWidth,
   SketchRect,
@@ -763,6 +764,21 @@ export function calcBoq(input: BoqInput): BoqResult {
     )
   );
 
+  // one outline for the whole house (plot mode): every floor takes the depth of the deepest floor,
+  // so walls and columns run floor over floor; spare depth upstairs becomes open terrace / bigger rooms
+  const needOf = (f: number, B: number) =>
+    requiredDepth(
+      B,
+      layoutRooms(f),
+      f < F - 1 || terrace ? STAIR_FP : 0,
+      f === 0,
+      WE,
+    );
+  const commonL =
+    spec.widthM && houseW && !wideAll
+      ? Math.max(...FL.map((f) => needOf(f, houseW!)))
+      : 0;
+
   // ---------------- per-floor geometry (each floor sized from its own rooms)
   const geo = FL.map((f) => {
     const rs = onFloor(f);
@@ -800,7 +816,11 @@ export function calcBoq(input: BoqInput): BoqResult {
       WE,
     );
     const L = round(
-      wide ? spec.depthM! : spec.widthM ? need : Math.max(A / B, need),
+      wide
+        ? spec.depthM!
+        : spec.widthM
+          ? commonL || need
+          : Math.max(A / B, need),
       2,
     );
     const LC = L - COL,
@@ -2200,6 +2220,65 @@ export function calcBoq(input: BoqInput): BoqResult {
   });
 
   // ---------------- schematic sketch per floor
+  // one stair lane for the whole house: the widest any floor wants (so upstairs bedrooms in that lane stay ≥ 2.4 m)
+  const laneWs = geo
+    .filter((g) => !g.wide && g.hasStair)
+    .map((g) =>
+      stairLaneWidth(
+        g.B,
+        g.L,
+        g.rs.map((r) => ({
+          key: r.code,
+          type: r.type,
+          area: r.area,
+          L: r.L,
+          B: r.B,
+          windows: r.windows,
+          vents: r.vents,
+        })),
+        STAIR_FP,
+        WE,
+        g.f === 0,
+      ),
+    )
+    .filter((x): x is number => x !== undefined);
+  const lr = (g: (typeof geo)[number]) =>
+    g.rs.map((r) => ({
+      key: r.code,
+      type: r.type,
+      area: r.area,
+      L: r.L,
+      B: r.B,
+      windows: r.windows,
+      vents: r.vents,
+    }));
+  // try each floor's own lane width on the whole house; keep the one whose narrowest bedroom / hall is widest
+  let fixB: number | undefined;
+  if (laneWs.length > 1) {
+    let best = -1;
+    for (const b of [...new Set(laneWs.map((x) => round(x, 3)))]) {
+      const narrowest = Math.min(
+        ...geo.flatMap((g) =>
+          layoutFloor(
+            g.B,
+            g.L,
+            lr(g),
+            g.hasStair ? STAIR_FP : 0,
+            g.f === 0,
+            WE,
+            g.wide,
+            b,
+          )
+            .filter((x) => x.type === "bedroom" || x.type === "hall")
+            .map((x) => Math.min(x.w, x.h)),
+        ),
+      );
+      if (narrowest > best + 0.05) {
+        best = narrowest;
+        fixB = b;
+      }
+    }
+  }
   const drawn = geo.map((g) => ({
     floor: g.f,
     // drawn with the front (road) at the bottom: width across the front, depth front to back
@@ -2221,6 +2300,7 @@ export function calcBoq(input: BoqInput): BoqResult {
       g.f === 0,
       WE,
       g.wide,
+      fixB,
     ),
   }));
 

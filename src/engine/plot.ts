@@ -144,6 +144,7 @@ function familyTemplate(
 function trimToFit(
   floors: RoomSpec[][],
   parking: boolean,
+  narrow: boolean,
   fits: (list: RoomSpec[], f: number) => boolean,
   notes: { en: string; hi: string }[],
 ) {
@@ -218,7 +219,17 @@ function trimToFit(
             () => moveBedroomUp(0),
           ]
         : [
+            // narrow plots: the balcony strip stays (it lines up with the entry below); the lounge goes first
             () =>
+              narrow &&
+              list.some((r) => r.type === "bedroom") &&
+              !!take(list, isType("hall")) &&
+              note(
+                `Plot is small: no family lounge on the ${flr(f)[0]} — the stair opens on the passage.`,
+                `प्लॉट छोटा है: ${flr(f)[1]} पर फ़ैमिली लाउंज नहीं — सीढ़ी पैसेज में खुलती है।`,
+              ),
+            () =>
+              !narrow &&
               !!take(list, isType("balcony")) &&
               note(
                 `Plot is small: no balcony on the ${flr(f)[0]}.`,
@@ -315,6 +326,7 @@ export function fitPlot(p: PlotInput): PlotFit {
     trimToFit(
       family,
       p.parking,
+      !twoLanes(buildB, 0.23),
       (list, f) => !tight(list) || fitsFor(scaleList(list, 0.8), f === 0),
       notes,
     );
@@ -439,6 +451,8 @@ function makeLanes(
   stairArea: number,
   ground: boolean,
   wall: number,
+  /** Stair-lane width to keep (the ground floor's), so the stair lines up on every floor. */
+  fixB?: number,
 ): Lanes {
   const iw = W - 2 * wall;
   const hasStair = stairArea > 0;
@@ -581,6 +595,12 @@ function makeLanes(
       applyWidths();
       return;
     }
+    if (fixB !== undefined) {
+      b = Math.min(fixB, avail - 3.0); // same clamp on every floor (the parking lane needs 3 m)
+      a = avail - b;
+      applyWidths();
+      return;
+    }
     // choose the lane split so both lanes come out equally deep (stair lane ≥ 2.3 m, parking lane ≥ 3 m)
     const minA = by("parking").length ? 3.0 : 2.7;
     // keep the lanes in proportion (each 40–60% of the width) so no lane turns into a strip
@@ -690,7 +710,11 @@ function makeLanes(
       const pick = pool.find(
         (x) =>
           x.room &&
-          ["utility", "store", "pooja"].includes(x.room.type) &&
+          // a pooja room never sits by the stair at the front (it would open on the porch)
+          (ground
+            ? ["utility", "store"]
+            : ["utility", "store", "pooja"]
+          ).includes(x.room.type) &&
           !x.side,
       );
       if (pick) {
@@ -1738,6 +1762,535 @@ export function requiredWidth(
   return wideFloor(null, D, rooms, stairArea, ground, wall).need;
 }
 
+/**
+ * Narrow plots (about 20 ft frontage), family house. The stair sits at the front right on every floor,
+ * beside the car parking, so it lines up floor over floor and an upper floor can be reached without
+ * passing through the living room.
+ * Ground: parking | entry + stair → drawing room → kitchen + dining → toilets → bedroom.
+ * Upper:  balcony → lounge (or bedroom) | stair → side passage with toilets and bedrooms off it.
+ */
+const ENTRY_D = 5.0 - STAIR_D - IW; // entry porch in front of the stair = balcony depth upstairs
+
+interface NCell {
+  key: string;
+  kind: SketchKind;
+  room?: LayoutRoom;
+  w: number;
+  /** Split front-to-back inside the cell; the last part takes what is left. */
+  stack?: { key: string; kind: SketchKind; d?: number }[];
+}
+interface NRow {
+  cells: NCell[];
+  depth: number;
+  flex?: boolean;
+  /** Most a flexible row may grow to. */
+  maxD?: number;
+}
+
+const narrowFits = (_rooms: LayoutRoom[], _ground: boolean) => true;
+
+function narrowFloor(
+  W: number,
+  D: number | null,
+  rooms: LayoutRoom[],
+  stairArea: number,
+  ground: boolean,
+  wall: number,
+): { rects: SketchRect[]; need: number } {
+  const iw = W - 2 * wall;
+  const by = (t: RoomType) => rooms.filter((r) => r.type === t);
+  const SW = Math.min(STAIR_W, iw * 0.42);
+  const LW = iw - SW - IW;
+  const hasStair = stairArea > 0;
+  const rows: NRow[] = [];
+  const cellOf = (r: LayoutRoom, w: number): NCell => ({
+    key: r.key,
+    kind: r.type,
+    room: r,
+    w,
+  });
+  const stairCell = (): NCell =>
+    hasStair
+      ? {
+          key: "STAIR",
+          kind: "stair",
+          w: SW,
+          stack: [
+            { key: "STAIR", kind: "stair", d: STAIR_D },
+            { key: "LOBBY0", kind: "corridor" },
+          ],
+        }
+      : { key: "LOBBY0", kind: "corridor", w: SW };
+  const bedrooms = [...by("bedroom")].sort((x, y) => y.area - x.area);
+  const toilets = [...by("toilet")];
+  const smallsOther = [
+    ...by("pooja"),
+    ...by("store"),
+    ...by("utility"),
+    ...by("study"),
+  ];
+  // a passage along the right wall (under the stair), toilets in pairs and bedrooms one per row on its left
+  const sidePassage = (
+    tl: LayoutRoom[],
+    beds: LayoutRoom[],
+    firstSingle = false,
+  ) => {
+    const PW = Math.min(1.1, SW);
+    const RW = iw - PW - IW;
+    let n = 0;
+    const pass = (): NCell => ({
+      key: n++ === 0 ? "LOBBY" : `LOBBY${n}`,
+      kind: "corridor",
+      w: PW,
+    });
+    for (let i = 0; i < tl.length;) {
+      // the first row stays a single toilet with a wide lobby when a bedroom sits beside the stair (it must open on the lobby)
+      const two =
+        !!tl[i + 1] && (RW - IW) / 2 >= 1.5 && !(firstSingle && i === 0);
+      const pair = tl.slice(i, i + (two ? 2 : 1));
+      const w =
+        pair.length === 2
+          ? (RW - IW) / 2
+          : firstSingle && i === 0
+            ? Math.max(1.5, Math.min(2.4, LW - 1.0 - IW))
+            : Math.min(RW, 2.4);
+      const cells: NCell[] = pair.map((x) => cellOf(x, w));
+      const p = pass();
+      // one toilet: the passage widens beside it (an L-shaped lobby) instead of a second strip
+      if (pair.length === 1) p.w = iw - w - IW;
+      rows.push({ depth: 1.6, cells: [...cells, p] });
+      i += pair.length;
+    }
+    for (const b of beds)
+      rows.push({
+        depth: Math.max(2.9, b.area / RW),
+        cells: [cellOf(b, RW), pass()],
+        flex: true,
+        maxD: 4.2,
+      });
+  };
+
+  // kitchen + dining (or an open dining space); a single toilet joins this row when there is no bedroom
+  const kitchenRow = (): LayoutRoom | null => {
+    const kit = by("kitchen")[0];
+    const din = by("dining")[0];
+    if (!kit && !din) return null;
+    const mid: NCell[] = [];
+    let kd = 2.4;
+    if (kit) {
+      const kw = Math.max(2.4, Math.min(iw * 0.48, kit.area / 2.6));
+      mid.push(cellOf(kit, kw));
+      kd = Math.max(kd, kit.area / kw);
+    }
+    const restW = iw - (mid[0]?.w ?? 0) - (mid.length ? IW : 0);
+    let tMid: LayoutRoom | null = null;
+    if (
+      !bedrooms.length &&
+      toilets.length === 1 &&
+      restW - 1.5 - IW >= (din ? 1.8 : 0.9)
+    ) {
+      tMid = toilets[0];
+    }
+    // no dining room (it sits in the hall): kitchen | wash | toilet — the toilet opens off the wash area
+    if (tMid && !din) {
+      mid.push({ key: "WASH", kind: "corridor", w: restW - 1.5 - IW });
+      mid.push(cellOf(tMid, 1.5));
+      rows.push({ depth: Math.min(3.3, kd), cells: mid });
+      return tMid;
+    }
+    const tw = tMid ? 1.5 : 0;
+    const dw = restW - (tMid ? tw + IW : 0);
+    if (din) {
+      mid.push(cellOf(din, dw));
+      kd = Math.max(kd, Math.min(3.3, din.area / dw));
+    } else mid.push({ key: "HUB", kind: "dining", w: dw }); // open dining space beside the kitchen
+    if (tMid) mid.push(cellOf(tMid, tw));
+    rows.push({ depth: Math.min(3.3, kd), cells: mid });
+    return tMid;
+  };
+  if (ground) {
+    const park = [...by("parking"), ...by("shop")][0];
+    const hall = by("hall")[0];
+    if (park) {
+      // parking / shop across the front with the entry porch and the stair beside it
+      rows.push({
+        depth: 5.0,
+        cells: [
+          cellOf(park, LW),
+          hasStair
+            ? {
+                key: "STAIR",
+                kind: "stair",
+                w: SW,
+                stack: [
+                  { key: "ENTRY", kind: "porch", d: ENTRY_D },
+                  { key: "STAIR", kind: "stair" },
+                ],
+              }
+            : { key: "ENTRY", kind: "porch", w: SW },
+        ],
+      });
+      if (hall)
+        rows.push({
+          depth: Math.max(3.0, hall.area / iw),
+          cells: [cellOf(hall, iw)],
+          flex: true,
+          maxD: 4.6,
+        });
+    } else {
+      rows.push({
+        depth: ENTRY_D,
+        cells: [{ key: "PORCH", kind: "porch", w: iw }],
+      });
+      if (hall) {
+        // the stair keeps its own depth: the hall row is exactly the stair, or long enough for a lobby behind it
+        let hd = Math.max(STAIR_D, hall.area / LW);
+        if (hd > STAIR_D + 0.01 && hd < STAIR_D + IW + 0.9)
+          hd = STAIR_D + IW + 0.9;
+        rows.push({ depth: hd, cells: [cellOf(hall, LW), stairCell()] });
+      }
+    }
+    const tMid = kitchenRow();
+    // back: toilets / pooja either side of a lobby, then one bedroom across the full width;
+    // more rooms than that hang off a side passage
+    const smalls = [...toilets.filter((x) => x !== tMid), ...smallsOther];
+    if (bedrooms.length <= 1 && smalls.length <= 2) {
+      if (smalls.length) {
+        const lobbyW = 1.2;
+        const half = (iw - lobbyW - 2 * IW) / 2;
+        const cells: NCell[] =
+          smalls.length === 1 && !bedrooms.length
+            ? [
+                cellOf(smalls[0], Math.min(2.4, iw - 2.2 - IW)),
+                {
+                  key: "WASH",
+                  kind: "corridor",
+                  w: iw - Math.min(2.4, iw - 2.2 - IW) - IW,
+                },
+              ]
+            : [
+                cellOf(smalls[0], half),
+                { key: "LOBBY", kind: "corridor", w: lobbyW },
+                smalls[1]
+                  ? cellOf(smalls[1], half)
+                  : { key: "WASH", kind: "corridor", w: half },
+              ];
+        rows.push({ depth: 1.6, cells });
+      }
+      for (const b of bedrooms)
+        rows.push({
+          depth: Math.max(3.0, b.area / iw),
+          cells: [cellOf(b, iw)],
+          flex: true,
+          maxD: 4.2,
+        });
+    } else sidePassage(smalls, bedrooms);
+  } else {
+    // upper floor: balcony over the entry, lounge (or a bedroom) beside the stair, then a side passage
+    const bal = by("balcony")[0];
+    rows.push({
+      depth: ENTRY_D,
+      cells: [bal ? cellOf(bal, iw) : { key: "BALC", kind: "balcony", w: iw }],
+    });
+    const lounge = by("hall")[0];
+    const front = lounge ?? bedrooms.shift();
+    rows.push({
+      depth: STAIR_D,
+      cells: [
+        front ? cellOf(front, LW) : { key: "OPEN-F", kind: "open", w: LW },
+        stairCell(),
+      ],
+    });
+    const tMid = kitchenRow(); // a rental floor has its own kitchen
+    sidePassage(
+      [...toilets.filter((x) => x !== tMid), ...smallsOther],
+      bedrooms,
+      !lounge && !!front,
+    );
+  }
+
+  const total = () =>
+    rows.reduce((t, r) => t + r.depth, 0) + IW * Math.max(0, rows.length - 1);
+  const need = total();
+  if (D === null) return { rects: [], need: need + 2 * wall };
+  const id = D - 2 * wall;
+  const flexRows = rows.filter((r) => r.flex);
+  const flexD = flexRows.reduce((t, r) => t + r.depth, 0);
+  if (flexD > 0) {
+    const k = Math.max(0.75, (id - (need - flexD)) / flexD);
+    for (const r of flexRows) r.depth = Math.min(r.maxD ?? 99, r.depth * k);
+  }
+  const left = id - total() - IW;
+  if (left > 0.75)
+    rows.push({ cells: [{ key: "OTS", kind: "open", w: iw }], depth: left });
+  else if (rows.length) rows[rows.length - 1].depth += id - total();
+
+  // place: front row at the bottom
+  const out: SketchRect[] = [];
+  let yf = 0;
+  for (const r of rows) {
+    let x = wall;
+    const yTop = wall + id - yf - r.depth;
+    for (const c of r.cells) {
+      if (c.stack) {
+        let used = 0;
+        c.stack.forEach((p, i) => {
+          const last = i === c.stack!.length - 1;
+          const d = last ? r.depth - used : Math.min(p.d ?? 0, r.depth);
+          if (d < 0.6) {
+            // too thin to be a space: give it to the part before
+            const prev = out[out.length - 1];
+            if (prev && i > 0) {
+              prev.y -= d + (i > 0 ? IW : 0);
+              prev.h += d + (i > 0 ? IW : 0);
+            }
+            return;
+          }
+          out.push({
+            key: p.key,
+            label: p.key,
+            type: p.kind,
+            x,
+            y: wall + id - yf - used - d,
+            w: c.w,
+            h: d,
+            doors: [],
+            windows: [],
+          });
+          used += d + IW;
+        });
+      } else
+        out.push({
+          key: c.key,
+          label: c.key,
+          type: c.kind,
+          x,
+          y: yTop,
+          w: c.w,
+          h: r.depth,
+          doors: [],
+          windows: [],
+        });
+      x += c.w + IW;
+    }
+    yf += r.depth + IW;
+  }
+
+  for (let merged = true; merged;) {
+    merged = false;
+    for (const a of out)
+      for (const b of out)
+        if (
+          a !== b &&
+          a.type === "corridor" &&
+          b.type === "corridor" &&
+          Math.abs(a.x - b.x) < 0.02 &&
+          Math.abs(a.w - b.w) < 0.02 &&
+          Math.abs(a.y + a.h + IW - b.y) < 0.03
+        ) {
+          a.h = b.y + b.h - a.y;
+          out.splice(out.indexOf(b), 1);
+          merged = true;
+          break;
+        }
+  }
+  const get = (k: string) => out.find((q) => q.key === k);
+  const overlap = (a0: number, a1: number, b0: number, b1: number) =>
+    Math.max(0, Math.min(a1, b1) - Math.max(a0, b0));
+  const near = (a: number, b: number) => Math.abs(a - b) < 0.03;
+  /** Door on p's edge shared with q (q in front, behind or beside p). */
+  const door = (
+    p: SketchRect | undefined,
+    q: SketchRect | undefined,
+    width: number,
+    extra: Partial<SketchDoor> = {},
+  ) => {
+    if (!p || !q) return false;
+    // q in front (towards the road = larger y) or behind
+    if (near(p.y + p.h + IW, q.y) || near(q.y + q.h + IW, p.y)) {
+      const o = overlap(p.x, p.x + p.w, q.x, q.x + q.w);
+      if (o < 0.7) return false;
+      const lo = Math.max(p.x, q.x);
+      const wd = Math.min(width, o - 0.1);
+      p.doors!.push({
+        side: q.y > p.y ? "bottom" : "top",
+        at: lo - p.x + Math.min(0.15, o - wd - 0.05),
+        width: wd,
+        ...extra,
+      });
+      return true;
+    }
+    if (near(p.x + p.w + IW, q.x) || near(q.x + q.w + IW, p.x)) {
+      const o = overlap(p.y, p.y + p.h, q.y, q.y + q.h);
+      if (o < 0.7) return false;
+      const lo = Math.max(p.y, q.y);
+      const wd = Math.min(width, o - 0.1);
+      p.doors!.push({
+        side: q.x > p.x ? "right" : "left",
+        at: lo - p.y + Math.max(0.05, o - wd - 0.15),
+        width: wd,
+        ...extra,
+      });
+      return true;
+    }
+    return false;
+  };
+  const hall = out.find((q) => q.type === "hall");
+  const lobbies = out.filter((q) => q.type === "corridor");
+  for (const r of out) {
+    switch (r.type) {
+      case "parking":
+      case "porch":
+        r.doors!.push({
+          side: "bottom",
+          at: 0.05,
+          width: r.w - 0.1,
+          open: true,
+        });
+        break;
+      case "shop":
+        r.doors!.push({
+          side: "bottom",
+          at: Math.max(0.1, (r.w - Math.min(2.4, r.w - 0.3)) / 2),
+          width: Math.min(2.4, r.w - 0.3),
+          shutter: true,
+        });
+        break;
+      case "hall":
+        if (ground) {
+          const park = out.find(
+            (q) => q.type === "parking" || q.type === "shop",
+          );
+          const porch = get("PORCH");
+          if (porch) door(r, porch, 1.0, { main: true });
+          else if (park && park.type === "parking")
+            door(r, park, 1.0, { main: true });
+          else if (get("ENTRY")) {
+            // shop in front: enter beside the stair from the entry porch
+            const e = get("ENTRY")!;
+            r.doors!.push({
+              side: "bottom",
+              at: e.x - r.x + 0.1,
+              width: Math.min(1.0, e.w - 0.2),
+              main: true,
+            });
+          }
+        }
+        break;
+      case "balcony": {
+        // opens from the room beside the stair (lounge or front bedroom), never from the stair
+        const fr = out.find(
+          (q) =>
+            (q.type === "hall" || q.type === "bedroom") &&
+            near(q.y + q.h + IW, r.y),
+        );
+        door(r, fr, 1.0);
+        break;
+      }
+      case "dining":
+        door(r, hall, 1.5, { open: true }) ||
+          door(r, get("LOBBY0"), 1.2, { open: true }) ||
+          door(r, get("LOBBY"), 1.0, { open: true });
+        break;
+      case "stair": {
+        if (get("ENTRY"))
+          door(r, get("ENTRY"), Math.min(1.0, r.w - 0.2), { open: true });
+        let ok =
+          !!hall && near(hall.y, r.y) && door(r, hall, 1.0, { open: true });
+        if (!ok && hall && !get("LOBBY0"))
+          ok = door(r, hall, 1.0, { open: true });
+        for (const l of lobbies) if (!ok) ok = door(r, l, 1.0, { open: true });
+        break;
+      }
+      case "kitchen":
+        door(r, get("HUB") ?? out.find((q) => q.type === "dining"), 1.0, {
+          open: true,
+        }) || door(r, hall, 0.9);
+        break;
+      case "bedroom":
+      case "toilet":
+      case "pooja":
+      case "store":
+      case "utility":
+      case "study": {
+        const w = r.type === "bedroom" || r.type === "study" ? 0.9 : 0.75;
+        let ok = false;
+        for (const l of lobbies) if (!ok) ok = door(r, l, w);
+        if (!ok)
+          ok = door(
+            r,
+            out.find((q) => q.type === "dining"),
+            w,
+          );
+        if (!ok && r.type === "bedroom") door(r, hall, w);
+        break;
+      }
+      case "corridor":
+        // a passage piece opens on the passage piece in front of it
+        for (const q of lobbies)
+          if (
+            q !== r &&
+            near(r.y + r.h + IW, q.y) &&
+            overlap(r.x, r.x + r.w, q.x, q.x + q.w) >= 0.7
+          ) {
+            door(r, q, 1.0, { open: true });
+            break;
+          }
+        if (r.key === "LOBBY0" || r.key === "HUB")
+          door(r, hall, 1.2, { open: true }) ||
+            door(r, get("LOBBY0"), 1.0, { open: true });
+        if (r.key === "LOBBY" || r.key === "WASH")
+          door(r, out.find((q) => q.type === "dining") ?? get("HUB"), 1.0, {
+            open: true,
+          }) ||
+            door(r, get("LOBBY0"), 1.0, { open: true }) ||
+            door(r, hall, 1.0, { open: true });
+        break;
+      default:
+        break;
+    }
+    // windows on outer walls
+    const ext: Side[] = [];
+    if (r.y + r.h >= wall + id - 0.01) ext.push("bottom");
+    if (r.y <= wall + 0.01) ext.push("top");
+    if (r.x <= wall + 0.01) ext.push("left");
+    if (r.x + r.w >= wall + iw - 0.01) ext.push("right");
+    const room = rooms.find((q) => q.key === r.key);
+    if (room) {
+      const nW =
+        room.type === "toilet" ||
+        room.type === "store" ||
+        room.type === "utility"
+          ? 0
+          : room.windows;
+      const pref = (["left", "right", "top", "bottom"] as Side[]).filter((sd) =>
+        ext.includes(sd),
+      );
+      for (let i = 0; i < nW && pref.length; i++)
+        r.windows!.push({ side: pref[i % pref.length] });
+      for (let i = 0; i < room.vents && pref.length; i++)
+        r.windows!.push({ side: pref[(nW + i) % pref.length], vent: true });
+    }
+  }
+  connectAll(out, W, D, wall);
+  // columns on the side walls every ≤ 4.2 m, and on the stair line
+  const nY = Math.max(1, Math.ceil(D / 4.2));
+  for (let i = 0; i <= nY; i++) {
+    const cy = Math.min(D - 0.3, Math.max(0, (D * i) / nY - 0.15));
+    for (const cx of [0, W - 0.3])
+      out.push({
+        key: `C${i}-${cx.toFixed(2)}`,
+        label: "",
+        type: "column",
+        x: cx,
+        y: cy,
+        w: 0.3,
+        h: 0.3,
+      });
+  }
+  return { rects: out, need: need + 2 * wall };
+}
+
 /** Clear depth a floor needs so that every room keeps its size (lanes + walls), metres incl. outer walls. */
 export function requiredDepth(
   W: number,
@@ -1747,7 +2300,9 @@ export function requiredDepth(
   wall = 0.23,
 ): number {
   if (!twoLanes(W, wall))
-    return hubFloor(W, null, rooms, stairArea, ground, wall).need;
+    return narrowFits(rooms, ground)
+      ? narrowFloor(W, null, rooms, stairArea, ground, wall).need
+      : hubFloor(W, null, rooms, stairArea, ground, wall).need;
   let id = 6;
   for (let i = 0; i < 4; i++) {
     const l = makeLanes(W, id, rooms, stairArea, ground, wall);
@@ -1758,6 +2313,20 @@ export function requiredDepth(
   return id + 2 * wall;
 }
 
+/** Width of the stair lane a floor would choose on its own (two-lane plans). */
+export function stairLaneWidth(
+  W: number,
+  D: number,
+  rooms: LayoutRoom[],
+  stairArea: number,
+  wall = 0.23,
+  ground = true,
+): number | undefined {
+  if (!twoLanes(W, wall) || stairArea <= 0) return undefined;
+  const l = makeLanes(W, D - 2 * wall, rooms, stairArea, ground, wall);
+  return l.two ? l.b : undefined;
+}
+
 export function layoutFloor(
   W: number,
   D: number,
@@ -1766,6 +2335,7 @@ export function layoutFloor(
   ground: boolean,
   wall = 0.23,
   wide = false,
+  fixB?: number,
 ): SketchRect[] {
   if (wide) return wideFloor(W, D, rooms, stairArea, ground, wall).rects;
   const X0 = wall,
@@ -1774,7 +2344,9 @@ export function layoutFloor(
     id = D - 2 * wall;
   const hasStair = stairArea > 0;
   if (!twoLanes(W, wall))
-    return hubFloor(W, D, rooms, stairArea, ground, wall).rects;
+    return narrowFits(rooms, ground)
+      ? narrowFloor(W, D, rooms, stairArea, ground, wall).rects
+      : hubFloor(W, D, rooms, stairArea, ground, wall).rects;
   const { two, a, b, c, left, right } = makeLanes(
     W,
     id,
@@ -1782,6 +2354,7 @@ export function layoutFloor(
     stairArea,
     ground,
     wall,
+    fixB,
   );
   void hasStair;
 

@@ -41,6 +41,8 @@ export function SketchPanel({
     dress: ["Dress", "ड्रेस"],
     wash: ["Wash", "वॉश"],
     terrace: ["Open terrace", "खुली छत"],
+    dry: ["Dry balcony", "ड्राई बालकनी"],
+    entry: ["Entrance", "प्रवेश"],
   };
   const nm = (t: string) =>
     EXTRA[t]
