@@ -127,13 +127,13 @@ export function NakshaGallery({
               href={c.href}
               className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-24px_rgba(22,24,26,0.45)]"
             >
-              <span className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-[#faf8f4] p-2">
+              <span className="flex aspect-[16/10] items-center justify-center overflow-hidden bg-[#eef0ec]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={c.img}
                   alt={c.alt}
                   loading="lazy"
-                  className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.04]"
+                  className="h-full w-full scale-[1.25] object-cover transition duration-500 group-hover:scale-[1.32]"
                 />
               </span>
               <span className="flex flex-col gap-1 p-5">
