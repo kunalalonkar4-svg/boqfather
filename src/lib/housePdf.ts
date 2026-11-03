@@ -61,7 +61,7 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
       doc.text("BOQFather", M, H - 8.5);
       doc.setFont("helvetica", "normal");
       doc.text(
-        "|  boqfather.in  |  Preliminary estimate (thumb rules) - not a structural design",
+        "|  boqfather.vercel.app  |  Preliminary estimate (thumb rules) - not a structural design",
         M + 15,
         H - 8.5,
       );

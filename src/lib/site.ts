@@ -1,5 +1,5 @@
-/** Site-wide settings. The domain is a placeholder until the name is final. */
-export const SITE_URL = "https://boqfather.in";
+/** Site-wide settings. Testing on Vercel; switch SITE_URL when the domain is bought. */
+export const SITE_URL = "https://boqfather.vercel.app";
 export const SITE_NAME = "BOQFather";
 
 export const LANGS = ["en", "hi"] as const;

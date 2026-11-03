@@ -967,7 +967,7 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     doc
       .setFont("helvetica", "normal")
       .text(
-        "|  boqfather.in  |  Preliminary estimate from an assumed layout - verify with drawings and structural design",
+        "|  boqfather.vercel.app  |  Preliminary estimate from an assumed layout - verify with drawings and structural design",
         M + 15,
         H - 8.5,
       );
