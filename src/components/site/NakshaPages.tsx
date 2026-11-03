@@ -333,12 +333,6 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             )}
           </Cta>
           <a
-            href={nakshaImage(n)}
-            className="rounded-xl border border-line bg-white px-4 py-3 text-[14px] font-semibold hover:border-amber"
-          >
-            {L(lang, "Naksha image", "नक्शे की इमेज")}
-          </a>
-          <a
             href="#custom"
             className="rounded-xl border border-line bg-white px-4 py-3 text-[14px] font-semibold hover:border-amber"
           >

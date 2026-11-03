@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ROOM_DEFS, RoomType } from "@/engine";
 import { SketchPanel } from "@/components/calcs/boq/BoqPanels";
-import { getNaksha, nakshaPlan } from "@/content/naksha";
+import { getNaksha, nakshaPlan, nakshaTitle } from "@/content/naksha";
 import { Lang, WHATSAPP_NUMBER } from "@/lib/site";
 import { useAccount } from "@/components/account/Account";
 import { PLANS } from "@/lib/pricing";
@@ -13,15 +13,20 @@ const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
 
 /** The drawn G+1 plan of one naksha with its Vastu chart (rendered into the static page). */
 export function NakshaPlanView({ lang, slug }: { lang: Lang; slug: string }) {
-  const r = useMemo(() => {
-    const n = getNaksha(slug);
-    return n ? nakshaPlan(n).res : null;
-  }, [slug]);
-  if (!r) return null;
+  const n = getNaksha(slug);
+  const r = useMemo(() => (n ? nakshaPlan(n).res : null), [n]);
+  if (!r || !n) return null;
   return (
     <SketchPanel
       r={r}
       lang={lang}
+      title={nakshaTitle(n, lang)}
+      subtitle={L(
+        lang,
+        `Plot ${n.plot.w} × ${n.plot.d} ft · road at the bottom of each drawing`,
+        `प्लॉट ${n.plot.w} × ${n.plot.d} फ़ीट · हर ड्रॉइंग में सड़क नीचे`,
+      )}
+      fileName={`${slug}-naksha-boqfather`}
       names={(tp) =>
         tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
       }

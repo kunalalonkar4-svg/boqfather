@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   BoqQuality,
   BoqResult,
@@ -13,6 +13,7 @@ import {
 } from "@/engine";
 import type { Lang } from "@/lib/site";
 import { planPrimitives } from "@/lib/planDraw";
+import { downloadPlanPdf, downloadPlanPng } from "@/lib/planDownload";
 
 const FT = 3.28084;
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
@@ -27,11 +28,49 @@ export function SketchPanel({
   r,
   lang,
   names,
+  title,
+  subtitle,
+  fileName,
 }: {
   r: BoqResult;
   lang: Lang;
   names: (t: string) => string;
+  /** Heading printed on the downloaded sheet. */
+  title?: string;
+  subtitle?: string;
+  fileName?: string;
 }) {
+  const grid = useRef<HTMLDivElement>(null);
+  const [dl, setDl] = useState("");
+  const download = async (kind: "png" | "pdf") => {
+    const svgs = Array.from(
+      grid.current?.querySelectorAll<SVGSVGElement>("figure svg") ?? [],
+    );
+    if (!svgs.length) return;
+    setDl(kind);
+    try {
+      const sheet = {
+        title: title ?? L(lang, "House plan", "घर का नक्शा"),
+        subtitle,
+        captions: r.sketch.map(
+          (s) =>
+            `${FLOOR(s.floor, lang)} · ${round(s.L * FT, 1)} × ${round(s.B * FT, 1)} ft`,
+        ),
+        footer: L(
+          lang,
+          "Drawn to scale. Final drawing and structure by your architect / engineer; check local bye-laws.",
+          "स्केल पर बना। फ़ाइनल ड्रॉइंग और स्ट्रक्चर अपने आर्किटेक्ट / इंजीनियर से; लोकल नियम जांचें।",
+        ),
+      };
+      const name = fileName ?? "boqfather-house-plan";
+      if (kind === "png") await downloadPlanPng(svgs, sheet, name);
+      else await downloadPlanPdf(svgs, sheet, name);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setDl("");
+    }
+  };
   const EXTRA: Record<string, [string, string]> = {
     stair: ["Stair", "सीढ़ी"],
     corridor: ["Passage", "पैसेज"],
@@ -66,7 +105,29 @@ export function SketchPanel({
           "आपके कमरों से स्केल पर बना प्लान: नीचे सड़क, आगे पार्किंग और हॉल, बीच में किचन-डाइनिंग, पीछे या ऊपर टॉयलेट वाले बेडरूम; हर कमरा पैसेज, हॉल या लॉबी में खुलता है और दीवारें कॉलम लाइन पर हैं। सड़क की दिशा पता हो तो प्लान उस तरफ़ रखा जाता है जो वास्तु के ज़्यादा अनुकूल हो। घर का साइज़ इसी प्लान से निकलता है, इसलिए BOQ इसी से मेल खाता है। फ़ाइनल ड्रॉइंग आर्किटेक्ट से बनवाएं और लोकल नियम जांचें।",
         )}
       </p>
-      <div data-plan-grid className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="no-print flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => void download("pdf")}
+          disabled={!!dl}
+          className="inline-flex h-11 items-center gap-2 rounded-lg bg-ink px-4 text-[14px] font-bold text-white disabled:opacity-60"
+        >
+          ⬇ {dl === "pdf" ? "…" : L(lang, "Download naksha PDF", "नक्शा PDF डाउनलोड")}
+        </button>
+        <button
+          type="button"
+          onClick={() => void download("png")}
+          disabled={!!dl}
+          className="inline-flex h-11 items-center gap-2 rounded-lg border border-ink bg-white px-4 text-[14px] font-bold disabled:opacity-60"
+        >
+          ⬇ {dl === "png" ? "…" : L(lang, "Download image (PNG)", "इमेज डाउनलोड (PNG)")}
+        </button>
+      </div>
+      <div
+        ref={grid}
+        data-plan-grid
+        className="grid grid-cols-1 gap-6 md:grid-cols-2"
+      >
         {r.sketch.map((s) => {
           const face = r.facing
             ? {

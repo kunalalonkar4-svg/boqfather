@@ -25,6 +25,12 @@ export function PlotPlanPreview({
     <SketchPanel
       r={r}
       lang={lang}
+      title={
+        lang === "hi"
+          ? `${slug.replace("x", " × ")} फ़ीट प्लॉट का नक्शा`
+          : `${slug.replace("x", " × ")} ft house plan`
+      }
+      fileName={`${slug}-house-plan-boqfather`}
       names={(tp) =>
         tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
       }
