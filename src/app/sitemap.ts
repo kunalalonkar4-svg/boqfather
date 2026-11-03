@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { CALCULATORS } from "@/content/calculators";
 import { PLOTS, plotSlug, SQFT_SIZES, sqftSlug } from "@/content/plots";
+import { GUIDE_BASE, QUESTIONS, TOPICS } from "@/content/guideTopics";
 import { langPath, SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -15,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "house-construction-cost",
     ...SQFT_SIZES.map((n) => `house-construction-cost/${sqftSlug(n)}`),
     "house-construction-guide",
+    ...[...TOPICS, ...QUESTIONS].map((x) => `${GUIDE_BASE}/${x.slug}`),
   ];
   const lastModified = new Date("2026-11-03");
   return paths.flatMap((p) =>

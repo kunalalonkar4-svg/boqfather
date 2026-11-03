@@ -1,7 +1,13 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { calcHouse, QUALITY_RATES, ROOM_DEFS, RoomType } from "@/engine";
-import { GUIDE, GUIDE_FAQ } from "@/content/guide";
+import {
+  getQuestion,
+  getTopic,
+  GUIDE_BASE,
+  QUESTIONS,
+  TOPICS,
+} from "@/content/guideTopics";
 import {
   buildableSqft,
   ftIn,
@@ -38,6 +44,7 @@ function Shell({
   h1,
   intro,
   faqs,
+  faqsHidden,
   children,
 }: {
   lang: Lang;
@@ -46,6 +53,8 @@ function Shell({
   h1: string;
   intro: ReactNode;
   faqs?: { q: string; a: string }[];
+  /** Only in the structured data (the page shows the answer itself). */
+  faqsHidden?: boolean;
   children: ReactNode;
 }) {
   const all: Crumb[] = [{ name: SITE_NAME, path: "/" }, ...crumbs];
@@ -102,7 +111,7 @@ function Shell({
           <div className="text-[16px] leading-relaxed text-body">{intro}</div>
         </div>
         <div className="flex flex-col gap-10">{children}</div>
-        {faqs?.length ? <Faqs lang={lang} faqs={faqs} /> : null}
+        {faqs?.length && !faqsHidden ? <Faqs lang={lang} faqs={faqs} /> : null}
         <p className="mt-8 max-w-3xl rounded-xl bg-warn-tint px-4 py-3 text-[13px] leading-relaxed text-[#4a3b12]">
           {t(lang).disclaimer}
         </p>
@@ -951,61 +960,223 @@ export function SqftIndexPage({ lang }: { lang: Lang }) {
 export const guideTitle = (lang: Lang) =>
   L(
     lang,
-    "How to Build a House in India: Complete Checklist (2026)",
-    "घर कैसे बनाएं: पूरी चेकलिस्ट (2026)",
+    "How to Build a House in India: Complete Guide (2026)",
+    "घर कैसे बनाएं: पूरी गाइड (2026)",
   );
 export const guideDescription = (lang: Lang) =>
   L(
     lang,
-    "Everything a house owner and a new site engineer must know before and during construction: land papers, approvals, plan, budget, contractor, stage-wise quality checks and thumb rules.",
-    "घर बनाने से पहले और दौरान मालिक और नए साइट इंजीनियर को क्या पता होना चाहिए: ज़मीन के कागज़, मंज़ूरी, नक्शा, बजट, ठेकेदार, हर स्टेज की जांच और अंगूठे के नियम।",
+    "Everything a house owner and a new site engineer must know: land papers, approvals, planning, budget and BOQ, contractor, stage-wise quality checks, thumb rules, and answers to the most asked questions.",
+    "घर मालिक और नए साइट इंजीनियर को जो पता होना चाहिए: ज़मीन के कागज़, मंज़ूरी, प्लानिंग, बजट और BOQ, ठेकेदार, हर स्टेज की जांच, थंब रूल, और सबसे ज़्यादा पूछे जाने वाले सवालों के जवाब।",
   );
 
+const guideName = (lang: Lang) =>
+  L(lang, "House building guide", "घर बनाने की गाइड");
+
+function CardList({
+  items,
+}: {
+  items: { href: string; title: string; sub: string; tag?: string }[];
+}) {
+  return (
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      {items.map((it) => (
+        <li key={it.href}>
+          <Link
+            href={it.href}
+            className="flex h-full flex-col gap-1.5 rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-amber"
+          >
+            {it.tag && (
+              <span className="text-[12px] font-bold uppercase tracking-wide text-amber-dark">
+                {it.tag}
+              </span>
+            )}
+            <span className="text-[17px] font-bold leading-snug [text-wrap:balance]">
+              {it.title} →
+            </span>
+            <span className="text-[14px] leading-relaxed text-body">
+              {it.sub}
+            </span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function GuidePage({ lang }: { lang: Lang }) {
-  const faqs = GUIDE_FAQ.map((f) => ({ q: f.q[lang], a: f.a[lang] }));
   return (
     <Shell
       lang={lang}
-      path="house-construction-guide"
-      crumbs={[{ name: L(lang, "House building guide", "घर बनाने की गाइड") }]}
+      path={GUIDE_BASE}
+      crumbs={[{ name: guideName(lang) }]}
       h1={guideTitle(lang)}
-      faqs={faqs}
       intro={
         <p>
           {L(
             lang,
-            "What a house owner — and a new site engineer — should know before the first brick: papers, rules, plan, budget, contract, and what to check at every stage. Each point links to the tool that works it out for your house.",
-            "पहली ईंट से पहले घर मालिक — और नए साइट इंजीनियर — को क्या पता होना चाहिए: कागज़, नियम, नक्शा, बजट, ठेका, और हर स्टेज पर क्या जांचना है। हर पॉइंट के साथ वह टूल है जो आपके घर के लिए हिसाब निकालता है।",
+            "What a house owner — and a new site engineer — should know before the first brick. Each topic has its own page with a checklist, the common mistakes and the tool that works it out for your house.",
+            "पहली ईंट से पहले घर मालिक — और नए साइट इंजीनियर — को क्या पता होना चाहिए। हर विषय का अलग पेज है: चेकलिस्ट, आम ग़लतियां, और वह टूल जो आपके घर का हिसाब निकालता है।",
           )}
         </p>
       }
     >
-      <nav
-        aria-label={L(lang, "Contents", "विषय सूची")}
-        className="flex flex-wrap gap-2"
-      >
-        {GUIDE.map((s) => (
-          <a
-            key={s.id}
-            href={`#${s.id}`}
-            className="rounded-full border border-line bg-white px-3 py-1.5 text-[13px] font-semibold hover:border-amber"
+      <section className="flex flex-col gap-4">
+        <H2>{L(lang, "Step by step", "क़दम-दर-क़दम")}</H2>
+        <CardList
+          items={TOPICS.map((tp, i) => ({
+            href: langPath(lang, `${GUIDE_BASE}/${tp.slug}`),
+            tag: L(lang, `Step ${i + 1}`, `चरण ${i + 1}`),
+            title: tp.title[lang],
+            sub: tp.section.intro[lang],
+          }))}
+        />
+      </section>
+      <section className="flex flex-col gap-4">
+        <H2>
+          {L(lang, "Most asked questions", "सबसे ज़्यादा पूछे जाने वाले सवाल")}
+        </H2>
+        <CardList
+          items={QUESTIONS.map((q) => ({
+            href: langPath(lang, `${GUIDE_BASE}/${q.slug}`),
+            title: q.faq.q[lang],
+            sub: q.faq.a[lang],
+          }))}
+        />
+      </section>
+      <section className="flex flex-col gap-4">
+        <H2>{L(lang, "Plans and costs", "नक्शे और खर्च")}</H2>
+        <CardList
+          items={[
+            {
+              href: langPath(lang, "house-plan"),
+              title: L(
+                lang,
+                "House plans by plot size",
+                "प्लॉट साइज़ के हिसाब से नक्शे",
+              ),
+              sub: L(
+                lang,
+                "20×40, 25×50, 30×40, 30×50, 30×60 and more — drawn to scale with cost.",
+                "20×40, 25×50, 30×40, 30×50, 30×60 और भी — स्केल पर बने, खर्च के साथ।",
+              ),
+            },
+            {
+              href: langPath(lang, "house-construction-cost"),
+              title: L(
+                lang,
+                "Construction cost by sq ft",
+                "sq ft के हिसाब से खर्च",
+              ),
+              sub: L(
+                lang,
+                "500 to 3000 sq ft — total cost, material and stage-wise cost.",
+                "500 से 3000 sq ft — कुल खर्च, सामग्री और स्टेज-वार खर्च।",
+              ),
+            },
+          ]}
+        />
+      </section>
+    </Shell>
+  );
+}
+
+export const guideItemTitle = (slug: string, lang: Lang) =>
+  (getTopic(slug) ?? getQuestion(slug))!.title[lang];
+export const guideItemDescription = (slug: string, lang: Lang) =>
+  (getTopic(slug) ?? getQuestion(slug))!.description[lang];
+
+function Paras({
+  items,
+  lang,
+}: {
+  items: { en: string; hi: string }[];
+  lang: Lang;
+}) {
+  return (
+    <div className="flex max-w-3xl flex-col gap-3 text-[16px] leading-relaxed text-body">
+      {items.map((b) => (
+        <p key={b.en}>{b[lang]}</p>
+      ))}
+    </div>
+  );
+}
+
+function GuideNext({ lang, slug }: { lang: Lang; slug: string }) {
+  const all = [
+    ...TOPICS.map((x) => ({ slug: x.slug, title: x.title[lang] })),
+    ...QUESTIONS.map((x) => ({ slug: x.slug, title: x.faq.q[lang] })),
+  ];
+  const i = all.findIndex((x) => x.slug === slug);
+  const next = all[(i + 1) % all.length];
+  const prev = all[(i - 1 + all.length) % all.length];
+  return (
+    <nav
+      aria-label={L(lang, "More from the guide", "गाइड में और")}
+      className="grid max-w-3xl gap-3 sm:grid-cols-2"
+    >
+      {[
+        [prev, L(lang, "← Previous", "← पिछला")],
+        [next, L(lang, "Next →", "अगला →")],
+      ].map(([x, lbl]) => {
+        const it = x as { slug: string; title: string };
+        return (
+          <Link
+            key={lbl as string}
+            href={langPath(lang, `${GUIDE_BASE}/${it.slug}`)}
+            className="flex flex-col gap-1 rounded-xl border border-line bg-white px-4 py-3 hover:border-amber"
           >
-            {s.title[lang]}
-          </a>
-        ))}
-      </nav>
-      {GUIDE.map((s) => (
-        <section
-          key={s.id}
-          id={s.id}
-          className="flex max-w-3xl scroll-mt-4 flex-col gap-3"
-        >
-          <H2>{s.title[lang]}</H2>
-          <p className="text-[15px] leading-relaxed text-body">
-            {s.intro[lang]}
+            <span className="text-[12px] font-semibold uppercase tracking-wide text-muted">
+              {lbl as string}
+            </span>
+            <span className="text-[15px] font-semibold">{it.title}</span>
+          </Link>
+        );
+      })}
+      <Link
+        href={langPath(lang, GUIDE_BASE)}
+        className="text-[14px] font-semibold text-steel hover:text-ink sm:col-span-2"
+      >
+        {L(lang, "All guide topics →", "गाइड के सभी विषय →")}
+      </Link>
+    </nav>
+  );
+}
+
+export function GuideItemPage({ lang, slug }: { lang: Lang; slug: string }) {
+  const path = `${GUIDE_BASE}/${slug}`;
+  const crumbs = (title: string) => [
+    { name: guideName(lang), path: GUIDE_BASE },
+    { name: title },
+  ];
+  const tp = getTopic(slug);
+  if (tp) {
+    const n = TOPICS.indexOf(tp) + 1;
+    return (
+      <Shell
+        lang={lang}
+        path={path}
+        crumbs={crumbs(tp.section.title[lang].replace(/^\d+\.\s*/, ""))}
+        h1={tp.title[lang]}
+        intro={
+          <p>
+            <span className="font-semibold text-amber-dark">
+              {L(
+                lang,
+                `Step ${n} of ${TOPICS.length}`,
+                `चरण ${n} / ${TOPICS.length}`,
+              )}
+              {" · "}
+            </span>
+            {tp.section.intro[lang]}
           </p>
+        }
+      >
+        <Paras items={tp.body} lang={lang} />
+        <section className="flex max-w-3xl flex-col gap-3">
+          <H2>{L(lang, "Checklist", "चेकलिस्ट")}</H2>
           <ul className="flex flex-col gap-2">
-            {s.items.map((it) => (
+            {tp.section.items.map((it) => (
               <li
                 key={it.t.en}
                 className="flex gap-3 rounded-xl border border-line bg-white px-4 py-3"
@@ -1033,7 +1204,50 @@ export function GuidePage({ lang }: { lang: Lang }) {
             ))}
           </ul>
         </section>
-      ))}
+        <section className="flex max-w-3xl flex-col gap-3">
+          <H2>{L(lang, "Common mistakes", "आम ग़लतियां")}</H2>
+          <ul className="flex flex-col gap-2">
+            {tp.mistakes.map((m) => (
+              <li
+                key={m.en}
+                className="flex gap-3 rounded-xl bg-warn-tint px-4 py-3 text-[15px] leading-relaxed text-[#4a3b12]"
+              >
+                <span aria-hidden="true" className="font-black">
+                  ✕
+                </span>
+                <span>{m[lang]}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <GuideNext lang={lang} slug={slug} />
+      </Shell>
+    );
+  }
+  const q = getQuestion(slug)!;
+  return (
+    <Shell
+      lang={lang}
+      path={path}
+      crumbs={crumbs(q.title[lang])}
+      h1={q.title[lang]}
+      faqs={[{ q: q.faq.q[lang], a: q.faq.a[lang] }]}
+      faqsHidden
+      intro={null}
+    >
+      <div className="max-w-3xl rounded-2xl border-2 border-amber bg-white p-5">
+        <p className="text-[12px] font-bold uppercase tracking-wide text-amber-dark">
+          {L(lang, "Short answer", "छोटा जवाब")}
+        </p>
+        <p className="mt-1 text-[17px] font-medium leading-relaxed">
+          {q.faq.a[lang]}
+        </p>
+      </div>
+      <Paras items={q.body} lang={lang} />
+      {q.tool && (
+        <Cta href={langPath(lang, q.tool.path)}>{q.tool.label[lang]}</Cta>
+      )}
+      <GuideNext lang={lang} slug={slug} />
     </Shell>
   );
 }
