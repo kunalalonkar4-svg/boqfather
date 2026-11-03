@@ -36,12 +36,18 @@ export const PLOTS: PlotCfg[] = [
   cfg(20, 60, 3),
   cfg(25, 40, 3),
   cfg(25, 50, 3),
+  cfg(25, 60, 3),
+  cfg(30, 30, 2),
   cfg(30, 40, 3),
   cfg(30, 45, 3),
   cfg(30, 50, 3),
   cfg(30, 60, 4),
+  cfg(35, 50, 3),
   cfg(40, 50, 4),
   cfg(40, 60, 4),
+  cfg(40, 80, 4),
+  cfg(50, 50, 4),
+  cfg(50, 80, 4),
 ];
 
 export const plotSlug = (p: PlotCfg) => `${p.w}x${p.d}`;

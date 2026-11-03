@@ -91,6 +91,8 @@ export function planPrimitives(
     north?: string;
     title?: string;
     upper?: boolean;
+    /** Draw furniture (default true). */
+    furniture?: boolean;
   } = {},
 ): Primitives {
   const wall = opts.wall ?? 0.23;
@@ -167,6 +169,329 @@ export function planPrimitives(
         h: len,
         fill,
       });
+  };
+
+  // ---------------- furniture: drawn true to size against walls, clear of door swings
+  const FUR: RGB = [150, 144, 134];
+  const FW = 0.016;
+  type Box = { x: number; y: number; w: number; h: number };
+  const hit = (a: Box, b: Box) =>
+    a.x < b.x + b.w - 1e-3 &&
+    b.x < a.x + a.w - 1e-3 &&
+    a.y < b.y + b.h - 1e-3 &&
+    b.y < a.y + a.h - 1e-3;
+  const furnish = (r: SketchRect) => {
+    const swings: Box[] = (r.doors ?? [])
+      .filter((d) => !d.shutter && !d.open)
+      .map((d) => {
+        const dw = Math.max(d.width, 0.6) + 0.1;
+        if (d.side === "top")
+          return { x: r.x + d.at - 0.05, y: r.y, w: d.width + 0.1, h: dw };
+        if (d.side === "bottom")
+          return {
+            x: r.x + d.at - 0.05,
+            y: r.y + r.h - dw,
+            w: d.width + 0.1,
+            h: dw,
+          };
+        if (d.side === "left")
+          return { x: r.x, y: r.y + d.at - 0.05, w: dw, h: d.width + 0.1 };
+        return {
+          x: r.x + r.w - dw,
+          y: r.y + d.at - 0.05,
+          w: dw,
+          h: d.width + 0.1,
+        };
+      });
+    const doorSides = new Set((r.doors ?? []).map((d) => d.side));
+    const placed: Box[] = [];
+    const fits = (b: Box) =>
+      b.x >= r.x + 0.02 &&
+      b.y >= r.y + 0.02 &&
+      b.x + b.w <= r.x + r.w - 0.02 &&
+      b.y + b.h <= r.y + r.h - 0.02 &&
+      !swings.some((s) => hit(s, b)) &&
+      !placed.some((s) => hit(s, b));
+    const wallLen = (sd: Side) => (sd === "top" || sd === "bottom" ? r.w : r.h);
+    const deep = (sd: Side) => (sd === "top" || sd === "bottom" ? r.h : r.w);
+    // local frame: along the wall (u) and into the room (v)
+    const pt = (sd: Side, u: number, v: number): [number, number] =>
+      sd === "top"
+        ? [r.x + u, r.y + v]
+        : sd === "bottom"
+          ? [r.x + u, r.y + r.h - v]
+          : sd === "left"
+            ? [r.x + v, r.y + u]
+            : [r.x + r.w - v, r.y + u];
+    const box = (
+      sd: Side,
+      u: number,
+      v: number,
+      lu: number,
+      lv: number,
+    ): Box => {
+      const [x1, y1] = pt(sd, u, v);
+      const [x2, y2] = pt(sd, u + lu, v + lv);
+      return {
+        x: Math.min(x1, x2),
+        y: Math.min(y1, y2),
+        w: Math.abs(x2 - x1),
+        h: Math.abs(y2 - y1),
+      };
+    };
+    const rect = (b: Box, fill?: RGB) =>
+      P.rects.push({ ...b, fill: fill ?? WHITE, stroke: FUR, sw: FW });
+    const line = (sd: Side, u1: number, v1: number, u2: number, v2: number) => {
+      const [x1, y1] = pt(sd, u1, v1);
+      const [x2, y2] = pt(sd, u2, v2);
+      P.lines.push({ x1, y1, x2, y2, sw: FW, color: FUR });
+    };
+    const circle = (cx: number, cy: number, rad: number) => {
+      const k = 0.5523 * rad;
+      const q: [
+        [number, number],
+        [number, number],
+        [number, number],
+        [number, number],
+      ][] = [
+        [
+          [cx + rad, cy],
+          [cx + rad, cy + k],
+          [cx + k, cy + rad],
+          [cx, cy + rad],
+        ],
+        [
+          [cx, cy + rad],
+          [cx - k, cy + rad],
+          [cx - rad, cy + k],
+          [cx - rad, cy],
+        ],
+        [
+          [cx - rad, cy],
+          [cx - rad, cy - k],
+          [cx - k, cy - rad],
+          [cx, cy - rad],
+        ],
+        [
+          [cx, cy - rad],
+          [cx + k, cy - rad],
+          [cx + rad, cy - k],
+          [cx + rad, cy],
+        ],
+      ];
+      for (const [p0, c1, c2, p1] of q)
+        P.curves.push({ p0, c1, c2, p1, sw: FW, color: FUR });
+    };
+    /** First spot along a wall (sides in order, positions centre → ends) where a footprint lu × lv fits. */
+    const spot = (
+      sides: Side[],
+      lu: number,
+      lv: number,
+      pos: ("c" | "s" | "e")[] = ["c", "s", "e"],
+    ) => {
+      for (const sd of sides)
+        for (const p of pos) {
+          const L = wallLen(sd);
+          if (lu > L - 0.04 || lv > deep(sd) - 0.04) continue;
+          const u = p === "c" ? (L - lu) / 2 : p === "s" ? 0.05 : L - lu - 0.05;
+          const b = box(sd, u, 0.03, lu, lv);
+          if (fits(b)) return { sd, u, b };
+        }
+      return null;
+    };
+    const sidesBy = (pref: (sd: Side) => number) =>
+      (["top", "bottom", "left", "right"] as Side[]).sort(
+        (a, b) => pref(b) - pref(a),
+      );
+    const noDoorFirst = (sd: Side) =>
+      (doorSides.has(sd) ? 0 : 10) + wallLen(sd);
+    const mn = Math.min(r.w, r.h);
+
+    if (r.type === "bedroom" && mn >= 2.4) {
+      const bw = mn >= 3.0 ? 1.8 : 1.5,
+        bl = 2.0;
+      const sides = sidesBy(noDoorFirst);
+      // bed with side tables, then without
+      let s = spot(sides, bw + 1.0, bl);
+      let tables = true;
+      if (!s) {
+        s = spot(sides, bw, bl);
+        tables = false;
+      }
+      if (s) {
+        const u0 = s.u + (tables ? 0.5 : 0);
+        placed.push(s.b);
+        rect(box(s.sd, u0, 0.03, bw, bl));
+        rect(box(s.sd, u0 + 0.1, 0.1, bw / 2 - 0.15, 0.3));
+        rect(box(s.sd, u0 + bw / 2 + 0.05, 0.1, bw / 2 - 0.15, 0.3));
+        line(s.sd, u0, 0.75, u0 + bw, 0.75);
+        if (tables) {
+          rect(box(s.sd, s.u, 0.03, 0.42, 0.4));
+          rect(box(s.sd, s.u + bw + 0.58, 0.03, 0.42, 0.4));
+        }
+        // wardrobe on another wall
+        const others = sides.filter((x) => x !== s!.sd);
+        const wl = Math.min(1.8, Math.max(...others.map(wallLen)) - 0.3);
+        const w = wl >= 1.0 ? spot(others, wl, 0.6, ["s", "e", "c"]) : null;
+        if (w) {
+          placed.push(w.b);
+          rect(w.b);
+          for (let k = 0.6; k < wl - 0.1; k += 0.6)
+            line(w.sd, w.u + k, 0.03, w.u + k, 0.63);
+        }
+      }
+    } else if (r.type === "hall" && mn >= 2.4) {
+      const sides = sidesBy(noDoorFirst);
+      const sl = Math.min(2.2, Math.max(1.6, Math.max(r.w, r.h) * 0.45));
+      const s = spot(sides, sl, 0.85);
+      if (s) {
+        placed.push(s.b);
+        rect(s.b);
+        rect(box(s.sd, s.u, 0.03, sl, 0.2), [244, 241, 235]);
+        rect(box(s.sd, s.u, 0.03, 0.2, 0.85), [244, 241, 235]);
+        rect(box(s.sd, s.u + sl - 0.2, 0.03, 0.2, 0.85), [244, 241, 235]);
+        const tb = box(s.sd, s.u + sl / 2 - 0.5, 1.25, 1.0, 0.5);
+        if (deep(s.sd) > 2.2 && fits(tb)) {
+          placed.push(tb);
+          rect(tb);
+        }
+        const opp: Side =
+          s.sd === "top"
+            ? "bottom"
+            : s.sd === "bottom"
+              ? "top"
+              : s.sd === "left"
+                ? "right"
+                : "left";
+        const tv = spot([opp], 1.5, 0.4);
+        if (tv && deep(s.sd) > 3.0) {
+          placed.push(tv.b);
+          rect(tv.b, [236, 233, 226]);
+        }
+      }
+    } else if (r.type === "dining" && mn >= 1.9) {
+      const big = mn >= 2.7 && Math.max(r.w, r.h) >= 3.0;
+      const tl = big ? 1.5 : 1.1,
+        tw = big ? 0.9 : 0.8;
+      const along = r.w >= r.h;
+      const w = along ? tl : tw,
+        h = along ? tw : tl;
+      const t: Box = { x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, w, h };
+      const zone = { x: t.x - 0.5, y: t.y - 0.5, w: t.w + 1.0, h: t.h + 1.0 };
+      if (fits(zone) || fits(t)) {
+        rect(t);
+        const n = big ? 3 : 2;
+        for (let i = 0; i < n; i++) {
+          const f = (i + 0.5) / n;
+          if (along) {
+            rect({ x: t.x + f * w - 0.2, y: t.y - 0.45, w: 0.4, h: 0.4 });
+            rect({ x: t.x + f * w - 0.2, y: t.y + h + 0.05, w: 0.4, h: 0.4 });
+          } else {
+            rect({ x: t.x - 0.45, y: t.y + f * h - 0.2, w: 0.4, h: 0.4 });
+            rect({ x: t.x + w + 0.05, y: t.y + f * h - 0.2, w: 0.4, h: 0.4 });
+          }
+        }
+      }
+    } else if (r.type === "kitchen" && mn >= 1.8) {
+      const sides = sidesBy(noDoorFirst);
+      for (const sd of sides) {
+        const L = wallLen(sd);
+        // longest stretch of this wall without a door swing
+        const b = box(sd, 0.03, 0.03, L - 0.06, 0.6);
+        if (!fits(b)) continue;
+        placed.push(b);
+        rect(b, [246, 243, 238]);
+        // sink and two-burner hob
+        rect(box(sd, L * 0.2, 0.1, 0.55, 0.42));
+        const [hx, hy] = pt(sd, L * 0.72, 0.33);
+        const [hx2, hy2] = pt(sd, L * 0.72 + 0.3, 0.33);
+        circle(hx, hy, 0.1);
+        circle(hx2, hy2, 0.1);
+        // L-leg on a neighbouring wall
+        const adj = sides.filter(
+          (x) =>
+            (sd === "top" || sd === "bottom") !==
+            (x === "top" || x === "bottom"),
+        );
+        for (const a of adj) {
+          const ll = Math.min(1.8, deep(sd) - 0.7);
+          if (ll < 0.8) break;
+          for (const u of [0.66, wallLen(a) - ll - 0.66 + 0.6]) {
+            const lb = box(
+              a,
+              Math.max(0.03, Math.min(u, wallLen(a) - ll - 0.03)),
+              0.03,
+              ll,
+              0.6,
+            );
+            if (fits(lb)) {
+              placed.push(lb);
+              rect(lb, [246, 243, 238]);
+              break;
+            }
+          }
+          break;
+        }
+        break;
+      }
+    } else if (r.type === "toilet" && mn >= 1.0) {
+      const sides = sidesBy((sd) => (doorSides.has(sd) ? 0 : 10) + deep(sd));
+      const wc = spot(sides, 0.45, 0.7, ["e", "s", "c"]);
+      if (wc) {
+        placed.push(wc.b);
+        rect(box(wc.sd, wc.u, 0.03, 0.45, 0.18));
+        const [cx, cy] = pt(wc.sd, wc.u + 0.225, 0.45);
+        circle(cx, cy, 0.19);
+      }
+      const bs = spot(sides, 0.5, 0.4, ["s", "e", "c"]);
+      if (bs) {
+        placed.push(bs.b);
+        rect(bs.b);
+        const [cx, cy] = pt(bs.sd, bs.u + 0.25, 0.22);
+        circle(cx, cy, 0.12);
+      }
+    } else if (r.type === "parking" && mn >= 2.4 && Math.max(r.w, r.h) >= 4.6) {
+      const along = r.h >= r.w;
+      const cw = 1.75,
+        cl = 4.2;
+      const w = along ? cw : cl,
+        h = along ? cl : cw;
+      const c: Box = { x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, w, h };
+      rect(c, [250, 250, 250]);
+      if (along) {
+        rect(
+          { x: c.x + 0.18, y: c.y + 1.1, w: cw - 0.36, h: 1.9 },
+          [236, 236, 236],
+        );
+        P.lines.push({
+          x1: c.x + 0.18,
+          y1: c.y + 1.1,
+          x2: c.x + cw - 0.18,
+          y2: c.y + 1.1,
+          sw: 0.03,
+          color: FUR,
+        });
+      } else {
+        rect(
+          { x: c.x + 1.1, y: c.y + 0.18, w: 1.9, h: cw - 0.36 },
+          [236, 236, 236],
+        );
+      }
+    } else if (r.type === "pooja" && mn >= 0.9) {
+      const s = spot(
+        sidesBy(noDoorFirst),
+        Math.min(0.9, Math.max(r.w, r.h) - 0.2),
+        0.4,
+      );
+      if (s) rect(s.b, [246, 230, 238]);
+    } else if (r.type === "shop" && mn >= 2.2) {
+      const s = spot(
+        sidesBy((sd) => (sd === "top" ? 20 : 0) + (doorSides.has(sd) ? 0 : 10)),
+        Math.min(2.4, Math.max(r.w, r.h) - 0.6),
+        0.5,
+      );
+      if (s) rect(s.b, [246, 243, 238]);
+    }
   };
 
   for (const r of spaces) {
@@ -382,21 +707,25 @@ export function planPrimitives(
       continue;
     }
 
+    if (opts.furniture !== false) furnish(r);
+
     // labels: name + clear size, true to the drawing; long narrow spaces get a rotated label
     const nameText = names(
       r.key.startsWith("LOBBY")
         ? "lobby"
         : r.key.startsWith("WASH")
           ? "wash"
-          : r.type === "open" && opts.upper
-            ? Math.min(r.w, r.h) < 1.6
-              ? "dry" // a strip at the back upstairs: drying balcony
-              : "terrace"
-            : r.type === "porch" &&
-                Math.min(r.w, r.h) < 1.5 &&
-                Math.max(r.w, r.h) > 3
-              ? "entry" // narrow walkway beside the parking to the main door
-              : r.type,
+          : r.type === "open" && !opts.upper && Math.min(r.w, r.h) < 1.6
+            ? "yard" // a strip at the back on the ground floor
+            : r.type === "open" && opts.upper
+              ? Math.min(r.w, r.h) < 1.6
+                ? "dry" // a strip at the back upstairs: drying balcony
+                : "terrace"
+              : r.type === "porch" &&
+                  Math.min(r.w, r.h) < 1.5 &&
+                  Math.max(r.w, r.h) > 3
+                ? "entry" // narrow walkway beside the parking to the main door
+                : r.type,
     ).toUpperCase();
     const size = `${formatFtIn(r.w)} × ${formatFtIn(r.h)}`;
     const vertical = r.h > r.w * 1.8 && r.w < 1.6;

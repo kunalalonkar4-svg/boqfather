@@ -10,7 +10,7 @@ export const metadata = pageMeta({
   path: "naksha",
   title: `${naksheTitle("hi")} | BOQFather`,
   description: naksheDescription("hi"),
-  image: "/naksha/img/30x50-east-facing.png",
+  image: "/naksha/img/30x50-east-facing.webp",
 });
 
 export default function Page() {

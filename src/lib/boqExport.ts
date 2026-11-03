@@ -697,6 +697,7 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     wash: "Wash",
     terrace: "Open terrace",
     dry: "Dry balcony",
+    yard: "Back yard",
     entry: "Entrance",
   };
   const nm = (t: string) =>

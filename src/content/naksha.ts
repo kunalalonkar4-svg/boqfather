@@ -69,7 +69,9 @@ export const GAJ = [
   { gaj: 100, min: 0, max: 115 },
   { gaj: 150, min: 115, max: 170 },
   { gaj: 200, min: 170, max: 230 },
-  { gaj: 250, min: 230, max: 1e9 },
+  { gaj: 250, min: 230, max: 300 },
+  { gaj: 350, min: 300, max: 400 },
+  { gaj: 450, min: 400, max: 1e9 },
 ].map((g) => ({
   ...g,
   slug: `${g.gaj}-gaj`,
@@ -145,4 +147,4 @@ export function nakshaHinglish(n: Naksha) {
   return `${n.plot.w} by ${n.plot.d} ${f} ${n.kind === "shop" ? "dukan ke sath ghar" : "ghar"} ka naksha`;
 }
 
-export const nakshaImage = (n: Naksha) => `/naksha/img/${n.slug}.png`;
+export const nakshaImage = (n: Naksha) => `/naksha/img/${n.slug}.webp`;

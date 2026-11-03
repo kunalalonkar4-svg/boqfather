@@ -42,6 +42,7 @@ export function SketchPanel({
     wash: ["Wash", "वॉश"],
     terrace: ["Open terrace", "खुली छत"],
     dry: ["Dry balcony", "ड्राई बालकनी"],
+    yard: ["Back yard", "पीछे का आंगन"],
     entry: ["Entrance", "प्रवेश"],
   };
   const nm = (t: string) =>

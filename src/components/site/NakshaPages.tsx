@@ -39,6 +39,8 @@ const ROOM_EXTRA: Record<string, [string, string]> = {
   dress: ["Dress", "ड्रेस"],
 };
 const roomLabel = (type: string, floor: number, lang: Lang, m = 9) => {
+  if (type === "open" && floor === 0 && m < 1.6)
+    return L(lang, "Back yard", "पीछे का आंगन");
   if (type === "open" && floor > 0 && m < 1.6)
     return L(lang, "Dry balcony", "ड्राई बालकनी");
   if (type === "porch" && m < 1.5) return L(lang, "Entrance", "प्रवेश");
@@ -334,7 +336,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             href={nakshaImage(n)}
             className="rounded-xl border border-line bg-white px-4 py-3 text-[14px] font-semibold hover:border-amber"
           >
-            {L(lang, "Naksha image (PNG)", "नक्शे की इमेज (PNG)")}
+            {L(lang, "Naksha image", "नक्शे की इमेज")}
           </a>
           <a
             href="#custom"

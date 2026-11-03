@@ -1,10 +1,12 @@
 // Renders every naksha plan to a PNG for Google Images and social previews.
 // Usage: npm run build && node scripts/naksha-images.mjs && npm run build
 import { createServer } from "node:http";
-import { readFile, writeFile, readdir } from "node:fs/promises";
+import { readFile, writeFile, readdir, rm } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { createRequire } from "node:module";
-const { chromium } = createRequire(import.meta.url)("playwright"); // pre-installed globally on the build machine
+const req = createRequire(import.meta.url);
+const { chromium } = req("playwright"); // pre-installed globally on the build machine
+const sharp = req("sharp"); // comes with Next.js
 
 const OUT = new URL("../out/", import.meta.url).pathname;
 const DEST = new URL("../public/naksha/img/", import.meta.url).pathname;
@@ -33,6 +35,8 @@ const port = server.address().port;
 const slugs = (await readdir(join(OUT, "naksha"), { withFileTypes: true }))
   .filter((d) => d.isDirectory() && d.name !== "gaj" && d.name !== "img")
   .map((d) => d.name);
+// old PNGs are replaced by WebP
+for (const f of await readdir(DEST)) if (f.endsWith(".png")) await rm(join(DEST, f));
 const browser = await chromium.launch();
 const page = await browser.newPage({
   viewport: { width: 1180, height: 900 },
@@ -46,9 +50,11 @@ for (const slug of slugs) {
     e.style.background = "#fff";
     e.style.padding = "16px";
   });
+  // WebP: about a third of the PNG size, sharp line drawing kept
+  const png = await el.screenshot({ type: "png" });
   await writeFile(
-    join(DEST, `${slug}.png`),
-    await el.screenshot({ type: "png" }),
+    join(DEST, `${slug}.webp`),
+    await sharp(png).webp({ quality: 82, effort: 6 }).toBuffer(),
   );
   process.stdout.write(".");
 }
