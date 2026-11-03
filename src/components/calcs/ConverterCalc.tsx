@@ -1,11 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { CEMENT_BAG_KG, CEMENT_BAG_M3, CFT_PER_M3, formatFtIn, FT_PER_M, parseFtIn, round, SQFT_PER_M2 } from "@/engine";
+import {
+  CEMENT_BAG_KG,
+  CEMENT_BAG_M3,
+  CFT_PER_M3,
+  formatFtIn,
+  FT_PER_M,
+  parseFtIn,
+  round,
+  SQFT_PER_M2,
+} from "@/engine";
 import type { Lang } from "@/lib/site";
 import { NumberField, SelectField } from "@/components/ui/Fields";
 
-type Group = { key: string; en: string; hi: string; units: { u: string; label: string; toBase: number }[] };
+type Group = {
+  key: string;
+  en: string;
+  hi: string;
+  units: { u: string; label: string; toBase: number }[];
+};
 
 /** Every unit as a factor to a base unit (m³, m², kg, bag). */
 const GROUPS: Group[] = [
@@ -64,8 +78,17 @@ function GroupCard({ g, lang }: { g: Group; lang: Lang }) {
     <section className="rounded-2xl border border-line bg-white p-5">
       <h2 className="font-display text-[18px] font-bold">{g[lang]}</h2>
       <div className="mt-3 grid grid-cols-2 gap-3">
-        <NumberField label={lang === "hi" ? "मान" : "Value"} value={val} onChange={setVal} />
-        <SelectField label={lang === "hi" ? "से" : "From"} value={from} onChange={setFrom} options={g.units.map((x) => ({ value: x.u, label: x.label }))} />
+        <NumberField
+          label={lang === "hi" ? "मान" : "Value"}
+          value={val}
+          onChange={setVal}
+        />
+        <SelectField
+          label={lang === "hi" ? "से" : "From"}
+          value={from}
+          onChange={setFrom}
+          options={g.units.map((x) => ({ value: x.u, label: x.label }))}
+        />
       </div>
       <dl className="mt-4 grid grid-cols-2 gap-2">
         {g.units
@@ -73,7 +96,11 @@ function GroupCard({ g, lang }: { g: Group; lang: Lang }) {
           .map((x) => (
             <div key={x.u} className="rounded-xl bg-ground px-3 py-2.5">
               <dt className="text-[12px] text-muted">{x.label}</dt>
-              <dd className="text-[17px] font-bold">{Number.isFinite(base) ? round(base / x.toBase, 4).toLocaleString("en-IN") : "—"}</dd>
+              <dd className="text-[17px] font-bold">
+                {Number.isFinite(base)
+                  ? round(base / x.toBase, 4).toLocaleString("en-IN")
+                  : "—"}
+              </dd>
             </div>
           ))}
       </dl>
@@ -88,16 +115,35 @@ function LengthCard({ lang }: { lang: Lang }) {
   const fromM = Number(m);
   return (
     <section className="rounded-2xl border border-line bg-white p-5">
-      <h2 className="font-display text-[18px] font-bold">{lang === "hi" ? "लंबाई (फ़ीट-इंच ↔ मीटर)" : "Length (feet-inch ↔ metre)"}</h2>
+      <h2 className="font-display text-[18px] font-bold">
+        {lang === "hi"
+          ? "लंबाई (फ़ीट-इंच ↔ मीटर)"
+          : "Length (feet-inch ↔ metre)"}
+      </h2>
       <div className="mt-3 grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <NumberField label={lang === "hi" ? "फ़ीट-इंच" : "Feet-inch"} value={ftin} onChange={setFtin} inputMode="text" hint={`13'-8", 10' 6", 9.5`} />
-          <div className="rounded-xl bg-ground px-3 py-2.5 text-[17px] font-bold">{Number.isFinite(fromFt) ? `${round(fromFt, 3)} m` : "—"}</div>
+          <NumberField
+            label={lang === "hi" ? "फ़ीट-इंच" : "Feet-inch"}
+            value={ftin}
+            onChange={setFtin}
+            inputMode="text"
+            hint={`13'-8", 10' 6", 9.5`}
+          />
+          <div className="rounded-xl bg-ground px-3 py-2.5 text-[17px] font-bold">
+            {Number.isFinite(fromFt) ? `${round(fromFt, 3)} m` : "—"}
+          </div>
         </div>
         <div className="flex flex-col gap-2">
-          <NumberField label={lang === "hi" ? "मीटर" : "Metre"} value={m} onChange={setM} hint=" " />
+          <NumberField
+            label={lang === "hi" ? "मीटर" : "Metre"}
+            value={m}
+            onChange={setM}
+            hint=" "
+          />
           <div className="rounded-xl bg-ground px-3 py-2.5 text-[17px] font-bold">
-            {Number.isFinite(fromM) && fromM >= 0 ? `${formatFtIn(fromM)} · ${round(fromM * FT_PER_M, 3)} ft` : "—"}
+            {Number.isFinite(fromM) && fromM >= 0
+              ? `${formatFtIn(fromM)} · ${round(fromM * FT_PER_M, 3)} ft`
+              : "—"}
           </div>
         </div>
       </div>

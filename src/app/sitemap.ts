@@ -12,8 +12,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE_URL}${langPath(lang, p)}`,
       lastModified,
       changeFrequency: "monthly" as const,
-      priority: p === "/" ? 1 : p === "house-construction-cost-calculator" ? 0.9 : 0.8,
-      alternates: { languages: { "en-IN": `${SITE_URL}${langPath("en", p)}`, "hi-IN": `${SITE_URL}${langPath("hi", p)}` } },
+      priority:
+        p === "/" ? 1 : p === "house-construction-cost-calculator" ? 0.9 : 0.8,
+      alternates: {
+        languages: {
+          "en-IN": `${SITE_URL}${langPath("en", p)}`,
+          "hi-IN": `${SITE_URL}${langPath("hi", p)}`,
+        },
+      },
     })),
   );
 }

@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "./site";
 
 /** Page metadata with canonical URL and hreflang alternates for English / Hindi. */
-export function pageMeta(opts: { lang: Lang; path: string; title: string; description: string }): Metadata {
+export function pageMeta(opts: {
+  lang: Lang;
+  path: string;
+  title: string;
+  description: string;
+}): Metadata {
   const url = `${SITE_URL}${langPath(opts.lang, opts.path)}`;
   return {
     title: opts.title,
@@ -23,6 +28,10 @@ export function pageMeta(opts: { lang: Lang; path: string; title: string; descri
       locale: opts.lang === "hi" ? "hi_IN" : "en_IN",
       type: "website",
     },
-    twitter: { card: "summary", title: opts.title, description: opts.description },
+    twitter: {
+      card: "summary",
+      title: opts.title,
+      description: opts.description,
+    },
   };
 }

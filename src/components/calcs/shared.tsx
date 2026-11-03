@@ -5,7 +5,11 @@ import { t } from "@/i18n/ui";
 import type { Lang } from "@/lib/site";
 import { Segmented } from "@/components/ui/Fields";
 
-export function UnitToggle(props: { lang: Lang; unit: LengthUnit; onChange: (u: LengthUnit) => void }) {
+export function UnitToggle(props: {
+  lang: Lang;
+  unit: LengthUnit;
+  onChange: (u: LengthUnit) => void;
+}) {
   const d = t(props.lang);
   return (
     <Segmented

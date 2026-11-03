@@ -1,11 +1,33 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BAR_DIAS, calcAreaSteel, calcBarWeight, calcMemberSteel, inr, LengthUnit, Member, MEMBER_KG_PER_M3, round } from "@/engine";
+import {
+  BAR_DIAS,
+  calcAreaSteel,
+  calcBarWeight,
+  calcMemberSteel,
+  inr,
+  LengthUnit,
+  Member,
+  MEMBER_KG_PER_M3,
+  round,
+} from "@/engine";
 import { t } from "@/i18n/ui";
 import type { Lang } from "@/lib/site";
-import { dimToM, NumberField, num, Segmented, SelectField } from "@/components/ui/Fields";
-import { CalcFrame, Invalid, ResultPanel, WhatsAppShare, Working } from "@/components/ui/Results";
+import {
+  dimToM,
+  NumberField,
+  num,
+  Segmented,
+  SelectField,
+} from "@/components/ui/Fields";
+import {
+  CalcFrame,
+  Invalid,
+  ResultPanel,
+  WhatsAppShare,
+  Working,
+} from "@/components/ui/Results";
 import { UnitToggle, unitSuffix } from "./shared";
 
 type Mode = "bar" | "member" | "house";
@@ -34,36 +56,68 @@ export default function SteelCalc({ lang }: { lang: Lang }) {
 
   const res = useMemo(() => {
     if (mode === "bar") {
-      const l = dimToM(len, unit), n = num(nos);
+      const l = dimToM(len, unit),
+        n = num(nos);
       if (!(l > 0 && n > 0)) return null;
-      return { kind: mode, r: calcBarWeight({ diaMm: Number(dia), lengthM: l, nos: n }) } as const;
+      return {
+        kind: mode,
+        r: calcBarWeight({ diaMm: Number(dia), lengthM: l, nos: n }),
+      } as const;
     }
     if (mode === "member") {
-      const v = num(vol), k = num(kgm3);
+      const v = num(vol),
+        k = num(kgm3);
       if (!(v > 0 && k > 0)) return null;
-      return { kind: mode, r: calcMemberSteel({ member, concreteM3: v, kgPerM3: k }) } as const;
+      return {
+        kind: mode,
+        r: calcMemberSteel({ member, concreteM3: v, kgPerM3: k }),
+      } as const;
     }
-    const a = num(sqft), k = num(kgsqft);
+    const a = num(sqft),
+      k = num(kgsqft);
     if (!(a > 0 && k > 0)) return null;
-    return { kind: mode, r: calcAreaSteel({ builtUpSqft: a, kgPerSqft: k }) } as const;
+    return {
+      kind: mode,
+      r: calcAreaSteel({ builtUpSqft: a, kgPerSqft: k }),
+    } as const;
   }, [mode, unit, dia, len, nos, member, vol, kgm3, sqft, kgsqft]);
 
   const stats = !res
     ? []
     : res.kind === "bar"
       ? [
-          { label: lang === "hi" ? "कुल वज़न" : "Total weight", value: `${round(res.r.values.kg, 1)} kg` },
-          { label: lang === "hi" ? "प्रति मीटर" : "Per metre", value: `${round(res.r.values.kgPerM, 3)} kg` },
-          { label: lang === "hi" ? "कुल लंबाई" : "Total length", value: `${round(res.r.values.totalLengthM, 1)} m` },
-          { label: lang === "hi" ? "12 मी. की सरिया" : "12 m bars", value: `${res.r.values.bars12m} nos` },
+          {
+            label: lang === "hi" ? "कुल वज़न" : "Total weight",
+            value: `${round(res.r.values.kg, 1)} kg`,
+          },
+          {
+            label: lang === "hi" ? "प्रति मीटर" : "Per metre",
+            value: `${round(res.r.values.kgPerM, 3)} kg`,
+          },
+          {
+            label: lang === "hi" ? "कुल लंबाई" : "Total length",
+            value: `${round(res.r.values.totalLengthM, 1)} m`,
+          },
+          {
+            label: lang === "hi" ? "12 मी. की सरिया" : "12 m bars",
+            value: `${res.r.values.bars12m} nos`,
+          },
         ]
       : res.kind === "member"
         ? [
-            { label: d.steel, value: `${round(res.r.values.kg)} kg`, sub: `${round(res.r.values.kg / 1000, 2)} t` },
+            {
+              label: d.steel,
+              value: `${round(res.r.values.kg)} kg`,
+              sub: `${round(res.r.values.kg / 1000, 2)} t`,
+            },
             { label: "kg/m³", value: `${res.r.values.kgPerM3}` },
           ]
         : [
-            { label: d.steel, value: `${inr(res.r.values.kg)} kg`, sub: `${round(res.r.values.tonnes, 2)} t` },
+            {
+              label: d.steel,
+              value: `${inr(res.r.values.kg)} kg`,
+              sub: `${round(res.r.values.tonnes, 2)} t`,
+            },
             { label: "kg/sqft", value: `${res.r.values.kgPerSqft}` },
           ];
 
@@ -76,18 +130,48 @@ export default function SteelCalc({ lang }: { lang: Lang }) {
             value={mode}
             onChange={setMode}
             options={[
-              { value: "bar", label: lang === "hi" ? "सरिया का वज़न" : "Bar weight" },
-              { value: "member", label: lang === "hi" ? "मेंबर (kg/m³)" : "Member (kg/m³)" },
-              { value: "house", label: lang === "hi" ? "पूरा घर" : "Whole house" },
+              {
+                value: "bar",
+                label: lang === "hi" ? "सरिया का वज़न" : "Bar weight",
+              },
+              {
+                value: "member",
+                label: lang === "hi" ? "मेंबर (kg/m³)" : "Member (kg/m³)",
+              },
+              {
+                value: "house",
+                label: lang === "hi" ? "पूरा घर" : "Whole house",
+              },
             ]}
           />
           {mode === "bar" && (
             <>
               <UnitToggle lang={lang} unit={unit} onChange={setUnit} />
               <div className="grid grid-cols-3 gap-3">
-                <SelectField label="Dia (mm)" value={dia} onChange={setDia} options={BAR_DIAS.map((x) => ({ value: String(x), label: `${x} mm` }))} />
-                <NumberField label={lang === "hi" ? "एक सरिया की लंबाई" : "Length of one bar"} value={len} onChange={setLen} suffix={unitSuffix(unit)} inputMode="text" />
-                <NumberField label={d.count} value={nos} onChange={setNos} suffix="nos" />
+                <SelectField
+                  label="Dia (mm)"
+                  value={dia}
+                  onChange={setDia}
+                  options={BAR_DIAS.map((x) => ({
+                    value: String(x),
+                    label: `${x} mm`,
+                  }))}
+                />
+                <NumberField
+                  label={
+                    lang === "hi" ? "एक सरिया की लंबाई" : "Length of one bar"
+                  }
+                  value={len}
+                  onChange={setLen}
+                  suffix={unitSuffix(unit)}
+                  inputMode="text"
+                />
+                <NumberField
+                  label={d.count}
+                  value={nos}
+                  onChange={setNos}
+                  suffix="nos"
+                />
               </div>
             </>
           )}
@@ -100,18 +184,42 @@ export default function SteelCalc({ lang }: { lang: Lang }) {
                   setMember(m);
                   setKgm3(String(MEMBER_KG_PER_M3[m]));
                 }}
-                options={(Object.keys(MEMBER_KG_PER_M3) as Member[]).map((k) => ({ value: k, label: MEMBER_LABEL[k][lang] }))}
+                options={(Object.keys(MEMBER_KG_PER_M3) as Member[]).map(
+                  (k) => ({ value: k, label: MEMBER_LABEL[k][lang] }),
+                )}
               />
               <div className="grid grid-cols-2 gap-3">
-                <NumberField label={lang === "hi" ? "कंक्रीट का आयतन" : "Concrete volume"} value={vol} onChange={setVol} suffix="m³" />
-                <NumberField label={lang === "hi" ? "सरिया प्रति m³" : "Steel per m³"} value={kgm3} onChange={setKgm3} suffix="kg" />
+                <NumberField
+                  label={lang === "hi" ? "कंक्रीट का आयतन" : "Concrete volume"}
+                  value={vol}
+                  onChange={setVol}
+                  suffix="m³"
+                />
+                <NumberField
+                  label={lang === "hi" ? "सरिया प्रति m³" : "Steel per m³"}
+                  value={kgm3}
+                  onChange={setKgm3}
+                  suffix="kg"
+                />
               </div>
             </>
           )}
           {mode === "house" && (
             <div className="grid grid-cols-2 gap-3">
-              <NumberField label={lang === "hi" ? "कुल बिल्ट-अप एरिया" : "Total built-up area"} value={sqft} onChange={setSqft} suffix="sqft" />
-              <NumberField label="kg / sqft" value={kgsqft} onChange={setKgsqft} hint={lang === "hi" ? "आम रेंज 3.5–4.5" : "Typical 3.5–4.5"} />
+              <NumberField
+                label={
+                  lang === "hi" ? "कुल बिल्ट-अप एरिया" : "Total built-up area"
+                }
+                value={sqft}
+                onChange={setSqft}
+                suffix="sqft"
+              />
+              <NumberField
+                label="kg / sqft"
+                value={kgsqft}
+                onChange={setKgsqft}
+                hint={lang === "hi" ? "आम रेंज 3.5–4.5" : "Typical 3.5–4.5"}
+              />
             </div>
           )}
         </>
@@ -120,13 +228,24 @@ export default function SteelCalc({ lang }: { lang: Lang }) {
         res ? (
           <>
             <ResultPanel lang={lang} stats={stats} />
-            <WhatsAppShare lang={lang} text={`BOQFather – Steel: ${stats.map((s) => `${s.label} ${s.value}`).join(", ")}`} />
+            <WhatsAppShare
+              lang={lang}
+              text={`BOQFather – Steel: ${stats.map((s) => `${s.label} ${s.value}`).join(", ")}`}
+            />
           </>
         ) : (
           <Invalid lang={lang} />
         )
       }
-      working={res && <Working lang={lang} steps={res.r.steps} assumptions={res.r.assumptions} />}
+      working={
+        res && (
+          <Working
+            lang={lang}
+            steps={res.r.steps}
+            assumptions={res.r.assumptions}
+          />
+        )
+      }
     />
   );
 }

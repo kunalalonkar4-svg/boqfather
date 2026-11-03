@@ -33,7 +33,9 @@ export const m3ToBrass = (m3: number) => m3ToCft(m3) / BRASS_CFT;
 export function parseFtIn(text: string): number {
   const t = text.trim().replace(/[″”]/g, '"').replace(/[′’]/g, "'");
   if (!t) return NaN;
-  const m = t.match(/^(\d+(?:\.\d+)?)\s*(?:'|ft)?\s*[-\s]?\s*(?:(\d+(?:\.\d+)?)\s*(?:"|in)?)?$/i);
+  const m = t.match(
+    /^(\d+(?:\.\d+)?)\s*(?:'|ft)?\s*[-\s]?\s*(?:(\d+(?:\.\d+)?)\s*(?:"|in)?)?$/i,
+  );
   if (!m) return NaN;
   const feet = parseFloat(m[1]);
   const inches = m[2] ? parseFloat(m[2]) : 0;

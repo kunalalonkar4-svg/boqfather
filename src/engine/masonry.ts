@@ -3,12 +3,22 @@ import { CEMENT_BAG_M3, ceilSafe, m3ToCft, round } from "./units";
 
 export const BRICK_SIZES = {
   modular: { l: 0.19, w: 0.09, h: 0.09, name: "Modular 190 × 90 × 90 mm" },
-  standard: { l: 0.23, w: 0.11, h: 0.075, name: "Traditional 230 × 110 × 75 mm" },
+  standard: {
+    l: 0.23,
+    w: 0.11,
+    h: 0.075,
+    name: "Traditional 230 × 110 × 75 mm",
+  },
   fly_ash: { l: 0.23, w: 0.1, h: 0.075, name: "Fly ash 230 × 100 × 75 mm" },
 } as const;
 export type BrickSize = keyof typeof BRICK_SIZES;
 
-export const MORTAR_RATIOS = { "1:3": 3, "1:4": 4, "1:5": 5, "1:6": 6 } as const;
+export const MORTAR_RATIOS = {
+  "1:3": 3,
+  "1:4": 4,
+  "1:5": 5,
+  "1:6": 6,
+} as const;
 export type MortarRatio = keyof typeof MORTAR_RATIOS;
 
 /* ------------------------------------------------------------------ brickwork */
@@ -38,7 +48,9 @@ export interface BrickworkValues {
   sandCft: number;
 }
 
-export function calcBrickwork(input: BrickworkInput): CalcResult<BrickworkValues> {
+export function calcBrickwork(
+  input: BrickworkInput,
+): CalcResult<BrickworkValues> {
   const t = input.jointM ?? 0.01;
   const b = BRICK_SIZES[input.brick];
   const openings = input.openingsM2 ?? 0;
@@ -62,14 +74,26 @@ export function calcBrickwork(input: BrickworkInput): CalcResult<BrickworkValues
       formula: `${round(input.lengthM, 3)} × ${round(input.heightM, 3)} × ${input.thicknessM}`,
       value: `${round(gross, 3)} m³`,
     },
-    ...(openings > 0 ? [{ label: "Less openings", formula: `${round(openings, 2)} m² × ${input.thicknessM}`, value: `−${round(deduct, 3)} m³` }] : []),
+    ...(openings > 0
+      ? [
+          {
+            label: "Less openings",
+            formula: `${round(openings, 2)} m² × ${input.thicknessM}`,
+            value: `−${round(deduct, 3)} m³`,
+          },
+        ]
+      : []),
     { label: "Net brickwork", value: `${round(volume, 3)} m³` },
     {
       label: "One brick with mortar",
       formula: `(${b.l}+${t}) × (${b.w}+${t}) × (${b.h}+${t})`,
       value: `${round(withMortar, 6)} m³`,
     },
-    { label: "Number of bricks", formula: `${round(volume, 3)} ÷ ${round(withMortar, 6)}`, value: `${ceilSafe(bricks)} nos` },
+    {
+      label: "Number of bricks",
+      formula: `${round(volume, 3)} ÷ ${round(withMortar, 6)}`,
+      value: `${ceilSafe(bricks)} nos`,
+    },
     {
       label: "With breakage",
       formula: `${ceilSafe(bricks)} × (1 + ${round(wastage * 100, 1)}%)`,
@@ -80,7 +104,11 @@ export function calcBrickwork(input: BrickworkInput): CalcResult<BrickworkValues
       formula: `${round(volume, 3)} − ${round(bricks, 1)} × ${round(brickVol, 6)}`,
       value: `${round(mortarWet, 3)} m³`,
     },
-    { label: "Dry mortar", formula: `${round(mortarWet, 3)} × ${dryFactor}`, value: `${round(mortarDry, 3)} m³` },
+    {
+      label: "Dry mortar",
+      formula: `${round(mortarWet, 3)} × ${dryFactor}`,
+      value: `${round(mortarDry, 3)} m³`,
+    },
     {
       label: `Cement (${input.ratio})`,
       formula: `${round(mortarDry, 3)} ÷ ${1 + sandParts} ÷ ${round(CEMENT_BAG_M3, 4)}`,
@@ -145,16 +173,30 @@ export function calcPlaster(input: PlasterInput): CalcResult<PlasterValues> {
   const sandM3 = (dry * sandParts) / (1 + sandParts);
 
   return {
-    values: { wetM3: wet, dryM3: dry, cementBags: cementM3 / CEMENT_BAG_M3, sandM3, sandCft: m3ToCft(sandM3) },
+    values: {
+      wetM3: wet,
+      dryM3: dry,
+      cementBags: cementM3 / CEMENT_BAG_M3,
+      sandM3,
+      sandCft: m3ToCft(sandM3),
+    },
     steps: [
       { label: "Plaster area", value: `${round(input.areaM2, 2)} m²` },
-      { label: "Wet mortar", formula: `${round(input.areaM2, 2)} × ${thk}`, value: `${round(wet, 3)} m³` },
+      {
+        label: "Wet mortar",
+        formula: `${round(input.areaM2, 2)} × ${thk}`,
+        value: `${round(wet, 3)} m³`,
+      },
       {
         label: "Add for joints / uneven surface",
         formula: `${round(wet, 3)} × (1 + ${round(extra * 100)}%)`,
         value: `${round(wetPlus, 3)} m³`,
       },
-      { label: "Dry mortar", formula: `${round(wetPlus, 3)} × ${dryFactor}`, value: `${round(dry, 3)} m³` },
+      {
+        label: "Dry mortar",
+        formula: `${round(wetPlus, 3)} × ${dryFactor}`,
+        value: `${round(dry, 3)} m³`,
+      },
       {
         label: `Cement (${input.ratio})`,
         formula: `${round(dry, 3)} ÷ ${1 + sandParts} ÷ ${round(CEMENT_BAG_M3, 4)}`,

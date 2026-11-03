@@ -4,8 +4,12 @@ import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: `${SITE_NAME} – Construction Estimates, BOQ & Calculators`, template: `%s` },
-  description: "Free construction calculators and house cost estimates for India, in Hindi and English, with step-by-step working.",
+  title: {
+    default: `${SITE_NAME} – Construction Estimates, BOQ & Calculators`,
+    template: `%s`,
+  },
+  description:
+    "Free construction calculators and house cost estimates for India, in Hindi and English, with step-by-step working.",
   applicationName: SITE_NAME,
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icon.svg" },
@@ -17,12 +21,18 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"

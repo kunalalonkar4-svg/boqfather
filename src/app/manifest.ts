@@ -6,7 +6,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "BOQFather – Construction Estimates",
     short_name: "BOQFather",
-    description: "House construction cost and construction calculators for India.",
+    description:
+      "House construction cost and construction calculators for India.",
     start_url: "/",
     display: "standalone",
     background_color: "#f5f3ef",

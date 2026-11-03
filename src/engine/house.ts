@@ -2,11 +2,21 @@ import { CalcResult } from "./types";
 import { round, rupees } from "./units";
 
 /** Construction rate per sqft of built-up area (₹, 2026, composite material + labour). Editable by the user. */
-export const QUALITY_RATES = { basic: 1450, standard: 1700, premium: 2400 } as const;
+export const QUALITY_RATES = {
+  basic: 1450,
+  standard: 1700,
+  premium: 2400,
+} as const;
 export type Quality = keyof typeof QUALITY_RATES;
 
 /** Location multiplier on the base rate. */
-export const LOCATION_FACTORS = { metro: 1.15, tier1: 1.05, tier2: 1.0, town: 0.92, rural: 0.85 } as const;
+export const LOCATION_FACTORS = {
+  metro: 1.15,
+  tier1: 1.05,
+  tier2: 1.0,
+  town: 0.92,
+  rural: 0.85,
+} as const;
 export type Location = keyof typeof LOCATION_FACTORS;
 
 /** Material thumb rules per sqft of built-up area. */
@@ -62,10 +72,23 @@ export interface HouseValues {
   total: number;
   low: number;
   high: number;
-  materials: { key: Material; qty: number; unit: string; rate: number; amount: number; perSqft: number }[];
+  materials: {
+    key: Material;
+    qty: number;
+    unit: string;
+    rate: number;
+    amount: number;
+    perSqft: number;
+  }[];
   phases: { key: string; pct: number; amount: number }[];
   split: { key: string; pct: number; amount: number }[];
-  payments: { key: string; floor?: number; pct: number; amount: number; cumulative: number }[];
+  payments: {
+    key: string;
+    floor?: number;
+    pct: number;
+    amount: number;
+    cumulative: number;
+  }[];
   months: number;
 }
 
@@ -80,11 +103,21 @@ export function calcHouse(input: HouseInput): CalcResult<HouseValues> {
     const r = THUMB_RULES[key];
     const qty = totalSqft * r.perSqft;
     const mRate = input.materialRates?.[key] ?? r.rate;
-    return { key, qty, unit: r.unit, rate: mRate, amount: qty * mRate, perSqft: r.perSqft };
+    return {
+      key,
+      qty,
+      unit: r.unit,
+      rate: mRate,
+      amount: qty * mRate,
+      perSqft: r.perSqft,
+    };
   });
 
   const phases = PHASES.map((p) => ({ ...p, amount: (total * p.pct) / 100 }));
-  const split = COST_SPLIT.map((p) => ({ ...p, amount: (total * p.pct) / 100 }));
+  const split = COST_SPLIT.map((p) => ({
+    ...p,
+    amount: (total * p.pct) / 100,
+  }));
 
   // Payment milestones: slab share (30%) is spread over the floors.
   const slabPct = 30 / input.floors;
@@ -92,7 +125,11 @@ export function calcHouse(input: HouseInput): CalcResult<HouseValues> {
     { key: "booking", pct: 10 },
     { key: "foundation", pct: 15 },
     { key: "plinth", pct: 10 },
-    ...Array.from({ length: input.floors }, (_, i) => ({ key: "slab", floor: i, pct: slabPct })),
+    ...Array.from({ length: input.floors }, (_, i) => ({
+      key: "slab",
+      floor: i,
+      pct: slabPct,
+    })),
     { key: "brickwork", pct: 10 },
     { key: "plaster_flooring", pct: 15 },
     { key: "handover", pct: 10 },
@@ -107,11 +144,34 @@ export function calcHouse(input: HouseInput): CalcResult<HouseValues> {
   const months = Math.round(4 + 2.5 * input.floors + totalSqft / 1500);
 
   return {
-    values: { totalSqft, ratePerSqft: rate, total, low: total * 0.9, high: total * 1.1, materials, phases, split, payments, months },
+    values: {
+      totalSqft,
+      ratePerSqft: rate,
+      total,
+      low: total * 0.9,
+      high: total * 1.1,
+      materials,
+      phases,
+      split,
+      payments,
+      months,
+    },
     steps: [
-      { label: "Built-up area", formula: `${round(input.areaPerFloorSqft)} sqft × ${input.floors} floor(s)`, value: `${round(totalSqft)} sqft` },
-      { label: "Rate per sqft", formula: `${rupees(base)} (${input.quality}) × ${factor} (location)`, value: `${rupees(rate)}/sqft` },
-      { label: "Total cost", formula: `${round(totalSqft)} × ${rupees(rate)}`, value: rupees(total) },
+      {
+        label: "Built-up area",
+        formula: `${round(input.areaPerFloorSqft)} sqft × ${input.floors} floor(s)`,
+        value: `${round(totalSqft)} sqft`,
+      },
+      {
+        label: "Rate per sqft",
+        formula: `${rupees(base)} (${input.quality}) × ${factor} (location)`,
+        value: `${rupees(rate)}/sqft`,
+      },
+      {
+        label: "Total cost",
+        formula: `${round(totalSqft)} × ${rupees(rate)}`,
+        value: rupees(total),
+      },
       ...materials.slice(0, 5).map((m) => ({
         label: m.key[0].toUpperCase() + m.key.slice(1),
         formula: `${round(totalSqft)} × ${m.perSqft} ${m.unit}/sqft`,

@@ -1,11 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { areaToM2, calcPaint, LengthUnit, round, roomPaintArea } from "@/engine";
+import {
+  areaToM2,
+  calcPaint,
+  LengthUnit,
+  round,
+  roomPaintArea,
+} from "@/engine";
 import { t } from "@/i18n/ui";
 import type { Lang } from "@/lib/site";
 import { dimToM, NumberField, num, Segmented } from "@/components/ui/Fields";
-import { CalcFrame, Invalid, ResultPanel, WhatsAppShare, Working } from "@/components/ui/Results";
+import {
+  CalcFrame,
+  Invalid,
+  ResultPanel,
+  WhatsAppShare,
+  Working,
+} from "@/components/ui/Results";
 import { areaSuffix, UnitToggle, unitSuffix } from "./shared";
 
 export default function PaintCalc({ lang }: { lang: Lang }) {
@@ -35,8 +47,18 @@ export default function PaintCalc({ lang }: { lang: Lang }) {
   };
 
   const res = useMemo(() => {
-    const l = dimToM(L, unit), b = dimToM(B, unit), h = dimToM(H, unit), o = num(open || "0"), c = num(coats), cv = num(cov);
-    if (![l, b, h, o, c, cv].every((x) => Number.isFinite(x) && x >= 0) || cv <= 0 || c <= 0) return null;
+    const l = dimToM(L, unit),
+      b = dimToM(B, unit),
+      h = dimToM(H, unit),
+      o = num(open || "0"),
+      c = num(coats),
+      cv = num(cov);
+    if (
+      ![l, b, h, o, c, cv].every((x) => Number.isFinite(x) && x >= 0) ||
+      cv <= 0 ||
+      c <= 0
+    )
+      return null;
     const area = roomPaintArea(l, b, h, areaToM2(o, unit), ceiling === "yes");
     if (area <= 0) return null;
     return calcPaint({ areaM2: area, coats: c, coverageSqftPerL: cv });
@@ -50,11 +72,34 @@ export default function PaintCalc({ lang }: { lang: Lang }) {
         <>
           <UnitToggle lang={lang} unit={unit} onChange={changeUnit} />
           <div className="grid grid-cols-3 gap-3">
-            <NumberField label={d.length} value={L} onChange={setL} suffix={u} inputMode="text" />
-            <NumberField label={d.width} value={B} onChange={setB} suffix={u} inputMode="text" />
-            <NumberField label={d.height} value={H} onChange={setH} suffix={u} inputMode="text" />
+            <NumberField
+              label={d.length}
+              value={L}
+              onChange={setL}
+              suffix={u}
+              inputMode="text"
+            />
+            <NumberField
+              label={d.width}
+              value={B}
+              onChange={setB}
+              suffix={u}
+              inputMode="text"
+            />
+            <NumberField
+              label={d.height}
+              value={H}
+              onChange={setH}
+              suffix={u}
+              inputMode="text"
+            />
           </div>
-          <NumberField label={d.openings} value={open} onChange={setOpen} suffix={areaSuffix(unit)} />
+          <NumberField
+            label={d.openings}
+            value={open}
+            onChange={setOpen}
+            suffix={areaSuffix(unit)}
+          />
           <Segmented
             label={lang === "hi" ? "छत (सीलिंग) भी?" : "Include ceiling?"}
             value={ceiling}
@@ -65,8 +110,20 @@ export default function PaintCalc({ lang }: { lang: Lang }) {
             ]}
           />
           <div className="grid grid-cols-2 gap-3">
-            <NumberField label={lang === "hi" ? "कोट" : "Coats"} value={coats} onChange={setCoats} />
-            <NumberField label={lang === "hi" ? "कवरेज (sqft/लीटर/कोट)" : "Coverage (sqft/L/coat)"} value={cov} onChange={setCov} />
+            <NumberField
+              label={lang === "hi" ? "कोट" : "Coats"}
+              value={coats}
+              onChange={setCoats}
+            />
+            <NumberField
+              label={
+                lang === "hi"
+                  ? "कवरेज (sqft/लीटर/कोट)"
+                  : "Coverage (sqft/L/coat)"
+              }
+              value={cov}
+              onChange={setCov}
+            />
           </div>
         </>
       }
@@ -76,9 +133,19 @@ export default function PaintCalc({ lang }: { lang: Lang }) {
             <ResultPanel
               lang={lang}
               stats={[
-                { label: d.paint, value: `${round(v.paintL, 1)} L`, sub: `${coats} ${lang === "hi" ? "कोट" : "coats"}` },
-                { label: lang === "hi" ? "प्राइमर" : "Primer", value: `${round(v.primerL, 1)} L` },
-                { label: lang === "hi" ? "वॉल पुट्टी" : "Wall putty", value: `${round(v.puttyKg, 1)} kg` },
+                {
+                  label: d.paint,
+                  value: `${round(v.paintL, 1)} L`,
+                  sub: `${coats} ${lang === "hi" ? "कोट" : "coats"}`,
+                },
+                {
+                  label: lang === "hi" ? "प्राइमर" : "Primer",
+                  value: `${round(v.primerL, 1)} L`,
+                },
+                {
+                  label: lang === "hi" ? "वॉल पुट्टी" : "Wall putty",
+                  value: `${round(v.puttyKg, 1)} kg`,
+                },
                 { label: d.area, value: `${round(v.areaSqft)} sqft` },
               ]}
             />
@@ -91,7 +158,15 @@ export default function PaintCalc({ lang }: { lang: Lang }) {
           <Invalid lang={lang} />
         )
       }
-      working={res && <Working lang={lang} steps={res.steps} assumptions={res.assumptions} />}
+      working={
+        res && (
+          <Working
+            lang={lang}
+            steps={res.steps}
+            assumptions={res.assumptions}
+          />
+        )
+      }
     />
   );
 }

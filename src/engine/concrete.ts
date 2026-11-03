@@ -51,15 +51,31 @@ export function calcConcrete(input: ConcreteInput): CalcResult<ConcreteValues> {
       formula: `${round(volumeM3, 3)} × ${dryFactor} × (1 + ${round(wastage * 100, 1)}%)`,
       value: `${round(dry, 3)} m³`,
     },
-    { label: `Mix ${grade}`, formula: `${c} : ${s} : ${a} → total parts`, value: `${parts}` },
-    { label: "Cement volume", formula: `${round(dry, 3)} × ${c} / ${parts}`, value: `${round(cementM3, 3)} m³` },
+    {
+      label: `Mix ${grade}`,
+      formula: `${c} : ${s} : ${a} → total parts`,
+      value: `${parts}`,
+    },
+    {
+      label: "Cement volume",
+      formula: `${round(dry, 3)} × ${c} / ${parts}`,
+      value: `${round(cementM3, 3)} m³`,
+    },
     {
       label: "Cement bags",
       formula: `${round(cementM3, 3)} ÷ ${round(CEMENT_BAG_M3, 4)} m³ per bag`,
       value: `${round(cementBags, 2)} bags`,
     },
-    { label: "Sand", formula: `${round(dry, 3)} × ${s} / ${parts}`, value: `${round(sandM3, 3)} m³ = ${round(m3ToCft(sandM3), 1)} cft` },
-    { label: "Aggregate", formula: `${round(dry, 3)} × ${a} / ${parts}`, value: `${round(aggM3, 3)} m³ = ${round(m3ToCft(aggM3), 1)} cft` },
+    {
+      label: "Sand",
+      formula: `${round(dry, 3)} × ${s} / ${parts}`,
+      value: `${round(sandM3, 3)} m³ = ${round(m3ToCft(sandM3), 1)} cft`,
+    },
+    {
+      label: "Aggregate",
+      formula: `${round(dry, 3)} × ${a} / ${parts}`,
+      value: `${round(aggM3, 3)} m³ = ${round(m3ToCft(aggM3), 1)} cft`,
+    },
   ];
 
   return {

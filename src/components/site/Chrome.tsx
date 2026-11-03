@@ -6,8 +6,12 @@ import { Lang, langPath } from "@/lib/site";
 export function Logo() {
   return (
     <span className="flex items-center gap-2.5">
-      <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-amber text-[14px] font-extrabold text-ink">BF</span>
-      <span className="font-display text-[20px] font-extrabold tracking-tight">BOQFather</span>
+      <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-amber text-[14px] font-extrabold text-ink">
+        BF
+      </span>
+      <span className="font-display text-[20px] font-extrabold tracking-tight">
+        BOQFather
+      </span>
     </span>
   );
 }
@@ -21,11 +25,20 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
         <Link href={langPath(lang)} aria-label="BOQFather home">
           <Logo />
         </Link>
-        <nav aria-label="Main" className="flex flex-wrap items-center gap-1 text-[14px]">
-          <Link href={langPath(lang, "calculators")} className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white">
+        <nav
+          aria-label="Main"
+          className="flex flex-wrap items-center gap-1 text-[14px]"
+        >
+          <Link
+            href={langPath(lang, "calculators")}
+            className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
+          >
             {d.nav_calculators}
           </Link>
-          <Link href={langPath(lang, "house-construction-cost-calculator")} className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white">
+          <Link
+            href={langPath(lang, "house-construction-cost-calculator")}
+            className="rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
+          >
             {d.nav_house}
           </Link>
           <Link
@@ -51,14 +64,21 @@ export function SiteFooter({ lang }: { lang: Lang }) {
             <Logo />
           </span>
           <p className="max-w-sm text-[14px] leading-relaxed">{d.tagline}</p>
-          <p className="max-w-sm text-[12px] leading-relaxed text-[#9c968b]">{d.disclaimer}</p>
+          <p className="max-w-sm text-[12px] leading-relaxed text-[#9c968b]">
+            {d.disclaimer}
+          </p>
         </div>
         <div>
-          <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">{d.all_calculators}</h2>
+          <h2 className="text-[13px] font-bold uppercase tracking-wide text-amber">
+            {d.all_calculators}
+          </h2>
           <ul className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2">
             {CALCULATORS.map((c) => (
               <li key={c.slug}>
-                <Link href={langPath(lang, c.slug)} className="hover:text-white">
+                <Link
+                  href={langPath(lang, c.slug)}
+                  className="hover:text-white"
+                >
                   {c[lang].name}
                 </Link>
               </li>
@@ -69,7 +89,9 @@ export function SiteFooter({ lang }: { lang: Lang }) {
       <div className="border-t border-[#2e3033]">
         <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-4 text-[12px] text-[#9c968b] sm:px-6">
           <span>© 2026 BOQFather</span>
-          <span>{lang === "hi" ? "भारत के लिए बना" : "Made in India, for India"}</span>
+          <span>
+            {lang === "hi" ? "भारत के लिए बना" : "Made in India, for India"}
+          </span>
         </div>
       </div>
     </footer>

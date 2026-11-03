@@ -28,12 +28,38 @@ export function calcExcavation(input: ExcavationInput): CalcResult<{
   const loose = vol * (1 + swell);
   const cost = vol * (input.ratePerM3 ?? 0);
   return {
-    values: { volumeM3: vol, volumeCft: m3ToCft(vol), brass: m3ToBrass(vol), looseM3: loose, cost },
+    values: {
+      volumeM3: vol,
+      volumeCft: m3ToCft(vol),
+      brass: m3ToBrass(vol),
+      looseM3: loose,
+      cost,
+    },
     steps: [
-      ...(ws > 0 ? [{ label: "Size with working space", formula: `(${input.lengthM} + 2×${ws}) × (${input.widthM} + 2×${ws})`, value: `${round(L, 2)} × ${round(B, 2)} m` }] : []),
-      { label: "Excavation volume", formula: `${round(L, 2)} × ${round(B, 2)} × ${input.depthM} × ${input.nos}`, value: `${round(vol, 3)} m³` },
-      { label: "In cft / brass", formula: `${round(vol, 3)} × 35.315`, value: `${round(m3ToCft(vol), 1)} cft = ${round(m3ToBrass(vol), 2)} brass` },
-      { label: "Loose soil to dispose", formula: `${round(vol, 3)} × (1 + ${round(swell * 100)}%)`, value: `${round(loose, 2)} m³` },
+      ...(ws > 0
+        ? [
+            {
+              label: "Size with working space",
+              formula: `(${input.lengthM} + 2×${ws}) × (${input.widthM} + 2×${ws})`,
+              value: `${round(L, 2)} × ${round(B, 2)} m`,
+            },
+          ]
+        : []),
+      {
+        label: "Excavation volume",
+        formula: `${round(L, 2)} × ${round(B, 2)} × ${input.depthM} × ${input.nos}`,
+        value: `${round(vol, 3)} m³`,
+      },
+      {
+        label: "In cft / brass",
+        formula: `${round(vol, 3)} × 35.315`,
+        value: `${round(m3ToCft(vol), 1)} cft = ${round(m3ToBrass(vol), 2)} brass`,
+      },
+      {
+        label: "Loose soil to dispose",
+        formula: `${round(vol, 3)} × (1 + ${round(swell * 100)}%)`,
+        value: `${round(loose, 2)} m³`,
+      },
     ],
     assumptions: [
       `Working space ${ws} m each side.`,

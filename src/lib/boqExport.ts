@@ -9,8 +9,15 @@ function drawPlan(doc: Pdf, P: Primitives, ox: number, oy: number, sc: number) {
     Y = (y: number) => oy + y * sc;
   for (const r of P.rects) {
     if (r.fill) doc.setFillColor(...r.fill);
-    if (r.stroke) doc.setDrawColor(...r.stroke).setLineWidth((r.sw ?? 0.1) * sc);
-    doc.rect(X(r.x), Y(r.y), r.w * sc, r.h * sc, r.fill && r.stroke ? "FD" : r.fill ? "F" : "S");
+    if (r.stroke)
+      doc.setDrawColor(...r.stroke).setLineWidth((r.sw ?? 0.1) * sc);
+    doc.rect(
+      X(r.x),
+      Y(r.y),
+      r.w * sc,
+      r.h * sc,
+      r.fill && r.stroke ? "FD" : r.fill ? "F" : "S",
+    );
   }
   for (const l of P.lines) {
     doc.setDrawColor(...l.color).setLineWidth(l.sw * sc);
@@ -21,7 +28,23 @@ function drawPlan(doc: Pdf, P: Primitives, ox: number, oy: number, sc: number) {
   for (const c of P.curves) {
     doc.setDrawColor(...c.color).setLineWidth(c.sw * sc);
     const [x0, y0] = c.p0;
-    doc.lines([[(c.c1[0] - x0) * sc, (c.c1[1] - y0) * sc, (c.c2[0] - x0) * sc, (c.c2[1] - y0) * sc, (c.p1[0] - x0) * sc, (c.p1[1] - y0) * sc]], X(x0), Y(y0), [1, 1], "S", false);
+    doc.lines(
+      [
+        [
+          (c.c1[0] - x0) * sc,
+          (c.c1[1] - y0) * sc,
+          (c.c2[0] - x0) * sc,
+          (c.c2[1] - y0) * sc,
+          (c.p1[0] - x0) * sc,
+          (c.p1[1] - y0) * sc,
+        ],
+      ],
+      X(x0),
+      Y(y0),
+      [1, 1],
+      "S",
+      false,
+    );
   }
   for (const t of P.texts) {
     doc
@@ -32,12 +55,23 @@ function drawPlan(doc: Pdf, P: Primitives, ox: number, oy: number, sc: number) {
     if (t.rotate) {
       // jsPDF rotates about the start of the baseline: shift so the text is centred like the SVG
       const tw = doc.getTextWidth(txt);
-      doc.text(txt, X(t.x), Y(t.y) + (t.anchor === "middle" ? tw / 2 : 0), { angle: -t.rotate });
-    } else doc.text(txt, X(t.x), Y(t.y), { align: t.anchor === "start" ? "left" : t.anchor === "end" ? "right" : "center" });
+      doc.text(txt, X(t.x), Y(t.y) + (t.anchor === "middle" ? tw / 2 : 0), {
+        angle: -t.rotate,
+      });
+    } else
+      doc.text(txt, X(t.x), Y(t.y), {
+        align:
+          t.anchor === "start"
+            ? "left"
+            : t.anchor === "end"
+              ? "right"
+              : "center",
+      });
   }
 }
 
-const fmt = (n: number | undefined, d = 3) => (n === undefined ? "" : round(n, d));
+const fmt = (n: number | undefined, d = 3) =>
+  n === undefined ? "" : round(n, d);
 const materialName: Record<string, string> = {
   cement: "Cement",
   steel: "Steel Fe500D",
@@ -115,20 +149,36 @@ export const RATE_INFO: Record<RateKey, [string, string]> = {
 export async function downloadRateSheet(current: Record<string, number>) {
   const XLSX = await import("xlsx");
   const rows: (string | number)[][] = [
-    ["BOQFather rate sheet – fill column D with your SOR / DSR / contractor rates (Rs.), keep column A unchanged, then upload"],
+    [
+      "BOQFather rate sheet – fill column D with your SOR / DSR / contractor rates (Rs.), keep column A unchanged, then upload",
+    ],
     [],
     ["Key", "Description", "Unit", "Rate (Rs.)", "Market rate (Rs.)"],
-    ...(Object.keys(BOQ_RATES) as RateKey[]).map((k) => [k, RATE_INFO[k]?.[0] ?? k, RATE_INFO[k]?.[1] ?? "", current[k] ?? BOQ_RATES[k], BOQ_RATES[k]]),
+    ...(Object.keys(BOQ_RATES) as RateKey[]).map((k) => [
+      k,
+      RATE_INFO[k]?.[0] ?? k,
+      RATE_INFO[k]?.[1] ?? "",
+      current[k] ?? BOQ_RATES[k],
+      BOQ_RATES[k],
+    ]),
   ];
   const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws["!cols"] = [{ wch: 11 }, { wch: 52 }, { wch: 12 }, { wch: 12 }, { wch: 16 }];
+  ws["!cols"] = [
+    { wch: 11 },
+    { wch: 52 },
+    { wch: 12 },
+    { wch: 12 },
+    { wch: 16 },
+  ];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Rates");
   XLSX.writeFile(wb, "BOQFather_rate_sheet.xlsx");
 }
 
 /** Read a filled rate sheet (xlsx / csv): first column key, a numeric rate in column D (or the first number after the key). */
-export async function readRateSheet(file: File): Promise<Partial<Record<RateKey, number>>> {
+export async function readRateSheet(
+  file: File,
+): Promise<Partial<Record<RateKey, number>>> {
   const XLSX = await import("xlsx");
   const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
   const ws = wb.Sheets[wb.SheetNames[0]];
@@ -138,7 +188,13 @@ export async function readRateSheet(file: File): Promise<Partial<Record<RateKey,
     const key = String(r?.[0] ?? "").trim() as RateKey;
     if (!(key in BOQ_RATES)) continue;
     const v = Number(r[3] ?? NaN);
-    const val = Number.isFinite(v) ? v : Number(r.slice(1).find((x) => Number.isFinite(Number(x)) && String(x).trim() !== ""));
+    const val = Number.isFinite(v)
+      ? v
+      : Number(
+          r
+            .slice(1)
+            .find((x) => Number.isFinite(Number(x)) && String(x).trim() !== ""),
+        );
     if (Number.isFinite(val) && val >= 0) out[key] = val;
   }
   return out;
@@ -158,13 +214,23 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
   let sr = 0;
   for (const s of r.sections) {
     abs.push(["", `${s.code}. ${s.title.en.toUpperCase()}`]);
-    for (const i of s.items) abs.push([++sr, i.code, i.desc, i.unit, i.qty, i.rate, i.amount]);
+    for (const i of s.items)
+      abs.push([++sr, i.code, i.desc, i.unit, i.qty, i.rate, i.amount]);
     abs.push(["", "", "Sub-total", "", "", "", s.subtotal]);
   }
   abs.push([], ["", "", "Total of all items", "", "", "", r.itemsTotal]);
   abs.push(["", "", "Contingency / misc. 5%", "", "", "", r.contingency]);
   abs.push(["", "", "GRAND TOTAL", "", "", "", r.grandTotal]);
-  if (r.externalTotal) abs.push(["", "", "of which external works (incl. 5%)", "", "", "", r.externalTotal]);
+  if (r.externalTotal)
+    abs.push([
+      "",
+      "",
+      "of which external works (incl. 5%)",
+      "",
+      "",
+      "",
+      r.externalTotal,
+    ]);
   abs.push([
     "",
     "",
@@ -175,33 +241,105 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
     Math.round(r.perSqft),
   ]);
   const ws1 = XLSX.utils.aoa_to_sheet(abs);
-  ws1["!cols"] = [{ wch: 5 }, { wch: 7 }, { wch: 62 }, { wch: 6 }, { wch: 11 }, { wch: 11 }, { wch: 14 }];
+  ws1["!cols"] = [
+    { wch: 5 },
+    { wch: 7 },
+    { wch: 62 },
+    { wch: 6 },
+    { wch: 11 },
+    { wch: 11 },
+    { wch: 14 },
+  ];
   XLSX.utils.book_append_sheet(wb, ws1, "Abstract");
 
-  const mb: (string | number)[][] = [["Measurement book (Nos × L × B × H = Qty, metres)"], []];
+  const mb: (string | number)[][] = [
+    ["Measurement book (Nos × L × B × H = Qty, metres)"],
+    [],
+  ];
   for (const s of r.sections)
     for (const i of s.items) {
-      mb.push([`Item ${i.code}: ${i.desc}`], [`Basis: ${i.basis}`], ["Sr", "Description", "Nos", "L", "B", "H / D", "Qty", "Remarks"]);
-      i.rows.forEach((x, k) => mb.push([k + 1, x.desc, x.n, fmt(x.L), fmt(x.B), fmt(x.H), round(x.q, i.dec || 0), x.rem ?? ""]));
+      mb.push(
+        [`Item ${i.code}: ${i.desc}`],
+        [`Basis: ${i.basis}`],
+        ["Sr", "Description", "Nos", "L", "B", "H / D", "Qty", "Remarks"],
+      );
+      i.rows.forEach((x, k) =>
+        mb.push([
+          k + 1,
+          x.desc,
+          x.n,
+          fmt(x.L),
+          fmt(x.B),
+          fmt(x.H),
+          round(x.q, i.dec || 0),
+          x.rem ?? "",
+        ]),
+      );
       mb.push(["", "TOTAL", "", "", "", "", i.qty, i.unit], []);
     }
   const ws2 = XLSX.utils.aoa_to_sheet(mb);
-  ws2["!cols"] = [{ wch: 5 }, { wch: 48 }, { wch: 6 }, { wch: 9 }, { wch: 9 }, { wch: 9 }, { wch: 11 }, { wch: 18 }];
+  ws2["!cols"] = [
+    { wch: 5 },
+    { wch: 48 },
+    { wch: 6 },
+    { wch: 9 },
+    { wch: 9 },
+    { wch: 9 },
+    { wch: 11 },
+    { wch: 18 },
+  ];
   XLSX.utils.book_append_sheet(wb, ws2, "Measurement Book");
 
-  const mat: (string | number)[][] = [["Material", "Unit", "Quantity", "Basis"], ...r.materials.map((m) => [materialName[m.key] ?? m.key, m.unit, round(m.qty, 1), m.basis])];
-  mat.push([], ["Thumb-rule check", "Unit", "Per sqft", "Thumb qty", "This estimate", "Diff %"]);
-  r.thumb.forEach((t) => mat.push([materialName[t.key] ?? t.key, t.unit, t.perSqft, Math.round(t.thumbQty), Math.round(t.qty), Math.round(t.diffPct)]));
+  const mat: (string | number)[][] = [
+    ["Material", "Unit", "Quantity", "Basis"],
+    ...r.materials.map((m) => [
+      materialName[m.key] ?? m.key,
+      m.unit,
+      round(m.qty, 1),
+      m.basis,
+    ]),
+  ];
+  mat.push(
+    [],
+    [
+      "Thumb-rule check",
+      "Unit",
+      "Per sqft",
+      "Thumb qty",
+      "This estimate",
+      "Diff %",
+    ],
+  );
+  r.thumb.forEach((t) =>
+    mat.push([
+      materialName[t.key] ?? t.key,
+      t.unit,
+      t.perSqft,
+      Math.round(t.thumbQty),
+      Math.round(t.qty),
+      Math.round(t.diffPct),
+    ]),
+  );
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(mat), "Materials");
 
   const rooms: (string | number)[][] = [
     ["Floor", "Code", "Room", "L (m)", "B (m)", "Area (m²)", "Perimeter (m)"],
-    ...r.rooms.map((x) => [x.floor === 0 ? "GF" : `Floor ${x.floor}`, x.code, ROOM_DEFS[x.type].name.en, x.L, x.B, round(x.area, 2), round(x.per, 2)]),
+    ...r.rooms.map((x) => [
+      x.floor === 0 ? "GF" : `Floor ${x.floor}`,
+      x.code,
+      ROOM_DEFS[x.type].name.en,
+      x.L,
+      x.B,
+      round(x.area, 2),
+      round(x.per, 2),
+    ]),
   ];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rooms), "Rooms");
 
   const spec: (string | number)[][] = [
-    [`Specification – ${r.quality} finish, ${r.wall === "aac" ? "AAC" : "brick"} walls`],
+    [
+      `Specification – ${r.quality} finish, ${r.wall === "aac" ? "AAC" : "brick"} walls`,
+    ],
     [],
     ["Item", "Specification"],
     ...r.specSheet.map((x) => [x.item.en, x.spec.en]),
@@ -213,20 +351,69 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
   const bbs: (string | number)[][] = [
     ["Bar bending schedule (typical detailing — structural drawing governs)"],
     [],
-    ["Member", "Mark", "Description", "Dia (mm)", "Nos", "Cut length (m)", "Total length (m)", "Weight (kg)"],
+    [
+      "Member",
+      "Mark",
+      "Description",
+      "Dia (mm)",
+      "Nos",
+      "Cut length (m)",
+      "Total length (m)",
+      "Weight (kg)",
+    ],
   ];
-  r.bbs.rows.forEach((x) => bbs.push([x.member, x.mark, x.desc, x.dia, x.nos, x.cutLen, x.totalLen, x.kg]));
-  bbs.push([], ["", "", "Net", "", "", "", "", r.bbs.net], ["", "", "Wastage 3%", "", "", "", "", r.bbs.wastage], ["", "", "TOTAL", "", "", "", "", r.bbs.total], []);
-  r.bbs.byDia.forEach((d) => bbs.push(["", "", `${d.dia} mm`, "", "", "", "", d.kg]));
+  r.bbs.rows.forEach((x) =>
+    bbs.push([
+      x.member,
+      x.mark,
+      x.desc,
+      x.dia,
+      x.nos,
+      x.cutLen,
+      x.totalLen,
+      x.kg,
+    ]),
+  );
+  bbs.push(
+    [],
+    ["", "", "Net", "", "", "", "", r.bbs.net],
+    ["", "", "Wastage 3%", "", "", "", "", r.bbs.wastage],
+    ["", "", "TOTAL", "", "", "", "", r.bbs.total],
+    [],
+  );
+  r.bbs.byDia.forEach((d) =>
+    bbs.push(["", "", `${d.dia} mm`, "", "", "", "", d.kg]),
+  );
   const wsB = XLSX.utils.aoa_to_sheet(bbs);
-  wsB["!cols"] = [{ wch: 14 }, { wch: 8 }, { wch: 56 }, { wch: 8 }, { wch: 7 }, { wch: 13 }, { wch: 15 }, { wch: 12 }];
+  wsB["!cols"] = [
+    { wch: 14 },
+    { wch: 8 },
+    { wch: 56 },
+    { wch: 8 },
+    { wch: 7 },
+    { wch: 13 },
+    { wch: 15 },
+    { wch: 12 },
+  ];
   XLSX.utils.book_append_sheet(wb, wsB, "BBS");
 
   const plan = buildPlan(r);
   const pl: (string | number)[][] = [
     ["Stage plan and purchase plan"],
     [],
-    ["#", "Stage", "Start month", "Months", "Amount (Rs.)", "Cement (bags)", "Steel (kg)", "Sand (cft)", "Aggregate (cft)", "Bricks / blocks", "Tiles (sqft)"],
+    [
+      "#",
+      "Stage",
+      "Start month",
+      "Months",
+      "Amount (Rs.)",
+      "Cement (bags)",
+      "Steel (kg)",
+      "Sand (cft)",
+      "Aggregate (cft)",
+      "Bricks / blocks",
+      "Tiles (sqft)",
+    ],
   ];
   plan.stages.forEach((st, i) =>
     pl.push([
@@ -243,12 +430,31 @@ export async function downloadBoqExcel(r: BoqResult, title: string) {
       Math.round(st.mat.tiles ?? 0),
     ]),
   );
-  pl.push([], ["Month", "Spend (Rs.)", "Cumulative (Rs.)"], ...plan.months.map((m) => [m.month, m.spend, m.cumulative]));
+  pl.push(
+    [],
+    ["Month", "Spend (Rs.)", "Cumulative (Rs.)"],
+    ...plan.months.map((m) => [m.month, m.spend, m.cumulative]),
+  );
   const wsP = XLSX.utils.aoa_to_sheet(pl);
-  wsP["!cols"] = [{ wch: 7 }, { wch: 44 }, { wch: 12 }, { wch: 8 }, { wch: 14 }, { wch: 13 }, { wch: 11 }, { wch: 11 }, { wch: 14 }, { wch: 14 }, { wch: 12 }];
+  wsP["!cols"] = [
+    { wch: 7 },
+    { wch: 44 },
+    { wch: 12 },
+    { wch: 8 },
+    { wch: 14 },
+    { wch: 13 },
+    { wch: 11 },
+    { wch: 11 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 12 },
+  ];
   XLSX.utils.book_append_sheet(wb, wsP, "Plan");
 
-  XLSX.writeFile(wb, `BOQFather_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.xlsx`);
+  XLSX.writeFile(
+    wb,
+    `BOQFather_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.xlsx`,
+  );
 }
 
 /** PDF: abstract of cost + measurement book, BOQFather branding. */
@@ -284,7 +490,11 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
       .setFont("helvetica", "normal")
       .setFontSize(7.5)
       .setTextColor(92, 90, 85)
-      .text("Construction Estimates  |  BOQ  |  Measurement Book", M + 13, 19.2);
+      .text(
+        "Construction Estimates  |  BOQ  |  Measurement Book",
+        M + 13,
+        19.2,
+      );
     doc
       .setFont("helvetica", "bold")
       .setTextColor(...INK)
@@ -294,13 +504,26 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
       .setFont("helvetica", "normal")
       .setFontSize(7.5)
       .setTextColor(92, 90, 85)
-      .text(`Estimate No. ${estNo}   |   Date: ${date}`, W - M, 17.5, { align: "right" });
+      .text(`Estimate No. ${estNo}   |   Date: ${date}`, W - M, 17.5, {
+        align: "right",
+      });
     doc.setFillColor(...AMBER).rect(M, 23, W - 2 * M, 0.6, "F");
   };
   const base = {
     theme: "grid" as const,
-    styles: { font: "helvetica", fontSize: 7.6, cellPadding: 1.6, lineColor: [205, 200, 192] as [number, number, number], lineWidth: 0.2, textColor: INK },
-    headStyles: { fillColor: [236, 233, 226] as [number, number, number], textColor: INK, fontStyle: "bold" as const },
+    styles: {
+      font: "helvetica",
+      fontSize: 7.6,
+      cellPadding: 1.6,
+      lineColor: [205, 200, 192] as [number, number, number],
+      lineWidth: 0.2,
+      textColor: INK,
+    },
+    headStyles: {
+      fillColor: [236, 233, 226] as [number, number, number],
+      textColor: INK,
+      fontStyle: "bold" as const,
+    },
     margin: { left: M, right: M, top: 30, bottom: 18 },
     didDrawPage: header,
   };
@@ -311,7 +534,12 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     .setFontSize(14)
     .text(title.toUpperCase(), M, 33);
   doc.setFont("helvetica", "normal").setFontSize(8.5).setTextColor(70, 68, 62);
-  const fl = r.geometry.perFloor.map((p) => `${p.floor === 0 ? "GF" : r.geometry.floors > 2 ? `F${p.floor}` : "FF"} ${inr(p.builtUpSqft)}`).join(" + ");
+  const fl = r.geometry.perFloor
+    .map(
+      (p) =>
+        `${p.floor === 0 ? "GF" : r.geometry.floors > 2 ? `F${p.floor}` : "FF"} ${inr(p.builtUpSqft)}`,
+    )
+    .join(" + ");
   doc.text(
     `Built-up ${fl} = ${inr(r.geometry.builtUpSqft)} sqft  |  Columns 300x300, beams 230x400, slab 125 mm  |  M20, Fe500D  |  ${r.quality} finish, ${r.wall === "aac" ? "AAC" : "brick"} walls`,
     M,
@@ -321,7 +549,10 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
 
   let startAbs = 43;
   if (r.warnings.length) {
-    const lines = doc.splitTextToSize(r.warnings.map((w) => `- ${w.en}`).join("\n"), W - 2 * M - 6);
+    const lines = doc.splitTextToSize(
+      r.warnings.map((w) => `- ${w.en}`).join("\n"),
+      W - 2 * M - 6,
+    );
     const hBox = 7 + lines.length * 3.6;
     doc
       .setFillColor(255, 244, 214)
@@ -339,30 +570,96 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
       .text(lines, M + 3, 50);
     startAbs = 41.5 + hBox + 3;
   }
-  const body: (string | { content: string; colSpan?: number; styles?: object })[][] = [];
+  const body: (
+    string | { content: string; colSpan?: number; styles?: object }
+  )[][] = [];
   let sr = 0;
   for (const s of r.sections) {
-    body.push([{ content: `${s.code}. ${s.title.en.toUpperCase()}`, colSpan: 7, styles: { fillColor: [251, 243, 222], fontStyle: "bold" } }]);
-    for (const i of s.items) body.push([String(++sr), i.code, i.desc, i.unit, String(i.qty), inr(i.rate), inr(i.amount)]);
-    body.push(["", "", { content: "Sub-total", styles: { fontStyle: "bold" } }, "", "", "", { content: inr(s.subtotal), styles: { fontStyle: "bold" } }]);
+    body.push([
+      {
+        content: `${s.code}. ${s.title.en.toUpperCase()}`,
+        colSpan: 7,
+        styles: { fillColor: [251, 243, 222], fontStyle: "bold" },
+      },
+    ]);
+    for (const i of s.items)
+      body.push([
+        String(++sr),
+        i.code,
+        i.desc,
+        i.unit,
+        String(i.qty),
+        inr(i.rate),
+        inr(i.amount),
+      ]);
+    body.push([
+      "",
+      "",
+      { content: "Sub-total", styles: { fontStyle: "bold" } },
+      "",
+      "",
+      "",
+      { content: inr(s.subtotal), styles: { fontStyle: "bold" } },
+    ]);
   }
-  body.push(["", "", { content: "Total of all items", styles: { fontStyle: "bold" } }, "", "", "", { content: inr(r.itemsTotal), styles: { fontStyle: "bold" } }]);
+  body.push([
+    "",
+    "",
+    { content: "Total of all items", styles: { fontStyle: "bold" } },
+    "",
+    "",
+    "",
+    { content: inr(r.itemsTotal), styles: { fontStyle: "bold" } },
+  ]);
   body.push(["", "", "Contingency / misc. 5%", "", "", "", inr(r.contingency)]);
   body.push([
     { content: "", styles: { fillColor: [252, 231, 178] } },
     { content: "", styles: { fillColor: [252, 231, 178] } },
-    { content: "GRAND TOTAL", styles: { fontStyle: "bold", fillColor: [252, 231, 178] } },
+    {
+      content: "GRAND TOTAL",
+      styles: { fontStyle: "bold", fillColor: [252, 231, 178] },
+    },
     { content: "", styles: { fillColor: [252, 231, 178] } },
     { content: "", styles: { fillColor: [252, 231, 178] } },
     { content: "", styles: { fillColor: [252, 231, 178] } },
-    { content: inr(r.grandTotal), styles: { fontStyle: "bold", fillColor: [252, 231, 178] } },
+    {
+      content: inr(r.grandTotal),
+      styles: { fontStyle: "bold", fillColor: [252, 231, 178] },
+    },
   ]);
-  if (r.externalTotal) body.push(["", "", "of which external works (incl. 5%)", "", "", "", inr(r.externalTotal)]);
-  body.push(["", "", `House cost per sqft (${inr(r.geometry.builtUpSqft)} sqft${r.externalTotal ? ", external works excluded" : ""})`, "", "", "", inr(r.perSqft)]);
+  if (r.externalTotal)
+    body.push([
+      "",
+      "",
+      "of which external works (incl. 5%)",
+      "",
+      "",
+      "",
+      inr(r.externalTotal),
+    ]);
+  body.push([
+    "",
+    "",
+    `House cost per sqft (${inr(r.geometry.builtUpSqft)} sqft${r.externalTotal ? ", external works excluded" : ""})`,
+    "",
+    "",
+    "",
+    inr(r.perSqft),
+  ]);
   autoTable(doc, {
     ...base,
     startY: startAbs,
-    head: [["Sr", "MB item", "Description of work", "Unit", "Qty", "Rate (Rs.)", "Amount (Rs.)"]],
+    head: [
+      [
+        "Sr",
+        "MB item",
+        "Description of work",
+        "Unit",
+        "Qty",
+        "Rate (Rs.)",
+        "Amount (Rs.)",
+      ],
+    ],
     body,
     columnStyles: {
       0: { cellWidth: 8 },
@@ -390,9 +687,28 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     columnStyles: { 0: { cellWidth: 42, fontStyle: "bold" } },
   });
   // Floor plans (planning sketch), one floor per half page
-  const EXTRA: Record<string, string> = { stair: "Stair", corridor: "Passage", lobby: "Lobby", porch: "Porch", open: "Open sit-out", dress: "Dress", wash: "Wash" };
-  const nm = (t: string) => EXTRA[t] ?? (ROOM_DEFS[t as keyof typeof ROOM_DEFS]?.name.en ?? t).replace(" / living", "").replace(" / bath", "").replace(" / lobby", "");
-  const floorNames = ["GROUND FLOOR PLAN", "FIRST FLOOR PLAN", "SECOND FLOOR PLAN", "THIRD FLOOR PLAN"];
+  const EXTRA: Record<string, string> = {
+    stair: "Stair",
+    corridor: "Passage",
+    lobby: "Lobby",
+    porch: "Porch",
+    open: "Open sit-out",
+    dress: "Dress",
+    wash: "Wash",
+    terrace: "Open terrace",
+  };
+  const nm = (t: string) =>
+    EXTRA[t] ??
+    (ROOM_DEFS[t as keyof typeof ROOM_DEFS]?.name.en ?? t)
+      .replace(" / living", "")
+      .replace(" / bath", "")
+      .replace(" / lobby", "");
+  const floorNames = [
+    "GROUND FLOOR PLAN",
+    "FIRST FLOOR PLAN",
+    "SECOND FLOOR PLAN",
+    "THIRD FLOOR PLAN",
+  ];
   r.sketch.forEach((sk, i) => {
     const top = i % 2 === 0;
     if (top) {
@@ -401,19 +717,35 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     }
     const boxY = top ? 30 : 30 + (H - 30 - 18) / 2 + 2;
     const boxH = (H - 30 - 18) / 2 - 8;
-    const face = r.facing ? { N: "NORTH", E: "EAST", S: "SOUTH", W: "WEST" }[r.facing] : "";
-    const P = planPrimitives(sk.L, sk.B, sk.rects, nm, { wall: r.wall === "aac" ? 0.2 : 0.23, facing: r.facing, road: face ? `ROAD - ${face} FACING` : "ROAD / FRONT" });
+    const face = r.facing
+      ? { N: "NORTH", E: "EAST", S: "SOUTH", W: "WEST" }[r.facing]
+      : "";
+    const P = planPrimitives(sk.L, sk.B, sk.rects, nm, {
+      wall: r.wall === "aac" ? 0.2 : 0.23,
+      facing: r.facing,
+      road: face ? `ROAD - ${face} FACING` : "ROAD / FRONT",
+      upper: sk.floor > 0,
+    });
     doc
       .setTextColor(...INK)
       .setFont("helvetica", "bold")
       .setFontSize(11)
-      .text(`${floorNames[sk.floor] ?? `FLOOR ${sk.floor} PLAN`}  -  ${round(sk.L * 3.28084, 1)} x ${round(sk.B * 3.28084, 1)} ft`, M, boxY + 3);
+      .text(
+        `${floorNames[sk.floor] ?? `FLOOR ${sk.floor} PLAN`}  -  ${round(sk.L * 3.28084, 1)} x ${round(sk.B * 3.28084, 1)} ft`,
+        M,
+        boxY + 3,
+      );
     if (top)
       doc
         .setFont("helvetica", "normal")
         .setFontSize(7)
         .setTextColor(92, 90, 85)
-        .text("Drawn to scale from the room list - finalise with your architect and local bye-laws", W - M, boxY + 3, { align: "right" });
+        .text(
+          "Drawn to scale from the room list - finalise with your architect and local bye-laws",
+          W - M,
+          boxY + 3,
+          { align: "right" },
+        );
     const sc = Math.min((W - 2 * M) / P.bounds.w, (boxH - 6) / P.bounds.h);
     const ox = M + (W - 2 * M - P.bounds.w * sc) / 2 - P.bounds.x * sc;
     const oy = boxY + 6 - P.bounds.y * sc;
@@ -432,7 +764,20 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
   autoTable(doc, {
     ...base,
     startY: 37,
-    head: [["#", "Stage", "Month", "Amount (Rs.)", "Cement bags", "Steel kg", "Sand cft", "Agg. cft", "Bricks / blocks", "Tiles sqft"]],
+    head: [
+      [
+        "#",
+        "Stage",
+        "Month",
+        "Amount (Rs.)",
+        "Cement bags",
+        "Steel kg",
+        "Sand cft",
+        "Agg. cft",
+        "Bricks / blocks",
+        "Tiles sqft",
+      ],
+    ],
     body: plan.stages.map((st, i) => [
       String(i + 1),
       st.name.en,
@@ -462,7 +807,9 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
     ...base,
     startY: py,
     head: [["Month", ...plan.months.map((m) => String(m.month))]],
-    body: [["Spend (Rs. '000)", ...plan.months.map((m) => inr(m.spend / 1000))]],
+    body: [
+      ["Spend (Rs. '000)", ...plan.months.map((m) => inr(m.spend / 1000))],
+    ],
     styles: { ...base.styles, fontSize: 7, halign: "center" },
   });
 
@@ -477,20 +824,57 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
   autoTable(doc, {
     ...base,
     startY: 37,
-    head: [["Member", "Mark", "Description", "Dia", "Nos", "Cut L (m)", "Total L (m)", "kg"]],
+    head: [
+      [
+        "Member",
+        "Mark",
+        "Description",
+        "Dia",
+        "Nos",
+        "Cut L (m)",
+        "Total L (m)",
+        "kg",
+      ],
+    ],
     body: [
-      ...r.bbs.rows.map((x) => [x.member, x.mark, x.desc, String(x.dia), String(x.nos), String(x.cutLen), inr(x.totalLen), inr(x.kg)]),
+      ...r.bbs.rows.map((x) => [
+        x.member,
+        x.mark,
+        x.desc,
+        String(x.dia),
+        String(x.nos),
+        String(x.cutLen),
+        inr(x.totalLen),
+        inr(x.kg),
+      ]),
       [
         "",
         "",
-        { content: `Net ${inr(r.bbs.net)} kg + 3% wastage ${inr(r.bbs.wastage)} kg = TOTAL`, styles: { fontStyle: "bold" } },
+        {
+          content: `Net ${inr(r.bbs.net)} kg + 3% wastage ${inr(r.bbs.wastage)} kg = TOTAL`,
+          styles: { fontStyle: "bold" },
+        },
         "",
         "",
         "",
         "",
         { content: inr(r.bbs.total), styles: { fontStyle: "bold" } },
       ],
-      ["", "", { content: r.bbs.byDia.map((d) => `${d.dia} mm: ${inr(d.kg)} kg`).join("   "), styles: { fontStyle: "bold" } }, "", "", "", "", ""],
+      [
+        "",
+        "",
+        {
+          content: r.bbs.byDia
+            .map((d) => `${d.dia} mm: ${inr(d.kg)} kg`)
+            .join("   "),
+          styles: { fontStyle: "bold" },
+        },
+        "",
+        "",
+        "",
+        "",
+        "",
+      ],
     ],
     columnStyles: {
       0: { cellWidth: 20 },
@@ -517,12 +901,45 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
         ...base,
         startY: y,
         head: [
-          [{ content: `Item ${i.code}: ${i.desc}  (Basis: ${i.basis})`, colSpan: 8, styles: { fillColor: [251, 243, 222], halign: "left" } }],
-          ["Sr", "Description / location", "Nos", "L", "B", "H / D", "Qty", "Remarks"],
+          [
+            {
+              content: `Item ${i.code}: ${i.desc}  (Basis: ${i.basis})`,
+              colSpan: 8,
+              styles: { fillColor: [251, 243, 222], halign: "left" },
+            },
+          ],
+          [
+            "Sr",
+            "Description / location",
+            "Nos",
+            "L",
+            "B",
+            "H / D",
+            "Qty",
+            "Remarks",
+          ],
         ],
         body: [
-          ...i.rows.map((x, k) => [String(k + 1), x.desc, String(x.n), String(fmt(x.L)), String(fmt(x.B)), String(fmt(x.H)), String(round(x.q, i.dec || 0)), x.rem ?? ""]),
-          ["", { content: "TOTAL", styles: { fontStyle: "bold" } }, "", "", "", "", { content: `${i.qty} ${i.unit}`, styles: { fontStyle: "bold" } }, ""],
+          ...i.rows.map((x, k) => [
+            String(k + 1),
+            x.desc,
+            String(x.n),
+            String(fmt(x.L)),
+            String(fmt(x.B)),
+            String(fmt(x.H)),
+            String(round(x.q, i.dec || 0)),
+            x.rem ?? "",
+          ]),
+          [
+            "",
+            { content: "TOTAL", styles: { fontStyle: "bold" } },
+            "",
+            "",
+            "",
+            "",
+            { content: `${i.qty} ${i.unit}`, styles: { fontStyle: "bold" } },
+            "",
+          ],
         ],
         columnStyles: {
           0: { cellWidth: 8 },
@@ -547,7 +964,13 @@ export async function downloadBoqPdf(r0: BoqResult, title: string) {
       .setTextColor(92, 90, 85)
       .setFont("helvetica", "bold")
       .text("BOQFather", M, H - 8.5);
-    doc.setFont("helvetica", "normal").text("|  boqfather.in  |  Preliminary estimate from an assumed layout - verify with drawings and structural design", M + 15, H - 8.5);
+    doc
+      .setFont("helvetica", "normal")
+      .text(
+        "|  boqfather.in  |  Preliminary estimate from an assumed layout - verify with drawings and structural design",
+        M + 15,
+        H - 8.5,
+      );
     doc.text(`Page ${p} of ${pages}`, W - M, H - 8.5, { align: "right" });
   }
   doc.save(`BOQFather_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.pdf`);

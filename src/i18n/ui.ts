@@ -49,7 +49,8 @@ const en = {
   // home
   home_badge: "Built by a civil engineer · IS-code based · Free",
   home_h1: "Know the full cost of your house, item by item",
-  home_sub: "Enter the area — get cement, steel, bricks, labour and total cost instantly, with a detailed report and PDF.",
+  home_sub:
+    "Enter the area — get cement, steel, bricks, labour and total cost instantly, with a detailed report and PDF.",
   home_cta: "Calculate house cost",
   home_popular: "Popular calculators",
   home_how: "How it works",
@@ -63,13 +64,15 @@ const en = {
   home_trust_d:
     "Every formula follows IS 456 / IS 1200 practice and shows its working, so engineers and contractors can check it line by line.",
   home_pro_t: "Coming soon: Detailed estimate from your plan",
-  home_pro_d: "Upload your plan — get abstract of cost, measurement book and bar bending schedule automatically.",
+  home_pro_d:
+    "Upload your plan — get abstract of cost, measurement book and bar bending schedule automatically.",
   home_why_t: "Why BOQFather",
   home_why_1: "Other calculators give a guess. BOQFather gives the working.",
   home_why_2: "Hindi and English, metric and feet-inch.",
   home_why_3: "Editable rates — use your market or SOR rates.",
   calculators_h1: "Construction calculators",
-  calculators_sub: "Free, accurate calculators for every stage of construction — with step-by-step working.",
+  calculators_sub:
+    "Free, accurate calculators for every stage of construction — with step-by-step working.",
   open: "Open",
   // house
   area_per_floor: "Built-up area per floor (sqft)",
@@ -99,7 +102,8 @@ const en = {
   share: "Share",
   timeline: "Approx. construction time",
   months: "months",
-  detailed_cta: "Need item-wise BOQ with measurement book? Detailed estimate is coming soon.",
+  detailed_cta:
+    "Need item-wise BOQ with measurement book? Detailed estimate is coming soon.",
 };
 
 type Dict = typeof en;
@@ -152,7 +156,8 @@ const hi: Dict = {
   print: "प्रिंट",
   home_badge: "सिविल इंजीनियर द्वारा बनाया · IS कोड आधारित · मुफ़्त",
   home_h1: "घर का पूरा हिसाब, एक क्लिक में",
-  home_sub: "एरिया डालें — सीमेंट, सरिया, ईंट, मज़दूरी और कुल खर्च तुरंत, विस्तृत रिपोर्ट और PDF के साथ।",
+  home_sub:
+    "एरिया डालें — सीमेंट, सरिया, ईंट, मज़दूरी और कुल खर्च तुरंत, विस्तृत रिपोर्ट और PDF के साथ।",
   home_cta: "घर का खर्च निकालें",
   home_popular: "लोकप्रिय कैलकुलेटर",
   home_how: "कैसे काम करता है",
@@ -163,15 +168,18 @@ const hi: Dict = {
   home_step3_t: "PDF / WhatsApp",
   home_step3_d: "रिपोर्ट डाउनलोड करें या ग्राहक को भेजें",
   home_trust_t: "सिर्फ़ डेवलपर नहीं, सिविल इंजीनियर ने बनाया",
-  home_trust_d: "हर फ़ॉर्मूला IS 456 / IS 1200 के अनुसार है और पूरी गणना दिखाता है, ताकि इंजीनियर और ठेकेदार लाइन-दर-लाइन जांच सकें।",
+  home_trust_d:
+    "हर फ़ॉर्मूला IS 456 / IS 1200 के अनुसार है और पूरी गणना दिखाता है, ताकि इंजीनियर और ठेकेदार लाइन-दर-लाइन जांच सकें।",
   home_pro_t: "जल्द आ रहा है: नक्शे से विस्तृत एस्टिमेट",
-  home_pro_d: "अपना नक्शा अपलोड करें — एब्स्ट्रैक्ट ऑफ़ कॉस्ट, मेज़रमेंट बुक और BBS अपने आप।",
+  home_pro_d:
+    "अपना नक्शा अपलोड करें — एब्स्ट्रैक्ट ऑफ़ कॉस्ट, मेज़रमेंट बुक और BBS अपने आप।",
   home_why_t: "BOQFather क्यों",
   home_why_1: "बाकी कैलकुलेटर अंदाज़ा देते हैं, BOQFather पूरी गणना देता है।",
   home_why_2: "हिंदी और अंग्रेज़ी, मीटर और फ़ीट-इंच दोनों में।",
   home_why_3: "रेट बदल सकते हैं — अपने बाज़ार या SOR के रेट डालें।",
   calculators_h1: "निर्माण कैलकुलेटर",
-  calculators_sub: "निर्माण के हर चरण के लिए मुफ़्त और सटीक कैलकुलेटर — पूरी गणना के साथ।",
+  calculators_sub:
+    "निर्माण के हर चरण के लिए मुफ़्त और सटीक कैलकुलेटर — पूरी गणना के साथ।",
   open: "खोलें",
   area_per_floor: "हर मंज़िल का बिल्ट-अप एरिया (sqft)",
   floors: "मंज़िलें",
@@ -200,7 +208,8 @@ const hi: Dict = {
   share: "हिस्सा",
   timeline: "निर्माण का अनुमानित समय",
   months: "महीने",
-  detailed_cta: "मेज़रमेंट बुक के साथ आइटम-वार BOQ चाहिए? विस्तृत एस्टिमेट जल्द आ रहा है।",
+  detailed_cta:
+    "मेज़रमेंट बुक के साथ आइटम-वार BOQ चाहिए? विस्तृत एस्टिमेट जल्द आ रहा है।",
 };
 
 const dicts: Record<Lang, Dict> = { en, hi };
@@ -222,9 +231,15 @@ export const NAMES: Record<string, { en: string; hi: string }> = {
   nos: { en: "nos", hi: "नग" },
   sqft: { en: "sqft", hi: "sqft" },
   litre: { en: "litre", hi: "लीटर" },
-  site_excavation: { en: "Site preparation & excavation", hi: "साइट तैयारी और खुदाई" },
+  site_excavation: {
+    en: "Site preparation & excavation",
+    hi: "साइट तैयारी और खुदाई",
+  },
   foundation_plinth: { en: "Foundation & plinth", hi: "नींव और प्लिंथ" },
-  rcc_structure: { en: "RCC structure (columns, beams, slabs)", hi: "RCC ढांचा (कॉलम, बीम, स्लैब)" },
+  rcc_structure: {
+    en: "RCC structure (columns, beams, slabs)",
+    hi: "RCC ढांचा (कॉलम, बीम, स्लैब)",
+  },
   brickwork: { en: "Brickwork", hi: "ईंट की चिनाई" },
   plaster: { en: "Plastering", hi: "प्लास्टर" },
   flooring: { en: "Flooring & tiling", hi: "फ़र्श और टाइल्स" },
@@ -233,22 +248,40 @@ export const NAMES: Record<string, { en: string; hi: string }> = {
   plumbing: { en: "Plumbing & sanitary", hi: "प्लंबिंग और सैनिटरी" },
   painting: { en: "Painting", hi: "पेंटिंग" },
   waterproofing: { en: "Waterproofing", hi: "वॉटरप्रूफिंग" },
-  staircase_misc: { en: "Staircase, parapet & misc.", hi: "सीढ़ी, पैरापेट और अन्य" },
+  staircase_misc: {
+    en: "Staircase, parapet & misc.",
+    hi: "सीढ़ी, पैरापेट और अन्य",
+  },
   contingency: { en: "Contingency", hi: "आकस्मिक खर्च" },
   materials: { en: "Materials", hi: "सामग्री" },
   labour: { en: "Labour", hi: "मज़दूरी" },
-  equipment: { en: "Equipment, transport & misc.", hi: "मशीनरी, ढुलाई और अन्य" },
+  equipment: {
+    en: "Equipment, transport & misc.",
+    hi: "मशीनरी, ढुलाई और अन्य",
+  },
   booking: { en: "On agreement / booking", hi: "एग्रीमेंट / बुकिंग पर" },
   foundation: { en: "Foundation complete", hi: "नींव पूरी" },
   plinth: { en: "Plinth complete", hi: "प्लिंथ पूरा" },
   slab: { en: "slab cast", hi: "स्लैब ढलाई" },
-  plaster_flooring: { en: "Plaster & flooring complete", hi: "प्लास्टर और फ़र्श पूरा" },
+  plaster_flooring: {
+    en: "Plaster & flooring complete",
+    hi: "प्लास्टर और फ़र्श पूरा",
+  },
   handover: { en: "Finishing & handover", hi: "फ़िनिशिंग और हैंडओवर" },
 };
 export const name = (key: string, lang: Lang) => NAMES[key]?.[lang] ?? key;
 
 export function floorName(i: number, lang: Lang) {
-  if (lang === "hi") return ["ग्राउंड फ़्लोर", "पहली मंज़िल", "दूसरी मंज़िल", "तीसरी मंज़िल", "चौथी मंज़िल"].at(i) ?? `${i} मंज़िल`;
+  if (lang === "hi")
+    return (
+      [
+        "ग्राउंड फ़्लोर",
+        "पहली मंज़िल",
+        "दूसरी मंज़िल",
+        "तीसरी मंज़िल",
+        "चौथी मंज़िल",
+      ].at(i) ?? `${i} मंज़िल`
+    );
   if (i === 0) return "Ground floor";
   const suffix = i === 1 ? "st" : i === 2 ? "nd" : i === 3 ? "rd" : "th";
   return `${i}${suffix} floor`;

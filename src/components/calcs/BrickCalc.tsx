@@ -1,11 +1,33 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { areaToM2, BRICK_SIZES, BrickSize, calcBrickwork, inr, LengthUnit, MORTAR_RATIOS, MortarRatio, round } from "@/engine";
+import {
+  areaToM2,
+  BRICK_SIZES,
+  BrickSize,
+  calcBrickwork,
+  inr,
+  LengthUnit,
+  MORTAR_RATIOS,
+  MortarRatio,
+  round,
+} from "@/engine";
 import { t } from "@/i18n/ui";
 import type { Lang } from "@/lib/site";
-import { dimToM, NumberField, num, Segmented, SelectField } from "@/components/ui/Fields";
-import { CalcFrame, Invalid, ResultPanel, WhatsAppShare, Working } from "@/components/ui/Results";
+import {
+  dimToM,
+  NumberField,
+  num,
+  Segmented,
+  SelectField,
+} from "@/components/ui/Fields";
+import {
+  CalcFrame,
+  Invalid,
+  ResultPanel,
+  WhatsAppShare,
+  Working,
+} from "@/components/ui/Results";
 import { areaSuffix, UnitToggle, unitSuffix } from "./shared";
 
 const BRICK_LABEL: Record<BrickSize, { en: string; hi: string }> = {
@@ -39,9 +61,21 @@ export default function BrickCalc({ lang }: { lang: Lang }) {
   };
 
   const res = useMemo(() => {
-    const l = dimToM(L, unit), h = dimToM(H, unit), o = num(open || "0"), w = num(wastage);
-    if (![l, h, o, w].every((x) => Number.isFinite(x) && x >= 0) || l * h <= 0) return null;
-    return calcBrickwork({ lengthM: l, heightM: h, thicknessM: Number(thk), openingsM2: areaToM2(o, unit), brick, ratio, brickWastagePct: w });
+    const l = dimToM(L, unit),
+      h = dimToM(H, unit),
+      o = num(open || "0"),
+      w = num(wastage);
+    if (![l, h, o, w].every((x) => Number.isFinite(x) && x >= 0) || l * h <= 0)
+      return null;
+    return calcBrickwork({
+      lengthM: l,
+      heightM: h,
+      thicknessM: Number(thk),
+      openingsM2: areaToM2(o, unit),
+      brick,
+      ratio,
+      brickWastagePct: w,
+    });
   }, [L, H, thk, open, brick, ratio, wastage, unit]);
 
   const u = unitSuffix(unit);
@@ -52,34 +86,67 @@ export default function BrickCalc({ lang }: { lang: Lang }) {
         <>
           <UnitToggle lang={lang} unit={unit} onChange={changeUnit} />
           <div className="grid grid-cols-2 gap-3">
-            <NumberField label={d.length} value={L} onChange={setL} suffix={u} inputMode="text" />
-            <NumberField label={d.height} value={H} onChange={setH} suffix={u} inputMode="text" />
+            <NumberField
+              label={d.length}
+              value={L}
+              onChange={setL}
+              suffix={u}
+              inputMode="text"
+            />
+            <NumberField
+              label={d.height}
+              value={H}
+              onChange={setH}
+              suffix={u}
+              inputMode="text"
+            />
           </div>
           <Segmented
             label={d.thickness}
             value={thk}
             onChange={setThk}
             options={[
-              { value: "0.23", label: lang === "hi" ? "9 इंच (230 mm)" : "9 inch (230 mm)" },
-              { value: "0.115", label: lang === "hi" ? "4.5 इंच (115 mm)" : "4.5 inch (115 mm)" },
+              {
+                value: "0.23",
+                label: lang === "hi" ? "9 इंच (230 mm)" : "9 inch (230 mm)",
+              },
+              {
+                value: "0.115",
+                label: lang === "hi" ? "4.5 इंच (115 mm)" : "4.5 inch (115 mm)",
+              },
             ]}
           />
-          <NumberField label={d.openings} value={open} onChange={setOpen} suffix={areaSuffix(unit)} />
+          <NumberField
+            label={d.openings}
+            value={open}
+            onChange={setOpen}
+            suffix={areaSuffix(unit)}
+          />
           <div className="grid grid-cols-2 gap-3">
             <SelectField
               label={d.brick_size}
               value={brick}
               onChange={setBrick}
-              options={(Object.keys(BRICK_SIZES) as BrickSize[]).map((k) => ({ value: k, label: BRICK_LABEL[k][lang] }))}
+              options={(Object.keys(BRICK_SIZES) as BrickSize[]).map((k) => ({
+                value: k,
+                label: BRICK_LABEL[k][lang],
+              }))}
             />
             <SelectField
               label={d.mortar}
               value={ratio}
               onChange={setRatio}
-              options={(Object.keys(MORTAR_RATIOS) as MortarRatio[]).map((k) => ({ value: k, label: `CM ${k}` }))}
+              options={(Object.keys(MORTAR_RATIOS) as MortarRatio[]).map(
+                (k) => ({ value: k, label: `CM ${k}` }),
+              )}
             />
           </div>
-          <NumberField label={d.wastage} value={wastage} onChange={setWastage} suffix="%" />
+          <NumberField
+            label={d.wastage}
+            value={wastage}
+            onChange={setWastage}
+            suffix="%"
+          />
         </>
       }
       result={
@@ -88,10 +155,29 @@ export default function BrickCalc({ lang }: { lang: Lang }) {
             <ResultPanel
               lang={lang}
               stats={[
-                { label: d.bricks, value: `${inr(v.bricksWithWastage)}`, sub: lang === "hi" ? `टूट-फूट सहित (${inr(v.bricks)} नेट)` : `incl. breakage (${inr(v.bricks)} net)` },
-                { label: d.cement, value: `${round(v.cementBags, 1)} ${d.bags}`, sub: `CM ${ratio}` },
-                { label: d.sand, value: `${round(v.sandCft, 1)} cft`, sub: `${round(v.sandM3, 2)} m³` },
-                { label: d.volume, value: `${round(v.volumeM3, 2)} m³`, sub: lang === "hi" ? "नेट चिनाई" : "net brickwork" },
+                {
+                  label: d.bricks,
+                  value: `${inr(v.bricksWithWastage)}`,
+                  sub:
+                    lang === "hi"
+                      ? `टूट-फूट सहित (${inr(v.bricks)} नेट)`
+                      : `incl. breakage (${inr(v.bricks)} net)`,
+                },
+                {
+                  label: d.cement,
+                  value: `${round(v.cementBags, 1)} ${d.bags}`,
+                  sub: `CM ${ratio}`,
+                },
+                {
+                  label: d.sand,
+                  value: `${round(v.sandCft, 1)} cft`,
+                  sub: `${round(v.sandM3, 2)} m³`,
+                },
+                {
+                  label: d.volume,
+                  value: `${round(v.volumeM3, 2)} m³`,
+                  sub: lang === "hi" ? "नेट चिनाई" : "net brickwork",
+                },
               ]}
             />
             <WhatsAppShare
@@ -103,7 +189,15 @@ export default function BrickCalc({ lang }: { lang: Lang }) {
           <Invalid lang={lang} />
         )
       }
-      working={res && <Working lang={lang} steps={res.steps} assumptions={res.assumptions} />}
+      working={
+        res && (
+          <Working
+            lang={lang}
+            steps={res.steps}
+            assumptions={res.assumptions}
+          />
+        )
+      }
     />
   );
 }

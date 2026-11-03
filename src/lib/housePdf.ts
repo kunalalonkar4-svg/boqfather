@@ -31,7 +31,11 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.setTextColor(92, 90, 85);
-    doc.text("Construction Estimates  |  BOQ  |  Measurement Book", M + 13, 19.2);
+    doc.text(
+      "Construction Estimates  |  BOQ  |  Measurement Book",
+      M + 13,
+      19.2,
+    );
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...INK);
     doc.setFontSize(8);
@@ -39,7 +43,9 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.setTextColor(92, 90, 85);
-    doc.text(`Estimate No. ${estNo}   |   Date: ${date}`, W - M, 17.5, { align: "right" });
+    doc.text(`Estimate No. ${estNo}   |   Date: ${date}`, W - M, 17.5, {
+      align: "right",
+    });
     doc.setFillColor(...AMBER);
     doc.rect(M, 23, W - 2 * M, 0.6, "F");
   };
@@ -54,15 +60,30 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
       doc.setFont("helvetica", "bold");
       doc.text("BOQFather", M, H - 8.5);
       doc.setFont("helvetica", "normal");
-      doc.text("|  boqfather.in  |  Preliminary estimate (thumb rules) - not a structural design", M + 15, H - 8.5);
+      doc.text(
+        "|  boqfather.in  |  Preliminary estimate (thumb rules) - not a structural design",
+        M + 15,
+        H - 8.5,
+      );
       doc.text(`Page ${i} of ${pages}`, W - M, H - 8.5, { align: "right" });
     }
   };
 
   const tableStyle = {
     theme: "grid" as const,
-    styles: { font: "helvetica", fontSize: 8.5, cellPadding: 2, lineColor: [210, 205, 196] as [number, number, number], lineWidth: 0.2, textColor: INK },
-    headStyles: { fillColor: INK, textColor: [255, 255, 255] as [number, number, number], fontStyle: "bold" as const },
+    styles: {
+      font: "helvetica",
+      fontSize: 8.5,
+      cellPadding: 2,
+      lineColor: [210, 205, 196] as [number, number, number],
+      lineWidth: 0.2,
+      textColor: INK,
+    },
+    headStyles: {
+      fillColor: INK,
+      textColor: [255, 255, 255] as [number, number, number],
+      fontStyle: "bold" as const,
+    },
     alternateRowStyles: { fillColor: GROUND },
     margin: { left: M, right: M, top: 30 },
     didDrawPage: header,
@@ -98,20 +119,36 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
   doc.text(rs(v.total), M + 6, y + 19);
   doc.setFontSize(11);
   doc.setTextColor(...AMBER);
-  doc.text(`${rs(v.ratePerSqft)} per sqft`, W - M - 6, y + 12, { align: "right" });
+  doc.text(`${rs(v.ratePerSqft)} per sqft`, W - M - 6, y + 12, {
+    align: "right",
+  });
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.5);
   doc.setTextColor(207, 203, 194);
-  doc.text(`Likely range: ${rs(v.low)} - ${rs(v.high)}`, W - M - 6, y + 19, { align: "right" });
-  doc.text(`Approx. time: ${v.months} months`, W - M - 6, y + 24, { align: "right" });
+  doc.text(`Likely range: ${rs(v.low)} - ${rs(v.high)}`, W - M - 6, y + 19, {
+    align: "right",
+  });
+  doc.text(`Approx. time: ${v.months} months`, W - M - 6, y + 24, {
+    align: "right",
+  });
   y += 34;
 
   autoTable(doc, {
     ...tableStyle,
     startY: y,
     head: [["Material", "Thumb rule (per sqft)", "Quantity", "Rate", "Amount"]],
-    body: v.materials.map((m) => [name(m.key, "en"), `${m.perSqft} ${m.unit}`, `${inr(round(m.qty))} ${m.unit}`, `Rs. ${inr(m.rate)}`, rs(m.amount)]),
-    columnStyles: { 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" } },
+    body: v.materials.map((m) => [
+      name(m.key, "en"),
+      `${m.perSqft} ${m.unit}`,
+      `${inr(round(m.qty))} ${m.unit}`,
+      `Rs. ${inr(m.rate)}`,
+      rs(m.amount),
+    ]),
+    columnStyles: {
+      2: { halign: "right" },
+      3: { halign: "right" },
+      4: { halign: "right" },
+    },
   });
   // @ts-expect-error lastAutoTable is added by the plugin
   y = doc.lastAutoTable.finalY + 6;
@@ -120,9 +157,18 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
     ...tableStyle,
     startY: y,
     head: [["#", "Stage", "Share", "Amount"]],
-    body: v.phases.map((p, i) => [String(i + 1), name(p.key, "en"), `${p.pct}%`, rs(p.amount)]),
+    body: v.phases.map((p, i) => [
+      String(i + 1),
+      name(p.key, "en"),
+      `${p.pct}%`,
+      rs(p.amount),
+    ]),
     foot: [["", "Total", "100%", rs(v.total)]],
-    footStyles: { fillColor: [252, 231, 178], textColor: INK, fontStyle: "bold" },
+    footStyles: {
+      fillColor: [252, 231, 178],
+      textColor: INK,
+      fontStyle: "bold",
+    },
     columnStyles: { 2: { halign: "right" }, 3: { halign: "right" } },
   });
   // @ts-expect-error lastAutoTable is added by the plugin
@@ -144,12 +190,18 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
     head: [["#", "Payment milestone", "Share", "Amount", "Cumulative"]],
     body: v.payments.map((p, i) => [
       String(i + 1),
-      p.key === "slab" ? `${floorName(p.floor ?? 0, "en")} roof slab cast` : name(p.key, "en"),
+      p.key === "slab"
+        ? `${floorName(p.floor ?? 0, "en")} roof slab cast`
+        : name(p.key, "en"),
       `${round(p.pct, 1)}%`,
       rs(p.amount),
       rs(p.cumulative),
     ]),
-    columnStyles: { 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" } },
+    columnStyles: {
+      2: { halign: "right" },
+      3: { halign: "right" },
+      4: { halign: "right" },
+    },
   });
   // @ts-expect-error lastAutoTable is added by the plugin
   y = doc.lastAutoTable.finalY + 8;
@@ -180,5 +232,7 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
   });
 
   footer();
-  doc.save(`BOQFather_House_Estimate_${inr(v.totalSqft).replace(/,/g, "")}sqft.pdf`);
+  doc.save(
+    `BOQFather_House_Estimate_${inr(v.totalSqft).replace(/,/g, "")}sqft.pdf`,
+  );
 }

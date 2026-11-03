@@ -1,7 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BoqQuality, BoqResult, buildPlan, inr, lakhWords, loanPlan, round, rupees } from "@/engine";
+import {
+  BoqQuality,
+  BoqResult,
+  buildPlan,
+  inr,
+  lakhWords,
+  loanPlan,
+  round,
+  rupees,
+} from "@/engine";
 import type { Lang } from "@/lib/site";
 import { planPrimitives } from "@/lib/planDraw";
 
@@ -9,10 +18,20 @@ const FT = 3.28084;
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
 
 const FLOOR = (i: number, lang: Lang) =>
-  lang === "hi" ? ["ग्राउंड फ़्लोर", "पहली मंज़िल", "दूसरी मंज़िल", "तीसरी मंज़िल"][i] : ["Ground floor", "First floor", "Second floor", "Third floor"][i];
+  lang === "hi"
+    ? ["ग्राउंड फ़्लोर", "पहली मंज़िल", "दूसरी मंज़िल", "तीसरी मंज़िल"][i]
+    : ["Ground floor", "First floor", "Second floor", "Third floor"][i];
 
 /** Architect-style planning sketch of every floor (front / road at the bottom). */
-export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; names: (t: string) => string }) {
+export function SketchPanel({
+  r,
+  lang,
+  names,
+}: {
+  r: BoqResult;
+  lang: Lang;
+  names: (t: string) => string;
+}) {
   const EXTRA: Record<string, [string, string]> = {
     stair: ["Stair", "सीढ़ी"],
     corridor: ["Passage", "पैसेज"],
@@ -21,12 +40,20 @@ export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; name
     open: ["Open sit-out", "खुला सिट-आउट"],
     dress: ["Dress", "ड्रेस"],
     wash: ["Wash", "वॉश"],
+    terrace: ["Open terrace", "खुली छत"],
   };
   const nm = (t: string) =>
     EXTRA[t]
       ? L(lang, EXTRA[t][0], EXTRA[t][1])
-      : names(t).replace(" / living", "").replace(" / bath", "").replace(" / lobby", "").replace(" / लिविंग", "").replace(" / बाथ", "").replace(" / लॉबी", "");
-  const rgb = (c?: [number, number, number]) => (c ? `rgb(${c[0]},${c[1]},${c[2]})` : "none");
+      : names(t)
+          .replace(" / living", "")
+          .replace(" / bath", "")
+          .replace(" / lobby", "")
+          .replace(" / लिविंग", "")
+          .replace(" / बाथ", "")
+          .replace(" / लॉबी", "");
+  const rgb = (c?: [number, number, number]) =>
+    c ? `rgb(${c[0]},${c[1]},${c[2]})` : "none";
   return (
     <div className="flex flex-col gap-5">
       <p className="text-[13px] text-muted">
@@ -38,12 +65,37 @@ export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; name
       </p>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {r.sketch.map((s) => {
-          const face = r.facing ? { N: ["NORTH", "उत्तर"], E: ["EAST", "पूर्व"], S: ["SOUTH", "दक्षिण"], W: ["WEST", "पश्चिम"] }[r.facing] : null;
+          const face = r.facing
+            ? {
+                N: ["NORTH", "उत्तर"],
+                E: ["EAST", "पूर्व"],
+                S: ["SOUTH", "दक्षिण"],
+                W: ["WEST", "पश्चिम"],
+              }[r.facing]
+            : null;
           const P = planPrimitives(s.L, s.B, s.rects, nm, {
-            road: face ? L(lang, `ROAD — ${face[0]} FACING`, `सड़क — ${face[1]} मुखी`) : L(lang, "ROAD / FRONT", "सड़क / सामने"),
+            road: face
+              ? L(lang, `ROAD — ${face[0]} FACING`, `सड़क — ${face[1]} मुखी`)
+              : L(lang, "ROAD / FRONT", "सड़क / सामने"),
             up: L(lang, "UP", "ऊपर"),
             facing: r.facing,
             north: L(lang, "N", "उ"),
+            upper: s.floor > 0,
+            title: L(
+              lang,
+              [
+                "GROUND FLOOR PLAN",
+                "FIRST FLOOR PLAN",
+                "SECOND FLOOR PLAN",
+                "THIRD FLOOR PLAN",
+              ][s.floor] ?? "FLOOR PLAN",
+              [
+                "ग्राउंड फ़्लोर प्लान",
+                "पहली मंज़िल प्लान",
+                "दूसरी मंज़िल प्लान",
+                "तीसरी मंज़िल प्लान",
+              ][s.floor] ?? "प्लान",
+            ),
           });
           const b = P.bounds;
           return (
@@ -54,12 +106,35 @@ export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; name
                   {round(s.L * FT, 1)} × {round(s.B * FT, 1)} ft
                 </span>
               </figcaption>
-              <svg viewBox={`${b.x} ${b.y} ${b.w} ${b.h}`} className="h-auto w-full rounded-xl border border-line bg-white" role="img" aria-label={`${FLOOR(s.floor, lang)} plan`}>
+              <svg
+                viewBox={`${b.x} ${b.y} ${b.w} ${b.h}`}
+                className="h-auto w-full rounded-xl border border-line bg-white"
+                role="img"
+                aria-label={`${FLOOR(s.floor, lang)} plan`}
+              >
                 {P.rects.map((x, i) => (
-                  <rect key={`r${i}`} x={x.x} y={x.y} width={x.w} height={x.h} fill={rgb(x.fill)} stroke={rgb(x.stroke)} strokeWidth={x.sw ?? 0} />
+                  <rect
+                    key={`r${i}`}
+                    x={x.x}
+                    y={x.y}
+                    width={x.w}
+                    height={x.h}
+                    fill={rgb(x.fill)}
+                    stroke={rgb(x.stroke)}
+                    strokeWidth={x.sw ?? 0}
+                  />
                 ))}
                 {P.lines.map((x, i) => (
-                  <line key={`l${i}`} x1={x.x1} y1={x.y1} x2={x.x2} y2={x.y2} stroke={rgb(x.color)} strokeWidth={x.sw} strokeDasharray={x.dash ? "0.15 0.1" : undefined} />
+                  <line
+                    key={`l${i}`}
+                    x1={x.x1}
+                    y1={x.y1}
+                    x2={x.x2}
+                    y2={x.y2}
+                    stroke={rgb(x.color)}
+                    strokeWidth={x.sw}
+                    strokeDasharray={x.dash ? "0.15 0.1" : undefined}
+                  />
                 ))}
                 {P.curves.map((c, i) => (
                   <path
@@ -79,7 +154,9 @@ export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; name
                     fontWeight={t.bold ? 700 : 400}
                     fill={rgb(t.color)}
                     textAnchor={t.anchor}
-                    transform={t.rotate ? `rotate(${t.rotate} ${t.x} ${t.y})` : undefined}
+                    transform={
+                      t.rotate ? `rotate(${t.rotate} ${t.x} ${t.y})` : undefined
+                    }
                   >
                     {t.text}
                   </text>
@@ -94,23 +171,38 @@ export function SketchPanel({ r, lang, names }: { r: BoqResult; lang: Lang; name
 }
 
 export function SpecPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
-  const q = { basic: L(lang, "Basic", "बेसिक"), standard: L(lang, "Standard", "स्टैंडर्ड"), premium: L(lang, "Premium", "प्रीमियम") }[r.quality];
+  const q = {
+    basic: L(lang, "Basic", "बेसिक"),
+    standard: L(lang, "Standard", "स्टैंडर्ड"),
+    premium: L(lang, "Premium", "प्रीमियम"),
+  }[r.quality];
   return (
     <div className="flex flex-col gap-3">
       <p className="text-[14px]">
         {L(lang, "Specification for", "स्पेसिफ़िकेशन")}: <strong>{q}</strong> ·{" "}
-        {L(lang, "change the finish level in Step 3 and the rates change with it.", "स्टेप 3 में क्वालिटी बदलें, रेट भी साथ बदलेंगे।")}
+        {L(
+          lang,
+          "change the finish level in Step 3 and the rates change with it.",
+          "स्टेप 3 में क्वालिटी बदलें, रेट भी साथ बदलेंगे।",
+        )}
       </p>
       <ul className="flex flex-col divide-y divide-[#f0ece5] rounded-xl border border-line">
         {r.specSheet.map((s) => (
-          <li key={s.key} className="grid grid-cols-1 gap-1 px-4 py-3 sm:grid-cols-[200px_minmax(0,1fr)] sm:gap-4">
+          <li
+            key={s.key}
+            className="grid grid-cols-1 gap-1 px-4 py-3 sm:grid-cols-[200px_minmax(0,1fr)] sm:gap-4"
+          >
             <span className="text-[14px] font-bold">{s.item[lang]}</span>
             <span className="text-[14px] text-body">{s.spec[lang]}</span>
           </li>
         ))}
       </ul>
       <p className="text-[12px] text-muted">
-        {L(lang, "Brands are indicative; write the exact brand and model in your contract.", "ब्रांड सांकेतिक हैं; ठेके में सही ब्रांड और मॉडल लिखवाएं।")}
+        {L(
+          lang,
+          "Brands are indicative; write the exact brand and model in your contract.",
+          "ब्रांड सांकेतिक हैं; ठेके में सही ब्रांड और मॉडल लिखवाएं।",
+        )}
       </p>
     </div>
   );
@@ -123,28 +215,41 @@ export function BbsPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {b.byDia.map((d) => (
-          <div key={d.dia} className="rounded-xl border border-line bg-[#fcfbf8] p-3">
+          <div
+            key={d.dia}
+            className="rounded-xl border border-line bg-[#fcfbf8] p-3"
+          >
             <div className="text-[12px] text-muted">{d.dia} mm</div>
             <div className="text-[17px] font-bold">{inr(d.kg)} kg</div>
           </div>
         ))}
       </div>
       <p className="text-[14px]">
-        {L(lang, "BBS total", "BBS कुल")}: <strong>{inr(b.total)} kg</strong> ({inr(b.net)} + {L(lang, "3% wastage", "3% वेस्टेज")}) ·{" "}
-        {L(lang, "thumb rule would give", "थंब रूल से")} {inr(r.steelThumbKg)} kg ({diff >= 0 ? "+" : ""}
+        {L(lang, "BBS total", "BBS कुल")}: <strong>{inr(b.total)} kg</strong> (
+        {inr(b.net)} + {L(lang, "3% wastage", "3% वेस्टेज")}) ·{" "}
+        {L(lang, "thumb rule would give", "थंब रूल से")} {inr(r.steelThumbKg)}{" "}
+        kg ({diff >= 0 ? "+" : ""}
         {Math.round(diff)}%)
       </p>
       <div className="overflow-x-auto rounded-xl border border-line">
         <table className="w-full min-w-[640px] border-collapse text-[12.5px]">
           <thead>
             <tr className="bg-[#f5f3ef] text-left text-muted">
-              <th className="px-2 py-2 font-semibold">{L(lang, "Member", "सदस्य")}</th>
+              <th className="px-2 py-2 font-semibold">
+                {L(lang, "Member", "सदस्य")}
+              </th>
               <th className="px-2 py-2 font-semibold">Mark</th>
-              <th className="px-2 py-2 font-semibold">{L(lang, "Description", "विवरण")}</th>
+              <th className="px-2 py-2 font-semibold">
+                {L(lang, "Description", "विवरण")}
+              </th>
               <th className="px-2 py-2 text-right font-semibold">Dia</th>
               <th className="px-2 py-2 text-right font-semibold">Nos</th>
-              <th className="px-2 py-2 text-right font-semibold">{L(lang, "Cut length m", "कटिंग लंबाई m")}</th>
-              <th className="px-2 py-2 text-right font-semibold">{L(lang, "Total m", "कुल m")}</th>
+              <th className="px-2 py-2 text-right font-semibold">
+                {L(lang, "Cut length m", "कटिंग लंबाई m")}
+              </th>
+              <th className="px-2 py-2 text-right font-semibold">
+                {L(lang, "Total m", "कुल m")}
+              </th>
               <th className="px-2 py-2 text-right font-semibold">kg</th>
             </tr>
           </thead>
@@ -152,13 +257,17 @@ export function BbsPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
             {b.rows.map((x) => (
               <tr key={x.mark + x.desc} className="border-t border-[#f0ece5]">
                 <td className="px-2 py-1.5">{x.member}</td>
-                <td className="px-2 py-1.5 font-semibold text-amber-dark">{x.mark}</td>
+                <td className="px-2 py-1.5 font-semibold text-amber-dark">
+                  {x.mark}
+                </td>
                 <td className="px-2 py-1.5">{x.desc}</td>
                 <td className="px-2 py-1.5 text-right">{x.dia}</td>
                 <td className="px-2 py-1.5 text-right">{x.nos}</td>
                 <td className="px-2 py-1.5 text-right">{x.cutLen}</td>
                 <td className="px-2 py-1.5 text-right">{inr(x.totalLen)}</td>
-                <td className="px-2 py-1.5 text-right font-semibold">{inr(x.kg)}</td>
+                <td className="px-2 py-1.5 text-right font-semibold">
+                  {inr(x.kg)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -185,38 +294,72 @@ const MAT_LABEL: Record<string, { en: string; hi: string; unit: string }> = {
 
 export function PlanPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
   const plan = useMemo(() => buildPlan(r), [r]);
-  const [loanL, setLoanL] = useState(String(Math.round((r.grandTotal * 0.6) / 100000)));
+  const [loanL, setLoanL] = useState(
+    String(Math.round((r.grandTotal * 0.6) / 100000)),
+  );
   const [rate, setRate] = useState("8.5");
   const [years, setYears] = useState("20");
-  const loan = useMemo(() => loanPlan(plan, r.grandTotal, Number(loanL) * 100000 || 0, Number(rate) || 0, Number(years) || 1), [plan, r.grandTotal, loanL, rate, years]);
+  const loan = useMemo(
+    () =>
+      loanPlan(
+        plan,
+        r.grandTotal,
+        Number(loanL) * 100000 || 0,
+        Number(rate) || 0,
+        Number(years) || 1,
+      ),
+    [plan, r.grandTotal, loanL, rate, years],
+  );
   const maxM = Math.max(...plan.months.map((m) => m.spend), 1);
-  const stageName = (k: string) => plan.stages.find((s) => s.key === k)?.name[lang] ?? k;
+  const stageName = (k: string) =>
+    plan.stages.find((s) => s.key === k)?.name[lang] ?? k;
   return (
     <div className="flex flex-col gap-6">
       <section>
         <h3 className="font-display text-[17px] font-bold">
-          {L(lang, "Stage plan and what to buy", "चरण प्लान और कब क्या ख़रीदें")} · {plan.totalMonths} {L(lang, "months", "महीने")}
+          {L(
+            lang,
+            "Stage plan and what to buy",
+            "चरण प्लान और कब क्या ख़रीदें",
+          )}{" "}
+          · {plan.totalMonths} {L(lang, "months", "महीने")}
         </h3>
         <ol className="mt-3 flex flex-col gap-2">
           {plan.stages.map((s, i) => {
-            const mats = Object.entries(s.mat).filter(([, q]) => (q ?? 0) > 0.5);
+            const mats = Object.entries(s.mat).filter(
+              ([, q]) => (q ?? 0) > 0.5,
+            );
             return (
               <li key={s.key} className="rounded-xl border border-line p-3">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                   <span className="text-[14px] font-bold">
                     {i + 1}. {s.name[lang]}
                   </span>
-                  <span className="text-[14px] font-bold">{rupees(s.amount)}</span>
+                  <span className="text-[14px] font-bold">
+                    {rupees(s.amount)}
+                  </span>
                 </div>
                 <div className="mt-0.5 text-[12.5px] text-muted">
-                  {L(lang, "Month", "महीना")} {round(s.start + 1, 1)} – {round(s.start + s.months + 1, 1)} · {L(lang, "items", "आइटम")} {s.items.join(", ")}
+                  {L(lang, "Month", "महीना")} {round(s.start + 1, 1)} –{" "}
+                  {round(s.start + s.months + 1, 1)} ·{" "}
+                  {L(lang, "items", "आइटम")} {s.items.join(", ")}
                 </div>
                 {mats.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    <span className="text-[12px] font-semibold text-steel">{L(lang, "Buy before this stage:", "इस चरण से पहले ख़रीदें:")}</span>
+                    <span className="text-[12px] font-semibold text-steel">
+                      {L(
+                        lang,
+                        "Buy before this stage:",
+                        "इस चरण से पहले ख़रीदें:",
+                      )}
+                    </span>
                     {mats.map(([k, q]) => (
-                      <span key={k} className="rounded-full bg-[#efece6] px-2 py-0.5 text-[12px]">
-                        {MAT_LABEL[k]?.[lang] ?? k} {inr(q ?? 0)} {MAT_LABEL[k]?.unit}
+                      <span
+                        key={k}
+                        className="rounded-full bg-[#efece6] px-2 py-0.5 text-[12px]"
+                      >
+                        {MAT_LABEL[k]?.[lang] ?? k} {inr(q ?? 0)}{" "}
+                        {MAT_LABEL[k]?.unit}
                       </span>
                     ))}
                   </div>
@@ -228,27 +371,41 @@ export function PlanPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
       </section>
 
       <section>
-        <h3 className="font-display text-[17px] font-bold">{L(lang, "Month-by-month spend", "महीने-वार खर्च")}</h3>
+        <h3 className="font-display text-[17px] font-bold">
+          {L(lang, "Month-by-month spend", "महीने-वार खर्च")}
+        </h3>
         <ul className="mt-3 flex flex-col gap-1.5">
           {plan.months.map((m) => (
-            <li key={m.month} className="grid grid-cols-[64px_minmax(0,1fr)_96px] items-center gap-2 text-[13px]">
+            <li
+              key={m.month}
+              className="grid grid-cols-[64px_minmax(0,1fr)_96px] items-center gap-2 text-[13px]"
+            >
               <span className="text-muted">
                 {L(lang, "Month", "महीना")} {m.month}
               </span>
               <span className="flex flex-col gap-0.5">
                 <span className="block h-3 rounded-full bg-[#f0ece5]">
-                  <span className="block h-3 rounded-full bg-amber" style={{ width: `${(m.spend / maxM) * 100}%` }} />
+                  <span
+                    className="block h-3 rounded-full bg-amber"
+                    style={{ width: `${(m.spend / maxM) * 100}%` }}
+                  />
                 </span>
-                <span className="truncate text-[11.5px] text-muted">{m.stages.map(stageName).join(" · ")}</span>
+                <span className="truncate text-[11.5px] text-muted">
+                  {m.stages.map(stageName).join(" · ")}
+                </span>
               </span>
-              <span className="text-right font-semibold">{rupees(m.spend)}</span>
+              <span className="text-right font-semibold">
+                {rupees(m.spend)}
+              </span>
             </li>
           ))}
         </ul>
       </section>
 
       <section className="rounded-xl border border-line p-4">
-        <h3 className="font-display text-[17px] font-bold">{L(lang, "Home loan: EMI and pre-EMI", "होम लोन: EMI और प्री-EMI")}</h3>
+        <h3 className="font-display text-[17px] font-bold">
+          {L(lang, "Home loan: EMI and pre-EMI", "होम लोन: EMI और प्री-EMI")}
+        </h3>
         <div className="mt-3 grid grid-cols-3 gap-2">
           {(
             [
@@ -257,7 +414,10 @@ export function PlanPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
               [L(lang, "Years", "साल"), years, setYears],
             ] as const
           ).map(([lbl, v, set]) => (
-            <label key={lbl} className="flex flex-col gap-1 text-[12.5px] font-semibold">
+            <label
+              key={lbl}
+              className="flex flex-col gap-1 text-[12.5px] font-semibold"
+            >
               {lbl}
               <input
                 inputMode="decimal"
@@ -274,16 +434,26 @@ export function PlanPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
             <dd className="text-[16px] font-bold">{rupees(loan.emi)}</dd>
           </div>
           <div className="rounded-lg bg-[#fcfbf8] p-2.5">
-            <dt className="text-muted">{L(lang, "Your own money", "आपका अपना पैसा")}</dt>
+            <dt className="text-muted">
+              {L(lang, "Your own money", "आपका अपना पैसा")}
+            </dt>
             <dd className="text-[16px] font-bold">₹{lakhWords(loan.own)}</dd>
           </div>
           <div className="rounded-lg bg-[#fcfbf8] p-2.5">
-            <dt className="text-muted">{L(lang, "Pre-EMI during build", "निर्माण के दौरान प्री-EMI")}</dt>
-            <dd className="text-[16px] font-bold">{rupees(loan.preEmiTotal)}</dd>
+            <dt className="text-muted">
+              {L(lang, "Pre-EMI during build", "निर्माण के दौरान प्री-EMI")}
+            </dt>
+            <dd className="text-[16px] font-bold">
+              {rupees(loan.preEmiTotal)}
+            </dd>
           </div>
           <div className="rounded-lg bg-[#fcfbf8] p-2.5">
-            <dt className="text-muted">{L(lang, "Total interest", "कुल ब्याज")}</dt>
-            <dd className="text-[16px] font-bold">₹{lakhWords(loan.totalInterest)}</dd>
+            <dt className="text-muted">
+              {L(lang, "Total interest", "कुल ब्याज")}
+            </dt>
+            <dd className="text-[16px] font-bold">
+              ₹{lakhWords(loan.totalInterest)}
+            </dd>
           </div>
         </dl>
         <div className="mt-3 overflow-x-auto">
@@ -291,10 +461,18 @@ export function PlanPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
             <thead>
               <tr className="bg-[#f5f3ef] text-left text-muted">
                 <th className="px-2 py-1.5">{L(lang, "Month", "महीना")}</th>
-                <th className="px-2 py-1.5 text-right">{L(lang, "Spend", "खर्च")}</th>
-                <th className="px-2 py-1.5 text-right">{L(lang, "Own", "अपना")}</th>
-                <th className="px-2 py-1.5 text-right">{L(lang, "Loan", "लोन")}</th>
-                <th className="px-2 py-1.5 text-right">{L(lang, "Pre-EMI", "प्री-EMI")}</th>
+                <th className="px-2 py-1.5 text-right">
+                  {L(lang, "Spend", "खर्च")}
+                </th>
+                <th className="px-2 py-1.5 text-right">
+                  {L(lang, "Own", "अपना")}
+                </th>
+                <th className="px-2 py-1.5 text-right">
+                  {L(lang, "Loan", "लोन")}
+                </th>
+                <th className="px-2 py-1.5 text-right">
+                  {L(lang, "Pre-EMI", "प्री-EMI")}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -322,15 +500,34 @@ export function PlanPanel({ r, lang }: { r: BoqResult; lang: Lang }) {
   );
 }
 
-export function ComparePanel({ r, lang, run }: { r: BoqResult; lang: Lang; run: (q: BoqQuality, wall: "brick" | "aac") => BoqResult }) {
+export function ComparePanel({
+  r,
+  lang,
+  run,
+}: {
+  r: BoqResult;
+  lang: Lang;
+  run: (q: BoqQuality, wall: "brick" | "aac") => BoqResult;
+}) {
   const grid = useMemo(() => {
     const qs: BoqQuality[] = ["basic", "standard", "premium"];
     return qs.map((q) => ({ q, brick: run(q, "brick"), aac: run(q, "aac") }));
   }, [run]);
-  const qName = (q: BoqQuality) => ({ basic: L(lang, "Basic", "बेसिक"), standard: L(lang, "Standard", "स्टैंडर्ड"), premium: L(lang, "Premium", "प्रीमियम") })[q];
+  const qName = (q: BoqQuality) =>
+    ({
+      basic: L(lang, "Basic", "बेसिक"),
+      standard: L(lang, "Standard", "स्टैंडर्ड"),
+      premium: L(lang, "Premium", "प्रीमियम"),
+    })[q];
   const cell = (x: BoqResult, on: boolean) => (
-    <td className={"px-3 py-2.5 text-right " + (on ? "bg-amber-tint font-bold" : "")}>
-      <div className="text-[14px] font-semibold">₹{lakhWords(x.grandTotal)}</div>
+    <td
+      className={
+        "px-3 py-2.5 text-right " + (on ? "bg-amber-tint font-bold" : "")
+      }
+    >
+      <div className="text-[14px] font-semibold">
+        ₹{lakhWords(x.grandTotal)}
+      </div>
       <div className="text-[12px] text-muted">{rupees(x.perSqft)}/sqft</div>
     </td>
   );
@@ -342,15 +539,23 @@ export function ComparePanel({ r, lang, run }: { r: BoqResult; lang: Lang; run: 
         <table className="w-full min-w-[420px] border-collapse">
           <thead>
             <tr className="bg-[#f5f3ef] text-left text-[13px] text-muted">
-              <th className="px-3 py-2">{L(lang, "Finish level", "क्वालिटी")}</th>
-              <th className="px-3 py-2 text-right">{L(lang, "Brick walls", "ईंट की दीवार")}</th>
-              <th className="px-3 py-2 text-right">{L(lang, "AAC block walls", "AAC ब्लॉक दीवार")}</th>
+              <th className="px-3 py-2">
+                {L(lang, "Finish level", "क्वालिटी")}
+              </th>
+              <th className="px-3 py-2 text-right">
+                {L(lang, "Brick walls", "ईंट की दीवार")}
+              </th>
+              <th className="px-3 py-2 text-right">
+                {L(lang, "AAC block walls", "AAC ब्लॉक दीवार")}
+              </th>
             </tr>
           </thead>
           <tbody>
             {grid.map((g) => (
               <tr key={g.q} className="border-t border-[#f0ece5]">
-                <td className="px-3 py-2.5 text-[14px] font-semibold">{qName(g.q)}</td>
+                <td className="px-3 py-2.5 text-[14px] font-semibold">
+                  {qName(g.q)}
+                </td>
                 {cell(g.brick, r.quality === g.q && r.wall === "brick")}
                 {cell(g.aac, r.quality === g.q && r.wall === "aac")}
               </tr>
@@ -360,7 +565,15 @@ export function ComparePanel({ r, lang, run }: { r: BoqResult; lang: Lang; run: 
       </div>
       <ul className="list-disc space-y-1.5 pl-5 text-[13.5px] text-body">
         <li>
-          {L(lang, "AAC blocks vs bricks (standard)", "AAC ब्लॉक बनाम ईंट (स्टैंडर्ड)")}: {aacSave >= 0 ? L(lang, "saves", "बचत") : L(lang, "costs extra", "ज़्यादा खर्च")}{" "}
+          {L(
+            lang,
+            "AAC blocks vs bricks (standard)",
+            "AAC ब्लॉक बनाम ईंट (स्टैंडर्ड)",
+          )}
+          :{" "}
+          {aacSave >= 0
+            ? L(lang, "saves", "बचत")
+            : L(lang, "costs extra", "ज़्यादा खर्च")}{" "}
           <strong>{rupees(Math.abs(aacSave))}</strong>.{" "}
           {L(
             lang,
@@ -369,7 +582,10 @@ export function ComparePanel({ r, lang, run }: { r: BoqResult; lang: Lang; run: 
           )}
         </li>
         <li>
-          {L(lang, "Premium vs basic finish", "प्रीमियम बनाम बेसिक")}: <strong>₹{lakhWords(grid[2].brick.grandTotal - grid[0].brick.grandTotal)}</strong>{" "}
+          {L(lang, "Premium vs basic finish", "प्रीमियम बनाम बेसिक")}:{" "}
+          <strong>
+            ₹{lakhWords(grid[2].brick.grandTotal - grid[0].brick.grandTotal)}
+          </strong>{" "}
           {L(
             lang,
             "difference — the structure is the same, only finishes, doors, windows and fittings change.",
@@ -377,9 +593,17 @@ export function ComparePanel({ r, lang, run }: { r: BoqResult; lang: Lang; run: 
           )}
         </li>
         <li>
-          {L(lang, "Steel by BBS", "BBS से सरिया")}: {inr(r.bbs.total)} kg · {L(lang, "by thumb rule", "थंब रूल से")} {inr(r.steelThumbKg)} kg ({L(lang, "difference", "फ़र्क")}{" "}
+          {L(lang, "Steel by BBS", "BBS से सरिया")}: {inr(r.bbs.total)} kg ·{" "}
+          {L(lang, "by thumb rule", "थंब रूल से")} {inr(r.steelThumbKg)} kg (
+          {L(lang, "difference", "फ़र्क")}{" "}
           {inr(Math.abs(r.steelThumbKg - r.bbs.total))} kg ≈{" "}
-          {rupees(Math.abs(r.steelThumbKg - r.bbs.total) * (r.sections.flatMap((s) => s.items).find((i) => i.rateKey === "steel")?.rate ?? 72))}).
+          {rupees(
+            Math.abs(r.steelThumbKg - r.bbs.total) *
+              (r.sections
+                .flatMap((s) => s.items)
+                .find((i) => i.rateKey === "steel")?.rate ?? 72),
+          )}
+          ).
         </li>
       </ul>
     </div>

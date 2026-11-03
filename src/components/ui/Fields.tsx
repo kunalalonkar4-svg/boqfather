@@ -29,10 +29,14 @@ export function NumberField(props: {
           onChange={(e) => props.onChange(e.target.value)}
         />
         {props.suffix && (
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[13px] text-muted">{props.suffix}</span>
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[13px] text-muted">
+            {props.suffix}
+          </span>
         )}
       </div>
-      {props.hint && <span className="text-[12px] text-muted">{props.hint}</span>}
+      {props.hint && (
+        <span className="text-[12px] text-muted">{props.hint}</span>
+      )}
     </div>
   );
 }
@@ -49,7 +53,12 @@ export function SelectField<T extends string>(props: {
       <label htmlFor={id} className="text-[13px] font-semibold text-body">
         {props.label}
       </label>
-      <select id={id} className={inputCls} value={props.value} onChange={(e) => props.onChange(e.target.value as T)}>
+      <select
+        id={id}
+        className={inputCls}
+        value={props.value}
+        onChange={(e) => props.onChange(e.target.value as T)}
+      >
         {props.options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
@@ -69,7 +78,11 @@ export function Segmented<T extends string>(props: {
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-[13px] font-semibold text-body">{props.label}</span>
-      <div role="radiogroup" aria-label={props.label} className="flex flex-wrap gap-1 rounded-xl bg-[#efece6] p-1">
+      <div
+        role="radiogroup"
+        aria-label={props.label}
+        className="flex flex-wrap gap-1 rounded-xl bg-[#efece6] p-1"
+      >
         {props.options.map((o) => {
           const on = o.value === props.value;
           return (
@@ -81,7 +94,9 @@ export function Segmented<T extends string>(props: {
               onClick={() => props.onChange(o.value)}
               className={
                 "min-h-10 flex-1 rounded-lg px-3 text-[14px] transition " +
-                (on ? "bg-white font-bold text-ink shadow-sm" : "font-semibold text-muted hover:text-ink")
+                (on
+                  ? "bg-white font-bold text-ink shadow-sm"
+                  : "font-semibold text-muted hover:text-ink")
               }
             >
               {o.label}
@@ -108,5 +123,14 @@ export const num = (text: string) => {
 };
 
 export function Card(props: { children: React.ReactNode; className?: string }) {
-  return <section className={"rounded-2xl border border-line bg-white p-5 sm:p-6 " + (props.className ?? "")}>{props.children}</section>;
+  return (
+    <section
+      className={
+        "rounded-2xl border border-line bg-white p-5 sm:p-6 " +
+        (props.className ?? "")
+      }
+    >
+      {props.children}
+    </section>
+  );
 }
