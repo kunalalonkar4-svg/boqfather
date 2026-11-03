@@ -42,7 +42,7 @@ export function PlansGallery({
   const bhks = [...new Set(plans.map((p) => p.bhk))].sort();
 
   return (
-    <section className="relative overflow-hidden bg-[#0b0e14] py-24 text-white sm:py-32">
+    <section className="relative overflow-hidden bg-[#0b0e14] py-16 text-white sm:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-4">
@@ -50,7 +50,7 @@ export function PlansGallery({
               <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-amber">
                 {L(lang, "07 — House plans", "07 — घर के नक्शे")}
               </p>
-              <h2 className="font-display mt-3 max-w-3xl text-[38px] font-black uppercase leading-[0.95] tracking-tight [font-stretch:115%] sm:text-[58px]">
+              <h2 className="font-display mt-3 max-w-3xl text-[28px] font-black uppercase leading-[0.95] tracking-tight sm:text-[40px]">
                 {L(lang, `${plans.length} plans. Every one priced.`, `${plans.length} नक्शे। हर एक का खर्च।`)}
               </h2>
             </div>

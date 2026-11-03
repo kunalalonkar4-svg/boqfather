@@ -130,7 +130,7 @@ export function PlanToEstimate({
             <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-amber">
               {L(lang, "04 — Plan to estimate · Pro", "04 — नक्शे से एस्टिमेट · प्रो")}
             </p>
-            <h2 className="font-display mt-3 text-[38px] font-black uppercase leading-[0.95] tracking-tight [font-stretch:115%] sm:text-[58px]">
+            <h2 className="font-display mt-3 text-[28px] font-black uppercase leading-[0.95] tracking-tight sm:text-[40px]">
               {L(lang, "Your plan in. The estimate out.", "नक्शा डालिए। एस्टिमेट पाइए।")}
             </h2>
             <ol className="mt-8 flex flex-col gap-1">

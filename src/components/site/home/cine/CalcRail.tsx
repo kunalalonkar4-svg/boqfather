@@ -143,7 +143,7 @@ export function CalcRail({ lang, cards, allHref }: { lang: Lang; cards: CalcCard
             <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-amber">
               {L(lang, "05 — Engineering calculators", "05 — इंजीनियरिंग कैलकुलेटर")}
             </p>
-            <h2 className="font-display mt-3 text-[38px] font-black uppercase leading-[0.95] tracking-tight [font-stretch:115%] sm:text-[58px]">
+            <h2 className="font-display mt-3 text-[28px] font-black uppercase leading-[0.95] tracking-tight sm:text-[40px]">
               {L(lang, "Every quantity on site.", "साइट की हर मात्रा।")}
             </h2>
           </div>

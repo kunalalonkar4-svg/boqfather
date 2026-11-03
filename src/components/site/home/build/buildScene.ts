@@ -668,6 +668,8 @@ export function createBuildScene(
       camPos.z = Math.sin(ang) * r;
       camPos.y += Math.sin(a * 1.7) * 0.4;
     }
+    // hero: step back so the whole house and its garden are in view
+    if (opts.frame === "hero") camPos.sub(camTgt).multiplyScalar(1.45).add(camTgt);
     // narrow (portrait) screens: step back so the whole house stays in frame
     if (camera.aspect < 1.25) {
       const k = Math.min(2.1, Math.pow(1.25 / camera.aspect, 0.95));

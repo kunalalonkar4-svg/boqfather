@@ -46,7 +46,7 @@ export function Reports({
   const t = tabs[i];
 
   return (
-    <section className="relative overflow-hidden bg-night py-24 text-white sm:py-32">
+    <section className="relative overflow-hidden bg-night py-16 text-white sm:py-20">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -left-40 bottom-0 h-[520px] w-[520px] rounded-full bg-amber/10 blur-[140px]"
@@ -56,7 +56,7 @@ export function Reports({
           <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-amber">
             {L(lang, "06 — Engineering reports", "06 — इंजीनियरिंग रिपोर्ट")}
           </p>
-          <h2 className="font-display mt-3 max-w-4xl text-[38px] font-black uppercase leading-[0.95] tracking-tight [font-stretch:115%] sm:text-[58px]">
+          <h2 className="font-display mt-3 max-w-4xl text-[28px] font-black uppercase leading-[0.95] tracking-tight sm:text-[40px]">
             {L(lang, "Reports a site engineer would sign.", "ऐसी रिपोर्ट, जिस पर साइट इंजीनियर साइन करे।")}
           </h2>
         </Reveal>
@@ -82,7 +82,7 @@ export function Reports({
         </div>
         <div className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)]">
           <div key={t.key} className="stage-in">
-            <h3 className="font-display text-[28px] font-extrabold leading-tight sm:text-[34px]">{t.title}</h3>
+            <h3 className="font-display text-[28px] font-extrabold leading-tight sm:text-[26px]">{t.title}</h3>
             <ul className="mt-5 flex flex-col gap-3">
               {t.points.map((p) => (
                 <li key={p} className="flex gap-3 text-[15px] leading-relaxed text-white/70">

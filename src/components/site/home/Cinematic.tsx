@@ -288,7 +288,7 @@ export function Cinematic({ lang }: { lang: Lang }) {
         <PlansGallery lang={lang} plans={plans} allHref={langPath(lang, "naksha")} boqHref={langPath(lang, "house-boq-estimate")} />
 
         {/* 08 — final call */}
-        <section className="relative overflow-hidden bg-night px-5 py-28 text-white sm:px-8 sm:py-40">
+        <section className="relative overflow-hidden bg-night px-5 py-20 text-white sm:px-8 sm:py-28">
           <img
             src="/home/hero-house.webp"
             alt=""
@@ -298,7 +298,7 @@ export function Cinematic({ lang }: { lang: Lang }) {
           />
           <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,9,11,0.55)_0%,#08090b_75%)]" />
           <Reveal className="relative mx-auto max-w-5xl text-center">
-            <h2 className="font-display text-[44px] font-black uppercase leading-[0.92] tracking-tight [font-stretch:115%] sm:text-[92px]">
+            <h2 className="font-display text-[34px] font-black uppercase leading-[0.92] tracking-tight sm:text-[60px]">
               {L(lang, "Before you build.", "बनाने से पहले,")}
               <br />
               <span className="text-amber">{L(lang, "Know what it costs.", "खर्च जानिए।")}</span>

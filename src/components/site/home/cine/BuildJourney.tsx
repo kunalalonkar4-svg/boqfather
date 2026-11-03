@@ -122,7 +122,7 @@ export function BuildJourney({
       <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-amber">
         {L(lang, "02 — Plot to home", "02 — प्लॉट से घर")}
       </p>
-      <h2 className="font-display mt-3 max-w-3xl text-[36px] font-black uppercase leading-[0.95] tracking-tight [font-stretch:115%] sm:text-[60px]">
+      <h2 className="font-display mt-3 max-w-3xl text-[28px] font-black uppercase leading-[0.95] tracking-tight sm:text-[44px]">
         {L(lang, "Watch it get built. Know what each stage costs.", "घर बनते देखिए। हर स्टेज का खर्च जानिए।")}
       </h2>
     </div>
@@ -175,7 +175,7 @@ export function BuildJourney({
             <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-amber">
               {L(lang, "Plot to home", "प्लॉट से घर")} · {String(i + 1).padStart(2, "0")} / 08
             </p>
-            <h2 key={st.title} className="stage-in font-display mt-3 text-[34px] font-black uppercase leading-[0.95] tracking-tight [font-stretch:112%] sm:text-[54px]">
+            <h2 key={st.title} className="stage-in font-display mt-3 text-[26px] font-black uppercase leading-[0.95] tracking-tight sm:text-[38px]">
               {st.title}
             </h2>
             <p key={`d${i}`} className="stage-in mt-4 text-[15px] leading-relaxed text-white/75 sm:text-[17px]">
@@ -196,7 +196,7 @@ export function BuildJourney({
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-white/55">
                   {L(lang, "BOQ cost so far", "अब तक का BOQ खर्च")}
                 </p>
-                <p className="font-display text-[26px] font-extrabold tabular-nums sm:text-[34px]">
+                <p className="font-display text-[26px] font-extrabold tabular-nums sm:text-[26px]">
                   {lakh(stages[i].costSoFar, lang)}
                   <span className="text-[15px] font-semibold text-white/45"> / {lakh(total, lang)}</span>
                 </p>

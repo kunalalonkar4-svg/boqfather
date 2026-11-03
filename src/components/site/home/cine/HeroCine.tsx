@@ -85,7 +85,7 @@ export function HeroCine({
   return (
     <section
       ref={root}
-      className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden bg-night text-white"
+      className="relative isolate flex min-h-[88svh] flex-col justify-end overflow-hidden bg-night text-white"
     >
       {/* still render (always there; the live scene fades in over it) */}
       <picture>
@@ -106,12 +106,12 @@ export function HeroCine({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(8,9,11,0.92)_0%,rgba(8,9,11,0.6)_38%,rgba(8,9,11,0)_68%),linear-gradient(0deg,#08090b_0%,rgba(8,9,11,0)_35%)]"
       />
-      <div ref={copy} className="mx-auto w-full max-w-7xl px-5 pb-10 pt-28 sm:px-8 lg:pb-14">
+      <div ref={copy} className="mx-auto w-full max-w-7xl px-5 pb-8 pt-24 sm:px-8 lg:pb-10">
         <p className="reveal-up mb-6 inline-flex max-w-full items-center gap-2 rounded-2xl border border-amber/40 bg-amber/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-amber sm:rounded-full sm:text-[12px] sm:tracking-[0.22em]">
           <span className="h-1.5 w-1.5 rounded-full bg-amber shadow-[0_0_10px_#c6f432]" />
           {L(lang, "The engineer's way to build smarter", "समझदारी से घर बनाने का इंजीनियर वाला तरीका")}
         </p>
-        <h1 className="font-display max-w-4xl text-[44px] font-black leading-[0.95] tracking-[-0.02em] [font-stretch:115%] sm:text-[76px] lg:text-[96px]">
+        <h1 className="font-display max-w-4xl text-[34px] font-black leading-[0.95] tracking-[-0.02em] sm:text-[50px] lg:text-[64px]">
           {lines.map((l, i) => (
             <span key={l} className="block overflow-hidden pb-[0.06em]">
               <span
@@ -150,7 +150,7 @@ export function HeroCine({
             {L(lang, "Explore house plans", "घर के नक्शे देखें")}
           </Link>
         </div>
-        <div className="reveal-up mt-14 flex items-end justify-between gap-6" style={{ animationDelay: "1000ms" }}>
+        <div className="reveal-up mt-10 flex items-end justify-between gap-6" style={{ animationDelay: "1000ms" }}>
           <dl className="grid grid-cols-2 gap-x-8 gap-y-3 sm:flex sm:gap-10">
             {stats.map(([v, k]) => (
               <div key={k}>

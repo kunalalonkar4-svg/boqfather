@@ -45,7 +45,7 @@ export function BoqShowcase({
   href: string;
 }) {
   return (
-    <section id="features" className="relative overflow-hidden bg-night py-24 text-white sm:py-32">
+    <section id="features" className="relative overflow-hidden bg-night py-16 text-white sm:py-20">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-40 top-20 h-[520px] w-[520px] rounded-full bg-glow/20 blur-[120px]"
@@ -55,7 +55,7 @@ export function BoqShowcase({
           <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-amber">
             {L(lang, "03 — Item-wise BOQ", "03 — आइटम-वार BOQ")}
           </p>
-          <h2 className="font-display mt-3 text-[40px] font-black uppercase leading-[0.92] tracking-tight [font-stretch:115%] sm:text-[80px]">
+          <h2 className="font-display mt-3 text-[30px] font-black uppercase leading-[0.92] tracking-tight sm:text-[56px]">
             {L(lang, "Every rupee.", "हर रुपया।")}
             <br />
             <span className="text-white/35">{L(lang, "Item by item.", "आइटम-दर-आइटम।")}</span>
@@ -69,7 +69,7 @@ export function BoqShowcase({
                 <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-white/55">
                   {L(lang, "Total construction cost", "कुल निर्माण खर्च")}
                 </p>
-                <p className="font-display mt-2 text-[44px] font-black leading-none tracking-tight text-amber sm:text-[60px]">
+                <p className="font-display mt-2 text-[34px] font-black leading-none tracking-tight text-amber sm:text-[44px]">
                   ₹<CountUp to={Math.round(total)} ms={1800} />
                 </p>
                 <p className="mt-3 text-[14px] text-white/60">
