@@ -14,12 +14,13 @@ import {
   nakshaTitle,
 } from "@/content/naksha";
 import { PLOTS } from "@/content/plots";
+import { nakshaPreview } from "@/content/nakshaPreview";
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import { SiteFooter, SiteHeader } from "../Chrome";
 import HeroQuick from "../HeroQuick";
 import { BeforeAfter } from "./BeforeAfter";
-import { HeroDemo } from "./HeroDemo";
+import { EstimateDemo } from "./EstimateDemo";
 import { CountUp, Reveal } from "./Motion";
 
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
@@ -180,11 +181,30 @@ export function HomeV2({ lang }: { lang: Lang }) {
   }));
 
   const stats: [number, string][] = [
-    [NAKSHE.length, L(lang, "Vastu nakshe", "वास्तु नक्शे")],
-    [PLOTS.length, L(lang, "plot sizes", "प्लॉट साइज़")],
-    [CITIES.length, L(lang, "city rates", "शहरों के रेट")],
+    [CALCULATORS.length, L(lang, "calculators", "कैलकुलेटर")],
     [items, L(lang, "BOQ items per house", "BOQ आइटम हर घर में")],
+    [CITIES.length, L(lang, "city rates", "शहरों के रेट")],
+    [NAKSHE.length, L(lang, "nakshe in 3D", "नक्शे, 3D में")],
     [CHECKLIST_COUNT, L(lang, "site checks with videos", "साइट जांच, वीडियो के साथ")],
+  ];
+  const heads = topSections.slice(0, 5).map((s) => ({
+    label: s.title[lang],
+    value: lakh(s.subtotal, lang),
+    share: s.subtotal / maxSec,
+  }));
+  const demoMaterials = [
+    {
+      label: L(lang, "Cement", "सीमेंट"),
+      value: `${Math.round(mat("cement")).toLocaleString("en-IN")} ${L(lang, "bags", "बैग")}`,
+    },
+    {
+      label: L(lang, "Steel", "सरिया"),
+      value: `${(mat("steel") / 1000).toLocaleString("en-IN", { maximumFractionDigits: 1 })} ${L(lang, "t", "टन")}`,
+    },
+    {
+      label: L(lang, "Bricks", "ईंट"),
+      value: `${(Math.round(mat("bricks") / 100) * 100).toLocaleString("en-IN")}`,
+    },
   ];
 
   const jsonLd = {
@@ -286,11 +306,11 @@ export function HomeV2({ lang }: { lang: Lang }) {
                   "सिविल इंजीनियर द्वारा · IS 456 / IS 1200 आधारित",
                 )}
               </span>
-              <h1 className="font-display text-[42px] font-extrabold leading-[1.02] tracking-tight text-balance sm:text-[62px]">
-                {L(lang, "See your whole house ", "घर बनाने से पहले, ")}
+              <h1 className="font-display text-[40px] font-extrabold leading-[1.04] tracking-tight text-balance sm:text-[60px]">
+                {L(lang, "The full cost of your house, ", "घर बनाने का पूरा खर्च, ")}
                 <span className="relative whitespace-nowrap">
                   <span className="relative z-10">
-                    {L(lang, "before you build", "पूरा घर देख लीजिए")}
+                    {L(lang, "item by item", "आइटम-दर-आइटम")}
                   </span>
                   <span
                     aria-hidden="true"
@@ -301,30 +321,30 @@ export function HomeV2({ lang }: { lang: Lang }) {
               <p className="max-w-xl text-[18px] leading-relaxed text-body">
                 {L(
                   lang,
-                  "Enter your plot size. Get a to-scale Vastu naksha, an item-wise BOQ, the steel and materials, and the full cost — in two minutes, free.",
-                  "प्लॉट का साइज़ डालिए। स्केल पर वास्तु नक्शा, आइटम-वार BOQ, सरिया और मटेरियल, और पूरा खर्च — 2 मिनट में, मुफ़्त।",
+                  "Cement, steel, bricks, sand, tiles, labour — the quantity and the rate of everything, worked out from your plot or plan. IS-code based, in two minutes, free.",
+                  "सीमेंट, सरिया, ईंट, रेत, टाइल, मज़दूरी — हर चीज़ की मात्रा और रेट, आपके प्लॉट या नक्शे से। IS कोड के हिसाब से, 2 मिनट में, मुफ़्त।",
                 )}
               </p>
               <ul className="flex flex-col gap-2">
                 <Check>
                   {L(
                     lang,
-                    `${NAKSHE.length} nakshe — every common size and facing`,
-                    `${NAKSHE.length} नक्शे — हर आम साइज़ और दिशा`,
+                    "Item-wise BOQ with measurement book and steel BBS",
+                    "आइटम-वार BOQ, मेज़रमेंट बुक और सरिया BBS के साथ",
                   )}
                 </Check>
                 <Check>
                   {L(
                     lang,
-                    "Every item measured: cement, steel, bricks, tiles, labour",
-                    "हर आइटम का नाप: सीमेंट, सरिया, ईंट, टाइल, मज़दूरी",
+                    `${CALCULATORS.length} calculators — concrete, steel, bricks, plaster, tiles, paint`,
+                    `${CALCULATORS.length} कैलकुलेटर — कंक्रीट, सरिया, ईंट, प्लास्टर, टाइल, पेंट`,
                   )}
                 </Check>
                 <Check>
                   {L(
                     lang,
-                    "PDF and Excel to hand over — in Hindi and English",
-                    "PDF और Excel, देने लायक — हिंदी और अंग्रेज़ी में",
+                    `Rates for ${CITIES.length} cities · PDF and Excel · Hindi and English`,
+                    `${CITIES.length} शहरों के रेट · PDF और Excel · हिंदी और अंग्रेज़ी`,
                   )}
                 </Check>
               </ul>
@@ -333,27 +353,27 @@ export function HomeV2({ lang }: { lang: Lang }) {
                   href={langPath(lang, "house-boq-estimate")}
                   className="inline-flex h-14 items-center rounded-2xl bg-ink px-7 text-[17px] font-bold text-white shadow-[0_10px_30px_-10px_rgba(22,24,26,0.6)] transition hover:-translate-y-0.5"
                 >
-                  {L(lang, "Make my plan & cost →", "मेरा नक्शा और खर्च बनाएं →")}
+                  {L(lang, "Make my estimate →", "मेरा एस्टिमेट बनाएं →")}
                 </Link>
                 <Link
-                  href={langPath(lang, "naksha")}
+                  href={langPath(lang, "calculators")}
                   className="inline-flex h-14 items-center rounded-2xl border-2 border-ink bg-white px-6 text-[17px] font-bold transition hover:bg-ink hover:text-white"
                 >
-                  {L(lang, "See nakshe", "नक्शे देखें")}
+                  {L(lang, "All calculators", "सभी कैलकुलेटर")}
                 </Link>
               </div>
             </div>
-            <HeroDemo
+            <EstimateDemo
               lang={lang}
-              img={nakshaImage(n)}
               w={n.plot.w}
               d={n.plot.d}
-              bhk={info.bhk}
-              facing={facing}
+              floors="G+1"
               total={info.total}
-              vastu={info.vastu.pct}
-              steelT={mat("steel") / 1000}
-              cement={Math.round(mat("cement"))}
+              perSqft={info.perSqft}
+              builtUp={info.builtUp}
+              heads={heads}
+              materials={demoMaterials}
+              img3d={nakshaPreview(n).src}
             />
           </div>
         </section>
@@ -375,145 +395,124 @@ export function HomeV2({ lang }: { lang: Lang }) {
         </section>
 
         {/* ---------- features ---------- */}
-        <Feature
-          eyebrow={L(lang, "Naksha", "नक्शा")}
-          title={L(
-            lang,
-            "A real naksha, to scale — not a picture from the internet",
-            "असली नक्शा, स्केल पर — इंटरनेट की फ़ोटो नहीं",
-          )}
-          text={L(
-            lang,
-            "Every plan is drawn from the plot size with walls, columns, doors, stair and furniture in their true sizes, then set the way Vastu prefers for the road side.",
-            "हर नक्शा प्लॉट के साइज़ से बनता है — दीवारें, कॉलम, दरवाज़े, सीढ़ी और फ़र्नीचर असली साइज़ में, फिर सड़क की दिशा के हिसाब से वास्तु अनुसार।",
-          )}
-          points={[
-            L(lang, "Ground and first floor, same outline, stair on stair", "ग्राउंड और पहली मंज़िल, एक ही आउटलाइन, सीढ़ी के ऊपर सीढ़ी"),
-            L(lang, "Vastu chart for every room", "हर कमरे का वास्तु चार्ट"),
-            L(lang, "Download as PDF or image", "PDF या इमेज में डाउनलोड"),
-          ]}
-          link={{
-            href: langPath(lang, "naksha"),
-            label: L(lang, `See all ${NAKSHE.length} nakshe`, `सभी ${NAKSHE.length} नक्शे देखें`),
-          }}
-          visual={
-            <div className="group relative [perspective:1600px]">
-              <div className="rounded-[24px] border border-line bg-white p-3 shadow-[0_30px_70px_-30px_rgba(22,24,26,0.45)] transition duration-700 [transform:rotateX(14deg)_rotateZ(-3deg)] group-hover:[transform:none]">
-                <img
-                  src={nakshaImage(n)}
-                  alt={nakshaTitle(n, lang)}
-                  width={1054}
-                  height={911}
-                  loading="lazy"
-                  className="h-auto w-full rounded-xl"
-                />
-              </div>
-              <span className="absolute -bottom-4 right-6 rounded-full bg-ink px-4 py-2 text-[13px] font-bold text-white shadow-lg">
-                {n.plot.w}×{n.plot.d} · {facing} · {lakh(info.total, lang)}
-              </span>
+        {/* ---------- calculators ---------- */}
+        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div className="flex flex-col gap-2">
+              <Eyebrow>{L(lang, "Calculators", "कैलकुलेटर")}</Eyebrow>
+              <h2 className="font-display text-[30px] font-extrabold tracking-tight sm:text-[40px]">
+                {L(
+                  lang,
+                  "Every quantity on site, worked out",
+                  "साइट की हर मात्रा, एक क्लिक में",
+                )}
+              </h2>
             </div>
-          }
-        />
-
-        <div className="bg-white">
-          <Feature
-            flip
-            eyebrow={L(lang, "Item-wise BOQ", "आइटम-वार BOQ")}
-            title={L(
-              lang,
-              "Every rupee, item by item",
-              "हर रुपये का हिसाब, आइटम-दर-आइटम",
-            )}
-            text={L(
-              lang,
-              "Not a rough rate per sq ft. Excavation to painting, each item is measured from the plan — Nos × L × B × H — and priced at the market rate. Change any rate and the total follows.",
-              "प्रति sq ft का अंदाज़ा नहीं। खुदाई से पेंटिंग तक, हर आइटम नक्शे से नापा जाता है — Nos × L × B × H — और बाज़ार रेट से जोड़ा जाता है। कोई भी रेट बदलें, टोटल अपने आप बदलेगा।",
-            )}
-            points={[
-              L(lang, "Measurement book and steel BBS", "मेज़रमेंट बुक और सरिया BBS"),
-              L(lang, "Material list for ordering", "ऑर्डर के लिए मटेरियल लिस्ट"),
-              L(lang, "Excel and PDF with your name (Pro)", "आपके नाम के साथ Excel और PDF (प्रो)"),
-            ]}
-            link={{
-              href: langPath(lang, "house-boq-estimate"),
-              label: L(lang, "Make my BOQ", "मेरा BOQ बनाएं"),
-            }}
-            visual={
-              <div className="rounded-[24px] bg-ink p-6 text-white shadow-[0_30px_70px_-30px_rgba(22,24,26,0.6)] sm:p-8">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-[12px] font-bold uppercase tracking-wide text-amber">
-                      G+1 · {n.plot.w}×{n.plot.d} · {items}{" "}
-                      {L(lang, "items", "आइटम")}
-                    </div>
-                    <div className="font-display mt-1 text-[38px] font-extrabold leading-none">
-                      ₹<CountUp to={Math.round(info.total)} />
-                    </div>
-                  </div>
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-[12px] font-semibold">
-                    ₹{Math.round(info.perSqft).toLocaleString("en-IN")}/sqft
+            <Link
+              href={langPath(lang, "calculators")}
+              className="text-[15px] font-bold underline decoration-amber decoration-2 underline-offset-4"
+            >
+              {d.all_calculators} →
+            </Link>
+          </div>
+          <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              ...CALCULATORS.filter((c) =>
+                [
+                  "house-boq-estimate",
+                  "house-construction-cost-calculator",
+                  "contractor-quote-checker",
+                ].includes(c.slug),
+              ),
+              ...CALCULATORS.filter(
+                (c) =>
+                  ![
+                    "house-construction-cost-calculator",
+                    "house-boq-estimate",
+                    "contractor-quote-checker",
+                  ].includes(c.slug),
+              ),
+            ].map((c, i) => (
+              <li key={c.slug} className={i === 0 ? "sm:col-span-2" : ""}>
+                <Link
+                  href={langPath(lang, c.slug)}
+                  className={`flex h-full items-center gap-3 rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:shadow-md ${i < 3 ? "border-amber bg-amber-tint/60" : "border-line bg-white hover:border-amber"}`}
+                >
+                  <span className="font-display flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-tint text-[15px] font-extrabold text-amber-dark">
+                    {c.mark}
                   </span>
-                </div>
-                <ul className="mt-6 flex flex-col gap-3">
-                  {topSections.map((s) => (
-                    <li key={s.code} className="flex flex-col gap-1.5">
-                      <span className="flex justify-between gap-3 text-[13px]">
-                        <span className="truncate text-[#e7e3dc]">
-                          {s.code}. {s.title[lang]}
-                        </span>
-                        <span className="tabular-nums font-semibold">
-                          {lakh(s.subtotal, lang)}
-                        </span>
-                      </span>
-                      <span className="h-2 overflow-hidden rounded-full bg-white/10">
-                        <span
-                          className="block h-full rounded-full bg-amber"
-                          style={{ width: `${(s.subtotal / maxSec) * 100}%` }}
-                        />
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            }
-          />
-        </div>
+                  <span className="flex min-w-0 flex-col">
+                    <span className="text-[15px] font-bold">{c[lang].name}</span>
+                    <span className="truncate text-[13px] text-muted">
+                      {c[lang].short}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <Feature
-          eyebrow={L(lang, "Plan → Estimate · Pro", "नक्शे से एस्टिमेट · प्रो")}
+          eyebrow={L(lang, "Item-wise BOQ", "आइटम-वार BOQ")}
           title={L(
             lang,
-            "Already have a plan? Upload it",
-            "नक्शा पहले से है? बस अपलोड करें",
+            "Every rupee, item by item",
+            "हर रुपये का हिसाब, आइटम-दर-आइटम",
           )}
           text={L(
             lang,
-            "AutoCAD DXF, a photo of a printed plan, or a PDF from your architect. Every room is read, you check the sizes, and the full estimate is made from your own plan.",
-            "AutoCAD की DXF, छपे नक्शे की फ़ोटो, या आर्किटेक्ट की PDF। हर कमरा पढ़ा जाता है, आप साइज़ जांचते हैं, और पूरा एस्टिमेट आपके अपने नक्शे से बनता है।",
+            "Not a rough rate per sq ft. Excavation to painting, each item is measured from the plan — Nos × L × B × H — and priced at the market rate. Change any rate and the total follows.",
+            "प्रति sq ft का अंदाज़ा नहीं। खुदाई से पेंटिंग तक, हर आइटम नक्शे से नापा जाता है — Nos × L × B × H — और बाज़ार रेट से जोड़ा जाता है। कोई भी रेट बदलें, टोटल अपने आप बदलेगा।",
           )}
           points={[
-            L(lang, "DXF free, read on your own device", "DXF फ़्री, आपके ही डिवाइस पर पढ़ी जाती है"),
-            L(lang, "Photo and PDF read by AI", "फ़ोटो और PDF AI से पढ़ी जाती है"),
-            L(lang, "You check every room before it is used", "इस्तेमाल से पहले आप हर कमरा जांचते हैं"),
+            L(lang, "Measurement book and steel BBS", "मेज़रमेंट बुक और सरिया BBS"),
+            L(lang, "Material list for ordering", "ऑर्डर के लिए मटेरियल लिस्ट"),
+            L(lang, "Excel and PDF with your name (Pro)", "आपके नाम के साथ Excel और PDF (प्रो)"),
           ]}
           link={{
-            href: langPath(lang, "plan-to-estimate"),
-            label: L(lang, "Upload a plan", "नक्शा अपलोड करें"),
+            href: langPath(lang, "house-boq-estimate"),
+            label: L(lang, "Make my BOQ", "मेरा BOQ बनाएं"),
           }}
           visual={
-            <div className="flex flex-col gap-3">
-              <BeforeAfter
-                before={planPhoto}
-                after={planRead}
-                label={L(lang, "Drag to compare", "खींचकर तुलना करें")}
-              />
-              <p className="text-center text-[13px] font-semibold text-muted">
-                ‹ {L(lang, "drag to compare", "खींचकर तुलना करें")} ›
-              </p>
+            <div className="rounded-[24px] bg-ink p-6 text-white shadow-[0_30px_70px_-30px_rgba(22,24,26,0.6)] sm:p-8">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-[12px] font-bold uppercase tracking-wide text-amber">
+                    G+1 · {n.plot.w}×{n.plot.d} · {items}{" "}
+                    {L(lang, "items", "आइटम")}
+                  </div>
+                  <div className="font-display mt-1 text-[38px] font-extrabold leading-none">
+                    ₹<CountUp to={Math.round(info.total)} />
+                  </div>
+                </div>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-[12px] font-semibold">
+                  ₹{Math.round(info.perSqft).toLocaleString("en-IN")}/sqft
+                </span>
+              </div>
+              <ul className="mt-6 flex flex-col gap-3">
+                {topSections.map((s) => (
+                  <li key={s.code} className="flex flex-col gap-1.5">
+                    <span className="flex justify-between gap-3 text-[13px]">
+                      <span className="truncate text-[#e7e3dc]">
+                        {s.code}. {s.title[lang]}
+                      </span>
+                      <span className="tabular-nums font-semibold">
+                        {lakh(s.subtotal, lang)}
+                      </span>
+                    </span>
+                    <span className="h-2 overflow-hidden rounded-full bg-white/10">
+                      <span
+                        className="block h-full rounded-full bg-amber"
+                        style={{ width: `${(s.subtotal / maxSec) * 100}%` }}
+                      />
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           }
         />
-
         <div className="bg-white">
           <Feature
             flip
@@ -576,7 +575,97 @@ export function HomeV2({ lang }: { lang: Lang }) {
             }
           />
         </div>
+        <Feature
+          eyebrow={L(lang, "Plan → Estimate · Pro", "नक्शे से एस्टिमेट · प्रो")}
+          title={L(
+            lang,
+            "Already have a plan? Upload it",
+            "नक्शा पहले से है? बस अपलोड करें",
+          )}
+          text={L(
+            lang,
+            "AutoCAD DXF, a photo of a printed plan, or a PDF from your architect. Every room is read, you check the sizes, and the full estimate is made from your own plan.",
+            "AutoCAD की DXF, छपे नक्शे की फ़ोटो, या आर्किटेक्ट की PDF। हर कमरा पढ़ा जाता है, आप साइज़ जांचते हैं, और पूरा एस्टिमेट आपके अपने नक्शे से बनता है।",
+          )}
+          points={[
+            L(lang, "DXF free, read on your own device", "DXF फ़्री, आपके ही डिवाइस पर पढ़ी जाती है"),
+            L(lang, "Photo and PDF read by AI", "फ़ोटो और PDF AI से पढ़ी जाती है"),
+            L(lang, "You check every room before it is used", "इस्तेमाल से पहले आप हर कमरा जांचते हैं"),
+          ]}
+          link={{
+            href: langPath(lang, "plan-to-estimate"),
+            label: L(lang, "Upload a plan", "नक्शा अपलोड करें"),
+          }}
+          visual={
+            <div className="flex flex-col gap-3">
+              <BeforeAfter
+                before={planPhoto}
+                after={planRead}
+                label={L(lang, "Drag to compare", "खींचकर तुलना करें")}
+              />
+              <p className="text-center text-[13px] font-semibold text-muted">
+                ‹ {L(lang, "drag to compare", "खींचकर तुलना करें")} ›
+              </p>
+            </div>
+          }
+        />
 
+        <div className="bg-white">
+          <Feature
+            flip
+            eyebrow={L(lang, "Naksha · 3D", "नक्शा · 3D")}
+            title={L(
+              lang,
+              "The estimate comes with the naksha — in 3D",
+              "एस्टिमेट के साथ नक्शा भी — 3D में",
+            )}
+            text={L(
+              lang,
+              "Every plan is drawn from the plot size with walls, columns, doors, stair and furniture in their true sizes, then set the way Vastu prefers for the road side.",
+              "हर नक्शा प्लॉट के साइज़ से बनता है — दीवारें, कॉलम, दरवाज़े, सीढ़ी और फ़र्नीचर असली साइज़ में, फिर सड़क की दिशा के हिसाब से वास्तु अनुसार।",
+            )}
+            points={[
+              L(lang, "Turn the house around in 3D, floor by floor", "घर को 3D में घुमाकर देखें, मंज़िल-दर-मंज़िल"),
+              L(lang, "Vastu chart for every room", "हर कमरे का वास्तु चार्ट"),
+              L(lang, "Download as PDF or image", "PDF या इमेज में डाउनलोड"),
+            ]}
+            link={{
+              href: langPath(lang, "naksha"),
+              label: L(lang, `See all ${NAKSHE.length} nakshe`, `सभी ${NAKSHE.length} नक्शे देखें`),
+            }}
+            visual={
+              <div className="relative">
+                <div className="overflow-hidden rounded-[24px] border border-line bg-white shadow-[0_30px_70px_-30px_rgba(22,24,26,0.45)]">
+                  <img
+                    src={nakshaPreview(n).src}
+                    alt={nakshaTitle(n, lang)}
+                    width={nakshaPreview(n).w}
+                    height={nakshaPreview(n).h}
+                    loading="lazy"
+                    className="h-auto w-full"
+                  />
+                </div>
+                <div className="absolute -left-4 -top-6 w-[38%] overflow-hidden rounded-2xl border border-line bg-white p-1.5 shadow-xl sm:-left-8">
+                  <img
+                    src={nakshaImage(n)}
+                    alt=""
+                    width={1054}
+                    height={911}
+                    loading="lazy"
+                    className="h-auto w-full rounded-xl"
+                  />
+                  <span className="block px-1.5 pb-0.5 pt-1 text-[11px] font-bold text-muted">
+                    2D
+                  </span>
+                </div>
+                <span className="absolute -bottom-4 right-6 rounded-full bg-ink px-4 py-2 text-[13px] font-bold text-white shadow-lg">
+                  {n.plot.w}×{n.plot.d} · {facing} · {lakh(info.total, lang)}
+                </span>
+              </div>
+            }
+          />
+
+        </div>
         <Feature
           eyebrow={L(lang, "While it is being built", "बनते समय")}
           title={L(
@@ -660,12 +749,12 @@ export function HomeV2({ lang }: { lang: Lang }) {
                   >
                     <span className="block aspect-[4/3] overflow-hidden bg-white">
                       <img
-                        src={nakshaImage(g)}
+                        src={nakshaPreview(g).src}
                         alt={nakshaTitle(g, lang)}
                         loading="lazy"
-                        width={1054}
-                        height={911}
-                        className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-105"
+                        width={nakshaPreview(g).w}
+                        height={nakshaPreview(g).h}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                     </span>
                     <span className="flex flex-col gap-1 p-4">
@@ -708,48 +797,6 @@ export function HomeV2({ lang }: { lang: Lang }) {
           </div>
         </section>
 
-        {/* ---------- calculators ---------- */}
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <h2 className="font-display text-[28px] font-extrabold tracking-tight">
-              {d.home_popular}
-            </h2>
-            <Link
-              href={langPath(lang, "calculators")}
-              className="text-[15px] font-bold underline decoration-amber decoration-2 underline-offset-4"
-            >
-              {d.all_calculators} →
-            </Link>
-          </div>
-          <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {CALCULATORS.filter(
-              (c) =>
-                ![
-                  "house-construction-cost-calculator",
-                  "house-boq-estimate",
-                  "contractor-quote-checker",
-                ].includes(c.slug),
-            ).map((c) => (
-              <li key={c.slug}>
-                <Link
-                  href={langPath(lang, c.slug)}
-                  className="flex h-full items-center gap-3 rounded-2xl border border-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-amber hover:shadow-md"
-                >
-                  <span className="font-display flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-tint text-[15px] font-extrabold text-amber-dark">
-                    {c.mark}
-                  </span>
-                  <span className="flex min-w-0 flex-col">
-                    <span className="text-[15px] font-bold">{c[lang].name}</span>
-                    <span className="truncate text-[13px] text-muted">
-                      {c[lang].short}
-                    </span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-
         {/* ---------- closing ---------- */}
         <section className="px-4 pb-20 sm:px-6">
           <Reveal>
@@ -762,8 +809,8 @@ export function HomeV2({ lang }: { lang: Lang }) {
                 <h2 className="font-display max-w-3xl text-[32px] font-extrabold leading-tight tracking-tight text-ink text-balance sm:text-[46px]">
                   {L(
                     lang,
-                    "Your house, planned and priced before the first brick",
-                    "पहली ईंट से पहले, आपका घर — नक्शे और हिसाब के साथ",
+                    "Know the full cost before the first brick",
+                    "पहली ईंट से पहले, पूरा खर्च जानिए",
                   )}
                 </h2>
                 <div className="flex flex-wrap justify-center gap-3">
@@ -771,13 +818,13 @@ export function HomeV2({ lang }: { lang: Lang }) {
                     href={langPath(lang, "house-boq-estimate")}
                     className="inline-flex h-14 items-center rounded-2xl bg-ink px-7 text-[17px] font-bold text-white transition hover:-translate-y-0.5"
                   >
-                    {L(lang, "Start free →", "मुफ़्त शुरू करें →")}
+                    {L(lang, "Make my estimate →", "मेरा एस्टिमेट बनाएं →")}
                   </Link>
                   <Link
-                    href={langPath(lang, "naksha")}
+                    href={langPath(lang, "calculators")}
                     className="inline-flex h-14 items-center rounded-2xl border-2 border-ink px-6 text-[17px] font-bold text-ink transition hover:bg-ink hover:text-white"
                   >
-                    {L(lang, "Custom naksha", "कस्टम नक्शा")}
+                    {L(lang, "All calculators", "सभी कैलकुलेटर")}
                   </Link>
                 </div>
               </div>

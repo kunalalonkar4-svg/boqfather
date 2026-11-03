@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BoqQuality,
   BoqResult,
@@ -43,7 +43,14 @@ export function SketchPanel({
 }) {
   const grid = useRef<HTMLDivElement>(null);
   const [dl, setDl] = useState("");
-  const [mode, setMode] = useState<"2d" | "3d">("2d");
+  // 3D first; ?still3d=1 fixes the camera (used to make the preview images)
+  const [mode, setMode] = useState<"2d" | "3d">("3d");
+  const [still, setStill] = useState(false);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    setStill(q.has("still3d"));
+    if (q.has("plan2d")) setMode("2d");
+  }, []);
   const download = async (kind: "png" | "pdf") => {
     const svgs = Array.from(
       grid.current?.querySelectorAll<SVGSVGElement>("figure svg") ?? [],
@@ -146,6 +153,9 @@ export function SketchPanel({
       </div>
       {mode === "3d" && (
         <Plan3D
+          key={still ? "still" : "live"}
+          still={still}
+          onError={() => setMode("2d")}
           lang={lang}
           sketch={r.sketch}
           names={nm}

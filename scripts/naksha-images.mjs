@@ -14,6 +14,7 @@ const PORT = 4123;
 const server = spawn("npx", ["next", "start", "-p", String(PORT)], {
   cwd: new URL("..", import.meta.url).pathname,
   stdio: "ignore",
+  detached: true, // own process group, so the whole server stops at the end
 });
 for (let i = 0; i < 60; i++) {
   try {
@@ -33,7 +34,7 @@ const page = await browser.newPage({
 });
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 for (const slug of slugs) {
-  await page.goto(`http://localhost:${port}/naksha/${slug}/`);
+  await page.goto(`http://localhost:${port}/naksha/${slug}/?plan2d=1`);
   const el = page.locator("[data-plan-grid]").first();
   await el.evaluate((e) => {
     e.style.background = "#fff";
@@ -49,4 +50,4 @@ for (const slug of slugs) {
 }
 console.log(`\n${slugs.length} images`);
 await browser.close();
-server.kill();
+process.kill(-server.pid);

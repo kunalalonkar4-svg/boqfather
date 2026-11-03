@@ -23,11 +23,11 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const d = t(lang);
   const hi = lang === "hi";
   const links: { href: string; label: string; strong?: boolean; pro?: boolean }[] = [
-    { href: langPath(lang, "naksha"), label: hi ? "नक्शे" : "Naksha", strong: true },
-    { href: langPath(lang, "house-boq-estimate"), label: hi ? "BOQ एस्टिमेट" : "BOQ estimate" },
-    { href: langPath(lang, "plan-to-estimate"), label: hi ? "नक्शे से एस्टिमेट" : "Plan → Estimate", pro: true },
+    { href: langPath(lang, "calculators"), label: d.nav_calculators, strong: true },
+    { href: langPath(lang, "house-boq-estimate"), label: hi ? "BOQ एस्टिमेट" : "BOQ estimate", strong: true },
     { href: langPath(lang, "house-construction-cost"), label: d.nav_house },
-    { href: langPath(lang, "calculators"), label: d.nav_calculators },
+    { href: langPath(lang, "plan-to-estimate"), label: hi ? "नक्शे से एस्टिमेट" : "Plan → Estimate", pro: true },
+    { href: langPath(lang, "naksha"), label: hi ? "नक्शे" : "Naksha" },
     { href: langPath(lang, "house-construction-guide"), label: hi ? "गाइड" : "Guide" },
   ];
   const langBtn = (

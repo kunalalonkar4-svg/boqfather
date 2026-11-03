@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { nakshaPreview } from "@/content/nakshaPreview";
 import { ROOM_DEFS, RoomType } from "@/engine";
 import {
   FACING_NAME,
@@ -10,7 +11,6 @@ import {
   Naksha,
   NAKSHE,
   nakshaHinglish,
-  nakshaImage,
   nakshaInfo,
   nakshaPlan,
   nakshaTitle,
@@ -74,7 +74,7 @@ function card(n: Naksha, lang: Lang): GalleryCard {
   return {
     slug: n.slug,
     href: langPath(lang, `${BASE}/${n.slug}`),
-    img: nakshaImage(n),
+    img: nakshaPreview(n).src,
     alt: nakshaAlt(n, lang),
     title: nakshaTitle(n, lang),
     sub: L(

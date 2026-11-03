@@ -148,3 +148,6 @@ export function nakshaHinglish(n: Naksha) {
 }
 
 export const nakshaImage = (n: Naksha) => `/naksha/img/${n.slug}.webp`;
+
+/** 3D preview image of the naksha (made by scripts/naksha-3d-images.mjs). */
+export const nakshaImage3d = (n: Naksha) => `/naksha/img3d/${n.slug}.webp`;
