@@ -44,8 +44,34 @@ export interface PText {
   anchor: "start" | "middle" | "end";
   rotate?: number;
 }
+/** A piece of furniture as placed on the plan (for the 3D view); `sd` = the wall it stands against. */
+export interface Furniture {
+  t:
+    | "bed"
+    | "sidetable"
+    | "wardrobe"
+    | "sofa"
+    | "ctable"
+    | "tv"
+    | "dtable"
+    | "chair"
+    | "counter"
+    | "sink"
+    | "hob"
+    | "wc"
+    | "basin"
+    | "car"
+    | "pooja"
+    | "shopcounter";
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  sd?: Side;
+}
 export interface Primitives {
   bounds: { x: number; y: number; w: number; h: number };
+  furniture: Furniture[];
   rects: PRect[];
   lines: PLine[];
   curves: PCurve[];
@@ -104,6 +130,7 @@ export function planPrimitives(
     lines: [],
     curves: [],
     texts: [],
+    furniture: [],
   };
   if (opts.title)
     P.texts.push({
@@ -241,6 +268,7 @@ export function planPrimitives(
     };
     const rect = (b: Box, fill?: RGB) =>
       P.rects.push({ ...b, fill: fill ?? WHITE, stroke: FUR, sw: FW });
+    const fur = (t: Furniture["t"], b: Box, sd?: Side) => P.furniture.push({ t, ...b, sd });
     const line = (sd: Side, u1: number, v1: number, u2: number, v2: number) => {
       const [x1, y1] = pt(sd, u1, v1);
       const [x2, y2] = pt(sd, u2, v2);
@@ -322,12 +350,15 @@ export function planPrimitives(
         const u0 = s.u + (tables ? 0.5 : 0);
         placed.push(s.b);
         rect(box(s.sd, u0, 0.03, bw, bl));
+        fur("bed", box(s.sd, u0, 0.03, bw, bl), s.sd);
         rect(box(s.sd, u0 + 0.1, 0.1, bw / 2 - 0.15, 0.3));
         rect(box(s.sd, u0 + bw / 2 + 0.05, 0.1, bw / 2 - 0.15, 0.3));
         line(s.sd, u0, 0.75, u0 + bw, 0.75);
         if (tables) {
           rect(box(s.sd, s.u, 0.03, 0.42, 0.4));
           rect(box(s.sd, s.u + bw + 0.58, 0.03, 0.42, 0.4));
+          fur("sidetable", box(s.sd, s.u, 0.03, 0.42, 0.4), s.sd);
+          fur("sidetable", box(s.sd, s.u + bw + 0.58, 0.03, 0.42, 0.4), s.sd);
         }
         // wardrobe on another wall
         const others = sides.filter((x) => x !== s!.sd);
@@ -336,6 +367,7 @@ export function planPrimitives(
         if (w) {
           placed.push(w.b);
           rect(w.b);
+          fur("wardrobe", w.b, w.sd);
           for (let k = 0.6; k < wl - 0.1; k += 0.6)
             line(w.sd, w.u + k, 0.03, w.u + k, 0.63);
         }
@@ -347,6 +379,7 @@ export function planPrimitives(
       if (s) {
         placed.push(s.b);
         rect(s.b);
+        fur("sofa", s.b, s.sd);
         rect(box(s.sd, s.u, 0.03, sl, 0.2), [244, 241, 235]);
         rect(box(s.sd, s.u, 0.03, 0.2, 0.85), [244, 241, 235]);
         rect(box(s.sd, s.u + sl - 0.2, 0.03, 0.2, 0.85), [244, 241, 235]);
@@ -354,6 +387,7 @@ export function planPrimitives(
         if (deep(s.sd) > 2.2 && fits(tb)) {
           placed.push(tb);
           rect(tb);
+          fur("ctable", tb, s.sd);
         }
         const opp: Side =
           s.sd === "top"
@@ -367,6 +401,7 @@ export function planPrimitives(
         if (tv && deep(s.sd) > 3.0) {
           placed.push(tv.b);
           rect(tv.b, [236, 233, 226]);
+          fur("tv", tv.b, opp);
         }
       }
     } else if (r.type === "dining" && mn >= 1.9) {
@@ -380,15 +415,22 @@ export function planPrimitives(
       const zone = { x: t.x - 0.5, y: t.y - 0.5, w: t.w + 1.0, h: t.h + 1.0 };
       if (fits(zone) || fits(t)) {
         rect(t);
+        fur("dtable", t);
         const n = big ? 3 : 2;
         for (let i = 0; i < n; i++) {
           const f = (i + 0.5) / n;
-          if (along) {
-            rect({ x: t.x + f * w - 0.2, y: t.y - 0.45, w: 0.4, h: 0.4 });
-            rect({ x: t.x + f * w - 0.2, y: t.y + h + 0.05, w: 0.4, h: 0.4 });
-          } else {
-            rect({ x: t.x - 0.45, y: t.y + f * h - 0.2, w: 0.4, h: 0.4 });
-            rect({ x: t.x + w + 0.05, y: t.y + f * h - 0.2, w: 0.4, h: 0.4 });
+          const chairs: [Box, Side][] = along
+            ? [
+                [{ x: t.x + f * w - 0.2, y: t.y - 0.45, w: 0.4, h: 0.4 }, "top"],
+                [{ x: t.x + f * w - 0.2, y: t.y + h + 0.05, w: 0.4, h: 0.4 }, "bottom"],
+              ]
+            : [
+                [{ x: t.x - 0.45, y: t.y + f * h - 0.2, w: 0.4, h: 0.4 }, "left"],
+                [{ x: t.x + w + 0.05, y: t.y + f * h - 0.2, w: 0.4, h: 0.4 }, "right"],
+              ];
+          for (const [c, sd] of chairs) {
+            rect(c);
+            fur("chair", c, sd);
           }
         }
       }
@@ -401,8 +443,11 @@ export function planPrimitives(
         if (!fits(b)) continue;
         placed.push(b);
         rect(b, [246, 243, 238]);
+        fur("counter", b, sd);
         // sink and two-burner hob
         rect(box(sd, L * 0.2, 0.1, 0.55, 0.42));
+        fur("sink", box(sd, L * 0.2, 0.1, 0.55, 0.42), sd);
+        fur("hob", box(sd, L * 0.72 - 0.15, 0.15, 0.6, 0.36), sd);
         const [hx, hy] = pt(sd, L * 0.72, 0.33);
         const [hx2, hy2] = pt(sd, L * 0.72 + 0.3, 0.33);
         circle(hx, hy, 0.1);
@@ -427,6 +472,7 @@ export function planPrimitives(
             if (fits(lb)) {
               placed.push(lb);
               rect(lb, [246, 243, 238]);
+              fur("counter", lb, a);
               break;
             }
           }
@@ -440,6 +486,7 @@ export function planPrimitives(
       if (wc) {
         placed.push(wc.b);
         rect(box(wc.sd, wc.u, 0.03, 0.45, 0.18));
+        fur("wc", wc.b, wc.sd);
         const [cx, cy] = pt(wc.sd, wc.u + 0.225, 0.45);
         circle(cx, cy, 0.19);
       }
@@ -447,6 +494,7 @@ export function planPrimitives(
       if (bs) {
         placed.push(bs.b);
         rect(bs.b);
+        fur("basin", bs.b, bs.sd);
         const [cx, cy] = pt(bs.sd, bs.u + 0.25, 0.22);
         circle(cx, cy, 0.12);
       }
@@ -458,6 +506,8 @@ export function planPrimitives(
         h = along ? cl : cw;
       const c: Box = { x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, w, h };
       rect(c, [250, 250, 250]);
+      // front of the car faces the road (bottom of the plan)
+      fur("car", c, along ? "bottom" : "right");
       if (along) {
         rect(
           { x: c.x + 0.18, y: c.y + 1.1, w: cw - 0.36, h: 1.9 },
@@ -483,14 +533,20 @@ export function planPrimitives(
         Math.min(0.9, Math.max(r.w, r.h) - 0.2),
         0.4,
       );
-      if (s) rect(s.b, [246, 230, 238]);
+      if (s) {
+        rect(s.b, [246, 230, 238]);
+        fur("pooja", s.b, s.sd);
+      }
     } else if (r.type === "shop" && mn >= 2.2) {
       const s = spot(
         sidesBy((sd) => (sd === "top" ? 20 : 0) + (doorSides.has(sd) ? 0 : 10)),
         Math.min(2.4, Math.max(r.w, r.h) - 0.6),
         0.5,
       );
-      if (s) rect(s.b, [246, 243, 238]);
+      if (s) {
+        rect(s.b, [246, 243, 238]);
+        fur("shopcounter", s.b, s.sd);
+      }
     }
   };
 

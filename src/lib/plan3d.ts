@@ -151,7 +151,16 @@ export function floorBlocks(
   D: number,
   rects: SketchRect[],
   level: number,
+  opts: {
+    /** Wall height, m (default 2.9, full storey). */
+    wallH?: number;
+    /** Lintel strip over doors and arches (off for the cut-away look). */
+    doorLintel?: boolean;
+    /** Stair steps (off when the floor is shown on its own). */
+    stair?: boolean;
+  } = {},
 ): { blocks: Block[]; tiles: FloorTile[] } {
+  const WALL_H = opts.wallH ?? 2.9;
   const nx = Math.ceil(W / CELL),
     nz = Math.ceil(D / CELL);
   const g = new Uint8Array(nx * nz).fill(WALL);
@@ -185,18 +194,21 @@ export function floorBlocks(
     });
   for (const r of mergeGrid(g, nx, nz, WALL)) add(r, "wall", 0, WALL_H);
   for (const r of mergeGrid(g, nx, nz, COL)) add(r, "column", 0, WALL_H + 0.02);
-  for (const r of mergeGrid(g, nx, nz, DOOR)) add(r, "lintel", DOOR_H, WALL_H);
-  for (const r of mergeGrid(g, nx, nz, ARCH)) add(r, "lintel", DOOR_H, WALL_H);
+  if (opts.doorLintel !== false && WALL_H > DOOR_H) {
+    for (const r of mergeGrid(g, nx, nz, DOOR)) add(r, "lintel", DOOR_H, WALL_H);
+    for (const r of mergeGrid(g, nx, nz, ARCH)) add(r, "lintel", DOOR_H, WALL_H);
+  }
+  const top = Math.min(DOOR_H, WALL_H);
   for (const r of mergeGrid(g, nx, nz, WIN)) {
     add(r, "sill", 0, SILL_H);
-    add(r, "lintel", DOOR_H, WALL_H);
-    add(r, "glass", SILL_H, DOOR_H);
+    if (WALL_H > DOOR_H) add(r, "lintel", DOOR_H, WALL_H);
+    add(r, "glass", SILL_H, top);
   }
   // slab under this floor
   blocks.push({ kind: "slab", x: 0, z: 0, w: W, d: D, y: base - 0.14, h: 0.14 });
 
   // stair: two flights side by side, up from the front, landing at the back
-  for (const s of spaces.filter((r) => r.type === "stair")) {
+  for (const s of spaces.filter((r) => r.type === "stair" && opts.stair !== false)) {
     const along = s.h >= s.w; // flights run along the longer side
     const len = along ? s.h : s.w;
     const wide = along ? s.w : s.h;
@@ -224,6 +236,10 @@ export function floorBlocks(
         : { kind: "step", x: s.x, z: s.y, w: landing, d: wide, y: base, h: STOREY / 2 },
     );
   }
+
+  // a cut-away floor: the stair stops at the cut
+  for (const b of blocks)
+    if (b.kind === "step" && b.y + b.h > base + WALL_H) b.h = Math.max(0.02, base + WALL_H - b.y);
 
   const tiles: FloorTile[] = spaces.map((r) => ({
     type: r.type,

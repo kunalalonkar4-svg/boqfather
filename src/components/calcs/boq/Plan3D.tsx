@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type * as T from "three";
 import type { SketchRect } from "@/engine";
-import { PLAN_FILL, planPrimitives } from "@/lib/planDraw";
-import { floorBlocks, STOREY, type Block } from "@/lib/plan3d";
+import { STOREY } from "@/lib/plan3d";
 import type { Lang } from "@/lib/site";
 
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
@@ -13,15 +12,7 @@ const FLOOR = (i: number, lang: Lang) =>
     ? ["ग्राउंड", "पहली", "दूसरी", "तीसरी"][i]
     : ["Ground", "First", "Second", "Third"][i];
 
-const COLOR: Record<Block["kind"], number> = {
-  wall: 0xf7f3ec,
-  column: 0xcfc6b6,
-  lintel: 0xf4f1ea,
-  sill: 0xf4f1ea,
-  glass: 0x9cc3dd,
-  step: 0xcfc6b6,
-  slab: 0xa9a294,
-};
+
 
 /**
  * Rotatable 3D model of the drawn plan (walls with door and window openings, room floors, stair).
@@ -45,9 +36,9 @@ export function Plan3D({
   onError?: () => void;
 }) {
   const host = useRef<HTMLDivElement>(null);
-  const [show, setShow] = useState<number>(-1); // -1 = all floors
+  const [show, setShow] = useState<number>(0); // ground floor first; -1 = whole house
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
-  const [labels, setLabels] = useState(true);
+  const [labels, setLabels] = useState(false);
   const labelsRef = useRef(labels);
   labelsRef.current = labels;
   const onErrorRef = useRef(onError);
@@ -82,68 +73,55 @@ export function Plan3D({
         renderer.outputColorSpace = THREE.SRGBColorSpace;
         el.appendChild(renderer.domElement);
 
+        const { buildFloor, makeMaterials, CUT_H } = await import("@/lib/plan3dScene");
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xeef0ec);
-        const camera = new THREE.PerspectiveCamera(
-          38,
-          el.clientWidth / el.clientHeight,
-          0.1,
-          400,
-        );
+        scene.background = new THREE.Color(0x8c8d90);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.05;
+        const camera = new THREE.PerspectiveCamera(30, el.clientWidth / el.clientHeight, 0.1, 400);
         const span = Math.max(W, D);
-        const cy = (top + 0.5) * STOREY;
-        const k = still ? 0.82 : 1;
-        camera.position.set(
-          W / 2 + span * 0.7 * k,
-          cy + span * 1.45 * k,
-          D / 2 + span * 1.2 * k,
-        );
+        const floorY = top * STOREY;
+        const k = still ? 0.86 : 1.0;
+        // high, from the front-left corner: the "3D floor plan" view
+        camera.position.set(W / 2 - span * 0.62 * k, floorY + span * 1.55 * k, D / 2 + span * 1.05 * k);
         const controls = new OrbitControls(camera, renderer.domElement);
-        controls.target.set(W / 2, show < 0 ? cy * 0.6 : top * STOREY, D / 2);
+        controls.target.set(W / 2, floorY + 0.4, D / 2);
         controls.enableDamping = true;
-        controls.maxPolarAngle = Math.PI * 0.49;
+        controls.maxPolarAngle = Math.PI * 0.46;
         controls.minDistance = 4;
         controls.maxDistance = span * 4;
         controls.autoRotate = !still;
-        controls.autoRotateSpeed = 0.8;
+        controls.autoRotateSpeed = 0.6;
         controls.addEventListener("start", () => (controls.autoRotate = false));
 
-        scene.add(new THREE.HemisphereLight(0xffffff, 0xe6dccb, 2.2));
-        const sun = new THREE.DirectionalLight(0xffffff, 2.1);
-        sun.position.set(-span, span * 2, span * 1.2);
-        sun.target.position.set(W / 2, 0, D / 2);
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 1.9));
+        const sun = new THREE.DirectionalLight(0xfff4e6, 2.4);
+        sun.position.set(W / 2 - span * 0.6, floorY + span * 2.2, D / 2 - span * 0.5);
+        sun.target.position.set(W / 2, floorY, D / 2);
         sun.castShadow = true;
-        sun.shadow.mapSize.set(still ? 1536 : 2048, still ? 1536 : 2048);
+        sun.shadow.mapSize.set(2048, 2048);
+        sun.shadow.bias = -0.0005;
+        sun.shadow.radius = 4;
         const sc = sun.shadow.camera;
         sc.left = sc.bottom = -span;
         sc.right = sc.top = span;
-        sc.far = span * 6;
+        sc.far = span * 8;
         scene.add(sun, sun.target);
+        const fill = new THREE.DirectionalLight(0xdfe8ff, 0.6);
+        fill.position.set(W + span, floorY + span, D + span);
+        scene.add(fill);
 
-        // ground, plot and road
+        // neutral studio floor under the model
         const ground = new THREE.Mesh(
-          new THREE.PlaneGeometry(span * 8, span * 8),
-          new THREE.MeshStandardMaterial({ color: 0xd9e2cc }),
+          new THREE.PlaneGeometry(span * 10, span * 10),
+          new THREE.MeshStandardMaterial({ color: 0x96979a, roughness: 1 }),
         );
         ground.rotation.x = -Math.PI / 2;
-        ground.position.set(W / 2, -0.16, D / 2);
+        ground.position.set(W / 2, -0.15, D / 2);
         ground.receiveShadow = true;
         scene.add(ground);
-        const road = new THREE.Mesh(
-          new THREE.PlaneGeometry(span * 8, 6),
-          new THREE.MeshStandardMaterial({ color: 0x5b5d61 }),
-        );
-        road.rotation.x = -Math.PI / 2;
-        road.position.set(W / 2, -0.15, D + 4.5);
-        road.receiveShadow = true;
-        scene.add(road);
 
-        const textSprite = (
-          text: string,
-          size = 0.42,
-          color = "rgba(22,24,26,0.9)",
-          onTop = false,
-        ) => {
+        const textSprite = (text: string, size = 0.42) => {
           const c = document.createElement("canvas");
           const ctx = c.getContext("2d")!;
           const font = `700 64px "Noto Sans Devanagari", Inter, Arial, sans-serif`;
@@ -152,7 +130,7 @@ export function Plan3D({
           c.width = w;
           c.height = 96;
           ctx.font = font;
-          ctx.fillStyle = color;
+          ctx.fillStyle = "rgba(22,24,26,0.92)";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(text, w / 2, 50);
@@ -160,96 +138,29 @@ export function Plan3D({
           tex.colorSpace = THREE.SRGBColorSpace;
           const m = new THREE.Mesh(
             new THREE.PlaneGeometry((size * w) / 96, size),
-            new THREE.MeshBasicMaterial({
-              map: tex,
-              transparent: true,
-              depthWrite: false,
-              depthTest: !onTop,
-            }),
+            new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }),
           );
           m.rotation.x = -Math.PI / 2;
-          if (onTop) m.renderOrder = 10;
+          m.renderOrder = 10;
           return m;
         };
-        const roadLabel = textSprite(facingLabel, 0.8, "#ffffff");
-        roadLabel.position.set(W / 2, -0.12, D + 4.5);
-        scene.add(roadLabel);
+        void facingLabel;
 
-        const mats = new Map<string, T.Material>();
-        const mat = (kind: Block["kind"]) => {
-          if (!mats.has(kind))
-            mats.set(
-              kind,
-              kind === "glass"
-                ? new THREE.MeshStandardMaterial({
-                    color: COLOR.glass,
-                    transparent: true,
-                    opacity: 0.45,
-                    roughness: 0.1,
-                  })
-                : new THREE.MeshStandardMaterial({ color: COLOR[kind], roughness: 0.9 }),
-            );
-          return mats.get(kind)!;
-        };
-        const box = new THREE.BoxGeometry(1, 1, 1);
-        const furnMat = new THREE.MeshStandardMaterial({ color: 0xe9dcc4, roughness: 0.8 });
-        const softMat = new THREE.MeshStandardMaterial({ color: 0xd8cbb2, roughness: 0.9 });
-        const carMat = new THREE.MeshStandardMaterial({ color: 0x7f8fa3, roughness: 0.4, metalness: 0.2 });
+        const mats = makeMaterials();
         const labelGroup = new THREE.Group();
         for (const s of floors) {
-          const { blocks, tiles } = floorBlocks(s.L, s.B, s.rects, s.floor);
-          for (const b of blocks) {
-            const m = new THREE.Mesh(box, mat(b.kind));
-            m.scale.set(b.w, b.h, b.d);
-            m.position.set(b.x + b.w / 2, b.y + b.h / 2, b.z + b.d / 2);
-            m.castShadow = b.kind !== "glass";
-            m.receiveShadow = true;
-            scene.add(m);
-          }
-          // furniture: the same pieces the 2D plan draws, raised as low blocks
-          const P = planPrimitives(s.L, s.B, s.rects, () => "", {});
-          for (const fr of P.rects.filter((x) => x.sw === 0.016)) {
-            const area = fr.w * fr.h;
-            if (area < 0.04) continue;
-            const car = area > 5;
-            const h = car ? 1.35 : area < 0.35 ? 0.5 : Math.max(fr.w, fr.h) > 1.7 && Math.min(fr.w, fr.h) < 0.7 ? 0.85 : 0.5;
-            const m = new THREE.Mesh(
-              box,
-              car ? carMat : fr.fill && (fr.fill[0] < 250 || fr.fill[1] < 250) ? softMat : furnMat,
-            );
-            m.scale.set(fr.w, h, fr.h);
-            m.position.set(fr.x + fr.w / 2, s.floor * STOREY + h / 2, fr.y + fr.h / 2);
-            m.castShadow = true;
-            m.receiveShadow = true;
-            scene.add(m);
-          }
-          for (const t of tiles) {
-            const c = PLAN_FILL[t.type] ?? [240, 240, 240];
-            const f = new THREE.Mesh(
-              new THREE.PlaneGeometry(t.w, t.d),
-              new THREE.MeshStandardMaterial({
-                // the 2D fills are very pale; a little more colour reads better in 3D
-                color: new THREE.Color(`rgb(${c[0]},${c[1]},${c[2]})`).offsetHSL(0, 0.25, -0.1),
-                roughness: 0.95,
-              }),
-            );
-            f.rotation.x = -Math.PI / 2;
-            f.position.set(t.cx, s.floor * STOREY + 0.005, t.cz);
-            f.receiveShadow = true;
-            scene.add(f);
-            if (t.type !== "stair" && t.w * t.d > 2.5) {
-              const lb = textSprite(
-                namesRef.current(t.type).toUpperCase(),
-                Math.min(0.5, t.w / 5),
-                "rgba(22,24,26,0.92)",
-                true,
-              );
-              lb.position.set(t.cx, s.floor * STOREY + (s.floor === top ? 0.02 : 0.02), t.cz);
-              if (s.floor === top) labelGroup.add(lb);
-            }
+          // only the top floor shown is cut open; floors below are full height
+          const g = buildFloor(mats, s.L, s.B, s.rects, s.floor, { cut: s.floor === top });
+          scene.add(g);
+          if (s.floor !== top) continue;
+          for (const r of s.rects.filter((x) => x.type !== "column" && x.type !== "stair" && x.w * x.h > 2.5)) {
+            const lb = textSprite(namesRef.current(r.type).toUpperCase(), Math.min(0.42, r.w / 6));
+            lb.position.set(r.x + r.w / 2, s.floor * STOREY + CUT_H + 0.05, r.y + r.h / 2);
+            labelGroup.add(lb);
           }
         }
         scene.add(labelGroup);
+        const matList = Object.values(mats);
 
         const resize = () => {
           if (!el.clientWidth) return;
@@ -284,7 +195,7 @@ export function Plan3D({
             const m = o as T.Mesh;
             m.geometry?.dispose?.();
           });
-          mats.forEach((m) => m.dispose());
+          matList.forEach((m) => m.dispose());
           el.removeChild(renderer.domElement);
         };
       } catch (e) {
