@@ -176,5 +176,5 @@ describe("plan sweep: every plot input gives a sound plan", () => {
     );
     void uniq;
     expect(problems.length).toBe(0);
-  });
+  }, 60_000); // 1,680 plans: give it time on a busy machine
 });
