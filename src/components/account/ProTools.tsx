@@ -192,7 +192,7 @@ export function ProTools({
   const btn =
     "inline-flex h-11 items-center justify-center rounded-lg px-4 text-[14px] font-bold disabled:opacity-60";
   const exportOpts = (): ExportOptions => ({
-    watermark: a.enabled && !isPro,
+    watermark: a.payReady && !isPro,
     brand: isPro ? a.profile?.brand_name || undefined : undefined,
   });
   return (
@@ -251,7 +251,7 @@ export function ProTools({
           </>
         )}
       </div>
-      {a.enabled && !isPro && (
+      {a.payReady && !isPro && (
         <div className="flex flex-col gap-2 rounded-xl border border-amber bg-amber-tint p-3">
           <p className="text-[13px] leading-relaxed">
             <strong>

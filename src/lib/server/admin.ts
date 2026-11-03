@@ -10,7 +10,9 @@ let admin: SupabaseClient | null = null;
 /** Server-side Supabase with the service key (bypasses row security — use only after checking the user). */
 export function adminDb(): SupabaseClient {
   if (admin) return admin;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    "https://tkxkexslvlelhzaivvgd.supabase.co";
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new HttpError(503, "Login is not set up yet");
   admin = createClient(url, key, { auth: { persistSession: false } });

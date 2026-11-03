@@ -118,7 +118,7 @@ export function BillCheck({ lang }: { lang: Lang }) {
   const [loc, setLoc] = useState<Location>("tier2");
 
   const pick = async (file: File) => {
-    if (!a.enabled)
+    if (!a.payReady)
       return alertBox(
         L(lang, "Bill reading opens soon.", "बिल पढ़ना जल्द शुरू होगा।"),
       );

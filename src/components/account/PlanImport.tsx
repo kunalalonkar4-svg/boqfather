@@ -66,7 +66,7 @@ export function PlanImport({
       else setPlan(p);
       return;
     }
-    if (!a.enabled)
+    if (!a.payReady)
       return alertBox(
         L(
           lang,

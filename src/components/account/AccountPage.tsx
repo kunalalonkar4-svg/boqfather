@@ -159,36 +159,42 @@ export function AccountView({ lang }: { lang: Lang }) {
               {L(lang, "Free plan", "फ़्री प्लान")}
             </p>
           )}
-          <button
-            type="button"
-            onClick={async () => {
-              const ok = await a.buy("month").catch((e) => {
-                alertBox(e instanceof Error ? e.message : "Payment failed");
-                return false;
-              });
-              if (ok)
-                alertBox(
-                  L(
+          {a.payReady ? (
+            <button
+              type="button"
+              onClick={async () => {
+                const ok = await a.buy("month").catch((e) => {
+                  alertBox(e instanceof Error ? e.message : "Payment failed");
+                  return false;
+                });
+                if (ok)
+                  alertBox(
+                    L(
+                      lang,
+                      "Pro is on. Thank you!",
+                      "प्रो चालू हो गया। धन्यवाद!",
+                    ),
+                  );
+              }}
+              className="w-fit rounded-xl bg-ink px-4 py-2.5 text-[14px] font-semibold text-white"
+            >
+              {a.pro
+                ? L(
                     lang,
-                    "Pro is on. Thank you!",
-                    "प्रो चालू हो गया। धन्यवाद!",
-                  ),
-                );
-            }}
-            className="w-fit rounded-xl bg-ink px-4 py-2.5 text-[14px] font-semibold text-white"
-          >
-            {a.pro
-              ? L(
-                  lang,
-                  `Extend 30 days · ₹${PLANS.month.inr}`,
-                  `30 दिन बढ़ाएं · ₹${PLANS.month.inr}`,
-                )
-              : L(
-                  lang,
-                  `Get Pro · ₹${PLANS.month.inr}/month`,
-                  `प्रो लें · ₹${PLANS.month.inr}/महीना`,
-                )}
-          </button>
+                    `Extend 30 days · ₹${PLANS.month.inr}`,
+                    `30 दिन बढ़ाएं · ₹${PLANS.month.inr}`,
+                  )
+                : L(
+                    lang,
+                    `Get Pro · ₹${PLANS.month.inr}/month`,
+                    `प्रो लें · ₹${PLANS.month.inr}/महीना`,
+                  )}
+            </button>
+          ) : (
+            <p className="text-[14px] font-semibold text-amber-dark">
+              {L(lang, "Pro opens very soon.", "प्रो बहुत जल्द शुरू होगा।")}
+            </p>
+          )}
           <Link
             href={langPath(lang, "pro")}
             className="text-[13px] font-semibold text-steel"

@@ -1,4 +1,5 @@
--- BOQFather database. Run once in Supabase: Dashboard → SQL Editor → New query → paste → Run.
+-- BOQFather database. Applied on 3 Nov 2026 to Supabase project `boqfather` (tkxkexslvlelhzaivvgd, Mumbai).
+-- For a new project: Dashboard → SQL Editor → New query → paste → Run.
 
 -- One row per user (created automatically on first login).
 create table if not exists public.profiles (
@@ -67,17 +68,17 @@ alter table public.custom_orders enable row level security;
 alter table public.ai_usage enable row level security;
 
 drop policy if exists "own profile read" on public.profiles;
-create policy "own profile read" on public.profiles for select using (auth.uid() = id);
+create policy "own profile read" on public.profiles for select using ((select auth.uid()) = id);
 drop policy if exists "own profile brand" on public.profiles;
-create policy "own profile brand" on public.profiles for update using (auth.uid() = id)
-  with check (auth.uid() = id);
+create policy "own profile brand" on public.profiles for update using ((select auth.uid()) = id)
+  with check ((select auth.uid()) = id);
 -- a user may not give themself Pro: pro_until is changed only by the server (service role)
 revoke update on public.profiles from authenticated;
 grant update (name, brand_name, brand_logo) on public.profiles to authenticated;
 
 drop policy if exists "own projects" on public.projects;
-create policy "own projects" on public.projects for all using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+create policy "own projects" on public.projects for all using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
 -- only the server marks a project as paid (column grants: users can change everything except `pro`)
 revoke update on public.projects from authenticated;
 grant update (name, kind, data, share_token, updated_at) on public.projects to authenticated;
@@ -85,13 +86,13 @@ revoke insert on public.projects from authenticated;
 grant insert (user_id, name, kind, data, share_token) on public.projects to authenticated;
 
 drop policy if exists "own payments read" on public.payments;
-create policy "own payments read" on public.payments for select using (auth.uid() = user_id);
+create policy "own payments read" on public.payments for select using ((select auth.uid()) = user_id);
 drop policy if exists "own orders read" on public.custom_orders;
-create policy "own orders read" on public.custom_orders for select using (auth.uid() = user_id);
+create policy "own orders read" on public.custom_orders for select using ((select auth.uid()) = user_id);
 
 -- Profile row on sign-up.
 create or replace function public.handle_new_user() returns trigger
-language plpgsql security definer set search_path = public as $$
+language plpgsql security definer set search_path = '' as $$
 begin
   insert into public.profiles (id, phone, email, name)
   values (new.id, new.phone, new.email, coalesce(new.raw_user_meta_data->>'full_name', ''))
@@ -105,7 +106,11 @@ create trigger on_auth_user_created after insert on auth.users
 -- Shared project by link: anyone with the token can read the name and data (nothing else).
 create or replace function public.shared_project(token text)
 returns table (name text, kind text, data jsonb, updated_at timestamptz)
-language sql security definer set search_path = public stable as $$
+language sql security definer set search_path = '' stable as $$
   select p.name, p.kind, p.data, p.updated_at from public.projects p where p.share_token = token limit 1;
 $$;
+revoke execute on function public.shared_project(text) from public;
 grant execute on function public.shared_project(text) to anon, authenticated;
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+-- payments, orders and usage are written only by the server
+revoke insert, update, delete on public.payments, public.custom_orders, public.ai_usage from authenticated, anon;

@@ -8,7 +8,7 @@ const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
 
 export function ProBuy({ lang }: { lang: Lang }) {
   const a = useAccount();
-  if (!a.enabled)
+  if (!a.payReady)
     return (
       <p className="text-[14px] font-semibold text-amber-dark">
         {L(lang, "Pro opens very soon.", "प्रो बहुत जल्द शुरू होगा।")}

@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { PLANS, type PlanKey } from "@/lib/pricing";
+import { PAY_READY, PLANS, type PlanKey } from "@/lib/pricing";
 import { api, supabase } from "@/lib/supabase";
 import type { Lang } from "@/lib/site";
 
@@ -34,6 +34,8 @@ interface Ctx {
   profile: Profile | null;
   /** Monthly Pro active. */
   pro: boolean;
+  /** Pro can be bought (payments set up). */
+  payReady: boolean;
   openLogin: (then?: () => void) => void;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -157,6 +159,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   const value: Ctx = {
     ready,
     enabled: !!sb,
+    payReady: PAY_READY,
     user,
     profile,
     pro,
@@ -206,6 +209,8 @@ function LoginDialog({
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"start" | "code">("start");
+  const [email, setEmail] = useState("");
+  const [mailSent, setMailSent] = useState(false);
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const full = `+91${phone.replace(/\D/g, "").slice(-10)}`;
@@ -332,6 +337,52 @@ function LoginDialog({
             className="rounded-lg bg-ink px-4 py-2 text-[14px] font-semibold text-white"
           >
             {busy ? "…" : L(lang, "Verify", "जांचें")}
+          </button>
+        </form>
+      )}
+      <div className="flex items-center gap-3 text-[12px] text-muted">
+        <span className="h-px flex-1 bg-line" />
+        {L(lang, "or email", "या ईमेल")}
+        <span className="h-px flex-1 bg-line" />
+      </div>
+      {mailSent ? (
+        <p className="rounded-lg bg-[#e6f4ec] px-3 py-2 text-[14px] text-[#1d7a46]">
+          {L(
+            lang,
+            "Check your email and tap the login link.",
+            "अपना ईमेल देखें और लॉगिन लिंक दबाएं।",
+          )}
+        </p>
+      ) : (
+        <form
+          className="flex gap-2"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setBusy(true);
+            setMsg("");
+            const { error } = await sb.auth.signInWithOtp({
+              email: email.trim(),
+              options: { emailRedirectTo: window.location.href },
+            });
+            setBusy(false);
+            if (error) setMsg(error.message);
+            else setMailSent(true);
+          }}
+        >
+          <input
+            type="email"
+            autoComplete="email"
+            className="min-w-0 flex-1 rounded-lg border border-line px-3 py-2 text-[15px]"
+            placeholder="name@gmail.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <button
+            disabled={busy}
+            className="rounded-lg bg-ink px-4 py-2 text-[14px] font-semibold text-white"
+          >
+            {busy ? "…" : L(lang, "Send link", "लिंक भेजें")}
           </button>
         </form>
       )}

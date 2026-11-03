@@ -261,7 +261,7 @@ export function CustomNakshaForm({
       </label>
       <div className="flex flex-col gap-2 sm:col-span-2">
         <div className="flex flex-wrap gap-2">
-          {acc.enabled && (
+          {acc.payReady && (
             <button
               type="button"
               disabled={!f.name || !f.size}
@@ -290,7 +290,7 @@ export function CustomNakshaForm({
             {L(lang, "Ask on WhatsApp", "WhatsApp पर पूछें")}
           </button>
         </div>
-        {acc.enabled && (
+        {acc.payReady && (
           <p className="text-[12px] text-muted">
             {L(
               lang,

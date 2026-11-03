@@ -3,11 +3,17 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let client: SupabaseClient | null | undefined;
 
+/** The BOQFather Supabase project. Both values are public by design (row level security protects the data). */
+export const SUPABASE_URL = "https://tkxkexslvlelhzaivvgd.supabase.co";
+export const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_Yd971rfaL2j6W-rTJqo_4A_RdBUkMuK";
+
 /** Browser Supabase client, or null until the project keys are set. */
 export function supabase(): SupabaseClient | null {
   if (client !== undefined) return client;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || SUPABASE_URL;
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_PUBLISHABLE_KEY;
   client =
     url && key
       ? createClient(url, key, {
