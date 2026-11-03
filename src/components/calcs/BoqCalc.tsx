@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ProTools, type ExportOptions } from "@/components/account/ProTools";
 import { PlanImport } from "@/components/account/PlanImport";
+import { UPLOADED_PLAN_KEY } from "@/components/account/PlanUploader";
 import type { ReadPlan } from "@/lib/planRead";
 import {
   BOQ_RATES,
@@ -360,8 +361,23 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
   };
   // plan once on load from the default plot (or the plot in the link, e.g. ?w=30&d=50&bhk=3&floors=2); after that the user presses "Make plan"
   const [pending, setPending] = useState(false);
+  // rooms handed over from the Plan → Estimate page (?from=upload)
+  const [uploaded, setUploaded] = useState<ReadPlan | null>(null);
+  const [fromUpload, setFromUpload] = useState(false);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
+    if (q.get("from") === "upload") {
+      try {
+        const saved = sessionStorage.getItem(UPLOADED_PLAN_KEY);
+        if (saved) {
+          sessionStorage.removeItem(UPLOADED_PLAN_KEY);
+          setUploaded(JSON.parse(saved) as ReadPlan);
+          return;
+        }
+      } catch {
+        /* fall through to the default plan */
+      }
+    }
     const w = q.get("w"),
       dd = q.get("d");
     const okNum = (v: string | null) => v !== null && Number(v) >= 0;
@@ -529,7 +545,15 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     if (p.facing) setPlot((x) => ({ ...x, facing: p.facing! }));
     setTab(0);
     setView("boq");
+    setFromUpload(true);
   };
+
+  useEffect(() => {
+    if (!uploaded) return;
+    usePlan(uploaded);
+    setUploaded(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploaded]);
 
   const rows = plans[cur];
   const maxSub = res ? Math.max(...res.sections.map((s) => s.subtotal)) : 1;
@@ -540,6 +564,14 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     <div className="flex flex-col gap-5 pb-20 lg:pb-0">
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-5 rounded-2xl border border-line bg-white p-4 sm:p-6">
+          {fromUpload && (
+            <p className="rounded-xl border border-[#1d7a46]/40 bg-[#e8f4ec] px-4 py-3 text-[14px] font-semibold text-[#1d5c36]">
+              ✓{" "}
+              {lang === "hi"
+                ? "यह एस्टिमेट आपके अपलोड किए नक्शे के कमरों से बना है। नीचे “मंज़िल के कमरे” में कोई भी कमरा या साइज़ बदल सकते हैं।"
+                : "This estimate is made from the rooms of your uploaded plan. Change any room or size under the floor rooms below."}
+            </p>
+          )}
           <PlanImport lang={lang} onApply={usePlan} />
           <details
             className="group rounded-xl border-2 border-dashed border-amber bg-amber-tint/40 p-3"

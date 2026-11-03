@@ -13,7 +13,7 @@ function TryLinks({ lang }: { lang: Lang }) {
     "rounded-lg border border-ink bg-white px-4 py-2.5 text-[14px] font-semibold hover:bg-ink hover:text-white";
   return (
     <div className="flex flex-wrap gap-2">
-      <Link className={c} href={`${langPath(lang, "house-boq-estimate")}#upload-plan`}>
+      <Link className={c} href={langPath(lang, "plan-to-estimate")}>
         📄 {L(lang, "Upload plan → estimate", "नक्शा अपलोड → एस्टिमेट")}
       </Link>
       <Link className={c} href={`${langPath(lang, "contractor-quote-checker")}#bill-check`}>

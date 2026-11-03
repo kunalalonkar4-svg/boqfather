@@ -56,6 +56,15 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
             {lang === "hi" ? "गाइड" : "Guide"}
           </Link>
           <Link
+            href={langPath(lang, "plan-to-estimate")}
+            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-[#cfcbc2] hover:text-white"
+          >
+            {lang === "hi" ? "नक्शे से एस्टिमेट" : "Plan → Estimate"}
+            <span className="rounded bg-amber px-1 text-[10px] font-extrabold text-ink">
+              PRO
+            </span>
+          </Link>
+          <Link
             href={langPath(lang, "pro")}
             className="rounded-lg px-3 py-2 font-extrabold text-amber hover:text-white"
           >

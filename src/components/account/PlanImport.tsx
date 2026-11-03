@@ -41,9 +41,12 @@ const toBase64 = (file: File) =>
 export function PlanImport({
   lang,
   onApply,
+  open,
 }: {
   lang: Lang;
   onApply: (p: ReadPlan) => void;
+  /** Always open (the Plan → Estimate page). */
+  open?: boolean;
 }) {
   const a = useAccount();
   const [plan, setPlan] = useState<ReadPlan | null>(null);
@@ -52,11 +55,12 @@ export function PlanImport({
   const box = useRef<HTMLDetailsElement>(null);
   // opened from the Pro page link (#upload-plan)
   useEffect(() => {
-    if (window.location.hash === "#upload-plan" && box.current) {
+    if (open && box.current) box.current.open = true;
+    else if (window.location.hash === "#upload-plan" && box.current) {
       box.current.open = true;
       box.current.scrollIntoView({ block: "start" });
     }
-  }, []);
+  }, [open]);
 
   const pick = async (file: File) => {
     setNeedPro(false);
