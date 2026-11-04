@@ -11,7 +11,6 @@ import {
   nakshaPlan,
   nakshaTitle,
 } from "@/content/naksha";
-import { nakshaPreview } from "@/content/nakshaPreview";
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import { SiteFooter, SiteHeader } from "../Chrome";
@@ -20,7 +19,6 @@ import { BuildJourney, type StageInfo } from "./cine/BuildJourney";
 import { CalcRail } from "./cine/CalcRail";
 import { HeroCine } from "./cine/HeroCine";
 import { PlansGallery } from "./cine/PlansGallery";
-import { PlanToEstimate } from "./cine/PlanToEstimate";
 import { Reports } from "./cine/Reports";
 import { Reveal } from "./Motion";
 
@@ -229,7 +227,6 @@ export function Cinematic({ lang }: { lang: Lang }) {
       shop: x.kind === "shop",
       cost: lakh(xi.total, lang),
       img2d: nakshaImage(x),
-      img3d: nakshaPreview(x).src,
       title: nakshaTitle(x, lang),
     };
   });
@@ -269,19 +266,6 @@ export function Cinematic({ lang }: { lang: Lang }) {
           items={itemCount}
           caption={sample}
           href={langPath(lang, "house-boq-estimate")}
-        />
-        <PlanToEstimate
-          lang={lang}
-          img2d={nakshaImage(n)}
-          img3d={nakshaPreview(n).src}
-          chips={[
-            { k: L(lang, "Concrete", "कंक्रीट"), v: `${num(mat("rcc"), 1)} m³` },
-            { k: L(lang, "Steel", "सरिया"), v: `${num(mat("steel"))} kg` },
-            { k: L(lang, "Bricks", "ईंट"), v: num(mat("bricks")) },
-            { k: L(lang, "Cement", "सीमेंट"), v: `${num(mat("cement"))} ${L(lang, "bags", "बैग")}` },
-          ]}
-          rows={["A", "B", "C", "D", "E"].map((c) => ({ k: `${c}. ${sec(c)?.title[lang] ?? ""}`, v: lakh(sub(c), lang) }))}
-          href={langPath(lang, "plan-to-estimate")}
         />
         <CalcRail lang={lang} cards={calcCards} allHref={langPath(lang, "calculators")} />
         <Reports lang={lang} tabs={tabs} href={langPath(lang, "house-boq-estimate")} extras={extras} />

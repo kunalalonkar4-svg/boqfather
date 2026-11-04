@@ -1071,6 +1071,28 @@ export function GuidePage({ lang }: { lang: Lang }) {
       }
     >
       <Link
+        href={langPath(lang, "house-owner-guide")}
+        className="flex max-w-3xl flex-col gap-2 rounded-2xl border-2 border-amber bg-amber-tint p-5 transition hover:-translate-y-0.5 sm:p-6"
+      >
+        <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-white">
+          {L(lang, "INTERACTIVE HOUSE OWNER GUIDE", "इंटरैक्टिव घर-मालिक गाइड")}
+        </span>
+        <span className="font-display text-[22px] font-extrabold leading-tight">
+          {L(
+            lang,
+            "Track inspections, payments and progress across 12 stages →",
+            "12 चरणों में निरीक्षण, भुगतान और प्रगति देखें →",
+          )}
+        </span>
+        <span className="text-[15px] text-body">
+          {L(
+            lang,
+            "Open the practical owner dashboard, save checks in this browser and continue the existing topic-by-topic guide below.",
+            "मालिकों का व्यावहारिक dashboard खोलें, इसी browser में जांच सेव करें और नीचे मौजूदा विषय-वार गाइड पढ़ें।",
+          )}
+        </span>
+      </Link>
+      <Link
         href={langPath(lang, `${GUIDE_BASE}/checklist`)}
         className="flex max-w-3xl flex-col gap-2 rounded-2xl border-2 border-amber bg-amber-tint p-5 transition hover:-translate-y-0.5 sm:p-6"
       >

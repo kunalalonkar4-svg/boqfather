@@ -14,7 +14,6 @@ import {
   nakshaTitle,
 } from "@/content/naksha";
 import { PLOTS } from "@/content/plots";
-import { nakshaPreview } from "@/content/nakshaPreview";
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import { SiteFooter, SiteHeader } from "../Chrome";
@@ -184,7 +183,7 @@ export function HomeV2({ lang }: { lang: Lang }) {
     [CALCULATORS.length, L(lang, "calculators", "कैलकुलेटर")],
     [items, L(lang, "BOQ items per house", "BOQ आइटम हर घर में")],
     [CITIES.length, L(lang, "city rates", "शहरों के रेट")],
-    [NAKSHE.length, L(lang, "nakshe in 3D", "नक्शे, 3D में")],
+    [NAKSHE.length, L(lang, "2D house plans", "2D मकान के नक्शे")],
     [CHECKLIST_COUNT, L(lang, "site checks with videos", "साइट जांच, वीडियो के साथ")],
   ];
   const heads = topSections.slice(0, 5).map((s) => ({
@@ -373,7 +372,6 @@ export function HomeV2({ lang }: { lang: Lang }) {
               builtUp={info.builtUp}
               heads={heads}
               materials={demoMaterials}
-              img3d={nakshaPreview(n).src}
             />
           </div>
         </section>
@@ -613,11 +611,11 @@ export function HomeV2({ lang }: { lang: Lang }) {
         <div className="bg-white">
           <Feature
             flip
-            eyebrow={L(lang, "Naksha · 3D", "नक्शा · 3D")}
+            eyebrow={L(lang, "Naksha · 2D", "नक्शा · 2D")}
             title={L(
               lang,
-              "The estimate comes with the naksha — in 3D",
-              "एस्टिमेट के साथ नक्शा भी — 3D में",
+              "The estimate comes with a detailed 2D floor plan",
+              "एस्टिमेट के साथ विस्तृत 2D नक्शा",
             )}
             text={L(
               lang,
@@ -625,7 +623,7 @@ export function HomeV2({ lang }: { lang: Lang }) {
               "हर नक्शा प्लॉट के साइज़ से बनता है — दीवारें, कॉलम, दरवाज़े, सीढ़ी और फ़र्नीचर असली साइज़ में, फिर सड़क की दिशा के हिसाब से वास्तु अनुसार।",
             )}
             points={[
-              L(lang, "Turn the house around in 3D, floor by floor", "घर को 3D में घुमाकर देखें, मंज़िल-दर-मंज़िल"),
+              L(lang, "Explore detailed floor plans, floor by floor", "हर मंज़िल का विस्तृत नक्शा देखें"),
               L(lang, "Vastu chart for every room", "हर कमरे का वास्तु चार्ट"),
               L(lang, "Download as PDF or image", "PDF या इमेज में डाउनलोड"),
             ]}
@@ -637,10 +635,10 @@ export function HomeV2({ lang }: { lang: Lang }) {
               <div className="relative">
                 <div className="overflow-hidden rounded-[24px] border border-line bg-white shadow-[0_30px_70px_-30px_rgba(22,24,26,0.45)]">
                   <img
-                    src={nakshaPreview(n).src}
+                    src={nakshaImage(n)}
                     alt={nakshaTitle(n, lang)}
-                    width={nakshaPreview(n).w}
-                    height={nakshaPreview(n).h}
+                    width={1200}
+                    height={800}
                     loading="lazy"
                     className="h-auto w-full"
                   />
@@ -749,11 +747,11 @@ export function HomeV2({ lang }: { lang: Lang }) {
                   >
                     <span className="block aspect-[4/3] overflow-hidden bg-white">
                       <img
-                        src={nakshaPreview(g).src}
+                        src={nakshaImage(g)}
                         alt={nakshaTitle(g, lang)}
                         loading="lazy"
-                        width={nakshaPreview(g).w}
-                        height={nakshaPreview(g).h}
+                        width={1200}
+                        height={800}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                     </span>

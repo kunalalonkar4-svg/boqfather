@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { NakshaPage, nakshaDescription } from "@/components/site/NakshaPages";
-import { getNaksha, NAKSHE, nakshaImage, nakshaTitle } from "@/content/naksha";
+import { getNaksha, NAKSHE, nakshaTitle } from "@/content/naksha";
 import { pageMeta } from "@/lib/seo";
 
 export const dynamicParams = false;
@@ -22,7 +22,7 @@ export async function generateMetadata({
     path: `naksha/${slug}`,
     title: `${nakshaTitle(n, "en")} | BOQFather`,
     description: nakshaDescription(slug, "en"),
-    image: nakshaImage(n),
+    image: `/naksha/img/${n.slug}.webp`,
   });
 }
 

@@ -15,7 +15,6 @@ const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
 export function NakshaPlanView({ lang, slug }: { lang: Lang; slug: string }) {
   const n = getNaksha(slug);
   const r = useMemo(() => (n ? nakshaPlan(n).res : null), [n]);
-  const plot = useMemo(() => (n ? { w: n.plot.w, d: n.plot.d, back: n.plot.back } : undefined), [n]);
   if (!r || !n) return null;
   return (
     <SketchPanel
@@ -28,7 +27,6 @@ export function NakshaPlanView({ lang, slug }: { lang: Lang; slug: string }) {
         `प्लॉट ${n.plot.w} × ${n.plot.d} फ़ीट · हर ड्रॉइंग में सड़क नीचे`,
       )}
       fileName={`${slug}-naksha-boqfather`}
-      plot={plot}
       names={(tp) =>
         tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
       }
@@ -46,6 +44,7 @@ export interface GalleryCard {
   size: string;
   facing: string;
   kind: string;
+  bhk: number;
   gaj: number;
 }
 
@@ -62,17 +61,20 @@ export function NakshaGallery({
   const [size, setSize] = useState("");
   const [facing, setFacing] = useState("");
   const [kind, setKind] = useState("");
+  const [bhk, setBhk] = useState("");
+  const bhks = [...new Set(cards.map((card) => card.bhk))].sort((a, b) => a - b);
   const shown = cards.filter(
     (c) =>
       (!size || c.size === size) &&
       (!facing || c.facing === facing) &&
-      (!kind || c.kind === kind),
+      (!kind || c.kind === kind) &&
+      (!bhk || c.bhk === Number(bhk)),
   );
   const sel =
     "h-11 rounded-xl border border-line bg-white px-3 text-[15px] font-semibold text-ink";
   return (
-    <div className="flex flex-col gap-4">
-      <div className="sticky top-16 z-20 flex flex-wrap items-end gap-3 rounded-[20px] border border-line bg-white/90 p-4 shadow-[0_12px_30px_-20px_rgba(22,24,26,0.4)] backdrop-blur">
+    <div className="bf-naksha-gallery flex flex-col gap-4">
+      <div className="bf-naksha-filters sticky top-16 z-20 flex flex-wrap items-end gap-3 rounded-[20px] border border-line bg-white/90 p-4 shadow-[0_12px_30px_-20px_rgba(22,24,26,0.4)] backdrop-blur">
         <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted">
           {L(lang, "Plot size", "प्लॉट साइज़")}
           <select
@@ -118,24 +120,39 @@ export function NakshaGallery({
             </option>
           </select>
         </label>
-        <span className="pb-2 text-[13px] text-muted">
+        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted">
+          {L(lang, "Bedrooms", "बेडरूम")}
+          <select
+            className={sel}
+            value={bhk}
+            onChange={(e) => setBhk(e.target.value)}
+          >
+            <option value="">{L(lang, "Any BHK", "कोई भी BHK")}</option>
+            {bhks.map((count) => (
+              <option key={count} value={count}>
+                {count} BHK
+              </option>
+            ))}
+          </select>
+        </label>
+        <span className="pb-2 text-[13px] text-muted" role="status" aria-live="polite">
           {L(lang, `${shown.length} plans`, `${shown.length} नक्शे`)}
         </span>
       </div>
-      <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="bf-naksha-grid grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c) => (
           <li key={c.slug} hidden={!shown.includes(c)}>
             <Link
               href={c.href}
-              className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-24px_rgba(22,24,26,0.45)]"
+              className="bf-naksha-card group flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-24px_rgba(22,24,26,0.45)]"
             >
-              <span className="flex aspect-[16/10] items-center justify-center overflow-hidden bg-[#eef0ec]">
+              <span className="bf-naksha-card-image flex aspect-[16/10] items-center justify-center overflow-hidden bg-[#eef0ec]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={c.img}
                   alt={c.alt}
                   loading="lazy"
-                  className="h-full w-full scale-[1.25] object-cover transition duration-500 group-hover:scale-[1.32]"
+                  className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-[1.025]"
                 />
               </span>
               <span className="flex flex-col gap-1 p-5">

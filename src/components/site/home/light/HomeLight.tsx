@@ -13,11 +13,9 @@ import {
   nakshaTitle,
   type Naksha,
 } from "@/content/naksha";
-import { nakshaPreview } from "@/content/nakshaPreview";
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import { SiteFooter, SiteHeader } from "../../Chrome";
-import { BeforeAfter } from "../BeforeAfter";
 import { CountUp, Reveal } from "../Motion";
 import { PlanTabs } from "./PlanTabs";
 
@@ -117,7 +115,6 @@ export function HomeLight({ lang }: { lang: Lang }) {
       title: `${x.plot.w}×${x.plot.d} ${facing(x)}`,
       sub: `${xi.bhk} BHK · G+1 · ${num(xi.builtUp)} sq ft · ${L(lang, "Vastu", "वास्तु")} ${xi.vastu.pct}%`,
       cost: lakh(xi.total, lang),
-      img3d: nakshaPreview(x).src,
       img2d: nakshaImage(x),
     };
   };
@@ -138,7 +135,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
   const stats: [number, string][] = [
     [CALCULATORS.length, L(lang, "calculators", "कैलकुलेटर")],
     [items, L(lang, "BOQ items per house", "BOQ आइटम हर घर में")],
-    [NAKSHE.length, L(lang, "house plans, 2D + 3D", "घर के नक्शे, 2D + 3D")],
+    [NAKSHE.length, L(lang, "2D house plans", "2D घर के नक्शे")],
     [CITIES.length, L(lang, "city rates", "शहरों के रेट")],
     [CHECKLIST_COUNT, L(lang, "site checks", "साइट जांच")],
   ];
@@ -149,7 +146,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
       d: L(lang, "Know the full cost before you start, pick a Vastu plan, and check what the contractor charges.", "शुरू करने से पहले पूरा खर्च जानें, वास्तु नक्शा चुनें, और ठेकेदार का रेट जांचें।"),
       href: langPath(lang, "house-construction-cost-calculator"),
       cta: L(lang, "Cost of my house", "मेरे घर का खर्च"),
-      img: nakshaPreview(mosaic[1] ?? n).src,
+      img: nakshaImage(mosaic[1] ?? n),
     },
     {
       t: L(lang, "Contractors", "ठेकेदार"),
@@ -224,7 +221,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
               <ul className="flex flex-col gap-2.5">
                 <Tick>{L(lang, "Start from your plot size, a ready Vastu plan, or your own drawing", "अपने प्लॉट साइज़, तैयार वास्तु नक्शे, या अपनी ड्रॉइंग से शुरू करें")}</Tick>
                 <Tick>{L(lang, `Get an item-wise BOQ — ${items} items, steel BBS and material list`, `आइटम-वार BOQ पाएं — ${items} आइटम, सरिया BBS और मटेरियल लिस्ट`)}</Tick>
-                <Tick>{L(lang, "See the plan in 2D and 3D, download PDF and Excel", "नक्शा 2D और 3D में देखें, PDF और Excel डाउनलोड करें")}</Tick>
+                <Tick>{L(lang, "Review the 2D plan, download PDF and image", "2D नक्शा देखें, PDF और इमेज डाउनलोड करें")}</Tick>
               </ul>
               <div className="mt-1 flex flex-wrap gap-3">
                 <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-full bg-amber px-7 text-[16px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(23,105,210,0.7)] transition hover:brightness-105">
@@ -238,10 +235,10 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 {L(lang, "No sign-up · IS 456 / IS 1200 based · made by a civil engineer", "साइन-अप नहीं · IS 456 / IS 1200 आधारित · सिविल इंजीनियर द्वारा")}
               </p>
             </div>
-            {/* collage: a 3D plan, the BOQ on a phone, a floating cost card */}
+            {/* plan sheet, the BOQ on a phone, and a live cost card */}
             <div className="relative min-w-0">
               <div className="overflow-hidden rounded-[18px] border border-line bg-[#eef3f9] shadow-[0_40px_80px_-40px_rgba(22,24,26,0.45)]">
-                <img src={nakshaPreview(n).src} alt={nakshaTitle(n, lang)} className="aspect-[16/11] w-full object-cover" fetchPriority="high" />
+                <img src={nakshaImage(n)} alt={nakshaTitle(n, lang)} className="aspect-[16/11] w-full bg-white object-contain" fetchPriority="high" />
               </div>
               <div className="absolute -bottom-8 -left-3 w-[44%] max-w-[230px] overflow-hidden rounded-[26px] border-[6px] border-ink bg-white shadow-2xl sm:-left-8">
                 <img src={`/home/shots/boq${hiSfx}.webp`} alt={L(lang, "Item-wise BOQ on a phone", "फ़ोन पर आइटम-वार BOQ")} className="aspect-[9/16] w-full object-cover object-left-top" />
@@ -286,7 +283,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
               {mosaic.slice(0, 9).map((x, i) => (
                 <li key={x.slug} className={i === 0 ? "col-span-2 row-span-2" : ""}>
                   <Link href={langPath(lang, `naksha/${x.slug}`)} className="group relative block h-full overflow-hidden rounded-2xl bg-[#eef3f9]">
-                    <img src={nakshaPreview(x).src} alt={nakshaTitle(x, lang)} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                    <img src={nakshaImage(x)} alt={nakshaTitle(x, lang)} loading="lazy" className="h-full w-full bg-white object-contain transition duration-300" />
                     <span className="absolute bottom-2 left-2 rounded-full bg-white/95 px-3 py-1 text-[12px] font-bold shadow">
                       {x.plot.w}×{x.plot.d} · {facing(x)}
                     </span>
@@ -299,8 +296,8 @@ export function HomeLight({ lang }: { lang: Lang }) {
 
         <Split
           tint
-          title={L(lang, "See your naksha come to life in 3D", "अपना नक्शा 3D में बनता देखिए")}
-          text={L(lang, "Every plan is drawn to scale from the plot — walls, doors, stair and furniture — and shown in 3D on the plot with its road, garden and parking.", "हर नक्शा प्लॉट से स्केल पर बनता है — दीवारें, दरवाज़े, सीढ़ी और फ़र्नीचर — और 3D में सड़क, बगीचे और पार्किंग के साथ प्लॉट पर दिखता है।")}
+          title={L(lang, "Review the 2D floor plan in detail", "2D फ़्लोर प्लान की बारीकी से समीक्षा करें")}
+          text={L(lang, "Each plan is drawn to scale from the plot dimensions. Review the room layout, road facing, setbacks and room sizes before opening the plan in the BOQ workspace.", "हर नक्शा प्लॉट के माप से स्केल पर बनाया जाता है। BOQ वर्कस्पेस में खोलने से पहले कमरों का लेआउट, सड़क की दिशा, सेटबैक और कमरों का साइज़ देखें।")}
           points={[
             L(lang, "Ground and first floor, room sizes on every room", "ग्राउंड और पहली मंज़िल, हर कमरे पर साइज़"),
             L(lang, "Vastu chart for each room", "हर कमरे का वास्तु चार्ट"),
@@ -308,18 +305,14 @@ export function HomeLight({ lang }: { lang: Lang }) {
           ]}
           ctas={
             <>
-              <Link href={langPath(lang, `naksha/${n.slug}`)} className={btnDark}>{L(lang, "Open a plan in 3D", "नक्शा 3D में खोलें")}</Link>
+              <Link href={langPath(lang, `naksha/${n.slug}`)} className={btnDark}>{L(lang, "Open 2D floor plan", "2D फ़्लोर प्लान खोलें")}</Link>
               <Link href={langPath(lang, "naksha")} className={btnLight}>{L(lang, "All plans", "सभी नक्शे")}</Link>
             </>
           }
           visual={
-            <div className="flex flex-col gap-3">
-              <BeforeAfter
-                before={<img src={nakshaImage(n)} alt="" className="absolute inset-0 h-full w-full bg-white object-contain p-3" />}
-                after={<img src={nakshaPreview(n).src} alt="" className="absolute inset-0 h-full w-full object-cover" />}
-                label={L(lang, "Drag to compare 2D and 3D", "2D और 3D की तुलना के लिए खींचें")}
-              />
-              <p className="text-center text-[13px] text-muted">{L(lang, "2D plan ‹ drag › 3D view", "2D नक्शा ‹ खींचें › 3D व्यू")}</p>
+            <div className="relative overflow-hidden rounded-[18px] border border-line bg-white shadow-[0_30px_70px_-35px_rgba(16,29,53,0.3)]">
+              <img src={nakshaImage(n)} alt={nakshaTitle(n, lang)} className="aspect-[4/3] w-full object-contain p-3" loading="lazy" />
+              <span className="absolute bottom-3 left-3 rounded bg-white px-2.5 py-1 text-[11px] font-bold text-ink shadow">{n.plot.w}×{n.plot.d} · {facing(n)}</span>
             </div>
           }
         />
@@ -479,7 +472,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
           <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:py-20">
             <div className="flex min-w-0 flex-col gap-4">
               <h2 className="font-display text-[28px] font-extrabold tracking-tight sm:text-[36px]">{d.faq}</h2>
-              <img src={nakshaPreview(mosaic[2] ?? n).src} alt="" loading="lazy" className="hidden aspect-[4/3] w-full rounded-[16px] object-cover lg:block" />
+              <img src={nakshaImage(mosaic[2] ?? n)} alt={nakshaTitle(mosaic[2] ?? n, lang)} loading="lazy" className="hidden aspect-[4/3] w-full rounded-[16px] bg-white object-contain lg:block" />
             </div>
             <div className="flex min-w-0 flex-col gap-2">
               {faqs.map(([q, a]) => (

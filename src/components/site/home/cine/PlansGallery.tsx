@@ -17,11 +17,10 @@ export interface PlanCard {
   shop: boolean;
   cost: string;
   img2d: string;
-  img3d: string;
   title: string;
 }
 
-/** Section 7: the naksha library as a filterable, swipeable gallery with 3D and 2D previews. */
+/** Section 7: the naksha library as a filterable, swipeable gallery with detailed 2D previews. */
 export function PlansGallery({
   lang,
   plans,
@@ -35,7 +34,6 @@ export function PlansGallery({
 }) {
   const [facing, setFacing] = useState<"" | PlanCard["facing"]>("");
   const [bhk, setBhk] = useState(0);
-  const [flat, setFlat] = useState<Record<string, boolean>>({});
   const shown = plans.filter((p) => (!facing || p.facing === facing) && (!bhk || p.bhk === bhk)).slice(0, 18);
   const chip = (on: boolean) =>
     `rounded-full border px-4 py-2 text-[14px] font-bold transition ${on ? "border-amber bg-amber text-white" : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"}`;
@@ -77,37 +75,16 @@ export function PlansGallery({
       </div>
       <ul className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-6 sm:px-8 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))]">
         {shown.map((p) => {
-          const two = !!flat[p.slug];
           return (
             <li key={p.slug} className="w-[82vw] max-w-[400px] shrink-0 snap-start">
               <div className="group overflow-hidden rounded-3xl border border-night-line bg-night-2 transition hover:border-white/25">
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#eef0ec]">
                   <img
-                    src={p.img3d}
+                    src={p.img2d}
                     alt={p.title}
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full scale-[1.3] object-cover transition duration-700 group-hover:scale-[1.38]"
-                    style={{ opacity: two ? 0 : 1 }}
+                    className="absolute inset-0 h-full w-full bg-white object-contain p-2"
                   />
-                  <img
-                    src={p.img2d}
-                    alt=""
-                    loading="lazy"
-                    className="absolute inset-0 h-full w-full bg-white object-contain p-2 transition-opacity duration-500"
-                    style={{ opacity: two ? 1 : 0 }}
-                  />
-                  <div className="absolute left-3 top-3 flex rounded-full bg-night/80 p-1 text-[12px] font-bold backdrop-blur">
-                    {(["3D", "2D"] as const).map((m) => (
-                      <button
-                        key={m}
-                        type="button"
-                        onClick={() => setFlat((x) => ({ ...x, [p.slug]: m === "2D" }))}
-                        className={`rounded-full px-3 py-1 ${(m === "2D") === two ? "bg-amber text-white" : "text-white/70"}`}
-                      >
-                        {m}
-                      </button>
-                    ))}
-                  </div>
                   {p.shop && (
                     <span className="absolute right-3 top-3 rounded-full bg-night/80 px-2.5 py-1 text-[11px] font-bold text-amber">
                       {L(lang, "with shop", "दुकान सहित")}

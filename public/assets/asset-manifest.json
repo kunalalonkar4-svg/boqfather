@@ -1,0 +1,1042 @@
+{
+  "assets": [
+    {
+      "filename": "hero-modern-residence-960.webp",
+      "purpose": "Hero architecture photograph, responsive",
+      "source": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2400&q=88",
+      "license": "Unsplash License",
+      "dimensions": "960px wide",
+      "format": "WebP",
+      "licenseUrl": "https://unsplash.com/license",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "hero-modern-residence-1920.webp",
+      "purpose": "Hero architecture photograph, high resolution",
+      "source": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2400&q=88",
+      "license": "Unsplash License",
+      "dimensions": "1920px wide",
+      "format": "WebP",
+      "licenseUrl": "https://unsplash.com/license",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "engineer-plan-review-960.webp",
+      "purpose": "Civil engineer reviewing architectural drawings, responsive",
+      "source": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2400&q=88",
+      "license": "Unsplash License",
+      "dimensions": "960px wide",
+      "format": "WebP",
+      "licenseUrl": "https://unsplash.com/license",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "engineer-plan-review-1920.webp",
+      "purpose": "Civil engineer reviewing architectural drawings",
+      "source": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2400&q=88",
+      "license": "Unsplash License",
+      "dimensions": "1920px wide",
+      "format": "WebP",
+      "licenseUrl": "https://unsplash.com/license",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "site-measurement-960.webp",
+      "purpose": "Construction engineers setting out a building foundation, responsive",
+      "source": "https://commons.wikimedia.org/wiki/File:U.S._Soldiers_with_the_160th_Engineer_Company_measure_and_stake_out_the_high_point_of_the_foundation_a_new_schoolhouse_April_3,_2013,_at_a_construction_site_in_El_Tamarindo,_El_Salvador,_during_exercise_Beyond_130403-A-XZ241-016.jpg",
+      "license": "Public domain · SFC Sean A. Foley / U.S. Army",
+      "dimensions": "960px wide",
+      "format": "WebP",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+      "creator": "SFC Sean A. Foley / U.S. Army",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "site-measurement-1920.webp",
+      "purpose": "Construction engineers setting out a building foundation",
+      "source": "https://commons.wikimedia.org/wiki/File:U.S._Soldiers_with_the_160th_Engineer_Company_measure_and_stake_out_the_high_point_of_the_foundation_a_new_schoolhouse_April_3,_2013,_at_a_construction_site_in_El_Tamarindo,_El_Salvador,_during_exercise_Beyond_130403-A-XZ241-016.jpg",
+      "license": "Public domain · SFC Sean A. Foley / U.S. Army",
+      "dimensions": "1920px wide",
+      "format": "WebP",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+      "creator": "SFC Sean A. Foley / U.S. Army",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "concrete-workers-960.webp",
+      "purpose": "Construction team placing concrete, responsive",
+      "source": "https://commons.wikimedia.org/wiki/File:Concrete_workers_J1.jpg",
+      "license": "CC BY-SA 3.0 · Jamain",
+      "dimensions": "960px wide",
+      "format": "WebP",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "creator": "Jamain",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "concrete-workers-1920.webp",
+      "purpose": "Construction team placing concrete",
+      "source": "https://commons.wikimedia.org/wiki/File:Concrete_workers_J1.jpg",
+      "license": "CC BY-SA 3.0 · Jamain",
+      "dimensions": "1920px wide",
+      "format": "WebP",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "creator": "Jamain",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "cement-bags-960.webp",
+      "purpose": "Cement material photograph, responsive",
+      "source": "https://commons.wikimedia.org/wiki/File:Portland_Cement_Bags.jpg",
+      "license": "Public domain",
+      "dimensions": "Up to 1892px wide",
+      "format": "WebP",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "cement-bags-1920.webp",
+      "purpose": "Cement material photograph",
+      "source": "https://commons.wikimedia.org/wiki/File:Portland_Cement_Bags.jpg",
+      "license": "Public domain",
+      "dimensions": "Source width",
+      "format": "WebP",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "construction-sand-960.webp",
+      "purpose": "Fine construction sand photograph, responsive",
+      "source": "https://commons.wikimedia.org/wiki/File:Heap_of_Fine_Construction_Sand.jpg",
+      "license": "CC0",
+      "dimensions": "Up to 960px wide",
+      "format": "WebP",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "construction-sand-1920.webp",
+      "purpose": "Fine construction sand photograph",
+      "source": "https://commons.wikimedia.org/wiki/File:Heap_of_Fine_Construction_Sand.jpg",
+      "license": "CC0",
+      "dimensions": "Up to 1920px wide",
+      "format": "WebP",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "coarse-aggregate-960.webp",
+      "purpose": "Coarse aggregate stockpiles, responsive",
+      "source": "https://commons.wikimedia.org/wiki/File:Agregakinak_Aggregate.JPG",
+      "license": "CC BY-SA 4.0 · Emadrazo",
+      "dimensions": "960px wide",
+      "format": "WebP",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "creator": "Emadrazo",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "coarse-aggregate-1920.webp",
+      "purpose": "Coarse aggregate stockpiles",
+      "source": "https://commons.wikimedia.org/wiki/File:Agregakinak_Aggregate.JPG",
+      "license": "CC BY-SA 4.0 · Emadrazo",
+      "dimensions": "1920px wide",
+      "format": "WebP",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "creator": "Emadrazo",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "plan-30x40-east-g1.svg",
+      "purpose": "Generated 2D G+1 house plan, 30 × 40 ft",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing BOQ Father plan / estimate engine output."
+    },
+    {
+      "filename": "plan-20x40-east-g1.svg",
+      "purpose": "Generated 2D G+1 house plan, 20 × 40 ft",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing BOQ Father plan / estimate engine output."
+    },
+    {
+      "filename": "quantity-takeoff-30x40.svg",
+      "purpose": "Quantity takeoff visualization populated from the 30 × 40 estimate output",
+      "source": "BOQ Father plotEstimate in src/content/plots.ts",
+      "license": "Original project-generated vector drawing; existing calculation output",
+      "dimensions": "1800 × 1120",
+      "format": "SVG",
+      "modification": "Generated locally from existing BOQ Father plan / estimate engine output."
+    },
+    {
+      "filename": "construction-materials-board.webp",
+      "purpose": "Editorial board of cement, reinforcement steel, sand and aggregate",
+      "source": "Locally composed from the sources listed above and rebar-installation-1920.webp",
+      "license": "Mixed: public domain, CC0 and CC BY-SA 4.0; see individual image entries",
+      "dimensions": "1800 × 1120",
+      "format": "WebP",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "estimate-cost-30x40.svg",
+      "purpose": "Cost summary populated from the 30 × 40 estimate output",
+      "source": "BOQ Father plotEstimate in src/content/plots.ts",
+      "license": "Original project-generated vector drawing; existing calculation output",
+      "dimensions": "1800 × 1200",
+      "format": "SVG",
+      "modification": "Generated locally from existing BOQ Father plan / estimate engine output."
+    },
+    {
+      "filename": "steel-bbs-30x40.svg",
+      "purpose": "Steel bar bending schedule populated from the existing BBS output",
+      "source": "BOQ Father plotEstimate in src/content/plots.ts",
+      "license": "Original project-generated vector drawing; existing calculation output",
+      "dimensions": "1800 × 1200",
+      "format": "SVG",
+      "modification": "Generated locally from existing BOQ Father plan / estimate engine output."
+    },
+    {
+      "filename": "boq-report-30x40.svg",
+      "purpose": "BOQ report preview populated from the existing estimate output",
+      "source": "BOQ Father plotEstimate in src/content/plots.ts",
+      "license": "Original project-generated vector drawing; existing calculation output",
+      "dimensions": "1600 × 1800",
+      "format": "SVG",
+      "modification": "Generated locally from existing BOQ Father plan / estimate engine output."
+    },
+    {
+      "filename": "rebar-installation-1920.webp",
+      "purpose": "Reinforcement steel construction photograph",
+      "source": "https://commons.wikimedia.org/wiki/File:A_worker_ties_together_reinforcing_bar,_or_rebar,_to_strengthen_concrete_floors_for_a_facility_that_will_house_372_students_as_part_of_the_Herat_University_Women%27s_Dormitory_Project_in_Herat_province_140311-A-DT641-242.jpg",
+      "license": "Public domain · Bill Dowell / U.S. Army Corps of Engineers",
+      "dimensions": "1920 × 1277",
+      "format": "WebP",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+      "creator": "Bill Dowell / U.S. Army Corps of Engineers",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "plans/20x40-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 40 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x40-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 40 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x40-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 40 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x40-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 40 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x45-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 45 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x45-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 45 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x45-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 45 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x45-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 45 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x50-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 50 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x50-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 50 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x50-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 50 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x50-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 50 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x60-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 60 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x60-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 60 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x60-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 60 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/20x60-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (20 × 60 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x40-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 40 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x40-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 40 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x40-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 40 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x40-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 40 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x50-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 50 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x50-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 50 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x50-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 50 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x50-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 50 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x60-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 60 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x60-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 60 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x60-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 60 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x60-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (25 × 60 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x30-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 30 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x30-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 30 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x30-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 30 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x30-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 30 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x40-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 40 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x40-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 40 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x40-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 40 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x40-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 40 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x45-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 45 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x45-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 45 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x45-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 45 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x45-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 45 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x50-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 50 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x50-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 50 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x50-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 50 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x50-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 50 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x60-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 60 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x60-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 60 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x60-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 60 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x60-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (30 × 60 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/35x50-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (35 × 50 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/35x50-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (35 × 50 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/35x50-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (35 × 50 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/35x50-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (35 × 50 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x50-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 50 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x50-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 50 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x50-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 50 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x50-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 50 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x60-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 60 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x60-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 60 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x60-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 60 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x60-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 60 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x80-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 80 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x80-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 80 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x80-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 80 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/40x80-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (40 × 80 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/50x50-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (50 × 50 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/50x50-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (50 × 50 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/50x50-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (50 × 50 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/50x50-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (50 × 50 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/50x80-east-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (50 × 80 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/50x80-north-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (50 × 80 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/50x80-west-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (50 × 80 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/50x80-south-facing.svg",
+      "purpose": "High-resolution 2D G+1 house plan (50 × 80 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x50-east-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (25 × 50 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x50-north-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (25 × 50 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x50-west-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (25 × 50 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/25x50-south-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (25 × 50 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x50-east-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (30 × 50 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x50-north-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (30 × 50 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x50-west-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (30 × 50 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x50-south-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (30 × 50 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x60-east-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (30 × 60 ft, E-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x60-north-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (30 × 60 ft, N-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x60-west-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (30 × 60 ft, W-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "plans/30x60-south-facing-shop.svg",
+      "purpose": "High-resolution 2D G+1 house with shop plan (30 × 60 ft, S-facing)",
+      "source": "BOQ Father plotEstimate + planPrimitives in src/content/plots.ts and src/lib/planDraw.ts",
+      "license": "Original project-generated vector drawing",
+      "dimensions": "2200 × 1500",
+      "format": "SVG",
+      "modification": "Generated locally from existing plot and plan drawing engine output."
+    },
+    {
+      "filename": "coarse-aggregate-1080.webp",
+      "purpose": "Coarse aggregate photograph",
+      "source": "https://commons.wikimedia.org/wiki/File:Coarse_aggregate.jpg",
+      "license": "CC0",
+      "dimensions": "1080px source",
+      "format": "WebP",
+      "modification": "Locally optimized and stored; no external runtime image requests."
+    },
+    {
+      "filename": "kerala-residence-960.webp",
+      "purpose": "Responsive hero architecture photograph",
+      "source": "https://commons.wikimedia.org/wiki/File:Modern_house_in_kerala.jpg",
+      "creator": "Kottakkalnet",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "credit": "Kottakkalnet, Modern house in kerala, via Wikimedia Commons, CC BY-SA 4.0",
+      "sourceDimensions": "1920x1079",
+      "dimensions": "960x540",
+      "format": "WebP",
+      "modification": "Resized and converted to WebP; shared under CC BY-SA 4.0."
+    },
+    {
+      "filename": "kerala-residence-1920.webp",
+      "purpose": "High-resolution hero architecture photograph",
+      "source": "https://commons.wikimedia.org/wiki/File:Modern_house_in_kerala.jpg",
+      "creator": "Kottakkalnet",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "credit": "Kottakkalnet, Modern house in kerala, via Wikimedia Commons, CC BY-SA 4.0",
+      "sourceDimensions": "1920x1079",
+      "dimensions": "1920x1079",
+      "format": "WebP",
+      "modification": "Converted to WebP; shared under CC BY-SA 4.0."
+    },
+    {
+      "filename": "rebar-installation-960.webp",
+      "purpose": "Responsive construction-material workflow photograph",
+      "source": "https://commons.wikimedia.org/wiki/File:A_worker_ties_together_reinforcing_bar,_or_rebar,_to_strengthen_concrete_floors_for_a_facility_that_will_house_372_students_as_part_of_the_Herat_University_Women%27s_Dormitory_Project_in_Herat_province_140311-A-DT641-242.jpg",
+      "creator": "Bill Dowell / U.S. Army Corps of Engineers",
+      "license": "Public domain",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military",
+      "credit": "Bill Dowell, U.S. Army Corps of Engineers, via Wikimedia Commons (public domain)",
+      "sourceDimensions": "1920x1277",
+      "dimensions": "960x639",
+      "format": "WebP",
+      "modification": "Resized and converted to WebP."
+    },
+    {
+      "filename": "modern-residence-mysore.webp",
+      "purpose": "Hero photograph of contemporary residential architecture in India",
+      "source": "https://commons.wikimedia.org/wiki/File:Modern_residential_architecture_with_curved_design_and_exposed_brick_in_Mysore,_India.jpg",
+      "creator": "Evan Lovely",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "credit": "Evan Lovely, Modern residential architecture with curved design and exposed brick in Mysore, India, via Wikimedia Commons, CC BY 2.0",
+      "sourceDimensions": "960x720",
+      "dimensions": "960x720",
+      "format": "WebP",
+      "modification": "Converted to WebP and displayed with visible attribution."
+    }
+  ]
+}

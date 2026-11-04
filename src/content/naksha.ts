@@ -147,7 +147,4 @@ export function nakshaHinglish(n: Naksha) {
   return `${n.plot.w} by ${n.plot.d} ${f} ${n.kind === "shop" ? "dukan ke sath ghar" : "ghar"} ka naksha`;
 }
 
-export const nakshaImage = (n: Naksha) => `/naksha/img/${n.slug}.webp`;
-
-/** 3D preview image of the naksha (made by scripts/naksha-3d-images.mjs). */
-export const nakshaImage3d = (n: Naksha) => `/naksha/img3d/${n.slug}.webp`;
+export const nakshaImage = (n: Naksha) => `/assets/plans/${n.slug}.svg`;

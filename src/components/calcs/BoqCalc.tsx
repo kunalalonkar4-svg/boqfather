@@ -555,28 +555,27 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploaded]);
 
-  // the plot as last applied, for the site around the 3D house (none when rooms were typed in or uploaded)
-  const sitePlot = useMemo(() => {
-    if (!plotLive || !applied) return undefined;
-    try {
-      const p = JSON.parse(applied) as { B: string; L: string; back: string };
-      const w = Number(p.B),
-        d = Number(p.L),
-        back = Number(p.back);
-      return w > 0 && d > 0 ? { w, d, back: back >= 0 ? back : 0 } : undefined;
-    } catch {
-      return undefined;
-    }
-  }, [plotLive, applied]);
-
   const rows = plans[cur];
   const maxSub = res ? Math.max(...res.sections.map((s) => s.subtotal)) : 1;
   const carpetOf = (f: number) =>
     floorRooms[f]?.reduce((a, r) => a + r.L * r.B, 0) ?? 0;
 
   return (
-    <div className="flex flex-col gap-5 pb-20 lg:pb-0">
-      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+    <div className="bf-boq-workspace flex flex-col gap-5 pb-20 lg:pb-0">
+      <header className="bf-boq-project-header">
+        <div>
+          <span className="premium-kicker">{hi ? "प्रोजेक्ट वर्कस्पेस" : "PROJECT WORKSPACE"}</span>
+          <h2>{title || (hi ? "नया घर एस्टिमेट" : "New house estimate")}</h2>
+          <p>{res ? `${floorTag} · ${inr(res.geometry.builtUpSqft)} sqft · ${res.quality}` : `${floorCount} ${hi ? "मंज़िलें" : "floors"} · ${location}`}</p>
+        </div>
+        {res && <strong>{rupees(res.grandTotal)}<small>{hi ? " अनुमानित कुल" : " estimated total"}</small></strong>}
+      </header>
+      <nav className="bf-boq-steps" aria-label={hi ? "एस्टिमेट के चरण" : "Estimate workflow"}>
+        <a href="#boq-project-inputs"><span>01</span>{hi ? "प्रोजेक्ट सेट करें" : "Set up project"}</a>
+        <a href="#boq-total"><span>02</span>{hi ? "मात्रा और कुल जांचें" : "Review quantities"}</a>
+        <a href="#boq-exports"><span>03</span>{hi ? "रिपोर्ट एक्सपोर्ट करें" : "Export reports"}</a>
+      </nav>
+      <div id="boq-project-inputs" className="grid scroll-mt-24 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-5 rounded-2xl border border-line bg-white p-4 sm:p-6">
           {fromUpload && (
             <p className="rounded-xl border border-[#1d7a46]/40 bg-[#e8f4ec] px-4 py-3 text-[14px] font-semibold text-[#1d5c36]">
@@ -1465,15 +1464,17 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                 {rateSet ? ` · ${hi ? "आपके रेट" : "your rates"}` : ""}
               </p>
             </section>
-            <ProTools
-              lang={lang}
-              kind="boq"
-              title={title}
-              snapshot={snapshot}
-              restore={restore}
-              onExport={(kd, o) => void run(kd, o)}
-              busy={busy}
-            />
+            <div id="boq-exports" className="scroll-mt-24">
+              <ProTools
+                lang={lang}
+                kind="boq"
+                title={title}
+                snapshot={snapshot}
+                restore={restore}
+                onExport={(kd, o) => void run(kd, o)}
+                busy={busy}
+              />
+            </div>
             <div className="no-print">
               <WhatsAppShare
                 lang={lang}
@@ -1552,7 +1553,6 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                 <SketchPanel
                   r={res}
                   lang={lang}
-                  plot={sitePlot}
                   names={(tp) =>
                     tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
                   }

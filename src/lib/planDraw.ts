@@ -44,7 +44,7 @@ export interface PText {
   anchor: "start" | "middle" | "end";
   rotate?: number;
 }
-/** A piece of furniture as placed on the plan (for the 3D view); `sd` = the wall it stands against. */
+/** A piece of furniture as placed on the plan; `sd` = the wall it stands against. */
 export interface Furniture {
   t:
     | "bed"

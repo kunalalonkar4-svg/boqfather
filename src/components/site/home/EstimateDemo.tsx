@@ -26,7 +26,6 @@ export function EstimateDemo({
   builtUp,
   heads,
   materials,
-  img3d,
 }: {
   lang: Lang;
   w: number;
@@ -37,7 +36,6 @@ export function EstimateDemo({
   builtUp: number;
   heads: DemoLine[];
   materials: { label: string; value: string }[];
-  img3d: string;
 }) {
   const typed = `${w} × ${d}`;
   const [n, setN] = useState(typed.length);
@@ -155,25 +153,6 @@ export function EstimateDemo({
           </div>
         </div>
       </div>
-      {/* the plan comes with it, in 3D */}
-      {done && (
-        <div
-          key={`p${loop}`}
-          className="chip-in absolute -bottom-10 -left-4 w-[46%] overflow-hidden rounded-2xl border border-line bg-white shadow-xl sm:-left-12"
-          style={{ animationDelay: "1400ms" }}
-        >
-          <img
-            src={img3d}
-            alt={L(lang, "3D naksha of this house", "इस घर का 3D नक्शा")}
-            className="aspect-[2/1] w-full object-cover"
-            width={1200}
-            height={615}
-          />
-          <div className="px-3 py-2 text-[12px] font-bold">
-            {L(lang, "+ naksha, in 3D", "+ नक्शा भी, 3D में")}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

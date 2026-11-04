@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "house-construction-cost",
     ...SQFT_SIZES.map((n) => `house-construction-cost/${sqftSlug(n)}`),
     "house-construction-guide",
+    "house-owner-guide",
     "house-construction-guide/checklist",
     ...[...TOPICS, ...QUESTIONS].map((x) => `${GUIDE_BASE}/${x.slug}`),
     "naksha",

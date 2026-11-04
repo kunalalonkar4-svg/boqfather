@@ -85,6 +85,7 @@ function card(n: Naksha, lang: Lang): GalleryCard {
     size: plotSlug(n.plot),
     facing: n.facing,
     kind: n.kind,
+    bhk: i.bhk,
     gaj: gajOf(n.plot),
   };
 }
@@ -114,8 +115,8 @@ function CustomSection({
         <p className="text-[15px] leading-relaxed text-body">
           {L(
             lang,
-            "Odd plot shape, a corner plot, a full Vastu layout, a shop or rent floor, lift, 3D elevation or a structural drawing — send your details and we will get back to you on WhatsApp.",
-            "टेढ़ा प्लॉट, कॉर्नर प्लॉट, पूरा वास्तु लेआउट, दुकान या किराये का फ़्लोर, लिफ़्ट, 3D एलिवेशन या स्ट्रक्चरल ड्रॉइंग — अपनी जानकारी भेजें, हम WhatsApp पर संपर्क करेंगे।",
+            "Odd plot shape, a corner plot, a full Vastu layout, a shop or rent floor, lift or a structural drawing — send your details and we will get back to you on WhatsApp.",
+            "टेढ़ा प्लॉट, कॉर्नर प्लॉट, पूरा वास्तु लेआउट, दुकान या किराये का फ़्लोर, लिफ़्ट या स्ट्रक्चरल ड्रॉइंग — अपनी जानकारी भेजें, हम WhatsApp पर संपर्क करेंगे।",
           )}
         </p>
       </div>
@@ -156,25 +157,27 @@ export function NakshaIndexPage({ lang }: { lang: Lang }) {
         </p>
       }
     >
-      <nav
-        aria-label={L(lang, "By gaj", "गज़ के हिसाब से")}
-        className="flex flex-wrap gap-2"
-      >
-        {GAJ.map((g) => (
-          <Link
-            key={g.slug}
-            href={langPath(lang, `${BASE}/gaj/${g.slug}`)}
-            className="rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold hover:border-amber"
-          >
-            {L(lang, `${g.gaj} gaj naksha`, `${g.gaj} गज़ का नक्शा`)}
-          </Link>
-        ))}
-      </nav>
-      <NakshaGallery
-        lang={lang}
-        cards={NAKSHE.map((n) => card(n, lang))}
-        sizes={PLOTS.map(plotSlug)}
-      />
+      <section className="bf-naksha-library" aria-label={L(lang, "2D house plan library", "2D घर के नक्शों की सूची")}>
+        <nav
+          aria-label={L(lang, "Browse by plot area", "प्लॉट क्षेत्रफल से देखें")}
+          className="bf-naksha-size-links flex flex-wrap gap-2"
+        >
+          {GAJ.map((g) => (
+            <Link
+              key={g.slug}
+              href={langPath(lang, `${BASE}/gaj/${g.slug}`)}
+              className="rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold hover:border-amber"
+            >
+              {L(lang, `${g.gaj} gaj naksha`, `${g.gaj} गज़ का नक्शा`)}
+            </Link>
+          ))}
+        </nav>
+        <NakshaGallery
+          lang={lang}
+          cards={NAKSHE.map((n) => card(n, lang))}
+          sizes={PLOTS.map(plotSlug)}
+        />
+      </section>
       <CustomSection lang={lang} />
     </Shell>
   );

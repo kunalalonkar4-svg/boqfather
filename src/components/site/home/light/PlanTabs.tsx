@@ -9,11 +9,10 @@ export interface TabPlan {
   title: string;
   sub: string;
   cost: string;
-  img3d: string;
   img2d: string;
 }
 
-/** "See plans by type": tabs (2 BHK, 3 BHK, East facing…) with one large picture and a strip of more. */
+/** Browse 2D plans by type with one large plan and a strip of alternatives. */
 export function PlanTabs({
   lang,
   tabs,
@@ -25,7 +24,6 @@ export function PlanTabs({
 }) {
   const [t, setT] = useState(0);
   const [i, setI] = useState(0);
-  const [two, setTwo] = useState(false);
   const plans = tabs[t]?.plans ?? [];
   const p = plans[Math.min(i, plans.length - 1)];
   const L = (en: string, hi: string) => (lang === "hi" ? hi : en);
@@ -54,24 +52,12 @@ export function PlanTabs({
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
         <div className="relative min-w-0 overflow-hidden rounded-[28px] border border-line bg-[#eef3f9]">
           <img
-            key={p.href + (two ? "2" : "3")}
-            src={two ? p.img2d : p.img3d}
+            key={p.href}
+            src={p.img2d}
             alt={p.title}
-            className={`stage-in aspect-[16/10] w-full ${two ? "bg-white object-contain p-3" : "object-cover"}`}
+            className="stage-in aspect-[16/10] w-full bg-white object-contain p-3"
             loading="lazy"
           />
-          <div className="absolute left-4 top-4 flex rounded-full bg-white/95 p-1 text-[13px] font-bold shadow">
-            {(["3D", "2D"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setTwo(m === "2D")}
-                className={`rounded-full px-3.5 py-1 ${(m === "2D") === two ? "bg-ink text-white" : "text-ink"}`}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
         </div>
         <div className="flex min-w-0 flex-col gap-4">
           <div className="rounded-[24px] border border-line bg-white p-6">
@@ -98,7 +84,7 @@ export function PlanTabs({
                   onClick={() => setI(k)}
                   className={`w-full overflow-hidden rounded-xl border-2 transition ${k === i ? "border-ink" : "border-transparent hover:border-line"}`}
                 >
-                  <img src={x.img3d} alt={x.title} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                  <img src={x.img2d} alt={x.title} loading="lazy" className="aspect-[4/3] w-full bg-white object-contain p-1" />
                 </button>
               </li>
             ))}
