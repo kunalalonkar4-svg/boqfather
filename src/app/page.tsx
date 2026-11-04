@@ -1,4 +1,4 @@
-import { HomeLight as HomePage } from "@/components/site/home/light/HomeLight";
+import { PremiumHome } from "@/components/site/home/PremiumHome";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
@@ -11,5 +11,5 @@ export const metadata = pageMeta({
 });
 
 export default function Page() {
-  return <HomePage lang="en" />;
+  return <PremiumHome lang="en" />;
 }
