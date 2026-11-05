@@ -95,3 +95,44 @@ footer .bg-amber { background: var(--color-brand) !important; }
 .min-h-screen.bg-slate-950 > main {
   color: var(--color-ink);
 }
+
+/* Homepage polish: flatter surfaces, confident typography and restrained blue accents. */
+main section { scroll-margin-top: 5.5rem; }
+main .bg-gradient-to-r.from-blue-400,
+main .bg-gradient-to-r.from-blue-400.via-indigo-300 {
+  background: none !important;
+  color: var(--color-brand) !important;
+  -webkit-text-fill-color: var(--color-brand) !important;
+}
+main .bg-gradient-to-r.bg-clip-text {
+  background: none !important;
+  color: var(--color-brand) !important;
+  -webkit-text-fill-color: var(--color-brand) !important;
+}
+main .border-t.border-slate-800\/80 { border-color: var(--color-outline) !important; }
+main .bg-slate-900\/40 { background: #f7f8fa !important; }
+main .bg-slate-900\/80 { background: #f7f8fa !important; }
+main .bg-slate-950\/80 { background: rgba(255,255,255,.96) !important; }
+main .bg-slate-950\/90 { background: rgba(255,255,255,.98) !important; }
+main .shadow-blue-600\/25 { box-shadow: 0 10px 24px rgba(20,110,245,.16) !important; }
+main input[type="range"] { accent-color: var(--color-brand); }
+main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+main select,
+main textarea {
+  border-color: var(--color-outline);
+}
+main input:focus,
+main select:focus,
+main textarea:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(20,110,245,.12);
+}
+main .hover\\:border-blue-500\\/80:hover { border-color: var(--color-brand) !important; }
+main .hover\\:bg-slate-800:hover { background: #eef1f4 !important; }
+main .hover\\:text-slate-200:hover,
+main .hover\\:text-white:hover { color: var(--color-ink) !important; }
+main .bg-emerald-400 { background-color: #168447 !important; }
+main .text-emerald-400 { color: #168447 !important; }
+main .bg-amber { background-color: var(--color-brand) !important; }
+main .text-amber,
+main .text-amber-dark { color: var(--color-brand) !important; }
