@@ -2,21 +2,137 @@
 @tailwind components;
 @tailwind utilities;
 
+/* BOQFather — Webflow-inspired visual system.
+   Visual-only layer: calculation logic, routes, content and product features remain untouched. */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
+  color-scheme: light;
+  --color-canvas: #ffffff;
+  --color-ink: #080808;
+  --color-muted: #5a5a5a;
+  --color-whisper: #f0f0f0;
+  --color-outline: #d8d8d8;
+  --color-brand: #146ef5;
+  --color-brand-soft: #eaf2ff;
+  --color-success: #168447;
+  --font-ui: Inter, Arial, sans-serif;
+  --foreground-rgb: 8, 8, 8;
+  --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html { scroll-behavior: smooth; }
+body {
+  color: var(--color-ink);
+  background: var(--color-canvas);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection { color: #fff; background: var(--color-brand); }
+a { text-underline-offset: 3px; }
+button, input, select, textarea { font: inherit; }
+:focus-visible { outline: 3px solid rgba(20,110,245,.35); outline-offset: 2px; }
+
+/* Existing dark utility classes are remapped to the approved light visual language. */
+main .bg-slate-950 { background-color: #fff !important; }
+main .bg-slate-900 { background-color: #f7f8fa !important; }
+main .bg-slate-900\/40 { background-color: #f4f6f8 !important; }
+main .bg-slate-800 { background-color: #eef1f4 !important; }
+main .bg-slate-950\/80 { background-color: rgba(255,255,255,.92) !important; }
+main .border-slate-800,
+main .border-slate-800\/80 { border-color: var(--color-outline) !important; }
+main .text-slate-100,
+main .text-white { color: var(--color-ink) !important; }
+main .text-slate-200,
+main .text-slate-300,
+main .text-slate-400,
+main .text-slate-500 { color: var(--color-muted) !important; }
+main .text-blue-400,
+main .text-blue-300 { color: var(--color-brand) !important; }
+main .text-emerald-400 { color: var(--color-success) !important; }
+main .bg-blue-600,
+main .hover\\:bg-blue-500:hover { background-color: var(--color-brand) !important; color: #fff !important; }
+main .bg-blue-600\/20,
+main .bg-blue-500\/10 { background-color: var(--color-brand-soft) !important; }
+main .border-blue-500,
+main .hover\\:border-blue-500\\/80:hover { border-color: var(--color-brand) !important; }
+main .accent-blue-500 { accent-color: var(--color-brand); }
+
+/* Consistent surface treatment for estimator panels and cards. */
+main .rounded-3xl,
+main .rounded-2xl { border-radius: 8px !important; }
+main .rounded-xl,
+main .rounded-lg { border-radius: 6px !important; }
+main .shadow-2xl { box-shadow: 0 18px 48px rgba(8,8,8,.08) !important; }
+main .shadow-lg,
+main .shadow-md { box-shadow: 0 8px 24px rgba(8,8,8,.06) !important; }
+main h1, main h2, main h3 { color: var(--color-ink); letter-spacing: -.035em; }
+main h1 { line-height: 1.04; }
+main p { text-wrap: pretty; }
+main a { transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease; }
+
+/* Header and navigation stay crisp, readable and sticky. */
+header { background: rgba(255,255,255,.94) !important; border-color: var(--color-outline) !important; }
+header a:hover { color: var(--color-brand); }
+header .bg-ink { background: var(--color-brand) !important; }
+header .bg-amber { background: var(--color-brand) !important; }
+
+/* Keep the established dark footer as a deliberate high-contrast close. */
+footer { background: #080808 !important; border-color: #292929 !important; }
+footer .bg-amber { background: var(--color-brand) !important; }
+@media (max-width: 640px) {
+  main .text-4xl { font-size: clamp(2.25rem, 10vw, 3.5rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: #0f172a;
+/* Root homepage shell previously carried a dark utility background. */
+.min-h-screen.bg-slate-950 {
+  background: #fff !important;
+  color: var(--color-ink) !important;
 }
+.min-h-screen.bg-slate-950 > main {
+  color: var(--color-ink);
+}
+
+/* Homepage polish: flatter surfaces, confident typography and restrained blue accents. */
+main section { scroll-margin-top: 5.5rem; }
+main .bg-gradient-to-r.from-blue-400,
+main .bg-gradient-to-r.from-blue-400.via-indigo-300 {
+  background: none !important;
+  color: var(--color-brand) !important;
+  -webkit-text-fill-color: var(--color-brand) !important;
+}
+main .bg-gradient-to-r.bg-clip-text {
+  background: none !important;
+  color: var(--color-brand) !important;
+  -webkit-text-fill-color: var(--color-brand) !important;
+}
+main .border-t.border-slate-800\/80 { border-color: var(--color-outline) !important; }
+main .bg-slate-900\/40 { background: #f7f8fa !important; }
+main .bg-slate-900\/80 { background: #f7f8fa !important; }
+main .bg-slate-950\/80 { background: rgba(255,255,255,.96) !important; }
+main .bg-slate-950\/90 { background: rgba(255,255,255,.98) !important; }
+main .shadow-blue-600\/25 { box-shadow: 0 10px 24px rgba(20,110,245,.16) !important; }
+main input[type="range"] { accent-color: var(--color-brand); }
+main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+main select,
+main textarea {
+  border-color: var(--color-outline);
+}
+main input:focus,
+main select:focus,
+main textarea:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(20,110,245,.12);
+}
+main .hover\\:border-blue-500\\/80:hover { border-color: var(--color-brand) !important; }
+main .hover\\:bg-slate-800:hover { background: #eef1f4 !important; }
+main .hover\\:text-slate-200:hover,
+main .hover\\:text-white:hover { color: var(--color-ink) !important; }
+main .bg-emerald-400 { background-color: #168447 !important; }
+main .text-emerald-400 { color: #168447 !important; }
+main .bg-amber { background-color: var(--color-brand) !important; }
+main .text-amber,
+main .text-amber-dark { color: var(--color-brand) !important; }

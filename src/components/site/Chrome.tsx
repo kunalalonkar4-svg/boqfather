@@ -8,7 +8,7 @@ import { Lang, langPath } from "@/lib/site";
 export function Logo() {
   return (
     <span className="flex items-center gap-2.5">
-      <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-amber text-[14px] font-extrabold text-white">
+      <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-[#146ef5] text-[14px] font-extrabold text-white">
         BF
       </span>
       <span className="font-display text-[20px] font-extrabold tracking-tight">
@@ -36,7 +36,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const cta = (
     <Link
       href={langPath(lang, "house-boq-estimate")}
-      className="inline-flex h-10 items-center rounded-full bg-ink px-4 text-[14px] font-bold text-white transition hover:bg-[#1d3352]"
+      className="inline-flex h-10 items-center rounded-[4px] bg-[#146ef5] px-4 text-[14px] font-bold text-white transition hover:bg-[#0d57c7]"
     >
       {hi ? "मुफ़्त एस्टिमेट" : "Start Free Estimate"}
     </Link>
@@ -54,7 +54,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
               <Link
                 key={l.href}
                 href={l.href}
-                className="flex items-center gap-1.5 rounded-full px-3 py-2 font-medium text-body transition hover:bg-[#eaf3ff] hover:text-ink"
+                className="flex items-center gap-1.5 rounded-md px-3 py-2 font-medium text-body transition hover:bg-[#eaf3ff] hover:text-ink"
               >
                 {l.label}
                 {l.pro && (
@@ -72,7 +72,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
           <Link
             href={altPath}
             hrefLang={lang === "en" ? "hi" : "en"}
-            className="rounded-full border border-line px-3 py-1.5 text-[13px] font-semibold text-ink hover:border-ink"
+            className="rounded-md border border-line px-3 py-1.5 text-[13px] font-semibold text-ink hover:border-ink"
           >
             {d.lang_switch}
           </Link>
@@ -80,7 +80,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
           <details className="group relative xl:hidden">
             <summary
               aria-label={hi ? "मेनू" : "Menu"}
-              className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-white [&::-webkit-details-marker]:hidden"
+              className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md border border-line bg-white [&::-webkit-details-marker]:hidden"
             >
               <span aria-hidden="true" className="flex flex-col gap-[5px]">
                 <span className="block h-0.5 w-5 rounded bg-ink transition group-open:translate-y-[7px] group-open:rotate-45" />
@@ -90,13 +90,13 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
             </summary>
             <nav
               aria-label="Main"
-              className="absolute right-0 top-12 flex w-[min(88vw,340px)] flex-col gap-0.5 rounded-2xl border border-line bg-white p-2 shadow-[0_24px_60px_-20px_rgba(22,24,26,0.35)]"
+              className="absolute right-0 top-12 flex w-[min(88vw,340px)] flex-col gap-0.5 rounded-lg border border-line bg-white p-2 shadow-[0_24px_60px_-20px_rgba(22,24,26,0.35)]"
             >
               {links.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="flex items-center justify-between rounded-xl px-4 py-3 text-[16px] font-semibold text-ink hover:bg-[#eef4fb]"
+                  className="flex items-center justify-between rounded-md px-4 py-3 text-[16px] font-semibold text-ink hover:bg-[#eef4fb]"
                 >
                   {l.label}
                   {l.pro && (
