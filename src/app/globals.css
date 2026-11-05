@@ -86,3 +86,12 @@ footer .bg-amber { background: var(--color-brand) !important; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Root homepage shell previously carried a dark utility background. */
+.min-h-screen.bg-slate-950 {
+  background: #fff !important;
+  color: var(--color-ink) !important;
+}
+.min-h-screen.bg-slate-950 > main {
+  color: var(--color-ink);
+}
