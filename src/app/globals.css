@@ -1,254 +1,45 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* BOQFather brand tokens */
 :root {
-  /* BOQFather engineering palette: navy, blue, white */
-  --ink: #15263b;
-  --ground: #f7fafe;
-  --surface: #ffffff;
-  --line: #e3eaf2;
-  --muted: #66758a;
-  --body: #3d4d63;
-  /* accent (token names kept so every page follows): engineering blue */
-  --amber: #1769d2;
-  --amber-dark: #1769d2;
-  --amber-tint: #eaf3ff;
-  --steel: #12345a;
-  --good: #15966b;
-  --warn: #b45309;
-  --warn-tint: #fff4d6;
-  --night: #0b1626;
-  --night-2: #12203a;
-  --night-3: #1a2b48;
-  --night-line: #263a5a;
-  --mist: #93a1b0;
-  --glow: #3b82f6;
-}
+  /* Colors */
+  --color-signal-violet: #7084ff;
+  --gradient-signal-violet: linear-gradient(179deg, #405bff 1.06%, #7084ff 123.42%);
+  --color-voltage-blue: #405bff;
+  --color-midnight-ink: #0e0e0e;
+  --color-carbon: #191919;
+  --color-graphite: #414042;
+  --color-steel: #58595b;
+  --color-slate: #6d6e71;
+  --color-fog: #a7a9ac;
+  --color-ash: #d1d3d4;
+  --color-paper: #ffffff;
+  --color-smoke: #2c2c2c;
+  --color-plasma-cyan: #3dd6f5;
 
-@theme inline {
-  --color-ink: var(--ink);
-  --color-ground: var(--ground);
-  --color-surface: var(--surface);
-  --color-line: var(--line);
-  --color-muted: var(--muted);
-  --color-body: var(--body);
-  --color-amber: var(--amber);
-  --color-amber-dark: var(--amber-dark);
-  --color-amber-tint: var(--amber-tint);
-  --color-steel: var(--steel);
-  --color-good: var(--good);
-  --color-warn: var(--warn);
-  --color-warn-tint: var(--warn-tint);
-  --color-night: var(--night);
-  --color-night-2: var(--night-2);
-  --color-night-3: var(--night-3);
-  --color-night-line: var(--night-line);
-  --color-mist: var(--mist);
-  --color-glow: var(--glow);
-  --font-sans: "Inter", "Noto Sans Devanagari", system-ui, sans-serif;
-  --font-display: "Manrope", "Noto Sans Devanagari", system-ui, sans-serif;
-}
+  /* Surfaces */
+  --surface-midnight-canvas: #0e0e0e;
+  --surface-carbon-panel: #191919;
+  --surface-graphite-edge: #414042;
+  --surface-product-white: #ffffff;
 
-html {
-  -webkit-text-size-adjust: 100%;
+  /* Named Radii */
+  --radius-tags: 30px;
+  --radius-cards: 30px;
+  --radius-inputs: 10px;
+  --radius-buttons: 30px;
+  --radius-navpill: 60px;
+
+  /* Shadows & Glows */
+  --shadow-lg: rgba(0, 0, 0, 0.45) 0px 4px 20px 0px;
+  --glow-hero: 0 0 40px rgba(64, 91, 255, 0.25);
+  --glow-violet: 0 0 35px rgba(112, 132, 255, 0.22);
 }
 
 body {
-  background: var(--ground);
-  color: var(--ink);
-  font-family: var(--font-sans);
-}
-
-:lang(hi) {
-  font-family: "Noto Sans Devanagari", "Inter", system-ui, sans-serif;
-}
-
-.font-display {
-  font-family: var(--font-display);
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-@media print {
-  header,
-  footer,
-  .no-print {
-    display: none !important;
-  }
-  body {
-    background: #fff;
-  }
-}
-
-/* ---------- home page motion ---------- */
-.reveal-wait {
-  opacity: 0;
-  transform: translateY(28px);
-}
-.reveal-in {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 0.8s ease,
-    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-@keyframes hero-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-.hero-float {
-  animation: hero-float 7s ease-in-out infinite;
-}
-@keyframes plan-in {
-  from {
-    opacity: 0;
-    transform: scale(1.04);
-    filter: blur(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-}
-.plan-show {
-  animation: plan-in 0.9s ease both;
-}
-@keyframes chip-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.chip-in {
-  animation: chip-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-@keyframes caret {
-  50% {
-    opacity: 0;
-  }
-}
-.caret {
-  animation: caret 0.8s steps(1) infinite;
-  color: var(--amber-dark);
-}
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-float,
-  .plan-show,
-  .chip-in,
-  .caret {
-    animation: none !important;
-  }
-}
-
-/* ---------- cinematic home ---------- */
-@keyframes line-up {
-  from {
-    transform: translateY(105%);
-  }
-  to {
-    transform: none;
-  }
-}
-.line-up {
-  animation: line-up 1.1s cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-@keyframes reveal-up {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.reveal-up {
-  animation: reveal-up 1s cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-@keyframes kenburns {
-  from {
-    transform: scale(1.08) translateX(1.5%);
-  }
-  to {
-    transform: scale(1) translateX(0);
-  }
-}
-.kenburns {
-  animation: kenburns 18s ease-out both;
-}
-@keyframes scroll-cue {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(300%);
-  }
-}
-.scroll-cue {
-  animation: scroll-cue 1.8s cubic-bezier(0.6, 0, 0.4, 1) infinite;
-}
-@keyframes stage-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-    filter: blur(4px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-}
-.stage-in {
-  animation: stage-in 0.7s cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-.reveal-wait .row-in {
-  opacity: 0;
-}
-.reveal-in .row-in {
-  animation: reveal-up 0.8s cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-@keyframes tab-timer {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
-}
-.tab-timer {
-  animation: tab-timer 5.2s linear both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .line-up,
-  .reveal-up,
-  .kenburns,
-  .scroll-cue,
-  .stage-in,
-  .reveal-in .row-in,
-  .tab-timer {
-    animation: none !important;
-  }
+  background-color: var(--color-midnight-ink);
+  color: var(--color-paper);
+  font-family: var(--font-bodyfont, ui-sans-serif, system-ui, -apple-system, sans-serif);
+  overflow-x: hidden;
 }
