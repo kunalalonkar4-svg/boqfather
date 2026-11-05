@@ -69,11 +69,20 @@ export const nakshaAlt = (n: Naksha, lang: Lang) =>
     `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].hi} ${n.kind === "shop" ? "दुकान के साथ घर" : "घर"} का 3D आर्किटेक्चरल नक्शा — ${nakshaHinglish(n)}`,
   );
 
-// ================= SMART 3D ARCHITECTURAL RESOLVER =================
-// Replaces flat cartoonish drawings with international 3D cutaway renders
+// ================= REALISTIC 3D ARCHITECTURAL RESOLVER =================
+// Automatically replaces flat cartoonish drawings with high-resolution 3D renders
 function getRealistic3DPlanImage(n: Naksha): string {
-  // Uses our uploaded HD 3D Villa Cutaway Render
-  return "/hero-3d-villa.jpg";
+  const area = n.plot.w * n.plot.d;
+  if (area <= 1000) {
+    // 20x40, 20x45, 20x50 (Modern 3D Floor Plan)
+    return "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80";
+  } else if (area <= 1500) {
+    // 25x50, 30x40 (3D Duplex Villa Cutaway)
+    return "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80";
+  } else {
+    // 40x60, 50x50 (Luxury Architectural 3D Villa)
+    return "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80";
+  }
 }
 
 function card(n: Naksha, lang: Lang): GalleryCard {
@@ -81,7 +90,6 @@ function card(n: Naksha, lang: Lang): GalleryCard {
   return {
     slug: n.slug,
     href: langPath(lang, `${BASE}/${n.slug}`),
-    // Yahan humne naya realistic 3D render link kar diya hai:
     img: getRealistic3DPlanImage(n),
     alt: nakshaAlt(n, lang),
     title: nakshaTitle(n, lang),
