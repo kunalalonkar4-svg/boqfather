@@ -65,32 +65,17 @@ const FLOORS = (i: number, lang: Lang) =>
 export const nakshaAlt = (n: Naksha, lang: Lang) =>
   L(
     lang,
-    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].en.toLowerCase()} ${n.kind === "shop" ? "house with shop" : "house"} plan, 3D architectural perspective — ${nakshaHinglish(n)}`,
-    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].hi} ${n.kind === "shop" ? "दुकान के साथ घर" : "घर"} का 3D आर्किटेक्चरल नक्शा — ${nakshaHinglish(n)}`,
+    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].en.toLowerCase()} ${n.kind === "shop" ? "house with shop" : "house"} plan — ${nakshaHinglish(n)}`,
+    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].hi} ${n.kind === "shop" ? "दुकान के साथ घर" : "घर"} का 3D नक्शा — ${nakshaHinglish(n)}`,
   );
-
-// ================= REALISTIC 3D ARCHITECTURAL RESOLVER =================
-// Automatically replaces flat cartoonish drawings with high-resolution 3D renders
-function getRealistic3DPlanImage(n: Naksha): string {
-  const area = n.plot.w * n.plot.d;
-  if (area <= 1000) {
-    // 20x40, 20x45, 20x50 (Modern 3D Floor Plan)
-    return "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80";
-  } else if (area <= 1500) {
-    // 25x50, 30x40 (3D Duplex Villa Cutaway)
-    return "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80";
-  } else {
-    // 40x60, 50x50 (Luxury Architectural 3D Villa)
-    return "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80";
-  }
-}
 
 function card(n: Naksha, lang: Lang): GalleryCard {
   const i = nakshaInfo(n);
   return {
     slug: n.slug,
     href: langPath(lang, `${BASE}/${n.slug}`),
-    img: getRealistic3DPlanImage(n),
+    // Aapke khud ke banaye hue 84 original plans wapas aa gaye:
+    img: nakshaPreview(n).src,
     alt: nakshaAlt(n, lang),
     title: nakshaTitle(n, lang),
     sub: L(
@@ -117,9 +102,9 @@ function CustomSection({
   return (
     <section
       id="custom"
-      className="flex scroll-mt-4 flex-col gap-4 rounded-2xl border-2 border-amber bg-white p-5 sm:p-6"
+      className="flex scroll-mt-4 flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm"
     >
-      <div className="flex max-w-3xl flex-col gap-1">
+      <div className="flex max-w-3xl flex-col gap-1.5">
         <H2>
           {L(
             lang,
@@ -127,7 +112,7 @@ function CustomSection({
             "अपने प्लॉट का कस्टम नक्शा चाहिए?",
           )}
         </H2>
-        <p className="text-[15px] leading-relaxed text-body">
+        <p className="text-[15px] leading-relaxed text-slate-600">
           {L(
             lang,
             "Odd plot shape, a corner plot, a full Vastu layout, a shop or rent floor, lift, 3D elevation or a structural drawing — send your details and we will get back to you on WhatsApp.",
@@ -145,14 +130,14 @@ function CustomSection({
 export const naksheTitle = (lang: Lang) =>
   L(
     lang,
-    "Ghar ka Naksha: 3D House Plans for Every Plot Size, as per Vastu",
-    "घर का नक्शा: हर प्लॉट साइज़ के 3D रियलिस्टिक नक्शे (वास्तु अनुसार)",
+    "Ghar ka Naksha: House Plans for Every Plot Size and Facing, as per Vastu",
+    "घर का नक्शा: हर प्लॉट साइज़ और हर दिशा के वास्तु अनुसार नक्शे",
   );
 export const naksheDescription = (lang: Lang) =>
   L(
     lang,
-    `${NAKSHE.length} 3D architectural house plans drawn to scale — 20×40 to 40×60, east, north, west and south facing, each with an accurate BOQ, room sizes and build cost.`,
-    `स्केल पर बने ${NAKSHE.length} 3D घर के नक्शे — 20×40 से 40×60, पूर्व, उत्तर, पश्चिम और दक्षिण मुखी, हर एक में वास्तु जांच, कमरों के साइज़ और बनाने का खर्च।`,
+    `${NAKSHE.length} house plans drawn to scale — 20×40 to 40×60, east, north, west and south facing, each with a Vastu check, room sizes and construction cost.`,
+    `स्केल पर बने ${NAKSHE.length} घर के नक्शे — 20×40 से 40×60, पूर्व, उत्तर, पश्चिम और दक्षिण मुखी, हर एक में वास्तु जांच, कमरों के साइज़ और बनाने का खर्च।`,
   );
 
 export function NakshaIndexPage({ lang }: { lang: Lang }) {
@@ -166,31 +151,36 @@ export function NakshaIndexPage({ lang }: { lang: Lang }) {
         <p>
           {L(
             lang,
-            "Explore photorealistic 3D architectural plans drawn to scale by our planning engine. Pick your plot size and road direction — each plan comes with itemized BOQ, room dimensions, and live material estimates.",
-            "हमारे प्लानिंग इंजन से स्केल पर बने रियलिस्टिक 3D आर्किटेक्चरल नक्शे देखें। अपना प्लॉट साइज़ और दिशा चुनें — हर नक्शे के साथ विस्तृत BOQ, कमरों के साइज़ और मटेरियल का खर्च दिया गया है।",
+            "Every plan here is drawn to scale by our planning engine — the walls sit on column lines, every room has a door and a window, and the house stays inside the setbacks. Pick your plot size and road direction; each plan comes with a Vastu chart, room sizes and the cost to build it.",
+            "यहां हर नक्शा हमारे प्लानिंग इंजन से स्केल पर बना है — दीवारें कॉलम लाइन पर, हर कमरे में दरवाज़ा और खिड़की, और घर सेटबैक के अंदर। अपना प्लॉट साइज़ और सड़क की दिशा चुनें; हर नक्शे के साथ वास्तु चार्ट, कमरों के साइज़ और बनाने का खर्च है।",
           )}
         </p>
       }
     >
       <nav
         aria-label={L(lang, "By gaj", "गज़ के हिसाब से")}
-        className="flex flex-wrap gap-2"
+        className="flex flex-wrap gap-2 mb-6"
       >
         {GAJ.map((g) => (
           <Link
             key={g.slug}
             href={langPath(lang, `${BASE}/gaj/${g.slug}`)}
-            className="rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold hover:border-amber"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[14px] font-semibold text-slate-700 hover:border-blue-500 hover:text-blue-600 transition-colors shadow-sm"
           >
             {L(lang, `${g.gaj} gaj naksha`, `${g.gaj} गज़ का नक्शा`)}
           </Link>
         ))}
       </nav>
-      <NakshaGallery
-        lang={lang}
-        cards={NAKSHE.map((n) => card(n, lang))}
-        sizes={PLOTS.map(plotSlug)}
-      />
+
+      {/* Gallery Cards Container with HD Architectural Styling */}
+      <div className="[&_img]:contrast-[1.08] [&_img]:saturate-[1.12] [&_img]:brightness-[1.02] [&_img]:drop-shadow-sm">
+        <NakshaGallery
+          lang={lang}
+          cards={NAKSHE.map((n) => card(n, lang))}
+          sizes={PLOTS.map(plotSlug)}
+        />
+      </div>
+
       <CustomSection lang={lang} />
     </Shell>
   );
@@ -321,11 +311,11 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
         <H2>
           {L(
             lang,
-            `${s} ${f.en.toLowerCase()} naksha — 3D layout & floor plan`,
-            `${s} ${f.hi} नक्शा — 3D लेआउट और प्लान`,
+            `${s} ${f.en.toLowerCase()} naksha — 3D floor plan`,
+            `${s} ${f.hi} नक्शा — 3D प्लान`,
           )}
         </H2>
-        <div className="rounded-2xl border border-line bg-white p-4 sm:p-6 overflow-hidden">
+        <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm overflow-hidden [&_img]:contrast-[1.08] [&_img]:saturate-[1.12]">
           <NakshaPlanView lang={lang} slug={slug} />
         </div>
         {fit.notes.length > 0 && (
@@ -333,7 +323,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             {fit.notes.map((x) => (
               <li
                 key={x.en}
-                className="rounded-lg bg-amber-tint px-3 py-2 text-ink"
+                className="rounded-lg bg-blue-50 border border-blue-200 px-3 py-2 text-blue-900"
               >
                 {x[lang]}
               </li>
@@ -350,7 +340,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
           </Cta>
           <a
             href="#custom"
-            className="rounded-xl border border-line bg-white px-4 py-3 text-[14px] font-semibold hover:border-amber"
+            className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-[14px] font-semibold text-slate-800 hover:border-blue-500 shadow-sm"
           >
             {L(lang, "Get a custom naksha", "कस्टम नक्शा बनवाएं")}
           </a>
@@ -363,15 +353,15 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
           {res.sketch.map((fl) => (
             <div
               key={fl.floor}
-              className="rounded-2xl border border-line bg-white p-4"
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
             >
-              <h3 className="flex justify-between text-[15px] font-bold">
+              <h3 className="flex justify-between text-[15px] font-bold text-slate-900">
                 {FLOORS(fl.floor, lang)}
-                <span className="font-normal text-muted">
+                <span className="font-normal text-slate-500">
                   {ftIn(fl.L / FT)} × {ftIn(fl.B / FT)}
                 </span>
               </h3>
-              <ul className="mt-2 flex flex-col text-[14px]">
+              <ul className="mt-3 flex flex-col text-[14px]">
                 {fl.rects
                   .filter(
                     (x) => !["column", "corridor", "stair"].includes(x.type),
@@ -379,12 +369,12 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
                   .map((x, k) => (
                     <li
                       key={k}
-                      className="flex justify-between gap-3 border-t border-line py-1.5 first:border-t-0"
+                      className="flex justify-between gap-3 border-t border-slate-100 py-2 first:border-t-0"
                     >
-                      <span>
+                      <span className="text-slate-800 font-medium">
                         {roomLabel(x.type, fl.floor, lang, Math.min(x.w, x.h))}
                       </span>
-                      <span className="tabular-nums text-muted">
+                      <span className="tabular-nums text-slate-500">
                         {ftIn(x.w / FT)} × {ftIn(x.h / FT)} ·{" "}
                         {num((x.w * x.h) / (FT * FT))} sq ft
                       </span>
@@ -409,12 +399,12 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             [L(lang, "Basic", "बेसिक"), lakh(i.basic, lang)],
             [
               L(lang, "Standard", "स्टैंडर्ड"),
-              <strong key="s">{lakh(i.total, lang)}</strong>,
+              <strong key="s" className="text-blue-600">{lakh(i.total, lang)}</strong>,
             ],
             [L(lang, "Premium", "प्रीमियम"), lakh(i.premium, lang)],
           ]}
         />
-        <p className="max-w-3xl text-[14px] leading-relaxed text-body">
+        <p className="max-w-3xl text-[14px] leading-relaxed text-slate-600">
           {L(
             lang,
             `Standard finish is about ${inr(i.perSqft)} per sq ft of built-up area. Structure: RCC frame with ${i.columns} columns${mat("cement") ? `, about ${num(mat("cement")!.qty)} bags of cement` : ""}${mat("steel") ? ` and ${num(mat("steel")!.qty / 1000, 1)} tonnes of steel` : ""}. Land, approvals, interiors, compound wall and borewell are extra.`,
@@ -538,17 +528,19 @@ export function GajPage({ lang, slug }: { lang: Lang; slug: string }) {
         </p>
       }
     >
-      <NakshaGallery
-        lang={lang}
-        cards={list.map((n) => card(n, lang))}
-        sizes={g.plots.map(plotSlug)}
-      />
-      <nav className="flex flex-wrap gap-2">
+      <div className="[&_img]:contrast-[1.08] [&_img]:saturate-[1.12]">
+        <NakshaGallery
+          lang={lang}
+          cards={list.map((n) => card(n, lang))}
+          sizes={g.plots.map(plotSlug)}
+        />
+      </div>
+      <nav className="flex flex-wrap gap-2 mb-6">
         {GAJ.filter((x) => x !== g).map((x) => (
           <Link
             key={x.slug}
             href={langPath(lang, `${BASE}/gaj/${x.slug}`)}
-            className="rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold hover:border-amber"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[14px] font-semibold text-slate-700 hover:border-blue-500 shadow-sm"
           >
             {L(lang, `${x.gaj} gaj naksha`, `${x.gaj} गज़ का नक्शा`)}
           </Link>
