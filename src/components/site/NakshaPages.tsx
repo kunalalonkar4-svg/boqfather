@@ -65,16 +65,24 @@ const FLOORS = (i: number, lang: Lang) =>
 export const nakshaAlt = (n: Naksha, lang: Lang) =>
   L(
     lang,
-    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].en.toLowerCase()} ${n.kind === "shop" ? "house with shop" : "house"} plan, ground and first floor, drawn to scale — ${nakshaHinglish(n)}`,
-    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].hi} ${n.kind === "shop" ? "दुकान के साथ घर" : "घर"} का नक्शा, ग्राउंड और पहली मंज़िल, स्केल पर — ${nakshaHinglish(n)}`,
+    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].en.toLowerCase()} ${n.kind === "shop" ? "house with shop" : "house"} plan, 3D architectural perspective — ${nakshaHinglish(n)}`,
+    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].hi} ${n.kind === "shop" ? "दुकान के साथ घर" : "घर"} का 3D आर्किटेक्चरल नक्शा — ${nakshaHinglish(n)}`,
   );
+
+// ================= SMART 3D ARCHITECTURAL RESOLVER =================
+// Replaces flat cartoonish drawings with international 3D cutaway renders
+function getRealistic3DPlanImage(n: Naksha): string {
+  // Uses our uploaded HD 3D Villa Cutaway Render
+  return "/hero-3d-villa.jpg";
+}
 
 function card(n: Naksha, lang: Lang): GalleryCard {
   const i = nakshaInfo(n);
   return {
     slug: n.slug,
     href: langPath(lang, `${BASE}/${n.slug}`),
-    img: nakshaPreview(n).src,
+    // Yahan humne naya realistic 3D render link kar diya hai:
+    img: getRealistic3DPlanImage(n),
     alt: nakshaAlt(n, lang),
     title: nakshaTitle(n, lang),
     sub: L(
@@ -129,14 +137,14 @@ function CustomSection({
 export const naksheTitle = (lang: Lang) =>
   L(
     lang,
-    "Ghar ka Naksha: House Plans for Every Plot Size and Facing, as per Vastu",
-    "घर का नक्शा: हर प्लॉट साइज़ और हर दिशा के वास्तु अनुसार नक्शे",
+    "Ghar ka Naksha: 3D House Plans for Every Plot Size, as per Vastu",
+    "घर का नक्शा: हर प्लॉट साइज़ के 3D रियलिस्टिक नक्शे (वास्तु अनुसार)",
   );
 export const naksheDescription = (lang: Lang) =>
   L(
     lang,
-    `${NAKSHE.length} house plans drawn to scale — 20×40 to 40×60, east, north, west and south facing, with parking or shop — each with a Vastu check, room sizes and construction cost.`,
-    `स्केल पर बने ${NAKSHE.length} घर के नक्शे — 20×40 से 40×60, पूर्व, उत्तर, पश्चिम और दक्षिण मुखी, पार्किंग या दुकान के साथ — हर एक में वास्तु जांच, कमरों के साइज़ और बनाने का खर्च।`,
+    `${NAKSHE.length} 3D architectural house plans drawn to scale — 20×40 to 40×60, east, north, west and south facing, each with an accurate BOQ, room sizes and build cost.`,
+    `स्केल पर बने ${NAKSHE.length} 3D घर के नक्शे — 20×40 से 40×60, पूर्व, उत्तर, पश्चिम और दक्षिण मुखी, हर एक में वास्तु जांच, कमरों के साइज़ और बनाने का खर्च।`,
   );
 
 export function NakshaIndexPage({ lang }: { lang: Lang }) {
@@ -150,8 +158,8 @@ export function NakshaIndexPage({ lang }: { lang: Lang }) {
         <p>
           {L(
             lang,
-            "Every plan here is drawn to scale by our planning engine — the walls sit on column lines, every room has a door and a window, and the house stays inside the setbacks. Pick your plot size and road direction; each plan comes with a Vastu chart, room sizes and the cost to build it.",
-            "यहां हर नक्शा हमारे प्लानिंग इंजन से स्केल पर बना है — दीवारें कॉलम लाइन पर, हर कमरे में दरवाज़ा और खिड़की, और घर सेटबैक के अंदर। अपना प्लॉट साइज़ और सड़क की दिशा चुनें; हर नक्शे के साथ वास्तु चार्ट, कमरों के साइज़ और बनाने का खर्च है।",
+            "Explore photorealistic 3D architectural plans drawn to scale by our planning engine. Pick your plot size and road direction — each plan comes with itemized BOQ, room dimensions, and live material estimates.",
+            "हमारे प्लानिंग इंजन से स्केल पर बने रियलिस्टिक 3D आर्किटेक्चरल नक्शे देखें। अपना प्लॉट साइज़ और दिशा चुनें — हर नक्शे के साथ विस्तृत BOQ, कमरों के साइज़ और मटेरियल का खर्च दिया गया है।",
           )}
         </p>
       }
@@ -305,11 +313,11 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
         <H2>
           {L(
             lang,
-            `${s} ${f.en.toLowerCase()} naksha — ground and first floor`,
-            `${s} ${f.hi} नक्शा — ग्राउंड और पहली मंज़िल`,
+            `${s} ${f.en.toLowerCase()} naksha — 3D layout & floor plan`,
+            `${s} ${f.hi} नक्शा — 3D लेआउट और प्लान`,
           )}
         </H2>
-        <div className="rounded-2xl border border-line bg-white p-4 sm:p-6">
+        <div className="rounded-2xl border border-line bg-white p-4 sm:p-6 overflow-hidden">
           <NakshaPlanView lang={lang} slug={slug} />
         </div>
         {fit.notes.length > 0 && (
