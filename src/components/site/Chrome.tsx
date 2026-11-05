@@ -8,7 +8,7 @@ import { Lang, langPath } from "@/lib/site";
 export function Logo() {
   return (
     <span className="flex items-center gap-2.5">
-      <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-amber text-[14px] font-extrabold text-white">
+      <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-[#146ef5] text-[14px] font-extrabold text-white">
         BF
       </span>
       <span className="font-display text-[20px] font-extrabold tracking-tight">
@@ -36,7 +36,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const cta = (
     <Link
       href={langPath(lang, "house-boq-estimate")}
-      className="inline-flex h-10 items-center rounded-full bg-ink px-4 text-[14px] font-bold text-white transition hover:bg-[#1d3352]"
+      className="inline-flex h-10 items-center rounded-[4px] bg-[#146ef5] px-4 text-[14px] font-bold text-white transition hover:bg-[#0d57c7]"
     >
       {hi ? "मुफ़्त एस्टिमेट" : "Start Free Estimate"}
     </Link>
