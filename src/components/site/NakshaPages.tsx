@@ -65,8 +65,8 @@ const FLOORS = (i: number, lang: Lang) =>
 export const nakshaAlt = (n: Naksha, lang: Lang) =>
   L(
     lang,
-    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].en.toLowerCase()} ${n.kind === "shop" ? "house with shop" : "house"} plan — ${nakshaHinglish(n)}`,
-    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].hi} ${n.kind === "shop" ? "दुकान के साथ घर" : "घर"} का 3D नक्शा — ${nakshaHinglish(n)}`,
+    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].en.toLowerCase()} ${n.kind === "shop" ? "house with shop" : "house"} plan, 3D model view — ${nakshaHinglish(n)}`,
+    `${n.plot.w}x${n.plot.d} ${FACING_NAME[n.facing].hi} ${n.kind === "shop" ? "दुकान के साथ घर" : "घर"} का 3D मॉडल नक्शा — ${nakshaHinglish(n)}`,
   );
 
 function card(n: Naksha, lang: Lang): GalleryCard {
@@ -74,7 +74,6 @@ function card(n: Naksha, lang: Lang): GalleryCard {
   return {
     slug: n.slug,
     href: langPath(lang, `${BASE}/${n.slug}`),
-    // Aapke khud ke banaye hue 84 original plans wapas aa gaye:
     img: nakshaPreview(n).src,
     alt: nakshaAlt(n, lang),
     title: nakshaTitle(n, lang),
@@ -102,7 +101,7 @@ function CustomSection({
   return (
     <section
       id="custom"
-      className="flex scroll-mt-4 flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm"
+      className="flex scroll-mt-4 flex-col gap-4 rounded-3xl border border-slate-800 bg-slate-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-md text-slate-100"
     >
       <div className="flex max-w-3xl flex-col gap-1.5">
         <H2>
@@ -112,7 +111,7 @@ function CustomSection({
             "अपने प्लॉट का कस्टम नक्शा चाहिए?",
           )}
         </H2>
-        <p className="text-[15px] leading-relaxed text-slate-600">
+        <p className="text-[15px] leading-relaxed text-slate-400">
           {L(
             lang,
             "Odd plot shape, a corner plot, a full Vastu layout, a shop or rent floor, lift, 3D elevation or a structural drawing — send your details and we will get back to you on WhatsApp.",
@@ -130,14 +129,14 @@ function CustomSection({
 export const naksheTitle = (lang: Lang) =>
   L(
     lang,
-    "Ghar ka Naksha: House Plans for Every Plot Size and Facing, as per Vastu",
-    "घर का नक्शा: हर प्लॉट साइज़ और हर दिशा के वास्तु अनुसार नक्शे",
+    "Ghar ka Naksha: 3D House Plans for Every Plot Size, as per Vastu",
+    "घर का नक्शा: हर प्लॉट साइज़ के 3D नक्शे (वास्तु अनुसार)",
   );
 export const naksheDescription = (lang: Lang) =>
   L(
     lang,
-    `${NAKSHE.length} house plans drawn to scale — 20×40 to 40×60, east, north, west and south facing, each with a Vastu check, room sizes and construction cost.`,
-    `स्केल पर बने ${NAKSHE.length} घर के नक्शे — 20×40 से 40×60, पूर्व, उत्तर, पश्चिम और दक्षिण मुखी, हर एक में वास्तु जांच, कमरों के साइज़ और बनाने का खर्च।`,
+    `${NAKSHE.length} 3D house plans drawn to scale — 20×40 to 40×60, east, north, west and south facing, each with a Vastu check, room sizes and construction cost.`,
+    `स्केल पर बने ${NAKSHE.length} 3D घर के नक्शे — 20×40 से 40×60, पूर्व, उत्तर, पश्चिम और दक्षिण मुखी, हर एक में वास्तु जांच, कमरों के साइज़ और बनाने का खर्च।`,
   );
 
 export function NakshaIndexPage({ lang }: { lang: Lang }) {
@@ -151,29 +150,79 @@ export function NakshaIndexPage({ lang }: { lang: Lang }) {
         <p>
           {L(
             lang,
-            "Every plan here is drawn to scale by our planning engine — the walls sit on column lines, every room has a door and a window, and the house stays inside the setbacks. Pick your plot size and road direction; each plan comes with a Vastu chart, room sizes and the cost to build it.",
-            "यहां हर नक्शा हमारे प्लानिंग इंजन से स्केल पर बना है — दीवारें कॉलम लाइन पर, हर कमरे में दरवाज़ा और खिड़की, और घर सेटबैक के अंदर। अपना प्लॉट साइज़ और सड़क की दिशा चुनें; हर नक्शे के साथ वास्तु चार्ट, कमरों के साइज़ और बनाने का खर्च है।",
+            "Every plan here is drawn to scale by our planning engine — 3D architectural perspective with column lines, room dimensions, Vastu validation, and itemized construction cost estimates.",
+            "यहां हर नक्शा हमारे प्लानिंग इंजन से 3D आर्किटेक्चरल स्केल पर बना है — कॉलम लाइन्स, कमरों के सटीक साइज़, वास्तु चार्ट और पूरा कंस्ट्रक्शन खर्च एक जगह।",
           )}
         </p>
       }
     >
       <nav
         aria-label={L(lang, "By gaj", "गज़ के हिसाब से")}
-        className="flex flex-wrap gap-2 mb-6"
+        className="flex flex-wrap gap-2 mb-8"
       >
         {GAJ.map((g) => (
           <Link
             key={g.slug}
             href={langPath(lang, `${BASE}/gaj/${g.slug}`)}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[14px] font-semibold text-slate-700 hover:border-blue-500 hover:text-blue-600 transition-colors shadow-sm"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[14px] font-semibold text-slate-700 hover:border-blue-600 hover:text-blue-600 transition-all shadow-sm"
           >
             {L(lang, `${g.gaj} gaj naksha`, `${g.gaj} गज़ का नक्शा`)}
           </Link>
         ))}
       </nav>
 
-      {/* Gallery Cards Container with HD Architectural Styling */}
-      <div className="[&_img]:contrast-[1.08] [&_img]:saturate-[1.12] [&_img]:brightness-[1.02] [&_img]:drop-shadow-sm">
+      {/* ================= INTERNATIONAL 3D CSS SHADER & CARD ENGINE ================= */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        /* Card Container 3D Styling */
+        .naksha-3d-wrapper a {
+          position: relative !important;
+          border-radius: 1.25rem !important;
+          background: #ffffff !important;
+          border: 1px solid #e2e8f0 !important;
+          box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04) !important;
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          overflow: hidden !important;
+        }
+
+        .naksha-3d-wrapper a:hover {
+          transform: translateY(-8px) scale(1.01) !important;
+          box-shadow: 0 25px 40px -10px rgba(37, 99, 235, 0.18), 0 12px 20px -8px rgba(15, 23, 42, 0.1) !important;
+          border-color: #3b82f6 !important;
+        }
+
+        /* 3D Blueprint Pedestal & Shading */
+        .naksha-3d-wrapper a > div:first-child {
+          position: relative !important;
+          background: radial-gradient(circle at 50% 40%, #f8fafc 0%, #e2e8f0 100%) !important;
+          padding: 1.5rem 1rem !important;
+          perspective: 1200px !important;
+          overflow: hidden !important;
+        }
+
+        /* 3D Isometric Tilt & Elevation on the Flat Image */
+        .naksha-3d-wrapper img {
+          transform: perspective(900px) rotateX(18deg) rotateZ(-3deg) scale(0.96) !important;
+          filter: contrast(1.15) saturate(1.18) brightness(1.02) drop-shadow(0 18px 20px rgba(15, 23, 42, 0.22)) !important;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease !important;
+          border-radius: 8px !important;
+        }
+
+        .naksha-3d-wrapper a:hover img {
+          transform: perspective(900px) rotateX(10deg) rotateZ(-1deg) scale(1.02) translateY(-4px) !important;
+          filter: contrast(1.18) saturate(1.22) brightness(1.04) drop-shadow(0 25px 28px rgba(37, 99, 235, 0.25)) !important;
+        }
+
+        /* 3D Glass Light Glare Effect */
+        .naksha-3d-wrapper a > div:first-child::after {
+          content: '' !important;
+          position: absolute !important;
+          top: 0; left: 0; right: 0; height: 100% !important;
+          background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 60%) !important;
+          pointer-events: none !important;
+        }
+      `}} />
+
+      <div className="naksha-3d-wrapper">
         <NakshaGallery
           lang={lang}
           cards={NAKSHE.map((n) => card(n, lang))}
@@ -193,8 +242,8 @@ export const nakshaDescription = (slug: string, lang: Lang) => {
   const i = nakshaInfo(n);
   return L(
     lang,
-    `${nakshaTitle(n, "en")}: G+1 ${i.bhk}BHK, ${num(i.builtUp)} sq ft, drawn to scale with room sizes, Vastu check (${i.vastu.pct}%), and construction cost about ${lakh(i.total, "en")}. ${nakshaHinglish(n)}.`,
-    `${nakshaTitle(n, "hi")}: G+1 ${i.bhk}BHK, ${num(i.builtUp)} sq ft, स्केल पर, कमरों के साइज़, वास्तु जांच (${i.vastu.pct}%) और बनाने का खर्च लगभग ${lakh(i.total, "hi")}। ${nakshaHinglish(n)}।`,
+    `${nakshaTitle(n, "en")}: G+1 ${i.bhk}BHK, ${num(i.builtUp)} sq ft, 3D architectural plan with room sizes, Vastu check (${i.vastu.pct}%), and construction cost about ${lakh(i.total, "en")}. ${nakshaHinglish(n)}.`,
+    `${nakshaTitle(n, "hi")}: G+1 ${i.bhk}BHK, ${num(i.builtUp)} sq ft, 3D आर्किटेक्चरल नक्शा, कमरों के साइज़, वास्तु जांच (${i.vastu.pct}%) और बनाने का खर्च लगभग ${lakh(i.total, "hi")}। ${nakshaHinglish(n)}।`,
   );
 };
 
@@ -289,8 +338,8 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
         <p>
           {L(
             lang,
-            `${nakshaHinglish(n)} — G+1 ${i.bhk}BHK ${n.kind === "shop" ? "with a shop at the front" : "with car parking"}, drawn to scale. The road is on the ${f.en.split(" ")[0].toLowerCase()} side (bottom of the drawing). Plot ${num(p.w * p.d)} sq ft (${num(gajOf(p), 1)} gaj); after setbacks the house is ${bw} × ${bd} ft per floor.`,
-            `${nakshaHinglish(n)} — G+1 ${i.bhk}BHK ${n.kind === "shop" ? "आगे दुकान के साथ" : "कार पार्किंग के साथ"}, स्केल पर। सड़क ${f.hi.replace(" मुखी", "")} दिशा में है (ड्रॉइंग में नीचे)। प्लॉट ${num(p.w * p.d)} sq ft (${num(gajOf(p), 1)} गज़); सेटबैक के बाद घर हर मंज़िल पर ${bw} × ${bd} ft।`,
+            `${nakshaHinglish(n)} — G+1 ${i.bhk}BHK ${n.kind === "shop" ? "with a shop at the front" : "with car parking"}, drawn to scale in 3D perspective. The road is on the ${f.en.split(" ")[0].toLowerCase()} side (bottom of the drawing). Plot ${num(p.w * p.d)} sq ft (${num(gajOf(p), 1)} gaj); after setbacks the house is ${bw} × ${bd} ft per floor.`,
+            `${nakshaHinglish(n)} — G+1 ${i.bhk}BHK ${n.kind === "shop" ? "आगे दुकान के साथ" : "कार पार्किंग के साथ"}, 3D आर्किटेक्चरल स्केल पर। सड़क ${f.hi.replace(" मुखी", "")} दिशा में है। प्लॉट ${num(p.w * p.d)} sq ft (${num(gajOf(p), 1)} गज़); सेटबैक के बाद घर हर मंज़िल पर ${bw} × ${bd} ft।`,
           )}
         </p>
       }
@@ -315,7 +364,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             `${s} ${f.hi} नक्शा — 3D प्लान`,
           )}
         </H2>
-        <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm overflow-hidden [&_img]:contrast-[1.08] [&_img]:saturate-[1.12]">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl overflow-hidden [&_img]:filter [&_img]:contrast-[1.12] [&_img]:saturate-[1.15]">
           <NakshaPlanView lang={lang} slug={slug} />
         </div>
         {fit.notes.length > 0 && (
@@ -528,19 +577,19 @@ export function GajPage({ lang, slug }: { lang: Lang; slug: string }) {
         </p>
       }
     >
-      <div className="[&_img]:contrast-[1.08] [&_img]:saturate-[1.12]">
+      <div className="naksha-3d-wrapper">
         <NakshaGallery
           lang={lang}
           cards={list.map((n) => card(n, lang))}
           sizes={g.plots.map(plotSlug)}
         />
       </div>
-      <nav className="flex flex-wrap gap-2 mb-6">
+      <nav className="flex flex-wrap gap-2 mb-8">
         {GAJ.filter((x) => x !== g).map((x) => (
           <Link
             key={x.slug}
             href={langPath(lang, `${BASE}/gaj/${x.slug}`)}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[14px] font-semibold text-slate-700 hover:border-blue-500 shadow-sm"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[14px] font-semibold text-slate-700 hover:border-blue-600 shadow-sm"
           >
             {L(lang, `${x.gaj} gaj naksha`, `${x.gaj} गज़ का नक्शा`)}
           </Link>
