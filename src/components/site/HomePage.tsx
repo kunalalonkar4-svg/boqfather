@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { PLOTS, plotSlug } from "@/content/plots";
 import { CALCULATORS } from "@/content/calculators";
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -11,10 +10,10 @@ import { SiteFooter, SiteHeader } from "./Chrome";
 export function HomePage({ lang }: { lang: Lang }) {
   const d = t(lang);
 
-  // Interactive Estimator State
+  // Live Interactive Estimator State
   const [area, setArea] = useState<number>(1200);
   const [quality, setQuality] = useState<"standard" | "premium" | "luxury">("premium");
-  const [heroTab, setHeroTab] = useState<"3d" | "2d" | "boq">("3d");
+  const [activeTab, setActiveTab] = useState<"breakdown" | "materials" | "timeline">("breakdown");
 
   const rates = {
     standard: 1650,
@@ -25,6 +24,9 @@ export function HomePage({ lang }: { lang: Lang }) {
   const totalCost = area * rates[quality];
   const cementBags = Math.round(area * 0.42);
   const steelTons = ((area * 3.8) / 1000).toFixed(1);
+  const sandTons = Math.round(area * 1.8);
+  const aggregateTons = Math.round(area * 1.35);
+  const bricksCount = Math.round(area * 18);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -35,11 +37,13 @@ export function HomePage({ lang }: { lang: Lang }) {
     description: d.home_sub,
   };
 
-  const featuredPlots = [
-    { w: 30, d: 40, area: "1200 sq.ft", facing: "East", img: "/naksha/img3d/30x40-east-facing.webp", est: "₹24.6 L" },
-    { w: 25, d: 50, area: "1250 sq.ft", facing: "North", img: "/naksha/img3d/25x50-east-facing.webp", est: "₹25.8 L" },
-    { w: 40, d: 60, area: "2400 sq.ft", facing: "East", img: "/naksha/img3d/40x60-east-facing.webp", est: "₹49.2 L" },
-    { w: 20, d: 40, area: "800 sq.ft", facing: "West", img: "/naksha/img3d/20x40-east-facing.webp", est: "₹16.4 L" },
+  const popularPlots = [
+    { w: 20, d: 40, area: 800, gaj: 89, est: "₹16.4 L" },
+    { w: 20, d: 50, area: 1000, gaj: 111, est: "₹20.5 L" },
+    { w: 25, d: 50, area: 1250, gaj: 139, est: "₹25.6 L" },
+    { w: 30, d: 40, area: 1200, gaj: 133, est: "₹24.6 L" },
+    { w: 30, d: 50, area: 1500, gaj: 167, est: "₹30.8 L" },
+    { w: 40, d: 60, area: 2400, gaj: 267, est: "₹49.2 L" },
   ];
 
   return (
@@ -48,51 +52,53 @@ export function HomePage({ lang }: { lang: Lang }) {
       
       <main lang={lang} className="bg-slate-950 text-slate-100 overflow-hidden font-sans">
         
-        {/* ================= 1. HERO SECTION (PLANNER 5D STYLE) ================= */}
+        {/* ================= 1. HERO SECTION (INTERNATIONAL SAAS STYLE) ================= */}
         <section className="relative pt-12 pb-20 lg:pt-16 lg:pb-28 border-b border-slate-800/80">
-          {/* Ambient Lighting Background */}
+          {/* Subtle Ambient Glows */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/15 blur-[140px] pointer-events-none rounded-full" />
           <div className="absolute top-1/4 right-0 w-[400px] h-[300px] bg-emerald-500/10 blur-[130px] pointer-events-none rounded-full" />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             
-            {/* Top Pill */}
+            {/* Top Pill Badge */}
             <div className="flex justify-center mb-6">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-800 bg-slate-900/90 backdrop-blur-md shadow-inner text-xs text-slate-300">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="font-semibold text-slate-200">BOQFather 2.0</span>
                 <span className="text-slate-500">•</span>
-                <span className="text-slate-400">{lang === "hi" ? "3D नक्शा और लाइव कंस्ट्रक्शन एस्टीमेट" : "3D Floor Planning & Turnkey Estimation"}</span>
+                <span className="text-slate-400">
+                  {lang === "hi" ? "सटीक कंस्ट्रक्शन कॉस्ट और बीओक्यू इंजन" : "Precision House Cost & BOQ Estimation"}
+                </span>
               </div>
             </div>
 
-            {/* Headline & Subhead */}
+            {/* Headline */}
             <div className="text-center max-w-4xl mx-auto mb-10">
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.12]">
-                {lang === "hi" ? "घर का 3D नक्शा बनाएं।" : "Design your home in 3D."} <br />
+                {lang === "hi" ? "घर बनाने का बजट तय करें।" : "Plan your house construction."} <br />
                 <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">
                   {lang === "hi" ? "हर ईंट और खर्च का सटीक हिसाब।" : "Know every brick & rupee."}
                 </span>
               </h1>
               <p className="mt-5 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
                 {lang === "hi"
-                  ? "अपने प्लॉट साइज़ से आर्किटेक्चरल 2D प्लान, रियलिस्टिक 3D कटअवे और IS 1200 अनुसार लाइव BOQ एस्टीमेट तुरंत पाएं।"
-                  : "Turn your plot size into architect-grade 2D plans, photorealistic 3D cutaways, and verified turnkey BOQ estimates within minutes."}
+                  ? "अपने प्लॉट साइज़ से आइटम-वाइज़ BOQ, स्टील, सीमेंट और लेबर रेट का पारदर्शी एस्टीमेट तुरंत पाएं — बिना किसी ठेकेदार के धोखे के।"
+                  : "Turn your plot size into accurate item-wise BOQ, material requirements, and turnkey construction cost estimates within seconds."}
               </p>
 
-              {/* Action Buttons */}
+              {/* CTAs */}
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href={langPath(lang, "house-boq-estimate")}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm sm:text-base transition-all duration-200 shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:shadow-[0_0_40px_rgba(37,99,235,0.6)]"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base transition-all duration-200 shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:shadow-[0_0_40px_rgba(37,99,235,0.6)]"
                 >
-                  {lang === "hi" ? "फ़्री 3D एस्टीमेट शुरू करें →" : "Start Free 3D Estimate →"}
+                  {lang === "hi" ? "फ़्री BOQ एस्टीमेट शुरू करें →" : "Start Free BOQ Estimate →"}
                 </Link>
                 <Link
-                  href={langPath(lang, "naksha")}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-medium text-sm sm:text-base transition-colors duration-200 backdrop-blur-md"
+                  href={langPath(lang, "contractor-quote-checker")}
+                  className="inline-flex items-center gap-2 px-6 py-4 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-medium text-base transition-colors duration-200 backdrop-blur-md"
                 >
-                  {lang === "hi" ? "500+ नक्शे देखें" : "Explore 500+ House Plans"}
+                  {lang === "hi" ? "ठेकेदार कोटेशन चेक करें" : "Check Contractor Quote"}
                 </Link>
               </div>
 
@@ -104,109 +110,178 @@ export function HomePage({ lang }: { lang: Lang }) {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-blue-400">✓</span>
-                  <span>99.2% Estimation Accuracy</span>
+                  <span>99.2% Estimation Precision</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-amber-400">✓</span>
-                  <span>Free Excel & PDF Export</span>
+                  <span>Direct Excel & PDF Export</span>
                 </div>
               </div>
             </div>
 
-            {/* Showcase 3D Model Display Card */}
-            <div className="relative mx-auto max-w-5xl rounded-3xl p-2 sm:p-3 bg-gradient-to-b from-slate-800/90 via-slate-900/70 to-slate-950 border border-slate-800 shadow-[0_25px_80px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+            {/* Interactive Showcase Dashboard (No Cartoon Maps!) */}
+            <div className="relative mx-auto max-w-5xl rounded-3xl p-3 sm:p-5 bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-950 border border-slate-800 shadow-[0_25px_80px_rgba(0,0,0,0.8)] backdrop-blur-xl">
               
               {/* Header Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-slate-800/80 mb-3 bg-slate-900/60 rounded-2xl">
+              <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-slate-800/80 mb-4 bg-slate-950/60 rounded-2xl">
                 <div className="flex items-center gap-2">
                   <span className="h-3 w-3 rounded-full bg-rose-500/80 inline-block" />
                   <span className="h-3 w-3 rounded-full bg-amber-500/80 inline-block" />
                   <span className="h-3 w-3 rounded-full bg-emerald-500/80 inline-block" />
-                  <span className="ml-2 text-xs font-mono text-slate-400">30x40_Duplex_Architectural_3D.cad</span>
+                  <span className="ml-2 text-xs font-mono text-slate-400">Live_Construction_BOQ_Engine_v2.0</span>
                 </div>
 
-                {/* Switcher Pills */}
-                <div className="flex items-center p-1 bg-slate-950 rounded-xl border border-slate-800">
+                {/* View Switcher Pills */}
+                <div className="flex items-center p-1 bg-slate-900 rounded-xl border border-slate-800">
                   <button
-                    onClick={() => setHeroTab("3d")}
+                    onClick={() => setActiveTab("breakdown")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      heroTab === "3d" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                      activeTab === "breakdown" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    3D Isometric View
+                    Cost Breakdown
                   </button>
                   <button
-                    onClick={() => setHeroTab("2d")}
+                    onClick={() => setActiveTab("materials")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      heroTab === "2d" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                      activeTab === "materials" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    2D Floor Plan
+                    Material Schedule
                   </button>
                   <button
-                    onClick={() => setHeroTab("boq")}
+                    onClick={() => setActiveTab("timeline")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      heroTab === "boq" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                      activeTab === "timeline" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    Live BOQ Sheet
+                    Construction Stages
                   </button>
                 </div>
               </div>
 
-              {/* Visual Canvas Area */}
-              <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
+              {/* Interactive Dashboard Canvas */}
+              <div className="p-6 sm:p-8 rounded-2xl bg-slate-950 border border-slate-800/90 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 
-                <img
-                  src={
-                    heroTab === "3d"
-                      ? "/hero-3d-villa.jpg"
-                      : heroTab === "2d"
-                      ? "/naksha/img3d/30x40-east-facing.webp"
-                      : "/naksha/img3d/40x60-east-facing.webp"
-                  }
-                  alt="3D Architectural House Plan Cutaway"
-                  className="w-full h-full object-cover transition-opacity duration-300"
-                  onError={(e) => {
-                    // Fallback to existing 3D image if custom image not uploaded yet
-                    (e.target as HTMLImageElement).src = "/naksha/img3d/30x40-east-facing.webp";
-                  }}
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20 pointer-events-none" />
-
-                {/* Floating Pill 1: Total Estimate */}
-                <div className="absolute top-4 left-4 sm:top-6 sm:left-6 p-3 sm:p-4 rounded-2xl bg-slate-900/90 border border-slate-700/60 backdrop-blur-xl shadow-2xl flex items-center gap-3">
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold text-lg">
-                    ₹
+                {/* Left Metrics */}
+                <div className="lg:col-span-7 space-y-5">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div>
+                      <p className="text-xs uppercase font-semibold text-slate-400 tracking-wider">Reference Project</p>
+                      <h3 className="text-xl font-bold text-white">30 × 40 ft G+1 Duplex (1200 sq.ft)</h3>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold">
+                      Verified IS 1200
+                    </span>
                   </div>
+
+                  {activeTab === "breakdown" && (
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-xs text-slate-300 mb-1">
+                          <span>Structure & RCC (Foundations, Columns, Beams, Slabs)</span>
+                          <span className="font-mono font-bold text-blue-400">₹14,20,000 (53%)</span>
+                        </div>
+                        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                          <div className="bg-blue-500 h-full w-[53%]" />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs text-slate-300 mb-1">
+                          <span>Brickwork, Masonry & Plastering</span>
+                          <span className="font-mono font-bold text-indigo-400">₹4,80,000 (18%)</span>
+                        </div>
+                        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                          <div className="bg-indigo-500 h-full w-[18%]" />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs text-slate-300 mb-1">
+                          <span>Finishes (Flooring, Painting, Doors & Windows)</span>
+                          <span className="font-mono font-bold text-emerald-400">₹5,20,000 (19%)</span>
+                        </div>
+                        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                          <div className="bg-emerald-500 h-full w-[19%]" />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs text-slate-300 mb-1">
+                          <span>Electrical & Plumbing Rough-ins</span>
+                          <span className="font-mono font-bold text-amber-400">₹2,64,000 (10%)</span>
+                        </div>
+                        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                          <div className="bg-amber-500 h-full w-[10%]" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === "materials" && (
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                        <span className="text-slate-400 block">OPC 53 Cement</span>
+                        <span className="text-base font-bold font-mono text-white">460 Bags</span>
+                      </div>
+                      <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                        <span className="text-slate-400 block">TMT Steel (Fe 550D)</span>
+                        <span className="text-base font-bold font-mono text-white">4.2 Tons</span>
+                      </div>
+                      <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                        <span className="text-slate-400 block">River Sand</span>
+                        <span className="text-base font-bold font-mono text-white">2,160 Cu.ft</span>
+                      </div>
+                      <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                        <span className="text-slate-400 block">Red Clay Bricks</span>
+                        <span className="text-base font-bold font-mono text-white">21,600 Nos</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === "timeline" && (
+                    <div className="space-y-2 text-xs">
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900">
+                        <span className="text-slate-300">Phase 1: Excavation & Footings</span>
+                        <span className="font-mono text-blue-400">Month 1</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900">
+                        <span className="text-slate-300">Phase 2: Columns & Roof Slabs (G+1)</span>
+                        <span className="font-mono text-blue-400">Month 2 – 3</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900">
+                        <span className="text-slate-300">Phase 3: Brickwork & Plaster</span>
+                        <span className="font-mono text-blue-400">Month 4</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900">
+                        <span className="text-slate-300">Phase 4: Flooring, Paint & Handover</span>
+                        <span className="font-mono text-emerald-400">Month 5 – 5.5</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right Price Highlight Card */}
+                <div className="lg:col-span-5 p-6 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-900/60 border border-slate-800 flex flex-col justify-between h-full">
                   <div>
-                    <p className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Estimated Cost</p>
-                    <p className="text-base sm:text-xl font-bold font-mono text-emerald-400">₹26,84,000</p>
+                    <span className="text-xs uppercase font-semibold text-slate-400 tracking-wider">Total Project Valuation</span>
+                    <div className="text-3xl sm:text-4xl font-extrabold font-mono text-emerald-400 mt-1 mb-2">
+                      ₹26,84,000
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                      Turnkey rate @ ₹2,236/sq.ft including all materials, shuttering, structural steel, and labor contracts.
+                    </p>
                   </div>
+
+                  <Link
+                    href={langPath(lang, "house-boq-estimate")}
+                    className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-colors shadow-lg"
+                  >
+                    Generate Custom BOQ For Your Plot →
+                  </Link>
                 </div>
 
-                {/* Floating Pill 2: Material Live Counter */}
-                <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 p-3.5 sm:p-4 rounded-2xl bg-slate-900/90 border border-slate-700/60 backdrop-blur-xl shadow-2xl space-y-1.5 min-w-[190px]">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">TMT Steel (Fe 550D)</span>
-                    <span className="font-mono font-semibold text-slate-200">4.2 Tons</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">OPC 53 Cement</span>
-                    <span className="font-mono font-semibold text-slate-200">460 Bags</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs pt-1.5 border-t border-slate-800">
-                    <span className="text-slate-400">Structure Ready</span>
-                    <span className="font-mono font-semibold text-blue-400">5.5 Months</span>
-                  </div>
-                </div>
-
-                {/* Room Pin Tag */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-blue-600/90 text-white text-xs font-semibold backdrop-blur-md border border-blue-400/50 shadow-lg flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-white animate-ping" />
-                  30' × 40' East Duplex
-                </div>
               </div>
 
             </div>
@@ -307,89 +382,59 @@ export function HomePage({ lang }: { lang: Lang }) {
         </section>
 
 
-        {/* ================= 3. POPULAR 3D HOUSE PLANS CATALOG ================= */}
+        {/* ================= 3. POPULAR PLOT DIMENSIONS SELECTOR (NO CARTOONS) ================= */}
         <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
-            <div>
-              <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest">
-                🏡 {lang === "hi" ? "रेडीमेड 3D नक्शे" : "Architectural 3D Library"}
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-white mt-1">
-                {lang === "hi" ? "लोकप्रिय घर के 3D नक्शे — वास्तु अनुसार" : "Popular 3D House Plans — Vastu Approved"}
-              </h2>
-            </div>
-            <Link
-              href={langPath(lang, "naksha")}
-              className="text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              {lang === "hi" ? "सभी नक्शे देखें (500+) →" : "View All 500+ Plans →"}
-            </Link>
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest">
+              📐 Standard Plot Benchmarks
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white mt-1">
+              {lang === "hi" ? "लोकप्रिय प्लॉट साइज़ के अनुसार तुरंत खर्च निकालें" : "Turnkey Estimates by Plot Dimensions"}
+            </h2>
+            <p className="text-slate-400 text-sm mt-2">
+              Select your plot dimension below to view turnkey construction cost and itemized bill of quantities.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredPlots.map((item, idx) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {popularPlots.map((item, idx) => (
               <div
                 key={idx}
-                className="group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-slate-700 transition-all duration-200 flex flex-col"
+                className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/80 transition-all flex flex-col justify-between"
               >
-                <div className="aspect-[4/3] w-full bg-slate-950 overflow-hidden relative">
-                  <img
-                    src={item.img}
-                    alt={`${item.w}x${item.d} 3D House Plan`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/naksha/img3d/30x40-east-facing.webp";
-                    }}
-                  />
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-md text-[11px] font-semibold text-slate-200 border border-slate-800">
-                    {item.facing} Facing
-                  </span>
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl font-bold font-mono text-white">
+                      {item.w} × {item.d} ft
+                    </span>
+                    <span className="px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-mono">
+                      {item.gaj} Gaj
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mb-4">
+                    Covered Built-up: <strong className="text-slate-200">{item.area} sq.ft</strong> (G+1 Duplex Structure)
+                  </p>
                 </div>
 
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-white">{item.w} × {item.d} ft</h3>
-                    <span className="text-xs text-slate-400 font-mono">{item.area}</span>
+                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                  <div>
+                    <span className="text-[11px] text-slate-500 block">Est. Turnkey Budget</span>
+                    <span className="text-lg font-bold font-mono text-emerald-400">{item.est}</span>
                   </div>
-                  
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-4 pt-2 border-t border-slate-800/80">
-                    <span>Est. Construction:</span>
-                    <span className="font-mono font-bold text-emerald-400 text-sm">{item.est}</span>
-                  </div>
-
                   <Link
-                    href={langPath(lang, `naksha/${item.w}x${item.d}-east-facing`)}
-                    className="mt-auto w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white text-xs font-semibold text-center transition-colors"
+                    href={langPath(lang, `house-boq-estimate?w=${item.w}&d=${item.d}`)}
+                    className="py-2 px-4 rounded-xl bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white text-xs font-semibold transition-colors"
                   >
-                    {lang === "hi" ? "3D प्लान और BOQ देखें" : "View 3D Plan & BOQ"}
+                    View BOQ →
                   </Link>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Quick Plot Tags */}
-          <div className="mt-8 flex flex-wrap gap-2 pt-6 border-t border-slate-800/60">
-            {PLOTS.slice(0, 10).map((p) => (
-              <Link
-                key={plotSlug(p)}
-                href={langPath(lang, `naksha/${plotSlug(p)}-east-facing`)}
-                className="px-3.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/60 hover:border-blue-500 text-xs font-mono text-slate-300 transition-colors"
-              >
-                {p.w}×{p.d}
-              </Link>
-            ))}
-            <Link
-              href={langPath(lang, "naksha")}
-              className="px-3.5 py-1.5 rounded-lg border border-blue-500/40 bg-blue-500/10 text-xs font-medium text-blue-400 hover:bg-blue-500/20 transition-colors"
-            >
-              + More Dimensions
-            </Link>
-          </div>
         </section>
 
 
-        {/* ================= 4. BENTO GRID FEATURES ================= */}
+        {/* ================= 4. BENTO GRID ENGINEERING SUITE ================= */}
         <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest">
