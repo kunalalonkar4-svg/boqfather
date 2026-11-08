@@ -5,7 +5,7 @@ import type { ReadPlan } from "@/lib/planRead";
 import { PlanImport } from "./PlanImport";
 
 /** Key under which the checked rooms are handed to the BOQ tool. */
-export const UPLOADED_PLAN_KEY = "boqfather:uploaded-plan";
+export const UPLOADED_PLAN_KEY = "guniyo:uploaded-plan";
 
 /** Plan → Estimate page: read the plan here, then open the BOQ tool with these rooms. */
 export function PlanUploader({ lang }: { lang: Lang }) {

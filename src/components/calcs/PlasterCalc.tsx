@@ -148,7 +148,7 @@ export default function PlasterCalc({ lang }: { lang: Lang }) {
             />
             <WhatsAppShare
               lang={lang}
-              text={`BOQFather – Plaster ${round(m2ToSqft(area))} sqft, ${thk} mm, CM ${ratio}: cement ${round(v.cementBags, 1)} bags, sand ${round(v.sandCft, 1)} cft`}
+              text={`Guniyo – Plaster ${round(m2ToSqft(area))} sqft, ${thk} mm, CM ${ratio}: cement ${round(v.cementBags, 1)} bags, sand ${round(v.sandCft, 1)} cft`}
             />
           </>
         ) : (

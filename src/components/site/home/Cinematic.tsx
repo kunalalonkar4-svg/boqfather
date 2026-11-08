@@ -47,8 +47,8 @@ export function Cinematic({ lang }: { lang: Lang }) {
   const facing = L(lang, FACING_NAME[n.facing].en, FACING_NAME[n.facing].hi);
   const sample = L(
     lang,
-    `Real BOQFather output for a ${n.plot.w}×${n.plot.d} ft ${facing.toLowerCase()} G+1 ${info.bhk}BHK, standard specification, mid-size city rates (2026).`,
-    `${n.plot.w}×${n.plot.d} फ़ीट ${facing} G+1 ${info.bhk}BHK का असली BOQFather आउटपुट — स्टैंडर्ड स्पेसिफ़िकेशन, मध्यम शहर के रेट (2026)।`,
+    `Real Guniyo output for a ${n.plot.w}×${n.plot.d} ft ${facing.toLowerCase()} G+1 ${info.bhk}BHK, standard specification, mid-size city rates (2026).`,
+    `${n.plot.w}×${n.plot.d} फ़ीट ${facing} G+1 ${info.bhk}BHK का असली Guniyo आउटपुट — स्टैंडर्ड स्पेसिफ़िकेशन, मध्यम शहर के रेट (2026)।`,
   );
 
   const stages: StageInfo[] = [
@@ -181,7 +181,7 @@ export function Cinematic({ lang }: { lang: Lang }) {
     title,
     points,
     img: `/home/shots/${key}${lang === "hi" ? "-hi" : ""}.webp`,
-    alt: `${label} — BOQFather`,
+    alt: `${label} — Guniyo`,
   });
   const tabs = [
     tab("boq", L(lang, "Item-wise BOQ", "आइटम-वार BOQ"), L(lang, `${itemCount} items, A to I`, `${itemCount} आइटम, A से I तक`), [

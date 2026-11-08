@@ -8,7 +8,7 @@ import { pageMeta } from "@/lib/seo";
 export const metadata = pageMeta({
   lang: "en",
   path: "house-construction-guide",
-  title: `${guideTitle("en")} | BOQFather`,
+  title: `${guideTitle("en")} | Guniyo`,
   description: guideDescription("en"),
 });
 

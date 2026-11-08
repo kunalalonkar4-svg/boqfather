@@ -34,7 +34,7 @@ export function PlotPlanPreview({
           ? `${slug.replace("x", " × ")} फ़ीट प्लॉट का नक्शा`
           : `${slug.replace("x", " × ")} ft house plan`
       }
-      fileName={`${slug}-house-plan-boqfather`}
+      fileName={`${slug}-house-plan-guniyo`}
       plot={plot}
       names={(tp) =>
         tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp

@@ -1,4 +1,4 @@
-# BOQFather – Free website (Phase 2)
+# Guniyo – Free website (Phase 2)
 
 House construction cost estimate + 9 construction calculators for India, in English and Hindi, with step-by-step working, PDF report and WhatsApp share.
 
@@ -53,7 +53,7 @@ src/content/         Calculator SEO copy (English + Hindi), FAQs
 src/i18n/ui.ts       UI text in English and Hindi
 src/components/calcs Calculator screens (one per calculator)
 src/components/site  Header, footer, home, calculator page template
-src/lib/housePdf.ts  Quick-estimate PDF (jsPDF, BOQFather branding)
+src/lib/housePdf.ts  Quick-estimate PDF (jsPDF, Guniyo branding)
 src/app/             Routes, sitemap, robots, manifest
 ```
 
@@ -70,7 +70,7 @@ When a value changes, update the matching test in `engine.test.ts`.
 
 ## Hosting
 
-Deployed on Vercel (`https://boqfather.vercel.app`). The app has API routes (payments, AI plan/bill reading), so it needs the Next.js server build — a static `out/` export will not work. Do not add a `netlify.toml` that publishes `out`.
+Deployed on Vercel (`https://guniyo.com`). The app has API routes (payments, AI plan/bill reading), so it needs the Next.js server build — a static `out/` export will not work. Do not add a `netlify.toml` that publishes `out`.
 
 ## Styling (important)
 

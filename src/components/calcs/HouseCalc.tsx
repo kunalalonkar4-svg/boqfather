@@ -214,7 +214,7 @@ export default function HouseCalc({
               </button>
               <WhatsAppShare
                 lang={lang}
-                text={`BOQFather – ${inr(v.totalSqft)} sqft house (${floorLabel(floors)}, ${quality}): approx. ${rupees(v.total)} (${rupees(v.ratePerSqft)}/sqft). Cement ${inr(round(v.materials[0].qty))} bags, steel ${inr(round(v.materials[1].qty))} kg.`}
+                text={`Guniyo – ${inr(v.totalSqft)} sqft house (${floorLabel(floors)}, ${quality}): approx. ${rupees(v.total)} (${rupees(v.ratePerSqft)}/sqft). Cement ${inr(round(v.materials[0].qty))} bags, steel ${inr(round(v.materials[1].qty))} kg.`}
               />
               <button
                 type="button"

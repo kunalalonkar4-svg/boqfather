@@ -182,7 +182,7 @@ export default function BrickCalc({ lang }: { lang: Lang }) {
             />
             <WhatsAppShare
               lang={lang}
-              text={`BOQFather – Brickwork ${round(v.volumeM3, 2)} m³: ${inr(v.bricksWithWastage)} bricks, cement ${round(v.cementBags, 1)} bags, sand ${round(v.sandCft, 1)} cft`}
+              text={`Guniyo – Brickwork ${round(v.volumeM3, 2)} m³: ${inr(v.bricksWithWastage)} bricks, cement ${round(v.cementBags, 1)} bags, sand ${round(v.sandCft, 1)} cft`}
             />
           </>
         ) : (

@@ -23,7 +23,7 @@ export async function generateMetadata({
   return pageMeta({
     lang: "hi",
     path: `house-construction-cost-in/${city}`,
-    title: `${cityTitle(city, "hi")} | BOQFather`,
+    title: `${cityTitle(city, "hi")} | Guniyo`,
     description: cityDescription(city, "hi"),
   });
 }

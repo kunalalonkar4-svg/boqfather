@@ -6,7 +6,7 @@ import { CHECKLIST, CHECKLIST_COUNT, ytUrl } from "@/content/checklist";
 import { Lang, langPath } from "@/lib/site";
 
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
-const KEY = "boqfather-checklist-v1";
+const KEY = "guniyo-checklist-v1";
 
 function YtIcon() {
   return (
@@ -43,8 +43,8 @@ export function Checklist({ lang }: { lang: Lang }) {
     const lines = [
       L(
         lang,
-        "My house checklist (BOQFather)",
-        "मेरी घर की चेकलिस्ट (BOQFather)",
+        "My house checklist (Guniyo)",
+        "मेरी घर की चेकलिस्ट (Guniyo)",
       ),
       `${total}/${CHECKLIST_COUNT} ${L(lang, "done", "पूरे")}`,
       "",

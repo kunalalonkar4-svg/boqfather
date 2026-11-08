@@ -4,8 +4,8 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "BOQFather – Construction Estimates",
-    short_name: "BOQFather",
+    name: "Guniyo – Construction Estimates",
+    short_name: "Guniyo",
     description:
       "House construction cost and construction calculators for India.",
     start_url: "/",

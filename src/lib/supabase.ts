@@ -3,7 +3,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let client: SupabaseClient | null | undefined;
 
-/** The BOQFather Supabase project. Both values are public by design (row level security protects the data). */
+/** The Guniyo Supabase project. Both values are public by design (row level security protects the data). */
 export const SUPABASE_URL = "https://tkxkexslvlelhzaivvgd.supabase.co";
 export const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_Yd971rfaL2j6W-rTJqo_4A_RdBUkMuK";

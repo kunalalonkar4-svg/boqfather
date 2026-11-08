@@ -4,7 +4,7 @@ import { pageMeta } from "@/lib/seo";
 export const metadata = pageMeta({
   lang: "en",
   path: "house-construction-cost-in",
-  title: "House Construction Cost by City in India (2026) | BOQFather",
+  title: "House Construction Cost by City in India (2026) | Guniyo",
   description:
     "Construction rate per sq ft in 45 Indian cities — Indore, Bhopal, Jaipur, Lucknow, Delhi, Mumbai, Pune and more — for basic, standard and premium finish.",
 });

@@ -29,18 +29,18 @@ export const INFO_META: Record<
 > = {
   about: {
     title: [
-      "About BOQFather — who makes these estimates",
-      "BOQFather के बारे में — ये एस्टिमेट कौन बनाता है",
+      "About Guniyo — who makes these estimates",
+      "Guniyo के बारे में — ये एस्टिमेट कौन बनाता है",
     ],
     description: [
-      "BOQFather is made by a civil engineer to give Indian home builders honest, item-wise construction estimates and house plans, free.",
-      "BOQFather एक सिविल इंजीनियर ने बनाया है ताकि घर बनाने वालों को ईमानदार, आइटम-वार एस्टिमेट और नक्शे मुफ़्त मिलें।",
+      "Guniyo is made by a civil engineer to give Indian home builders honest, item-wise construction estimates and house plans, free.",
+      "Guniyo एक सिविल इंजीनियर ने बनाया है ताकि घर बनाने वालों को ईमानदार, आइटम-वार एस्टिमेट और नक्शे मुफ़्त मिलें।",
     ],
   },
   contact: {
     title: [
-      "Contact BOQFather — custom naksha and estimates",
-      "BOQFather से संपर्क — कस्टम नक्शा और एस्टिमेट",
+      "Contact Guniyo — custom naksha and estimates",
+      "Guniyo से संपर्क — कस्टम नक्शा और एस्टिमेट",
     ],
     description: [
       "Get in touch for a custom house plan, a detailed BOQ for your drawings, or feedback on the calculators.",
@@ -48,16 +48,16 @@ export const INFO_META: Record<
     ],
   },
   privacy: {
-    title: ["Privacy Policy — BOQFather", "प्राइवेसी पॉलिसी — BOQFather"],
+    title: ["Privacy Policy — Guniyo", "प्राइवेसी पॉलिसी — Guniyo"],
     description: [
-      "What BOQFather collects (almost nothing), what stays in your browser, and how contact requests are handled.",
-      "BOQFather क्या जानकारी लेता है (लगभग कुछ नहीं), क्या आपके ब्राउज़र में रहता है, और संपर्क अनुरोध कैसे संभाले जाते हैं।",
+      "What Guniyo collects (almost nothing), what stays in your browser, and how contact requests are handled.",
+      "Guniyo क्या जानकारी लेता है (लगभग कुछ नहीं), क्या आपके ब्राउज़र में रहता है, और संपर्क अनुरोध कैसे संभाले जाते हैं।",
     ],
   },
   pro: {
     title: [
-      "BOQFather Pro — clean reports, plan & bill reading",
-      "BOQFather प्रो — बिना निशान रिपोर्ट, नक्शा और बिल पढ़ना",
+      "Guniyo Pro — clean reports, plan & bill reading",
+      "Guniyo प्रो — बिना निशान रिपोर्ट, नक्शा और बिल पढ़ना",
     ],
     description: [
       "Pro: PDF / Excel with your name, saved projects, plan photo to estimate, contractor bill checker. ₹199 a project or ₹499 a month.",
@@ -65,17 +65,17 @@ export const INFO_META: Record<
     ],
   },
   account: {
-    title: ["My account — BOQFather", "मेरा अकाउंट — BOQFather"],
+    title: ["My account — Guniyo", "मेरा अकाउंट — Guniyo"],
     description: [
       "Your saved projects and Pro plan.",
       "आपके सेव प्रोजेक्ट और प्रो प्लान।",
     ],
   },
   terms: {
-    title: ["Terms of Use — BOQFather", "उपयोग की शर्तें — BOQFather"],
+    title: ["Terms of Use — Guniyo", "उपयोग की शर्तें — Guniyo"],
     description: [
-      "How BOQFather estimates and house plans may be used, and their limits.",
-      "BOQFather के एस्टिमेट और नक्शे कैसे इस्तेमाल करें, और उनकी सीमाएं।",
+      "How Guniyo estimates and house plans may be used, and their limits.",
+      "Guniyo के एस्टिमेट और नक्शे कैसे इस्तेमाल करें, और उनकी सीमाएं।",
     ],
   },
 };
@@ -105,13 +105,13 @@ export function AboutPage({ lang }: { lang: Lang }) {
       lang={lang}
       path="about"
       crumbs={[{ name: L(lang, "About", "हमारे बारे में") }]}
-      h1={L(lang, "About BOQFather", "BOQFather के बारे में")}
+      h1={L(lang, "About Guniyo", "Guniyo के बारे में")}
       intro={
         <p>
           {L(
             lang,
-            "Most families build a house once. They should know what it will cost, what material goes into it and whether a contractor's quote is fair — before the first brick. BOQFather works that out the way a site engineer does, item by item, and gives it away free.",
-            "ज़्यादातर परिवार ज़िंदगी में एक बार घर बनाते हैं। पहली ईंट से पहले उन्हें पता होना चाहिए कि कितना खर्च होगा, कितनी सामग्री लगेगी और ठेकेदार का रेट सही है या नहीं। BOQFather यह हिसाब एक साइट इंजीनियर की तरह, आइटम-वार निकालता है — और मुफ़्त देता है।",
+            "Most families build a house once. They should know what it will cost, what material goes into it and whether a contractor's quote is fair — before the first brick. Guniyo works that out the way a site engineer does, item by item, and gives it away free.",
+            "ज़्यादातर परिवार ज़िंदगी में एक बार घर बनाते हैं। पहली ईंट से पहले उन्हें पता होना चाहिए कि कितना खर्च होगा, कितनी सामग्री लगेगी और ठेकेदार का रेट सही है या नहीं। Guniyo यह हिसाब एक साइट इंजीनियर की तरह, आइटम-वार निकालता है — और मुफ़्त देता है।",
           )}
         </p>
       }
@@ -168,7 +168,7 @@ export function AboutPage({ lang }: { lang: Lang }) {
             )}
           </li>
         </ul>
-        <H2>{L(lang, "What BOQFather is not", "BOQFather क्या नहीं है")}</H2>
+        <H2>{L(lang, "What Guniyo is not", "Guniyo क्या नहीं है")}</H2>
         <p>
           {L(
             lang,
@@ -336,8 +336,8 @@ export function TermsPage({ lang }: { lang: Lang }) {
         <p>
           {L(
             lang,
-            "BOQFather is provided as is. We are not responsible for losses from decisions made only on the basis of these tools.",
-            "BOQFather जैसा है वैसा दिया गया है। सिर्फ़ इन टूल के आधार पर लिए गए फ़ैसलों से हुए नुकसान की ज़िम्मेदारी हमारी नहीं है।",
+            "Guniyo is provided as is. We are not responsible for losses from decisions made only on the basis of these tools.",
+            "Guniyo जैसा है वैसा दिया गया है। सिर्फ़ इन टूल के आधार पर लिए गए फ़ैसलों से हुए नुकसान की ज़िम्मेदारी हमारी नहीं है।",
           )}
         </p>
       </Prose>
@@ -419,7 +419,7 @@ export function ProPage({ lang }: { lang: Lang }) {
       lang={lang}
       path="pro"
       crumbs={[{ name: "Pro" }]}
-      h1={L(lang, "BOQFather Pro", "BOQFather प्रो")}
+      h1={L(lang, "Guniyo Pro", "Guniyo प्रो")}
       intro={
         <p>
           {L(

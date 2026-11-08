@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return pageMeta({
     lang: "en",
     path: `elevations/${slug}`,
-    title: `${elevationTitle(x, "en")} | BOQFather`,
+    title: `${elevationTitle(x, "en")} | Guniyo`,
     description: elevationDescription(x, "en"),
     image: elevationImage(x),
   });

@@ -3,7 +3,7 @@ import { adminDb } from "@/lib/server/admin";
 export const dynamic = "force-dynamic";
 
 const page = (msg: string, status = 200) =>
-  new Response(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width"><title>BOQFather</title><body style="font-family:system-ui;max-width:32rem;margin:15vh auto;padding:0 1rem"><h1 style="font-size:1.4rem">${msg}</h1><p><a href="/">Back to BOQFather</a></p>`, {
+  new Response(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width"><title>Guniyo</title><body style="font-family:system-ui;max-width:32rem;margin:15vh auto;padding:0 1rem"><h1 style="font-size:1.4rem">${msg}</h1><p><a href="/">Back to Guniyo</a></p>`, {
     status,
     headers: { "content-type": "text/html; charset=utf-8" },
   });

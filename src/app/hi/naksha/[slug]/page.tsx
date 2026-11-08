@@ -21,7 +21,7 @@ export async function generateMetadata({
   return pageMeta({
     lang: "hi",
     path: `naksha/${slug}`,
-    title: `${nakshaTitle(n, "hi")} | BOQFather`,
+    title: `${nakshaTitle(n, "hi")} | Guniyo`,
     description: nakshaDescription(slug, "hi"),
     image: nakshaPreview(n).src,
   });

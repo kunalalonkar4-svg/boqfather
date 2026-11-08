@@ -65,7 +65,7 @@ export function SketchPanel({
           "स्केल पर बना। फ़ाइनल ड्रॉइंग और स्ट्रक्चर अपने आर्किटेक्ट / इंजीनियर से; लोकल नियम जांचें।",
         ),
       };
-      const name = fileName ?? "boqfather-house-plan";
+      const name = fileName ?? "guniyo-house-plan";
       if (kind === "png") await downloadPlanPng(svgs, sheet, name);
       else await downloadPlanPdf(svgs, sheet, name);
     } catch (e) {

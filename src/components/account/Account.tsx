@@ -138,7 +138,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
         order_id: o.orderId,
         amount: o.amount,
         currency: "INR",
-        name: "BOQFather",
+        name: "Guniyo",
         description: lang === "hi" ? PLANS[plan].hi : PLANS[plan].en,
         prefill: { contact: user.phone ?? "", email: user.email ?? "" },
         theme: { color: "#e8a317" },
@@ -232,7 +232,7 @@ function LoginDialog({
   return (
     <Modal onClose={() => onClose(false)}>
       <h2 className="font-display text-[22px] font-extrabold">
-        {L(lang, "Log in to BOQFather", "BOQFather में लॉगिन करें")}
+        {L(lang, "Log in to Guniyo", "Guniyo में लॉगिन करें")}
       </h2>
       <p className="text-[14px] text-body">
         {L(

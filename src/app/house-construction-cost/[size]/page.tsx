@@ -24,7 +24,7 @@ export async function generateMetadata({
   return pageMeta({
     lang: "en",
     path: `house-construction-cost/${size}`,
-    title: `${sqftTitle(n, "en")} | BOQFather`,
+    title: `${sqftTitle(n, "en")} | Guniyo`,
     description: sqftDescription(n, "en"),
   });
 }

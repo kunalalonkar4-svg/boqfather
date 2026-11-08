@@ -150,7 +150,7 @@ export async function downloadRateSheet(current: Record<string, number>) {
   const XLSX = await import("xlsx");
   const rows: (string | number)[][] = [
     [
-      "BOQFather rate sheet – fill column D with your SOR / DSR / contractor rates (Rs.), keep column A unchanged, then upload",
+      "Guniyo rate sheet – fill column D with your SOR / DSR / contractor rates (Rs.), keep column A unchanged, then upload",
     ],
     [],
     ["Key", "Description", "Unit", "Rate (Rs.)", "Market rate (Rs.)"],
@@ -172,7 +172,7 @@ export async function downloadRateSheet(current: Record<string, number>) {
   ];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Rates");
-  XLSX.writeFile(wb, "BOQFather_rate_sheet.xlsx");
+  XLSX.writeFile(wb, "Guniyo_rate_sheet.xlsx");
 }
 
 /** Read a filled rate sheet (xlsx / csv): first column key, a numeric rate in column D (or the first number after the key). */
@@ -217,11 +217,11 @@ export async function downloadBoqExcel(
   const wb = XLSX.utils.book_new();
 
   const abs: (string | number)[][] = [
-    [(opts.brand ? opts.brand + " – " : "BOQFather – ") + title],
+    [(opts.brand ? opts.brand + " – " : "Guniyo – ") + title],
     ...(opts.watermark
       ? [
           [
-            "FREE VERSION – made with BOQFather (boqfather.vercel.app). Get Pro for a clean report with your name.",
+            "FREE VERSION – made with Guniyo (guniyo.com). Get Pro for a clean report with your name.",
           ],
         ]
       : []),
@@ -471,11 +471,11 @@ export async function downloadBoqExcel(
 
   XLSX.writeFile(
     wb,
-    `BOQFather_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.xlsx`,
+    `Guniyo_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.xlsx`,
   );
 }
 
-/** PDF: abstract of cost + measurement book, BOQFather branding. */
+/** PDF: abstract of cost + measurement book, Guniyo branding. */
 export async function downloadBoqPdf(
   r0: BoqResult,
   title: string,
@@ -498,7 +498,7 @@ export async function downloadBoqPdf(
     AMBER: [number, number, number] = [23, 105, 210];
   const today = new Date();
   const date = `${String(today.getDate()).padStart(2, "0")}-${String(today.getMonth() + 1).padStart(2, "0")}-${today.getFullYear()}`;
-  const estNo = `BF-BQ-${today.getFullYear()}-${String(Math.floor(today.getTime() / 1000) % 100000).padStart(5, "0")}`;
+  const estNo = `GN-BQ-${today.getFullYear()}-${String(Math.floor(today.getTime() / 1000) % 100000).padStart(5, "0")}`;
   const header = () => {
     doc.setFillColor(...AMBER);
     doc.roundedRect(M, 10, 10, 10, 1.5, 1.5, "F");
@@ -506,8 +506,8 @@ export async function downloadBoqPdf(
       .setTextColor(...INK)
       .setFont("helvetica", "bold")
       .setFontSize(10)
-      .text("BF", M + 5, 16.6, { align: "center" });
-    doc.setFontSize(15).text("BOQFather", M + 13, 15.2);
+      .text("G", M + 5, 16.6, { align: "center" });
+    doc.setFontSize(15).text("Guniyo", M + 13, 15.2);
     doc
       .setFont("helvetica", "normal")
       .setFontSize(7.5)
@@ -988,11 +988,11 @@ export async function downloadBoqPdf(
       .setFontSize(7)
       .setTextColor(92, 90, 85)
       .setFont("helvetica", "bold")
-      .text("BOQFather", M, H - 8.5);
+      .text("Guniyo", M, H - 8.5);
     doc
       .setFont("helvetica", "normal")
       .text(
-        "|  boqfather.vercel.app  |  Preliminary estimate from an assumed layout - verify with drawings and structural design",
+        "|  guniyo.com  |  Preliminary estimate from an assumed layout - verify with drawings and structural design",
         M + 15,
         H - 8.5,
       );
@@ -1012,9 +1012,9 @@ export async function downloadBoqPdf(
         .setFont("helvetica", "bold")
         .setFontSize(54)
         .setTextColor(...INK)
-        .text("BOQFather FREE", W / 2, H / 2, { align: "center", angle: 35 });
+        .text("Guniyo FREE", W / 2, H / 2, { align: "center", angle: 35 });
       doc.restoreGraphicsState();
     }
   }
-  doc.save(`BOQFather_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.pdf`);
+  doc.save(`Guniyo_BOQ_${Math.round(r.geometry.builtUpSqft)}sqft.pdf`);
 }

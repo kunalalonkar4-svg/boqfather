@@ -110,7 +110,7 @@ export function BoqShowcase({
                   <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
                 </span>
                 <span className="text-[12px] font-semibold text-white/50">
-                  {L(lang, "Abstract of cost · BOQFather", "एब्स्ट्रैक्ट ऑफ़ कॉस्ट · BOQFather")}
+                  {L(lang, "Abstract of cost · Guniyo", "एब्स्ट्रैक्ट ऑफ़ कॉस्ट · Guniyo")}
                 </span>
               </div>
               <div className="overflow-x-auto">

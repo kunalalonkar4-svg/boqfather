@@ -23,7 +23,7 @@ export async function generateMetadata({
   return pageMeta({
     lang: "en",
     path: `house-plan/${size}`,
-    title: `${plotTitle(size, "en")} | BOQFather`,
+    title: `${plotTitle(size, "en")} | Guniyo`,
     description: plotDescription(size, "en"),
   });
 }

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
-/* BOQFather brand tokens */
+/* Guniyo brand tokens */
 :root {
-  /* BOQFather engineering palette: navy, blue, white */
+  /* Guniyo engineering palette: navy, blue, white */
   --ink: #080808;
   --ground: #ffffff;
   --surface: #ffffff;

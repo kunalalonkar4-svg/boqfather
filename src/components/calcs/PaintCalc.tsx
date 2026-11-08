@@ -151,7 +151,7 @@ export default function PaintCalc({ lang }: { lang: Lang }) {
             />
             <WhatsAppShare
               lang={lang}
-              text={`BOQFather – Paint for ${round(v.areaSqft)} sqft: paint ${round(v.paintL, 1)} L, primer ${round(v.primerL, 1)} L, putty ${round(v.puttyKg, 1)} kg`}
+              text={`Guniyo – Paint for ${round(v.areaSqft)} sqft: paint ${round(v.paintL, 1)} L, primer ${round(v.primerL, 1)} L, putty ${round(v.puttyKg, 1)} kg`}
             />
           </>
         ) : (

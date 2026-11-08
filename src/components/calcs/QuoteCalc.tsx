@@ -275,7 +275,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
                 </div>
                 <div className="rounded-xl bg-white/[0.07] ring-1 ring-white/10 p-3">
                   <dt className="text-[12px] text-[#c3cfdd]">
-                    {hi ? "BOQFather बेंचमार्क" : "BOQFather benchmark"}
+                    {hi ? "Guniyo बेंचमार्क" : "Guniyo benchmark"}
                   </dt>
                   <dd className="text-[18px] font-bold text-amber">
                     {rupees(res.benchPerSqft)}/sqft
@@ -300,7 +300,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
             </section>
             <WhatsAppShare
               lang={lang}
-              text={`BOQFather quote check: contractor ${rupees(res.quotePerSqft)}/sqft vs benchmark ${rupees(res.benchPerSqft)}/sqft (${res.diffPct >= 0 ? "+" : ""}${round(res.diffPct, 1)}%) – ${VERDICT[res.verdict].en}`}
+              text={`Guniyo quote check: contractor ${rupees(res.quotePerSqft)}/sqft vs benchmark ${rupees(res.benchPerSqft)}/sqft (${res.diffPct >= 0 ? "+" : ""}${round(res.diffPct, 1)}%) – ${VERDICT[res.verdict].en}`}
             />
           </div>
         ) : (

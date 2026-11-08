@@ -97,7 +97,7 @@ export async function planSheet(
   g.fillText(t.footer, pad, H - 60);
   g.fillStyle = "#b07a12";
   g.font = `700 26px ${FONT}`;
-  const site = `BOQFather · ${SITE_URL.replace("https://", "")}`;
+  const site = `Guniyo · ${SITE_URL.replace("https://", "")}`;
   g.fillText(site, W - pad - g.measureText(site).width, H - 60);
   return c;
 }

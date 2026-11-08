@@ -257,8 +257,8 @@ export function ProTools({
             <strong>
               {L(
                 lang,
-                "Free reports carry a BOQFather mark.",
-                "फ़्री रिपोर्ट पर BOQFather का निशान रहता है।",
+                "Free reports carry a Guniyo mark.",
+                "फ़्री रिपोर्ट पर Guniyo का निशान रहता है।",
               )}
             </strong>{" "}
             {L(

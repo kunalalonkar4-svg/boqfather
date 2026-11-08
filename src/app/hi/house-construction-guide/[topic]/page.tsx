@@ -33,7 +33,7 @@ export async function generateMetadata({
   return pageMeta({
     lang: "hi",
     path: `${GUIDE_BASE}/${topic}`,
-    title: `${isJourneySlug(topic) ? journeyTitle(topic, "hi") : guideItemTitle(topic, "hi")} | BOQFather`,
+    title: `${isJourneySlug(topic) ? journeyTitle(topic, "hi") : guideItemTitle(topic, "hi")} | Guniyo`,
     description: isJourneySlug(topic) ? journeyDescription(topic, "hi") : guideItemDescription(topic, "hi"),
   });
 }

@@ -27,7 +27,7 @@ export function NakshaPlanView({ lang, slug }: { lang: Lang; slug: string }) {
         `Plot ${n.plot.w} × ${n.plot.d} ft · road at the bottom of each drawing`,
         `प्लॉट ${n.plot.w} × ${n.plot.d} फ़ीट · हर ड्रॉइंग में सड़क नीचे`,
       )}
-      fileName={`${slug}-naksha-boqfather`}
+      fileName={`${slug}-naksha-guniyo`}
       plot={plot}
       names={(tp) =>
         tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
@@ -180,7 +180,7 @@ export function CustomNakshaForm({
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) =>
     setF((x) => ({ ...x, [k]: e.target.value }));
   const msg = [
-    L(lang, "Custom naksha request (BOQFather)", "कस्टम नक्शा (BOQFather)"),
+    L(lang, "Custom naksha request (Guniyo)", "कस्टम नक्शा (Guniyo)"),
     `${L(lang, "Name", "नाम")}: ${f.name}`,
     `${L(lang, "City", "शहर")}: ${f.city}`,
     `${L(lang, "Plot size (ft)", "प्लॉट साइज़ (ft)")}: ${f.size}`,

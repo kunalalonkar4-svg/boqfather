@@ -66,8 +66,8 @@ const en = {
   home_pro_t: "Naksha and item-wise BOQ from your plot",
   home_pro_d:
     "Enter plot size and road direction — get a Vastu-checked naksha to scale, abstract of cost, measurement book and bar bending schedule.",
-  home_why_t: "Why BOQFather",
-  home_why_1: "Other calculators give a guess. BOQFather gives the working.",
+  home_why_t: "Why Guniyo",
+  home_why_1: "Other calculators give a guess. Guniyo gives the working.",
   home_why_2: "Hindi and English, metric and feet-inch.",
   home_why_3: "Editable rates — use your market or SOR rates.",
   calculators_h1: "Construction calculators",
@@ -173,8 +173,8 @@ const hi: Dict = {
   home_pro_t: "आपके प्लॉट से नक्शा और आइटम-वार BOQ",
   home_pro_d:
     "प्लॉट साइज़ और सड़क की दिशा डालें — स्केल पर वास्तु-जांचा नक्शा, एब्स्ट्रैक्ट ऑफ़ कॉस्ट, मेज़रमेंट बुक और BBS।",
-  home_why_t: "BOQFather क्यों",
-  home_why_1: "बाकी कैलकुलेटर अंदाज़ा देते हैं, BOQFather पूरी गणना देता है।",
+  home_why_t: "Guniyo क्यों",
+  home_why_1: "बाकी कैलकुलेटर अंदाज़ा देते हैं, Guniyo पूरी गणना देता है।",
   home_why_2: "हिंदी और अंग्रेज़ी, मीटर और फ़ीट-इंच दोनों में।",
   home_why_3: "रेट बदल सकते हैं — अपने बाज़ार या SOR के रेट डालें।",
   calculators_h1: "निर्माण कैलकुलेटर",

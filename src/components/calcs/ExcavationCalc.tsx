@@ -150,7 +150,7 @@ export default function ExcavationCalc({ lang }: { lang: Lang }) {
             />
             <WhatsAppShare
               lang={lang}
-              text={`BOQFather – Excavation: ${round(v.volumeM3, 2)} m³ (${round(v.brass, 2)} brass), cost ${rupees(v.cost)}`}
+              text={`Guniyo – Excavation: ${round(v.volumeM3, 2)} m³ (${round(v.brass, 2)} brass), cost ${rupees(v.cost)}`}
             />
           </>
         ) : (

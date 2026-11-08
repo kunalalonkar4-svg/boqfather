@@ -188,7 +188,7 @@ export default function ConcreteCalc({ lang }: { lang: Lang }) {
             />
             <WhatsAppShare
               lang={lang}
-              text={`BOQFather – ${grade} concrete ${round(v.wetVolumeM3, 2)} m³: cement ${round(v.cementBags, 1)} bags, sand ${round(v.sandCft, 1)} cft, aggregate ${round(v.aggregateCft, 1)} cft`}
+              text={`Guniyo – ${grade} concrete ${round(v.wetVolumeM3, 2)} m³: cement ${round(v.cementBags, 1)} bags, sand ${round(v.sandCft, 1)} cft, aggregate ${round(v.aggregateCft, 1)} cft`}
             />
           </>
         ) : (

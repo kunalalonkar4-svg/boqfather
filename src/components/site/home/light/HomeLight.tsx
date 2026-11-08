@@ -399,7 +399,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
   ];
 
   const faqs = [
-    [L(lang, "Is BOQFather free?", "क्या BOQFather फ़्री है?"), L(lang, "Yes. Every calculator, the item-wise BOQ, all house plans and the downloads are free. Pro adds clean reports with your name, reading plan photos and bills, and saved projects.", "हां। सारे कैलकुलेटर, आइटम-वार BOQ, सारे नक्शे और डाउनलोड फ़्री हैं। प्रो में आपके नाम के साथ बिना निशान रिपोर्ट, नक्शे और बिल की फ़ोटो पढ़ना, और सेव प्रोजेक्ट मिलते हैं।")],
+    [L(lang, "Is Guniyo free?", "क्या Guniyo फ़्री है?"), L(lang, "Yes. Every calculator, the item-wise BOQ, all house plans and the downloads are free. Pro adds clean reports with your name, reading plan photos and bills, and saved projects.", "हां। सारे कैलकुलेटर, आइटम-वार BOQ, सारे नक्शे और डाउनलोड फ़्री हैं। प्रो में आपके नाम के साथ बिना निशान रिपोर्ट, नक्शे और बिल की फ़ोटो पढ़ना, और सेव प्रोजेक्ट मिलते हैं।")],
     [L(lang, "How accurate is the estimate?", "एस्टिमेट कितना सही होता है?"), L(lang, "Each item is measured from the plan and priced at 2026 market rates for your city type. Your brand choices, soil and the structural design can change it. It is a planning estimate, so have your engineer confirm sizes and steel.", "हर आइटम नक्शे से नापा जाता है और आपके शहर के 2026 के बाज़ार रेट से जोड़ा जाता है। ब्रांड, मिट्टी और स्ट्रक्चर डिज़ाइन से फ़र्क़ आ सकता है। यह प्लानिंग एस्टिमेट है, इसलिए साइज़ और सरिया अपने इंजीनियर से पक्का करवाएं।")],
     [L(lang, "Can I change the rates?", "क्या मैं रेट बदल सकता हूं?"), L(lang, "Yes. Start from mid-city market rates and type your own contractor's rate for any item. Every total updates.", "हां। मध्यम शहर के बाज़ार रेट से शुरू करें और किसी भी आइटम में अपने ठेकेदार का रेट डालें। हर टोटल बदल जाता है।")],
     [L(lang, "Can I use my own plan?", "क्या मैं अपना नक्शा इस्तेमाल कर सकता हूं?"), L(lang, "Yes. Upload an AutoCAD DXF (free), or a photo or PDF of the plan (Pro), or type the rooms yourself.", "हां। AutoCAD DXF अपलोड करें (फ़्री), या नक्शे की फ़ोटो / PDF (प्रो), या कमरे ख़ुद भरें।")],
@@ -572,7 +572,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
         <section id="features" className="bg-white">
           <div className={`${wrap} py-16 lg:py-20`}>
             <Head
-              title={L(lang, "What you get with BOQFather", "BOQFather में आपको क्या मिलता है")}
+              title={L(lang, "What you get with Guniyo", "Guniyo में आपको क्या मिलता है")}
               text={L(lang, "Real screens from the tool, not mock-ups. Pick one to preview it.", "टूल की असली स्क्रीन, मॉक-अप नहीं। देखने के लिए एक चुनिए।")}
             />
             <div className="mt-9">
@@ -608,7 +608,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
         <section className="bg-white">
           <div className={`${wrap} py-16 lg:py-20`}>
             <Head
-              title={L(lang, "Why choose BOQFather?", "BOQFather क्यों चुनें?")}
+              title={L(lang, "Why choose Guniyo?", "Guniyo क्यों चुनें?")}
               text={L(lang, "Four practical reasons, each with the output behind it.", "चार काम की वजहें, हर एक के पीछे का असली आउटपुट के साथ।")}
             >
               <Link href={langPath(lang, "about")} className={`text-[15px] ${link}`}>

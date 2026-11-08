@@ -230,7 +230,7 @@ export default function SteelCalc({ lang }: { lang: Lang }) {
             <ResultPanel lang={lang} stats={stats} />
             <WhatsAppShare
               lang={lang}
-              text={`BOQFather – Steel: ${stats.map((s) => `${s.label} ${s.value}`).join(", ")}`}
+              text={`Guniyo – Steel: ${stats.map((s) => `${s.label} ${s.value}`).join(", ")}`}
             />
           </>
         ) : (

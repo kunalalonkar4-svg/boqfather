@@ -23,7 +23,7 @@ export async function generateMetadata({
   return pageMeta({
     lang: "hi",
     path: `naksha/gaj/${gaj}`,
-    title: `${gajTitle(gaj, "hi")} | BOQFather`,
+    title: `${gajTitle(gaj, "hi")} | Guniyo`,
     description: gajDescription(gaj, "hi"),
   });
 }

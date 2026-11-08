@@ -8,7 +8,7 @@ import { pageMeta } from "@/lib/seo";
 export const metadata = pageMeta({
   lang: "en",
   path: "naksha",
-  title: `${naksheTitle("en")} | BOQFather`,
+  title: `${naksheTitle("en")} | Guniyo`,
   description: naksheDescription("en"),
   image: "/naksha/img/30x50-east-facing.webp",
 });

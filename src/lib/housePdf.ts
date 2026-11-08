@@ -2,7 +2,7 @@ import type { HouseInput, HouseValues } from "@/engine";
 import { inr, round } from "@/engine";
 import { floorName, name } from "@/i18n/ui";
 
-/** Builds the Quick Estimate PDF (BOQFather branding) in the browser and downloads it. */
+/** Builds the Quick Estimate PDF (Guniyo branding) in the browser and downloads it. */
 export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
   const { jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");
@@ -17,7 +17,7 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
   const rs = (n: number) => `Rs. ${inr(n)}`;
   const today = new Date();
   const date = `${String(today.getDate()).padStart(2, "0")}-${String(today.getMonth() + 1).padStart(2, "0")}-${today.getFullYear()}`;
-  const estNo = `BF-QE-${today.getFullYear()}-${String(Math.floor(today.getTime() / 1000) % 100000).padStart(5, "0")}`;
+  const estNo = `GN-QE-${today.getFullYear()}-${String(Math.floor(today.getTime() / 1000) % 100000).padStart(5, "0")}`;
 
   const header = () => {
     doc.setFillColor(...AMBER);
@@ -25,9 +25,9 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
     doc.setTextColor(...INK);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text("BF", M + 5, 16.6, { align: "center" });
+    doc.text("G", M + 5, 16.6, { align: "center" });
     doc.setFontSize(15);
-    doc.text("BOQFather", M + 13, 15.2);
+    doc.text("Guniyo", M + 13, 15.2);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.setTextColor(92, 90, 85);
@@ -58,10 +58,10 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
       doc.setFontSize(7);
       doc.setTextColor(92, 90, 85);
       doc.setFont("helvetica", "bold");
-      doc.text("BOQFather", M, H - 8.5);
+      doc.text("Guniyo", M, H - 8.5);
       doc.setFont("helvetica", "normal");
       doc.text(
-        "|  boqfather.vercel.app  |  Preliminary estimate (thumb rules) - not a structural design",
+        "|  guniyo.com  |  Preliminary estimate (thumb rules) - not a structural design",
         M + 15,
         H - 8.5,
       );
@@ -233,6 +233,6 @@ export async function downloadHousePdf(input: HouseInput, v: HouseValues) {
 
   footer();
   doc.save(
-    `BOQFather_House_Estimate_${inr(v.totalSqft).replace(/,/g, "")}sqft.pdf`,
+    `Guniyo_House_Estimate_${inr(v.totalSqft).replace(/,/g, "")}sqft.pdf`,
   );
 }

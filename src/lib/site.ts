@@ -1,6 +1,6 @@
 /** Site-wide settings. Testing on Vercel; switch SITE_URL when the domain is bought. */
-export const SITE_URL = "https://boqfather.vercel.app";
-export const SITE_NAME = "BOQFather";
+export const SITE_URL = "https://guniyo.com";
+export const SITE_NAME = "Guniyo";
 
 export const LANGS = ["en", "hi"] as const;
 export type Lang = (typeof LANGS)[number];

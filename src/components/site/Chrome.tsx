@@ -13,10 +13,10 @@ export function Logo() {
   return (
     <span className="flex items-center gap-2.5">
       <span className="font-display flex h-9 w-9 items-center justify-center rounded-lg bg-amber text-[14px] font-extrabold text-white">
-        BF
+        G
       </span>
       <span className="font-display text-[20px] font-extrabold tracking-tight">
-        BOQFather
+        Guniyo
       </span>
     </span>
   );
@@ -49,7 +49,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-white/90 text-ink backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
-        <Link href={langPath(lang)} aria-label="BOQFather home" className="shrink-0">
+        <Link href={langPath(lang)} aria-label="Guniyo home" className="shrink-0">
           <Logo />
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-0.5 text-[14px] xl:flex">
@@ -351,7 +351,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
         </div>
         <div className="border-t border-[#1d3a60]">
           <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-4 text-[12px] text-[#8397b1] sm:px-6">
-            <span>© 2026 BOQFather</span>
+            <span>© 2026 Guniyo</span>
             <span>{L2(lang, "Made in India, for India", "भारत के लिए बना")}</span>
           </div>
         </div>

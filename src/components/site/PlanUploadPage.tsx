@@ -203,8 +203,8 @@ export function PlanUploadPage({ lang }: { lang: Lang }) {
       ),
       a: L(
         lang,
-        "A DXF never leaves your device. A photo or PDF is sent once to the AI service (Claude, by Anthropic) to be read, and BOQFather does not store it; only the rooms you save in a project are kept, in your account.",
-        "DXF आपके डिवाइस से बाहर नहीं जाती। फ़ोटो या PDF सिर्फ़ पढ़ने के लिए एक बार AI सेवा (Anthropic का Claude) को भेजी जाती है, और BOQFather उसे सेव नहीं करता; सिर्फ़ वो कमरे रखे जाते हैं जो आप प्रोजेक्ट में सेव करते हैं, आपके अकाउंट में।",
+        "A DXF never leaves your device. A photo or PDF is sent once to the AI service (Claude, by Anthropic) to be read, and Guniyo does not store it; only the rooms you save in a project are kept, in your account.",
+        "DXF आपके डिवाइस से बाहर नहीं जाती। फ़ोटो या PDF सिर्फ़ पढ़ने के लिए एक बार AI सेवा (Anthropic का Claude) को भेजी जाती है, और Guniyo उसे सेव नहीं करता; सिर्फ़ वो कमरे रखे जाते हैं जो आप प्रोजेक्ट में सेव करते हैं, आपके अकाउंट में।",
       ),
     },
     {

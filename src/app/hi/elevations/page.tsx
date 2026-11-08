@@ -5,7 +5,7 @@ import { pageMeta } from "@/lib/seo";
 export const metadata = pageMeta({
   lang: "hi",
   path: "elevations",
-  title: `${elevationsTitle("hi")} | BOQFather`,
+  title: `${elevationsTitle("hi")} | Guniyo`,
   description: elevationsDescription("hi"),
   image: elevationImage(ELEVATIONS[0], true),
 });

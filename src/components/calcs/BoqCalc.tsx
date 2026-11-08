@@ -1477,7 +1477,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
             <div className="no-print">
               <WhatsAppShare
                 lang={lang}
-                text={`BOQFather – ${title}: item-wise BOQ ${rupees(res.grandTotal)} (${rupees(res.perSqft)}/sqft)`}
+                text={`Guniyo – ${title}: item-wise BOQ ${rupees(res.grandTotal)} (${rupees(res.perSqft)}/sqft)`}
               />
             </div>
           </div>

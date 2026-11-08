@@ -107,7 +107,7 @@ export function Reports({
                   <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
                 </span>
                 <span className="ml-2 truncate rounded-md bg-white/5 px-3 py-1 text-[11px] text-white/45">
-                  boqfather.vercel.app/house-boq-estimate
+                  guniyo.com/house-boq-estimate
                 </span>
               </div>
               <div className="relative aspect-[16/10] bg-white">

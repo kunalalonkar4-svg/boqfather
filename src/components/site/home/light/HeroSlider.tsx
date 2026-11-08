@@ -33,7 +33,7 @@ export interface HeroSliderLabels {
 }
 
 /**
- * Manual hero slider: a few real BOQFather elevations, each paired with its own plot size and sample estimate.
+ * Manual hero slider: a few real Guniyo elevations, each paired with its own plot size and sample estimate.
  * Arrows, dots, swipe and the left/right keys; no autoplay. The details and both links follow the active slide.
  */
 export function HeroSlider({ slides, labels }: { slides: HeroSlide[]; labels: HeroSliderLabels }) {

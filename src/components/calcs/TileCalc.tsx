@@ -151,7 +151,7 @@ export default function TileCalc({ lang }: { lang: Lang }) {
             />
             <WhatsAppShare
               lang={lang}
-              text={`BOQFather – Tiles ${size} for ${round(v.areaSqft)} sqft: ${v.tiles} tiles, ${v.boxes} boxes, ${rupees(v.cost)}`}
+              text={`Guniyo – Tiles ${size} for ${round(v.areaSqft)} sqft: ${v.tiles} tiles, ${v.boxes} boxes, ${rupees(v.cost)}`}
             />
           </>
         ) : (

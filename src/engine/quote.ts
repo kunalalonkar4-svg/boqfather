@@ -1,4 +1,4 @@
-/** Contractor quote checker: compares a quote with BOQFather's benchmark. */
+/** Contractor quote checker: compares a quote with Guniyo's benchmark. */
 import { Location, LOCATION_FACTORS, Quality, QUALITY_RATES } from "./house";
 
 /** Labour-only rate per sqft (₹) by quality — indicative, editable. */

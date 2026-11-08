@@ -45,7 +45,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Total cost, materials, stages",
       h1: "House Construction Cost Calculator",
       metaTitle:
-        "House Construction Cost Calculator India 2026 – Cost per sqft, Materials | BOQFather",
+        "House Construction Cost Calculator India 2026 – Cost per sqft, Materials | Guniyo",
       metaDescription:
         "Calculate house construction cost in India from built-up area, floors, city and quality. Get cement, steel, sand, bricks, stage-wise cost, payment schedule and a PDF report.",
       intro:
@@ -74,7 +74,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "कुल खर्च, सामग्री, चरण",
       h1: "घर बनाने का खर्च कैलकुलेटर",
       metaTitle:
-        "घर बनाने का खर्च कैलकुलेटर 2026 – प्रति sqft रेट, सीमेंट, सरिया | BOQFather",
+        "घर बनाने का खर्च कैलकुलेटर 2026 – प्रति sqft रेट, सीमेंट, सरिया | Guniyo",
       metaDescription:
         "एरिया, मंज़िल, शहर और क्वालिटी डालकर घर बनाने का कुल खर्च निकालें। सीमेंट, सरिया, रेत, ईंट, चरण अनुसार खर्च, भुगतान शेड्यूल और PDF रिपोर्ट।",
       intro:
@@ -112,7 +112,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Cement, sand, aggregate",
       h1: "Concrete Calculator – Cement, Sand and Aggregate",
       metaTitle:
-        "Concrete Calculator – Cement, Sand, Aggregate for M20, M15, M10 | BOQFather",
+        "Concrete Calculator – Cement, Sand, Aggregate for M20, M15, M10 | Guniyo",
       metaDescription:
         "Find cement bags, sand and aggregate for M5 to M25 concrete. Enter slab, beam, column or footing size in metre or feet. Step-by-step working with the 1.54 dry volume factor.",
       intro:
@@ -137,7 +137,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "सीमेंट, रेत, गिट्टी",
       h1: "कंक्रीट कैलकुलेटर – सीमेंट, रेत और गिट्टी",
       metaTitle:
-        "कंक्रीट कैलकुलेटर – M20, M15 में सीमेंट, रेत, गिट्टी कितनी लगेगी | BOQFather",
+        "कंक्रीट कैलकुलेटर – M20, M15 में सीमेंट, रेत, गिट्टी कितनी लगेगी | Guniyo",
       metaDescription:
         "M5 से M25 कंक्रीट के लिए सीमेंट की बोरी, रेत और गिट्टी निकालें। स्लैब, बीम, कॉलम या फुटिंग का साइज़ मीटर या फ़ीट में डालें। 1.54 ड्राई वॉल्यूम के साथ पूरी गणना।",
       intro:
@@ -171,7 +171,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Bricks, cement, sand",
       h1: "Brick Calculator – Bricks, Cement and Sand for a Wall",
       metaTitle:
-        "Brick Calculator – How Many Bricks in a Wall, Cement & Sand for Brickwork | BOQFather",
+        "Brick Calculator – How Many Bricks in a Wall, Cement & Sand for Brickwork | Guniyo",
       metaDescription:
         "Calculate the number of bricks, cement bags and sand for 9 inch (230 mm) or 4.5 inch (115 mm) walls. Deduct doors and windows. Modular, traditional and fly ash bricks.",
       intro:
@@ -196,7 +196,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "ईंट, सीमेंट, रेत",
       h1: "ईंट कैलकुलेटर – दीवार में ईंट, सीमेंट और रेत",
       metaTitle:
-        "ईंट कैलकुलेटर – दीवार में कितनी ईंट लगेगी, सीमेंट और रेत | BOQFather",
+        "ईंट कैलकुलेटर – दीवार में कितनी ईंट लगेगी, सीमेंट और रेत | Guniyo",
       metaDescription:
         "9 इंच (230 mm) या 4.5 इंच (115 mm) दीवार में ईंट, सीमेंट की बोरी और रेत निकालें। दरवाज़े-खिड़की घटाएं। मॉड्यूलर, देसी और फ्लाई ऐश ईंट।",
       intro:
@@ -226,7 +226,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Cement and sand for plaster",
       h1: "Plaster Calculator – Cement and Sand for Wall Plaster",
       metaTitle:
-        "Plaster Calculator – Cement & Sand for 12 mm, 15 mm, 20 mm Plaster | BOQFather",
+        "Plaster Calculator – Cement & Sand for 12 mm, 15 mm, 20 mm Plaster | Guniyo",
       metaDescription:
         "Calculate cement bags and sand for internal and external plaster in 1:4, 1:5 or 1:6. Enter area in sqft or m², choose 12, 15 or 20 mm thickness.",
       intro:
@@ -251,7 +251,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "प्लास्टर में सीमेंट और रेत",
       h1: "प्लास्टर कैलकुलेटर – दीवार के प्लास्टर में सीमेंट और रेत",
       metaTitle:
-        "प्लास्टर कैलकुलेटर – 12, 15, 20 mm प्लास्टर में सीमेंट और रेत | BOQFather",
+        "प्लास्टर कैलकुलेटर – 12, 15, 20 mm प्लास्टर में सीमेंट और रेत | Guniyo",
       metaDescription:
         "1:4, 1:5 या 1:6 में अंदर और बाहर के प्लास्टर के लिए सीमेंट की बोरी और रेत निकालें। एरिया sqft या m² में, मोटाई 12, 15 या 20 mm।",
       intro:
@@ -285,7 +285,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Bar weight, kg per m³, kg per sqft",
       h1: "Steel Calculator – Rebar Weight and Steel Quantity",
       metaTitle:
-        "Steel Calculator – Rebar Weight (D²/162), Steel for Slab, Beam, Column | BOQFather",
+        "Steel Calculator – Rebar Weight (D²/162), Steel for Slab, Beam, Column | Guniyo",
       metaDescription:
         "Calculate steel bar weight with D²/162, steel for footing, column, beam and slab by thumb rule, and total steel for a house per sqft. 8 mm to 32 mm bars.",
       intro:
@@ -310,7 +310,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "सरिया का वज़न, kg/m³, kg/sqft",
       h1: "सरिया कैलकुलेटर – सरिया का वज़न और मात्रा",
       metaTitle:
-        "सरिया कैलकुलेटर – D²/162 से वज़न, स्लैब, बीम, कॉलम में सरिया | BOQFather",
+        "सरिया कैलकुलेटर – D²/162 से वज़न, स्लैब, बीम, कॉलम में सरिया | Guniyo",
       metaDescription:
         "D²/162 से सरिया का वज़न, थंब रूल से फुटिंग, कॉलम, बीम और स्लैब में सरिया, और प्रति sqft घर का कुल सरिया निकालें। 8 mm से 32 mm।",
       intro:
@@ -344,7 +344,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Tiles and boxes",
       h1: "Tile Calculator – How Many Tiles and Boxes",
       metaTitle:
-        "Tile Calculator – How Many Tiles & Boxes for a Room (60x60, 60x120, 80x80) | BOQFather",
+        "Tile Calculator – How Many Tiles & Boxes for a Room (60x60, 60x120, 80x80) | Guniyo",
       metaDescription:
         "Calculate tiles and boxes for any floor area with wastage. Sizes 30x30 to 80x80 and 60x120 cm. Enter room size in feet or metre.",
       intro:
@@ -369,7 +369,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "टाइल्स और बॉक्स",
       h1: "टाइल कैलकुलेटर – कितनी टाइल्स और बॉक्स लगेंगे",
       metaTitle:
-        "टाइल कैलकुलेटर – कमरे में कितनी टाइल्स और बॉक्स (60x60, 60x120) | BOQFather",
+        "टाइल कैलकुलेटर – कमरे में कितनी टाइल्स और बॉक्स (60x60, 60x120) | Guniyo",
       metaDescription:
         "किसी भी फ़र्श के लिए वेस्टेज सहित टाइल्स और बॉक्स निकालें। 30x30 से 80x80 और 60x120 cm साइज़। कमरे का साइज़ फ़ीट या मीटर में।",
       intro:
@@ -403,7 +403,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Paint, primer, putty",
       h1: "Paint Calculator – Paint, Primer and Putty for a Room",
       metaTitle:
-        "Paint Calculator – How Much Paint, Primer & Putty for a Room or House | BOQFather",
+        "Paint Calculator – How Much Paint, Primer & Putty for a Room or House | Guniyo",
       metaDescription:
         "Calculate litres of paint, primer and kg of wall putty from room size or wall area. Deduct doors and windows, choose coats and coverage.",
       intro:
@@ -428,7 +428,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "पेंट, प्राइमर, पुट्टी",
       h1: "पेंट कैलकुलेटर – कमरे में पेंट, प्राइमर और पुट्टी",
       metaTitle:
-        "पेंट कैलकुलेटर – कमरे या घर में कितना पेंट, प्राइमर और पुट्टी | BOQFather",
+        "पेंट कैलकुलेटर – कमरे या घर में कितना पेंट, प्राइमर और पुट्टी | Guniyo",
       metaDescription:
         "कमरे के साइज़ या दीवार के एरिया से पेंट और प्राइमर (लीटर) और वॉल पुट्टी (किलो) निकालें। दरवाज़े-खिड़की घटाएं, कोट और कवरेज चुनें।",
       intro:
@@ -462,7 +462,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Volume, brass, cost",
       h1: "Excavation Calculator – Volume, Brass and Cost",
       metaTitle:
-        "Excavation Calculator – Foundation Pit & Trench Volume in m³, cft, Brass | BOQFather",
+        "Excavation Calculator – Foundation Pit & Trench Volume in m³, cft, Brass | Guniyo",
       metaDescription:
         "Calculate excavation volume for footing pits and trenches with working space. Get m³, cft, brass, loose soil for disposal and cost.",
       intro:
@@ -487,7 +487,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "आयतन, ब्रास, खर्च",
       h1: "खुदाई कैलकुलेटर – आयतन, ब्रास और खर्च",
       metaTitle:
-        "खुदाई कैलकुलेटर – नींव के गड्ढे की खुदाई m³, cft, ब्रास में | BOQFather",
+        "खुदाई कैलकुलेटर – नींव के गड्ढे की खुदाई m³, cft, ब्रास में | Guniyo",
       metaDescription:
         "वर्किंग स्पेस के साथ फुटिंग के गड्ढे और नाली की खुदाई का आयतन निकालें। m³, cft, ब्रास, फेंकने वाली ढीली मिट्टी और खर्च।",
       intro:
@@ -521,7 +521,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "m³ ↔ cft ↔ brass, bags ↔ kg",
       h1: "Construction Unit Converter – m³, cft, Brass, sqft, Cement Bags",
       metaTitle:
-        "Construction Unit Converter – m³ to cft, Brass, sqft to m², Cement Bags to kg | BOQFather",
+        "Construction Unit Converter – m³ to cft, Brass, sqft to m², Cement Bags to kg | Guniyo",
       metaDescription:
         "Convert construction units instantly: cubic metre to cft and brass, sqft to m², cement bags to kg and m³, kg to tonnes, feet-inch to metre.",
       intro:
@@ -543,7 +543,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "m³ ↔ cft ↔ ब्रास, बोरी ↔ किलो",
       h1: "निर्माण यूनिट कन्वर्टर – m³, cft, ब्रास, sqft, सीमेंट बोरी",
       metaTitle:
-        "यूनिट कन्वर्टर – m³ से cft, ब्रास, sqft से m², सीमेंट बोरी से किलो | BOQFather",
+        "यूनिट कन्वर्टर – m³ से cft, ब्रास, sqft से m², सीमेंट बोरी से किलो | Guniyo",
       metaDescription:
         "निर्माण की इकाइयां तुरंत बदलें: घन मीटर से cft और ब्रास, sqft से m², सीमेंट बोरी से किलो और m³, किलो से टन, फ़ीट-इंच से मीटर।",
       intro:
@@ -574,11 +574,11 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Rooms → BOQ, measurement book, Excel",
       h1: "House BOQ Estimate – Item-wise with Measurement Book",
       metaTitle:
-        "House BOQ Estimate in Excel – Item-wise Cost, Measurement Book | BOQFather",
+        "House BOQ Estimate in Excel – Item-wise Cost, Measurement Book | Guniyo",
       metaDescription:
         "Enter floors, bedrooms, toilets and kitchen to get an item-wise BOQ of your house: excavation, RCC, steel, brickwork, plaster, flooring, doors, plumbing, electrical — with measurement book, editable rates, Excel and PDF.",
       intro:
-        "Choose G, G+1, G+2 or G+3, then add the rooms of each floor with their sizes — hall, bedrooms, kitchen, toilets, pooja, store, parking, shop and more. BOQFather lays out columns, beams and walls floor by floor and builds an item-wise BOQ with a measurement book (Nos × L × B × H) for every item. Change any rate and the total updates. Download Excel or PDF.",
+        "Choose G, G+1, G+2 or G+3, then add the rooms of each floor with their sizes — hall, bedrooms, kitchen, toilets, pooja, store, parking, shop and more. Guniyo lays out columns, beams and walls floor by floor and builds an item-wise BOQ with a measurement book (Nos × L × B × H) for every item. Change any rate and the total updates. Download Excel or PDF.",
       faqs: [
         {
           q: "How is this different from the house cost calculator?",
@@ -603,11 +603,11 @@ export const CALCULATORS: CalcInfo[] = [
       short: "कमरे → BOQ, मेज़रमेंट बुक, Excel",
       h1: "घर का BOQ एस्टिमेट – आइटम-वार, मेज़रमेंट बुक के साथ",
       metaTitle:
-        "घर का BOQ एस्टिमेट Excel में – आइटम-वार खर्च, मेज़रमेंट बुक | BOQFather",
+        "घर का BOQ एस्टिमेट Excel में – आइटम-वार खर्च, मेज़रमेंट बुक | Guniyo",
       metaDescription:
         "मंज़िल, बेडरूम, टॉयलेट और किचन डालें और घर का आइटम-वार BOQ पाएं: खुदाई, RCC, सरिया, ईंट, प्लास्टर, फ़्लोरिंग, दरवाज़े, प्लंबिंग, बिजली — मेज़रमेंट बुक, बदलने लायक रेट, Excel और PDF के साथ।",
       intro:
-        "G, G+1, G+2 या G+3 चुनें, फिर हर मंज़िल के कमरे उनके साइज़ के साथ जोड़ें — हॉल, बेडरूम, किचन, टॉयलेट, पूजा, स्टोर, पार्किंग, दुकान और बाकी। BOQFather हर मंज़िल के कॉलम, बीम और दीवारें तय करके हर आइटम का मेज़रमेंट बुक (Nos × L × B × H) के साथ आइटम-वार BOQ बनाता है। कोई भी रेट बदलें, टोटल अपने आप बदलेगा। Excel या PDF डाउनलोड करें।",
+        "G, G+1, G+2 या G+3 चुनें, फिर हर मंज़िल के कमरे उनके साइज़ के साथ जोड़ें — हॉल, बेडरूम, किचन, टॉयलेट, पूजा, स्टोर, पार्किंग, दुकान और बाकी। Guniyo हर मंज़िल के कॉलम, बीम और दीवारें तय करके हर आइटम का मेज़रमेंट बुक (Nos × L × B × H) के साथ आइटम-वार BOQ बनाता है। कोई भी रेट बदलें, टोटल अपने आप बदलेगा। Excel या PDF डाउनलोड करें।",
       faqs: [
         {
           q: "यह घर खर्च कैलकुलेटर से अलग कैसे है?",
@@ -641,11 +641,11 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Is your contractor's rate fair?",
       h1: "Contractor Quote Checker – Is Your Construction Rate Fair?",
       metaTitle:
-        "Contractor Rate Checker India – Is ₹/sqft Construction Quote Fair? | BOQFather",
+        "Contractor Rate Checker India – Is ₹/sqft Construction Quote Fair? | Guniyo",
       metaDescription:
         "Check if your contractor's construction quote is fair. Compare ₹/sqft for turnkey or labour-only contracts with market benchmarks for your city and quality, check item rates, and get a checklist before signing.",
       intro:
-        "Enter the contractor's rate per sqft (or total amount), the built-up area, quality and city type. BOQFather compares it with the market benchmark, flags item rates that are too high or suspiciously low, and gives you the questions to ask before you sign.",
+        "Enter the contractor's rate per sqft (or total amount), the built-up area, quality and city type. Guniyo compares it with the market benchmark, flags item rates that are too high or suspiciously low, and gives you the questions to ask before you sign.",
       faqs: [
         {
           q: "What is a fair turnkey construction rate in India?",
@@ -670,11 +670,11 @@ export const CALCULATORS: CalcInfo[] = [
       short: "ठेकेदार का रेट सही है या नहीं?",
       h1: "ठेकेदार रेट चेकर – आपका कंस्ट्रक्शन रेट सही है?",
       metaTitle:
-        "ठेकेदार रेट चेकर – ₹/sqft कंस्ट्रक्शन रेट सही है या ज़्यादा? | BOQFather",
+        "ठेकेदार रेट चेकर – ₹/sqft कंस्ट्रक्शन रेट सही है या ज़्यादा? | Guniyo",
       metaDescription:
         "जांचें कि ठेकेदार का कंस्ट्रक्शन रेट सही है या नहीं। टर्नकी या सिर्फ़ मज़दूरी के ₹/sqft रेट को अपने शहर और क्वालिटी के बाज़ार रेट से मिलाएं, आइटम रेट जांचें और साइन करने से पहले की चेकलिस्ट पाएं।",
       intro:
-        "ठेकेदार का प्रति sqft रेट (या कुल रकम), बिल्ट-अप एरिया, क्वालिटी और शहर डालें। BOQFather इसे बाज़ार बेंचमार्क से मिलाता है, बहुत ज़्यादा या शक वाले कम आइटम रेट बताता है, और साइन करने से पहले पूछने वाले सवाल देता है।",
+        "ठेकेदार का प्रति sqft रेट (या कुल रकम), बिल्ट-अप एरिया, क्वालिटी और शहर डालें। Guniyo इसे बाज़ार बेंचमार्क से मिलाता है, बहुत ज़्यादा या शक वाले कम आइटम रेट बताता है, और साइन करने से पहले पूछने वाले सवाल देता है।",
       faqs: [
         {
           q: "भारत में सही टर्नकी कंस्ट्रक्शन रेट क्या है?",
