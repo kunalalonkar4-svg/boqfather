@@ -8,7 +8,7 @@ House construction cost estimate + 9 construction calculators for India, in Engl
 npm install
 npm run dev        # http://localhost:3000
 npm test           # calculation engine tests (vitest)
-npm run build      # static site in ./out
+npm run build      # production build (Next.js server build, needs Vercel or any Node host)
 ```
 
 Needs Node.js 20 or newer.
@@ -68,6 +68,12 @@ All defaults live in the engine and can be changed in one place:
 
 When a value changes, update the matching test in `engine.test.ts`.
 
-## Not in this phase
+## Hosting
 
-Login, saved projects, payments (Razorpay), detailed plan-based estimate, SOR rates — these are Phase 3–4 in the PRD. The site is a static export now; it switches to a normal Vercel server build when accounts arrive.
+Deployed on Vercel (`https://boqfather.vercel.app`). The app has API routes (payments, AI plan/bill reading), so it needs the Next.js server build — a static `out/` export will not work. Do not add a `netlify.toml` that publishes `out`.
+
+## Styling (important)
+
+Tailwind **v4** is used. `src/app/globals.css` must start with `@import "tailwindcss";` and keep the `@theme inline` block that defines `ink`, `steel`, `night`, `glow`, `good`, `warn`, `ground`, `body`. If that file is replaced with the old v3 `@tailwind base/components/utilities` template, every page loses its colours and spacing.
+
+Edit code through git (local or a branch + pull request), not by pasting into the GitHub web editor, so a bad edit can be reverted.

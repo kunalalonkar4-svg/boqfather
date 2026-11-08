@@ -1,32 +1,13 @@
-"use client";
-
-import React, { useState } from "react";
 import Link from "next/link";
+import { PLOTS, plotSlug } from "@/content/plots";
 import { CALCULATORS } from "@/content/calculators";
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import { SiteFooter, SiteHeader } from "./Chrome";
+import HeroQuick from "./HeroQuick";
 
 export function HomePage({ lang }: { lang: Lang }) {
   const d = t(lang);
-
-  // Estimator State
-  const [area, setArea] = useState<number>(1200);
-  const [quality, setQuality] = useState<"standard" | "premium" | "luxury">("premium");
-  const [activeTab, setActiveTab] = useState<"cost" | "materials">("cost");
-
-  const rates = {
-    standard: 1650,
-    premium: 2050,
-    luxury: 2750,
-  };
-
-  const totalCost = area * rates[quality];
-  const cementBags = Math.round(area * 0.42);
-  const steelTons = ((area * 3.8) / 1000).toFixed(1);
-  const sandCuft = Math.round(area * 1.8);
-  const bricksCount = Math.round(area * 18);
-
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -35,374 +16,273 @@ export function HomePage({ lang }: { lang: Lang }) {
     inLanguage: lang === "hi" ? "hi-IN" : "en-IN",
     description: d.home_sub,
   };
-
-  const plotPresets = [
-    { w: 20, d: 40, area: 800, gaj: 89, est: "₹16.4 L" },
-    { w: 20, d: 50, area: 1000, gaj: 111, est: "₹20.5 L" },
-    { w: 25, d: 50, area: 1250, gaj: 139, est: "₹25.6 L" },
-    { w: 30, d: 40, area: 1200, gaj: 133, est: "₹24.6 L" },
-    { w: 30, d: 50, area: 1500, gaj: 167, est: "₹30.8 L" },
-    { w: 40, d: 60, area: 2400, gaj: 267, est: "₹49.2 L" },
+  const steps = [
+    [d.home_step1_t, d.home_step1_d],
+    [d.home_step2_t, d.home_step2_d],
+    [d.home_step3_t, d.home_step3_d],
   ];
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <>
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
-
-      <main lang={lang} className="flex-1">
-        
-        {/* ================= HERO SECTION ================= */}
-        <section className="relative pt-12 pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto text-center">
-          {/* Subtle Glow */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-600/15 blur-[120px] pointer-events-none rounded-full" />
-
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-800 bg-slate-900/80 text-xs font-mono text-slate-300 mb-6">
-            <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-            <span>PRECISION CONSTRUCTION ESTIMATOR</span>
-          </div>
-
-          {/* Main Headline */}
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight max-w-4xl mx-auto mb-4">
-            Plan your house construction. <br />
-            <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">
-              Know every brick & rupee.
-            </span>
-          </h1>
-
-          <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-8">
-            Turn your plot size into accurate item-wise BOQ, material requirements, and turnkey construction cost estimates within seconds.
-          </p>
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-4 mb-14">
-            <Link
-              href={langPath(lang, "house-boq-estimate")}
-              className="px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-lg shadow-blue-600/25"
-            >
-              Start Free BOQ Estimate →
-            </Link>
-            <Link
-              href={langPath(lang, "contractor-quote-checker")}
-              className="px-7 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-semibold text-sm transition-all"
-            >
-              Check Contractor Quote
-            </Link>
-          </div>
-
-          {/* Interactive Live Cockpit Card (No Cartoon Maps!) */}
-          <div className="max-w-4xl mx-auto p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl text-left">
-            <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-800">
-              <div>
-                <span className="text-xs uppercase font-mono text-slate-400">Live Project Estimator</span>
-                <h3 className="text-lg font-bold text-white mt-0.5">30 × 40 ft G+1 Duplex (1,200 sq.ft)</h3>
-              </div>
-              <div className="flex items-center gap-2 p-1 rounded-xl bg-slate-950 border border-slate-800">
-                <button
-                  onClick={() => setActiveTab("cost")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                    activeTab === "cost" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  Cost Breakdown
-                </button>
-                <button
-                  onClick={() => setActiveTab("materials")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                    activeTab === "materials" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  Key Materials
-                </button>
-              </div>
-            </div>
-
-            {/* Metrics Display */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pt-6 items-center">
-              <div className="md:col-span-7 space-y-4">
-                {activeTab === "cost" ? (
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-xs py-2 border-b border-slate-800/80">
-                      <span className="text-slate-300">Structure & RCC (Foundations, Columns, Slabs)</span>
-                      <span className="font-mono font-bold text-white">₹14.20 L (53%)</span>
-                    </div>
-                    <div className="flex justify-between text-xs py-2 border-b border-slate-800/80">
-                      <span className="text-slate-300">Brick Masonry & Sand Plaster</span>
-                      <span className="font-mono font-bold text-white">₹4.80 L (18%)</span>
-                    </div>
-                    <div className="flex justify-between text-xs py-2 border-b border-slate-800/80">
-                      <span className="text-slate-300">Flooring, Paint, Doors & Windows</span>
-                      <span className="font-mono font-bold text-white">₹5.20 L (19%)</span>
-                    </div>
-                    <div className="flex justify-between text-xs py-2">
-                      <span className="text-slate-300">Electrical & Plumbing Rough-ins</span>
-                      <span className="font-mono font-bold text-white">₹2.64 L (10%)</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                      <span className="text-slate-400 block mb-1">OPC 53 Cement</span>
-                      <span className="text-lg font-bold font-mono text-white">460 Bags</span>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                      <span className="text-slate-400 block mb-1">TMT Steel (Fe 550)</span>
-                      <span className="text-lg font-bold font-mono text-white">4.2 Tons</span>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                      <span className="text-slate-400 block mb-1">River Sand</span>
-                      <span className="text-lg font-bold font-mono text-white">2,160 Cu.ft</span>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                      <span className="text-slate-400 block mb-1">Red Clay Bricks</span>
-                      <span className="text-lg font-bold font-mono text-white">21,600 Nos</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Total Card */}
-              <div className="md:col-span-5 p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col justify-between h-full">
-                <div>
-                  <span className="text-xs uppercase font-mono text-slate-400">Total Project Valuation</span>
-                  <div className="text-3xl font-extrabold font-mono text-emerald-400 mt-1 mb-2">
-                    ₹26,84,000
-                  </div>
-                  <p className="text-xs text-slate-400 leading-relaxed mb-6">
-                    Turnkey rate @ ₹2,236/sq.ft including all materials, labor, and supervision.
-                  </p>
-                </div>
-
-                <Link
-                  href={langPath(lang, "house-boq-estimate")}
-                  className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold text-center transition-all shadow-md"
-                >
-                  Generate BOQ For Your Plot →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-
-        {/* ================= INTERACTIVE SLIDER SECTION ================= */}
-        <section className="py-16 border-t border-slate-800/80 bg-slate-900/40">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-10">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                Calibrate your build budget
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Slide the area bar to estimate total turnkey cost and materials in real time.
+      <main lang={lang}>
+        <section className="bg-ink text-[#f7fafe]">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:pb-20 lg:pt-16">
+            <div className="flex flex-col gap-5">
+              <span className="self-start rounded-full border border-[#4a4c50] px-3 py-1 text-[12px] font-semibold tracking-wide text-amber">
+                {d.home_badge}
+              </span>
+              <h1 className="font-display text-[36px] font-extrabold leading-[1.1] tracking-tight sm:text-[52px]">
+                {d.home_h1}
+              </h1>
+              <p className="max-w-xl text-[17px] leading-relaxed text-[#c3cfdd]">
+                {d.home_sub}
               </p>
+              <ul className="mt-1 flex flex-col gap-2 text-[15px] text-[#dbe4ef]">
+                {[d.home_why_1, d.home_why_2, d.home_why_3].map((w) => (
+                  <li key={w} className="flex gap-2.5">
+                    <span
+                      aria-hidden="true"
+                      className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber"
+                    />
+                    {w}
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800">
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between items-center text-sm font-mono mb-2">
-                    <span className="text-slate-400">COVERED SLAB AREA</span>
-                    <span className="text-blue-400 text-lg font-bold">{area} SQ.FT</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="600"
-                    max="4000"
-                    step="50"
-                    value={area}
-                    onChange={(e) => setArea(Number(e.target.value))}
-                    className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                  />
-                  <div className="flex justify-between text-[11px] font-mono text-slate-500 mt-1">
-                    <span>600 sq.ft</span>
-                    <span>2,000 sq.ft</span>
-                    <span>4,000 sq.ft</span>
-                  </div>
-                </div>
-
-                <div>
-                  <span className="block text-xs font-mono text-slate-400 mb-2 uppercase">
-                    Finish Quality
-                  </span>
-                  <div className="grid grid-cols-3 gap-3">
-                    {(["standard", "premium", "luxury"] as const).map((lvl) => (
-                      <button
-                        key={lvl}
-                        onClick={() => setQuality(lvl)}
-                        className={`py-2.5 px-3 rounded-xl text-xs font-semibold capitalize border transition-all ${
-                          quality === lvl
-                            ? "bg-blue-600/20 border-blue-500 text-blue-300"
-                            : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"
-                        }`}
-                      >
-                        {lvl} (₹{rates[lvl]}/sq.ft)
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <span className="text-[11px] font-mono text-slate-400 block">Total Est. Cost</span>
-                    <span className="text-2xl font-bold font-mono text-emerald-400">
-                      ₹{(totalCost / 100000).toFixed(2)} Lakh
-                    </span>
-                  </div>
-                  <div className="flex gap-4 text-xs font-mono text-slate-300">
-                    <div>
-                      <span className="text-slate-500 block">Cement</span>
-                      <span className="font-bold">{cementBags} Bags</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block">Steel</span>
-                      <span className="font-bold">{steelTons} Tons</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <HeroQuick lang={lang} />
           </div>
         </section>
 
-
-        {/* ================= PLOT DIMENSIONS SELECTOR (NO CARTOON MAPS) ================= */}
-        <section className="py-20 max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              Standard plot dimensions
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">
-              Select your plot size below to calculate exact turnkey BOQ.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {plotPresets.map((item, idx) => (
-              <div
-                key={idx}
-                className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/80 transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xl font-bold font-mono text-white">
-                      {item.w} × {item.d} ft
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-mono">
-                      {item.gaj} Gaj
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400 mb-4">
-                    Covered Built-up: <strong className="text-slate-200">{item.area} sq.ft</strong> (G+1 Structure)
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-slate-500 block">Est. Budget</span>
-                    <span className="text-base font-bold font-mono text-emerald-400">{item.est}</span>
-                  </div>
+        <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+          <h2 className="font-display text-[26px] font-extrabold tracking-tight">
+            {lang === "hi" ? "एडवांस्ड टूल्स — फ़्री" : "Advanced tools — free"}
+          </h2>
+          <ul className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {(
+              [
+                [
+                  "house-boq-estimate",
+                  lang === "hi"
+                    ? "कमरे बताइए — हर आइटम का नाप, रेट और टोटल। मेज़रमेंट बुक, Excel और PDF।"
+                    : "Tell us your rooms — every item measured, priced and totalled. Measurement book, Excel and PDF.",
+                ],
+                [
+                  "contractor-quote-checker",
+                  lang === "hi"
+                    ? "ठेकेदार का रेट बाज़ार से मिलाएं, ज़्यादा रेट पकड़ें, साइन से पहले 14 सवाल।"
+                    : "Compare a contractor's rate with the market, catch overpricing, 14 questions to ask before signing.",
+                ],
+              ] as const
+            ).map(([slug, desc]) => {
+              const c = CALCULATORS.find((x) => x.slug === slug)!;
+              return (
+                <li key={slug}>
                   <Link
-                    href={langPath(lang, `house-boq-estimate?w=${item.w}&d=${item.d}`)}
-                    className="py-1.5 px-3.5 rounded-lg bg-slate-800 hover:bg-blue-600 text-white text-xs font-semibold transition-colors"
+                    href={langPath(lang, slug)}
+                    className="flex h-full gap-4 rounded-2xl border-2 border-amber bg-white p-5 transition hover:-translate-y-0.5"
                   >
-                    View BOQ →
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-
-        {/* ================= 9 MATERIAL CALCULATORS ================= */}
-        <section className="py-20 border-t border-slate-800/80 max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                Dedicated material calculators
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Zero-wastage structural calculators for Indian trade standards.
-              </p>
-            </div>
-            <Link
-              href={langPath(lang, "calculators")}
-              className="text-xs font-mono text-blue-400 hover:text-blue-300"
-            >
-              All 9 Calculators →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {CALCULATORS.filter(
-              (c) => !["house-construction-cost-calculator", "house-boq-estimate", "contractor-quote-checker"].includes(c.slug)
-            ).map((c) => (
-              <Link
-                key={c.slug}
-                href={langPath(lang, c.slug)}
-                className="p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/80 transition-all flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <span className="h-7 w-7 rounded-lg bg-blue-500/10 text-blue-400 font-mono font-bold flex items-center justify-center text-xs">
+                    <span className="font-display flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ink text-[15px] font-extrabold text-amber">
                       {c.mark}
                     </span>
-                    <h3 className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">
-                      {c[lang].name}
-                    </h3>
-                  </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    {c[lang].short}
-                  </p>
-                </div>
-                <span className="mt-4 text-[11px] font-mono text-slate-500 group-hover:text-slate-300 transition-colors">
-                  Open Calculator →
-                </span>
-              </Link>
-            ))}
-          </div>
+                    <span className="flex min-w-0 flex-col gap-1">
+                      <span className="text-[17px] font-bold">
+                        {c[lang].name} →
+                      </span>
+                      <span className="text-[14px] leading-snug text-body">
+                        {desc}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </section>
 
-      </main>
+        <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="font-display text-[26px] font-extrabold tracking-tight">
+              {lang === "hi"
+                ? "घर का नक्शा — हर साइज़, हर दिशा, वास्तु अनुसार"
+                : "Ghar ka naksha — every size and facing, as per Vastu"}
+            </h2>
+            <Link
+              href={langPath(lang, "house-construction-guide")}
+              className="text-[15px] font-semibold text-steel hover:text-ink"
+            >
+              {lang === "hi"
+                ? "घर बनाने की पूरी गाइड →"
+                : "House building guide →"}
+            </Link>
+          </div>
+          <ul className="mt-5 flex flex-wrap gap-2">
+            {PLOTS.map((p) => (
+              <li key={plotSlug(p)}>
+                <Link
+                  href={langPath(lang, `naksha/${plotSlug(p)}-east-facing`)}
+                  className="font-display inline-flex rounded-xl border border-line bg-white px-4 py-2.5 text-[17px] font-extrabold hover:border-amber"
+                >
+                  {p.w}×{p.d}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href={langPath(lang, "naksha")}
+                className="inline-flex rounded-xl border border-amber bg-amber-tint px-4 py-2.5 text-[15px] font-semibold text-ink hover:border-ink"
+              >
+                {lang === "hi" ? "सभी नक्शे देखें →" : "All nakshe →"}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={langPath(lang, "house-construction-cost")}
+                className="inline-flex rounded-xl border border-dashed border-line px-4 py-2.5 text-[15px] font-semibold text-steel hover:border-amber"
+              >
+                {lang === "hi" ? "sq ft से खर्च →" : "Cost by sq ft →"}
+              </Link>
+            </li>
+          </ul>
+        </section>
 
+        <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="font-display text-[26px] font-extrabold tracking-tight">
+              {d.home_popular}
+            </h2>
+            <Link
+              href={langPath(lang, "calculators")}
+              className="text-[15px] font-semibold text-steel hover:text-ink"
+            >
+              {d.all_calculators} →
+            </Link>
+          </div>
+          <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {CALCULATORS.filter(
+              (c) =>
+                ![
+                  "house-construction-cost-calculator",
+                  "house-boq-estimate",
+                  "contractor-quote-checker",
+                ].includes(c.slug),
+            ).map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={langPath(lang, c.slug)}
+                  className="flex h-full flex-col gap-3 rounded-2xl border border-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-amber"
+                >
+                  <span className="font-display flex h-10 w-10 items-center justify-center rounded-lg bg-amber-tint text-[15px] font-extrabold text-amber-dark">
+                    {c.mark}
+                  </span>
+                  <span className="flex flex-col gap-0.5">
+                    <span className="text-[16px] font-bold">
+                      {c[lang].name}
+                    </span>
+                    <span className="text-[13px] text-muted">
+                      {c[lang].short}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+          <h2 className="font-display text-[26px] font-extrabold tracking-tight">
+            {d.home_how}
+          </h2>
+          <ol className="mt-5 grid gap-3 md:grid-cols-3">
+            {steps.map(([title, desc], i) => (
+              <li
+                key={title}
+                className="flex gap-4 rounded-2xl border border-line bg-white p-5"
+              >
+                <span className="font-display flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-[16px] font-extrabold text-amber">
+                  {i + 1}
+                </span>
+                <span className="flex flex-col gap-1">
+                  <span className="text-[16px] font-bold">{title}</span>
+                  <span className="text-[14px] text-body">{desc}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="mx-auto grid max-w-6xl gap-4 px-4 pt-14 sm:px-6 lg:grid-cols-2">
+          <div className="flex flex-col gap-3 rounded-2xl bg-steel p-6 text-white sm:p-8">
+            <span className="text-[12px] font-bold uppercase tracking-wide text-[#dce4ec]">
+              IS 456 · IS 1200
+            </span>
+            <h2 className="font-display text-[24px] font-extrabold leading-tight">
+              {d.home_trust_t}
+            </h2>
+            <p className="text-[15px] leading-relaxed text-[#e7edf3]">
+              {d.home_trust_d}
+            </p>
+          </div>
+          <Link
+            href={langPath(lang, "house-boq-estimate")}
+            className="flex flex-col gap-3 rounded-2xl border-2 border-amber bg-amber-tint p-6 transition hover:-translate-y-0.5 sm:p-8"
+          >
+            <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-white">
+              {lang === "hi" ? "मुफ़्त · अभी इस्तेमाल करें" : "FREE · LIVE NOW"}
+            </span>
+            <h2 className="font-display text-[24px] font-extrabold leading-tight">
+              {d.home_pro_t}
+            </h2>
+            <p className="text-[15px] leading-relaxed text-body">
+              {d.home_pro_d}
+            </p>
+            <span className="text-[15px] font-semibold text-amber-dark">
+              {lang === "hi" ? "नक्शा बनाएं →" : "Make my plan →"}
+            </span>
+          </Link>
+        </section>
+      </main>
       <SiteFooter lang={lang} />
-    </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+    </>
   );
 }
 
 export function CalculatorsIndex({ lang }: { lang: Lang }) {
   const d = t(lang);
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <>
       <SiteHeader
         lang={lang}
         altPath={langPath(lang === "en" ? "hi" : "en", "calculators")}
       />
-      <main lang={lang} className="flex-1 max-w-6xl mx-auto px-4 pt-12 pb-24 sm:px-6 w-full">
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2 text-white">
+      <main lang={lang} className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
+        <h1 className="font-display text-[32px] font-extrabold tracking-tight sm:text-[40px]">
           {d.calculators_h1}
         </h1>
-        <p className="max-w-2xl text-slate-400 text-sm mb-8">
+        <p className="mt-2 max-w-2xl text-[16px] text-body">
           {d.calculators_sub}
         </p>
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {CALCULATORS.map((c) => (
             <li key={c.slug}>
               <Link
                 href={langPath(lang, c.slug)}
-                className="flex h-full flex-col p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500 transition-all"
+                className="flex h-full flex-col gap-3 rounded-2xl border border-line bg-white p-5 transition hover:border-amber"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-sm font-bold font-mono text-blue-400">
+                <span className="flex items-center gap-3">
+                  <span className="font-display flex h-10 w-10 items-center justify-center rounded-lg bg-amber-tint text-[15px] font-extrabold text-amber-dark">
                     {c.mark}
                   </span>
-                  <span className="text-base font-bold text-white">{c[lang].name}</span>
-                </div>
-                <span className="text-xs leading-relaxed text-slate-400 mb-4">
+                  <span className="text-[17px] font-bold">{c[lang].name}</span>
+                </span>
+                <span className="text-[14px] leading-relaxed text-body">
                   {c[lang].intro}
                 </span>
-                <span className="mt-auto text-xs font-mono text-blue-400">
-                  Open Calculator →
+                <span className="mt-auto text-[14px] font-semibold text-steel">
+                  {d.open} →
                 </span>
               </Link>
             </li>
@@ -410,6 +290,6 @@ export function CalculatorsIndex({ lang }: { lang: Lang }) {
         </ul>
       </main>
       <SiteFooter lang={lang} />
-    </div>
+    </>
   );
 }

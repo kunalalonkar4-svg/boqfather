@@ -1,13 +1,13 @@
-import { HomePage } from "@/components/site/HomePage";
+import { HomeLight as HomePage } from "@/components/site/home/light/HomeLight";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
   lang: "en",
   path: "/",
   title:
-    "BOQFather – 3D House Planning & Construction Cost Calculator (India)",
+    "BOQFather – House Construction Cost Calculator & Construction Estimates (India)",
   description:
-    "Design house plans in 3D, estimate construction cost, cement, steel, bricks, and download itemized BOQ measurement book. IS 1200 compliant.",
+    "Free house construction cost calculator and construction calculators for India: cement, steel, bricks, plaster, tiles, paint. Step-by-step working, PDF report, Hindi and English.",
 });
 
 export default function Page() {
