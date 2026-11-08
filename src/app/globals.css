@@ -279,3 +279,15 @@ html {
     scroll-behavior: auto;
   }
 }
+
+/* landing: site-hoarding headline type (Archivo, widened), used for headings and big numbers */
+.font-hoard,
+.home-hoard h2,
+.home-hoard .font-display {
+  font-family: "Archivo", "Noto Sans Devanagari", system-ui, sans-serif;
+  font-stretch: 112%;
+  font-variation-settings: "wdth" 112;
+}
+.home-hoard h2 {
+  letter-spacing: -0.012em;
+}
