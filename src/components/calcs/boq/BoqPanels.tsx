@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   BoqQuality,
   BoqResult,
@@ -14,7 +14,6 @@ import {
 import type { Lang } from "@/lib/site";
 import { planPrimitives } from "@/lib/planDraw";
 import { downloadPlanPdf, downloadPlanPng } from "@/lib/planDownload";
-import { Plan3D } from "./Plan3D";
 
 const FT = 3.28084;
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
@@ -32,13 +31,10 @@ export function SketchPanel({
   title,
   subtitle,
   fileName,
-  plot,
-  look3d = "plan",
 }: {
   r: BoqResult;
-  /** Plot frontage, depth and back setback in feet, for the 3D site. */
+  /** Kept for callers; the 3D view was removed, so these are no longer used. */
   plot?: { w: number; d: number; back: number };
-  /** 3D look: "model" = cut-away architect's model, "plan" = technical aerial plan. ?look=model|plan overrides. */
   look3d?: "plan" | "model";
   lang: Lang;
   names: (t: string) => string;
@@ -49,17 +45,6 @@ export function SketchPanel({
 }) {
   const grid = useRef<HTMLDivElement>(null);
   const [dl, setDl] = useState("");
-  // 3D first; ?still3d=1 fixes the camera (used to make the preview images)
-  const [mode, setMode] = useState<"2d" | "3d">("3d");
-  const [still, setStill] = useState(false);
-  const [look, setLook] = useState<"plan" | "model">(look3d);
-  useEffect(() => {
-    const q = new URLSearchParams(window.location.search);
-    setStill(q.has("still3d"));
-    if (q.has("plan2d")) setMode("2d");
-    const l = q.get("look");
-    if (l === "model" || l === "plan") setLook(l);
-  }, []);
   const download = async (kind: "png" | "pdf") => {
     const svgs = Array.from(
       grid.current?.querySelectorAll<SVGSVGElement>("figure svg") ?? [],
@@ -124,25 +109,6 @@ export function SketchPanel({
         )}
       </p>
       <div className="no-print flex flex-wrap items-center gap-2">
-        <div
-          role="tablist"
-          className="mr-1 flex rounded-full border border-line bg-white p-1"
-        >
-          {(["2d", "3d"] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              role="tab"
-              aria-selected={mode === m}
-              onClick={() => setMode(m)}
-              className={`rounded-full px-4 py-2 text-[14px] font-bold transition ${mode === m ? "bg-ink text-white" : "text-ink hover:bg-[#eaf3ff]"}`}
-            >
-              {m === "2d"
-                ? L(lang, "2D plan", "2D नक्शा")
-                : L(lang, "3D view", "3D व्यू")}
-            </button>
-          ))}
-        </div>
         <button
           type="button"
           onClick={() => void download("pdf")}
@@ -160,31 +126,9 @@ export function SketchPanel({
           ⬇ {dl === "png" ? "…" : L(lang, "Download image (PNG)", "इमेज डाउनलोड (PNG)")}
         </button>
       </div>
-      {mode === "3d" && (
-        <Plan3D
-          key={`${still ? "still" : "live"}-${look}`}
-          still={still}
-          look={look}
-          plot={plot}
-          onError={() => setMode("2d")}
-          lang={lang}
-          sketch={r.sketch}
-          names={nm}
-          facingLabel={
-            r.facing
-              ? L(
-                  lang,
-                  `ROAD — ${{ N: "NORTH", E: "EAST", S: "SOUTH", W: "WEST" }[r.facing]} FACING`,
-                  `सड़क — ${{ N: "उत्तर", E: "पूर्व", S: "दक्षिण", W: "पश्चिम" }[r.facing]} मुखी`,
-                )
-              : L(lang, "ROAD", "सड़क")
-          }
-        />
-      )}
       <div
         ref={grid}
         data-plan-grid
-        hidden={mode === "3d"}
         className="grid grid-cols-1 gap-6 md:grid-cols-2"
       >
         {r.sketch.map((s) => {

@@ -371,6 +371,58 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
         )}
       </section>
 
+      <section className="flex flex-col gap-3">
+        <H2>{L(lang, `What it costs to build this ${s} house`, `यह ${s} घर बनाने में कितना खर्च`)}</H2>
+        <div className="overflow-hidden rounded-[10px] border border-[#0e2a47] bg-white shadow-[6px_6px_0_0_rgba(14,42,71,0.12)]">
+          <div className="grid divide-y divide-[#0e2a47]/25 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            {(
+              [
+                [L(lang, "Basic finish", "बेसिक फ़िनिश"), i.basic, false],
+                [L(lang, "Standard finish", "स्टैंडर्ड फ़िनिश"), i.total, true],
+                [L(lang, "Premium finish", "प्रीमियम फ़िनिश"), i.premium, false],
+              ] as const
+            ).map(([label, v, on]) => (
+              <div key={label} className={`px-5 py-4 text-[#0e2a47] ${on ? "bg-[#ffc933]" : "bg-white"}`}>
+                <span className="block text-[13px] font-semibold">{label}</span>
+                <span className="block text-[30px] font-black leading-tight tabular-nums sm:text-[34px]">{lakh(v, lang)}</span>
+                <span className="block text-[13px] tabular-nums">
+                  ₹{num(Math.round(v / i.builtUp))} {L(lang, "per sq ft", "प्रति sq ft")}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-[#0e2a47] px-5 py-4">
+            <p className="mb-3 text-[13px] font-semibold text-[#52627a]">
+              {L(lang, `Where the money goes (standard finish, ${num(i.builtUp)} sq ft)`, `पैसा कहां जाता है (स्टैंडर्ड फ़िनिश, ${num(i.builtUp)} sq ft)`)}
+            </p>
+            <ul className="flex flex-col gap-2.5">
+              {(() => {
+                const secs = [...res.sections].filter((x) => x.subtotal > 0).sort((a, b) => b.subtotal - a.subtotal).slice(0, 6);
+                const top = secs[0]?.subtotal || 1;
+                const sum = res.sections.reduce((t, x) => t + x.subtotal, 0) || 1;
+                return secs.map((x) => (
+                  <li key={x.code} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 text-[14px] text-[#0e2a47]">
+                    <span className="truncate">{x.title[lang].replace(/^[A-Z]\.\s*/, "")}</span>
+                    <span className="font-semibold tabular-nums">
+                      {lakh(x.subtotal, lang)} · {Math.round((x.subtotal / sum) * 100)}%
+                    </span>
+                    <span className="col-span-2 h-[6px] bg-[#e6ecf3]">
+                      <span className="block h-full bg-[#1668d6]" style={{ width: `${Math.max(4, (x.subtotal / top) * 100)}%` }} />
+                    </span>
+                  </li>
+                ));
+              })()}
+            </ul>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <Cta href={tool}>{L(lang, "Change rates and see the full item-wise BOQ →", "रेट बदलें और पूरा आइटम-वार BOQ देखें →")}</Cta>
+              <span className="text-[13px] text-[#52627a]">
+                {L(lang, "Land, approvals, interiors, compound wall and borewell are extra.", "ज़मीन, मंज़ूरी, इंटीरियर, बाउंड्री वॉल और बोरवेल अलग।")}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="flex flex-col gap-4">
         <H2>
           {L(
