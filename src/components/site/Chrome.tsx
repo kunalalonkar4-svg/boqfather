@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { CALCULATORS } from "@/content/calculators";
 import { AccountButton } from "@/components/account/Account";
+import { CITIES } from "@/content/cities";
+import { ELEVATIONS, groupOf } from "@/content/elevations";
+import { GUIDE_BASE, QUESTIONS, TOPICS } from "@/content/guideTopics";
 import { PLOTS, plotSlug, SQFT_SIZES, sqftSlug } from "@/content/plots";
+import { FooterGroups } from "./FooterGroups";
 import { t } from "@/i18n/ui";
 import { Lang, langPath } from "@/lib/site";
 
@@ -119,149 +123,231 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   );
 }
 
+const L2 = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
+
 export function SiteFooter({ lang }: { lang: Lang }) {
   const d = t(lang);
-  return (
-    <footer className="mt-16 border-t border-[#1d3a60] bg-[#0f2440] text-[#b8c6d8]">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.2fr_2fr]">
-        <div className="flex flex-col gap-3">
-          <span className="text-white">
-            <Logo />
-          </span>
-          <p className="max-w-sm text-[14px] leading-relaxed">{d.tagline}</p>
-          <p className="max-w-sm text-[12px] leading-relaxed text-[#7f93ad]">
-            {d.disclaimer}
-          </p>
-        </div>
-        <div className="flex flex-col gap-8">
+  const a = "hover:text-white";
+  const sub = "mb-2 text-[12px] font-bold uppercase tracking-wide text-[#8fb8ee]";
+  const col = "flex flex-col gap-2 text-[14px] sm:columns-2 sm:block sm:space-y-2 lg:columns-3";
+  const groupName = {
+    narrow: L2(lang, "Narrow plots (up to 25 ft)", "संकरे प्लॉट (25 ft तक)"),
+    medium: L2(lang, "Medium plots (30 to 35 ft)", "मध्यम प्लॉट (30 से 35 ft)"),
+    wide: L2(lang, "Wide plots (40 ft and more)", "चौड़े प्लॉट (40 ft और ज़्यादा)"),
+    shop: L2(lang, "House with a shop", "दुकान वाला घर"),
+  } as const;
+  const groups = [
+    {
+      key: "plans",
+      label: L2(lang, "Plans & elevations", "नक्शे और एलिवेशन"),
+      panel: (
+        <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
           <div>
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-[#8fb8ee]">
-              {d.all_calculators}
+            <h2 className={sub}>
+              <Link href={langPath(lang, "naksha")} className={a}>
+                {L2(lang, "House plans by plot size", "प्लॉट साइज़ के हिसाब से नक्शे")}
+              </Link>
             </h2>
-            <ul className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2">
-              {CALCULATORS.map((c) => (
-                <li key={c.slug}>
-                  <Link
-                    href={langPath(lang, c.slug)}
-                    className="hover:text-white"
-                  >
-                    {c[lang].name}
+            <ul className="flex flex-wrap gap-x-4 gap-y-2 text-[14px]">
+              {PLOTS.map((p) => (
+                <li key={plotSlug(p)}>
+                  <Link href={langPath(lang, `house-plan/${plotSlug(p)}`)} className={a}>
+                    {p.w}×{p.d}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
           <div className="grid gap-6 sm:grid-cols-2">
-            <div>
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-[#8fb8ee]">
-                <Link
-                  href={langPath(lang, "house-plan")}
-                  className="hover:text-white"
-                >
-                  {lang === "hi" ? "नक्शे और खर्च" : "Plans & cost"}
-                </Link>
-              </h2>
-              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[14px]">
-                {PLOTS.map((p) => (
-                  <li key={plotSlug(p)}>
-                    <Link
-                      href={langPath(lang, `house-plan/${plotSlug(p)}`)}
-                      className="hover:text-white"
-                    >
-                      {p.w}×{p.d}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-[#8fb8ee]">
-                <Link
-                  href={langPath(lang, "house-construction-cost")}
-                  className="hover:text-white"
-                >
-                  {lang === "hi" ? "निर्माण खर्च" : "Construction cost"}
-                </Link>
-              </h2>
-              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[14px]">
-                {SQFT_SIZES.map((n) => (
-                  <li key={n}>
-                    <Link
-                      href={langPath(
-                        lang,
-                        `house-construction-cost/${sqftSlug(n)}`,
-                      )}
-                      className="hover:text-white"
-                    >
-                      {n} sq ft
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-4 text-[14px]">
-                <Link
-                  href={langPath(lang, "house-construction-guide")}
-                  className="font-semibold text-white hover:text-[#8fb8ee]"
-                >
-                  {lang === "hi"
-                    ? "घर बनाने की पूरी गाइड →"
-                    : "House building guide →"}
-                </Link>
-              </p>
-              <p className="mt-2 text-[14px]">
-                <Link
-                  href={langPath(lang, "elevations")}
-                  className="font-semibold text-white hover:text-[#8fb8ee]"
-                >
-                  {lang === "hi" ? "फ़्रंट एलिवेशन डिज़ाइन →" : "Front elevation designs →"}
-                </Link>
-              </p>
-              <p className="mt-2 text-[14px]">
-                <Link
-                  href={langPath(lang, "house-construction-cost-in")}
-                  className="font-semibold text-white hover:text-[#8fb8ee]"
-                >
-                  {lang === "hi" ? "शहर के हिसाब से खर्च →" : "Cost by city →"}
-                </Link>
-              </p>
-              <p className="mt-2 text-[14px]">
-                <Link
-                  href={langPath(lang, "house-construction-guide/checklist")}
-                  className="font-semibold text-white hover:text-[#8fb8ee]"
-                >
-                  {lang === "hi"
-                    ? "घर बनाने की चेकलिस्ट (82 पॉइंट) →"
-                    : "House checklist (82 points) →"}
-                </Link>
-              </p>
-            </div>
+            {(["narrow", "medium", "wide", "shop"] as const).map((g) => (
+              <div key={g}>
+                <h2 className={sub}>{groupName[g]}</h2>
+                <ul className="flex flex-col gap-1.5 text-[14px]">
+                  {ELEVATIONS.filter((x) => groupOf(x) === g).map((x) => (
+                    <li key={x.slug}>
+                      <Link href={langPath(lang, `elevations/${x.slug}`)} className={a}>
+                        {x.plot.replace("-shop", "").replace("x", "×")} · {x.style[lang]}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-      <div className="border-t border-[#2e3033]">
-        <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-4 text-[12px] text-[#7f93ad] sm:px-6">
-          <span className="flex flex-wrap gap-x-4 gap-y-1">
-            <span>© 2026 BOQFather</span>
-            {(
-              [
-                ["about", "About", "हमारे बारे में"],
-                ["contact", "Contact", "संपर्क"],
-                ["privacy", "Privacy", "प्राइवेसी"],
-                ["terms", "Terms", "नियम और शर्तें"],
-              ] as const
-            ).map(([p, en, hi]) => (
-              <Link
-                key={p}
-                href={langPath(lang, p)}
-                className="hover:text-white"
-              >
-                {lang === "hi" ? hi : en}
+      ),
+    },
+    {
+      key: "cost",
+      label: L2(lang, "Construction cost", "निर्माण खर्च"),
+      panel: (
+        <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
+          <div>
+            <h2 className={sub}>
+              <Link href={langPath(lang, "house-construction-cost")} className={a}>
+                {L2(lang, "Cost by built-up area", "बिल्ट-अप एरिया के हिसाब से खर्च")}
               </Link>
+            </h2>
+            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[14px]">
+              {SQFT_SIZES.map((n) => (
+                <li key={n}>
+                  <Link href={langPath(lang, `house-construction-cost/${sqftSlug(n)}`)} className={a}>
+                    {n} sq ft
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2 className={sub}>{L2(lang, "Estimate your house", "अपने घर का एस्टिमेट")}</h2>
+            <ul className="flex flex-col gap-2 text-[14px]">
+              <li><Link href={langPath(lang, "house-boq-estimate")} className={a}>{L2(lang, "Item-wise house BOQ", "आइटम-वार घर का BOQ")}</Link></li>
+              <li><Link href={langPath(lang, "plan-to-estimate")} className={a}>{L2(lang, "Plan → Estimate", "नक्शे से एस्टिमेट")}</Link></li>
+              <li><Link href={langPath(lang, "contractor-quote-checker")} className={a}>{L2(lang, "Contractor quote checker", "ठेकेदार कोटेशन चेकर")}</Link></li>
+            </ul>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "city",
+      label: L2(lang, "Cost by city", "शहर के हिसाब से खर्च"),
+      panel: (
+        <div>
+          <h2 className={sub}>
+            <Link href={langPath(lang, "house-construction-cost-in")} className={a}>
+              {L2(lang, "House construction cost in your city", "आपके शहर में घर बनाने का खर्च")}
+            </Link>
+          </h2>
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-2 text-[14px] sm:grid-cols-3 lg:grid-cols-5">
+            {CITIES.map((c) => (
+              <li key={c.slug}>
+                <Link href={langPath(lang, `house-construction-cost-in/${c.slug}`)} className={a}>
+                  {c[lang]}
+                </Link>
+              </li>
             ))}
+          </ul>
+        </div>
+      ),
+    },
+    {
+      key: "guide",
+      label: L2(lang, "Guides", "गाइड"),
+      panel: (
+        <div className="grid gap-8 lg:grid-cols-2">
+          <div>
+            <h2 className={sub}>
+              <Link href={langPath(lang, GUIDE_BASE)} className={a}>
+                {L2(lang, "Build your house step by step", "घर बनाइए, क़दम-दर-क़दम")}
+              </Link>
+            </h2>
+            <ul className={col}>
+              {TOPICS.map((x) => (
+                <li key={x.slug} className="break-inside-avoid">
+                  <Link href={langPath(lang, `${GUIDE_BASE}/${x.slug}`)} className={a}>{x.title[lang]}</Link>
+                </li>
+              ))}
+              <li className="break-inside-avoid">
+                <Link href={langPath(lang, `${GUIDE_BASE}/checklist`)} className={a}>
+                  {L2(lang, "House checklist (82 points)", "घर बनाने की चेकलिस्ट (82 पॉइंट)")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2 className={sub}>{L2(lang, "Questions owners ask", "मकान मालिक अक्सर पूछते हैं")}</h2>
+            <ul className={col}>
+              {QUESTIONS.map((x) => (
+                <li key={x.slug} className="break-inside-avoid">
+                  <Link href={langPath(lang, `${GUIDE_BASE}/${x.slug}`)} className={a}>{x.title[lang]}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "calc",
+      label: L2(lang, "Calculators", "कैलकुलेटर"),
+      panel: (
+        <div>
+          <h2 className={sub}>
+            <Link href={langPath(lang, "calculators")} className={a}>{d.all_calculators}</Link>
+          </h2>
+          <ul className="grid grid-cols-1 gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2 lg:grid-cols-3">
+            {CALCULATORS.map((c) => (
+              <li key={c.slug}>
+                <Link href={langPath(lang, c.slug)} className={a}>{c[lang].name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ),
+    },
+  ];
+  const links: [string, string, string][] = [
+    ["about", "About", "हमारे बारे में"],
+    ["contact", "Contact", "संपर्क"],
+    ["pro", "Pricing", "प्राइसिंग"],
+    ["elevations", "Elevations", "एलिवेशन"],
+    ["naksha", "House plans", "घर के नक्शे"],
+    ["calculators", "Calculators", "कैलकुलेटर"],
+    [GUIDE_BASE, "Guide", "गाइड"],
+    ["privacy", "Privacy", "प्राइवेसी"],
+    ["terms", "Terms of use", "नियम और शर्तें"],
+  ];
+  return (
+    <footer className="mt-16 bg-[#0f2440] text-[#b8c6d8]">
+      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-4 py-10 sm:px-6 md:flex-row md:items-center">
+        <div className="flex flex-col gap-2">
+          <span className="text-white">
+            <Logo />
           </span>
-          <span>
-            {lang === "hi" ? "भारत के लिए बना" : "Made in India, for India"}
-          </span>
+          <p className="max-w-md text-[14px] leading-relaxed">{d.tagline}</p>
+        </div>
+        <Link
+          href={langPath(lang, "house-boq-estimate")}
+          className="inline-flex h-12 items-center rounded-full bg-[#ffc933] px-6 text-[15px] font-extrabold text-[#0e2a47] hover:bg-[#ffd75e]"
+        >
+          {L2(lang, "Start free estimate", "मुफ़्त एस्टिमेट शुरू करें")}
+        </Link>
+      </div>
+
+      <FooterGroups groups={groups} />
+
+      <nav aria-label="Footer" className="mx-auto flex max-w-6xl flex-wrap justify-center gap-x-6 gap-y-3 px-4 py-8 text-[14px] text-[#d3deec] sm:px-6">
+        {links.map(([p, en, hi]) => (
+          <Link key={p} href={langPath(lang, p)} className="hover:text-white">
+            {L2(lang, en, hi)}
+          </Link>
+        ))}
+      </nav>
+
+      <div className="border-t border-[#1d3a60]">
+        <div className="mx-auto flex max-w-4xl flex-col gap-3 px-4 py-8 text-center text-[12px] leading-relaxed text-[#8397b1] sm:px-6">
+          <p>{d.disclaimer}</p>
+          <p>
+            {L2(
+              lang,
+              "House photographs on this site are artist impressions of a front elevation, made to show a style. The final look depends on your design, materials and finishes. House plans are drawn to scale for planning; your architect or structural engineer must finalise the drawing and check local bye-laws before work starts. Vastu results follow standard directional rules and are a guide, not a certificate.",
+              "इस साइट की घर की तस्वीरें फ़्रंट एलिवेशन का काल्पनिक चित्र हैं, जो सिर्फ़ शैली दिखाती हैं। अंतिम रूप आपके डिज़ाइन, सामग्री और फ़िनिश पर निर्भर करेगा। घर के नक्शे प्लानिंग के लिए स्केल पर बने हैं; काम शुरू होने से पहले आपके आर्किटेक्ट या स्ट्रक्चरल इंजीनियर को ड्रॉइंग फ़ाइनल करनी और लोकल नियम जांचने होंगे। वास्तु नतीजे मानक दिशा-नियमों पर हैं और एक मार्गदर्शन हैं, प्रमाणपत्र नहीं।",
+            )}
+          </p>
+          <p>
+            {L2(
+              lang,
+              "Costs are for planning, in 2026 rupees, material and labour together, and do not include land, approvals, interiors, compound wall or borewell. Rates differ by city, season and contractor, so use your own quotes for the final budget.",
+              "खर्च प्लानिंग के लिए हैं, 2026 के रुपयों में, सामग्री और मज़दूरी मिलाकर; इनमें ज़मीन, मंज़ूरी, इंटीरियर, बाउंड्री वॉल और बोरवेल शामिल नहीं हैं। रेट शहर, मौसम और ठेकेदार के हिसाब से बदलते हैं, इसलिए अंतिम बजट के लिए अपने कोटेशन इस्तेमाल करें।",
+            )}
+          </p>
+        </div>
+        <div className="border-t border-[#1d3a60]">
+          <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-4 text-[12px] text-[#8397b1] sm:px-6">
+            <span>© 2026 BOQFather</span>
+            <span>{L2(lang, "Made in India, for India", "भारत के लिए बना")}</span>
+          </div>
         </div>
       </div>
     </footer>
