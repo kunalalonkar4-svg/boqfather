@@ -40,9 +40,9 @@ function Tick({ children }: { children: ReactNode }) {
   );
 }
 const btnDark =
-  "inline-flex h-12 items-center rounded-full bg-ink px-6 text-[15px] font-bold text-white transition hover:bg-[#1d3352]";
+  "inline-flex h-12 items-center rounded-[4px] bg-amber px-6 text-[15px] font-bold text-white transition hover:bg-amber-dark";
 const btnLight =
-  "inline-flex h-12 items-center rounded-full border border-line bg-white px-6 text-[15px] font-bold text-ink transition hover:border-ink";
+  "inline-flex h-12 items-center rounded-[4px] border border-line bg-white px-6 text-[15px] font-bold text-ink transition hover:border-ink";
 
 /** Text on one side, a picture on the other; sides swap with `flip`. */
 function Split({
@@ -65,7 +65,7 @@ function Split({
   id?: string;
 }) {
   return (
-    <section id={id} className={tint ? "bg-[#f7fafe]" : "bg-white"}>
+    <section id={id} className={tint ? "bg-[#f5f5f5]" : "bg-white"}>
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:py-20">
         <Reveal className={`min-w-0 ${flip ? "lg:order-2" : ""}`}>
           <div className="flex flex-col gap-4">
@@ -88,8 +88,8 @@ function Split({
 /** A screenshot of the tool in a light browser frame. */
 function Shot({ src, alt, url }: { src: string; alt: string; url: string }) {
   return (
-    <div className="overflow-hidden rounded-[16px] border border-line bg-white shadow-[0_30px_70px_-35px_rgba(22,24,26,0.45)]">
-      <div className="flex items-center gap-2 border-b border-line bg-[#f7fafe] px-4 py-2.5">
+    <div className="overflow-hidden rounded-lg border border-line bg-white shadow-[0_30px_70px_-35px_rgba(22,24,26,0.45)]">
+      <div className="flex items-center gap-2 border-b border-line bg-[#f5f5f5] px-4 py-2.5">
         <span className="flex gap-1.5" aria-hidden="true">
           <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
@@ -270,24 +270,20 @@ export function HomeLight({ lang }: { lang: Lang }) {
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
       <main lang={lang} className="home-hoard overflow-x-clip bg-white">
         {/* hero: one clear promise, then four ways in */}
-        <section className="relative bg-[#eef1f4]">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(14,42,71,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.05)_1px,transparent_1px)] [background-size:32px_32px] [mask-image:linear-gradient(to_bottom,black,transparent_90%)]"
-          />
+        <section className="relative bg-[#f5f5f5]">
           <div className="relative mx-auto max-w-6xl px-4 pb-14 pt-12 sm:px-6 lg:pb-20 lg:pt-20">
             <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-              <h1 className="font-hoard text-[38px] font-extrabold leading-[1.05] tracking-[-0.015em] text-[#0e2a47] [text-wrap:balance] sm:text-[58px]">
+              <h1 className="font-hoard text-[38px] font-extrabold leading-[1.05] tracking-[-0.015em] text-ink [text-wrap:balance] sm:text-[58px]">
                 {L(lang, "Know what your house will cost before you build it.", "घर बनाने से पहले जानिए कि उसका खर्च कितना आएगा।")}
               </h1>
               <p className="max-w-[36rem] text-[18px] leading-relaxed text-body">
                 {L(lang, "Pick your plot size and see the plan, the front elevation and an item-wise cost. Free, no sign-up.", "अपना प्लॉट साइज़ चुनिए और नक्शा, फ़्रंट एलिवेशन और आइटम-वार खर्च देखिए। मुफ़्त, साइन-अप नहीं।")}
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-[4px] bg-[#0e2a47] px-8 text-[16px] font-bold text-white transition hover:bg-[#16406b]">
+                <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-[4px] bg-amber px-8 text-[16px] font-bold text-white transition hover:bg-amber-dark">
                   {L(lang, "Start free estimate", "मुफ़्त एस्टिमेट शुरू करें")}
                 </Link>
-                <Link href={langPath(lang, "naksha")} className="inline-flex h-14 items-center rounded-[4px] border border-[#0e2a47] bg-white px-7 text-[16px] font-bold text-[#0e2a47] transition hover:bg-[#0e2a47] hover:text-white">
+                <Link href={langPath(lang, "naksha")} className="inline-flex h-14 items-center rounded-[4px] border border-line bg-white px-7 text-[16px] font-bold text-ink transition hover:bg-ink hover:text-white">
                   {L(lang, "See house plans", "घर के नक्शे देखें")}
                 </Link>
               </div>
@@ -295,14 +291,14 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {heroCards.map((c) => (
                 <li key={c.href}>
-                  <Link href={c.href} className="group flex h-full flex-col overflow-hidden rounded-[6px] border border-[#0e2a47] bg-white shadow-[6px_6px_0_0_rgba(14,42,71,0.12)] transition hover:-translate-y-1">
-                    <span className="block aspect-[4/3] overflow-hidden border-b border-[#0e2a47] bg-[#f4f8fc]">
+                  <Link href={c.href} className="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white hover:shadow-[0_14px_32px_-14px_rgba(8,8,8,0.35)] transition hover:-translate-y-1">
+                    <span className="block aspect-[4/3] overflow-hidden border-b border-line bg-[#f5f5f5]">
                       <img src={c.img} alt="" loading={c.eager ? "eager" : "lazy"} className={`h-full w-full ${c.fit} transition duration-500 group-hover:scale-[1.03]`} />
                     </span>
-                    <span className="flex flex-1 flex-col gap-1 p-4 text-[#0e2a47]">
+                    <span className="flex flex-1 flex-col gap-1 p-4 text-ink">
                       <span className="text-[18px] font-extrabold leading-snug">{c.t}</span>
-                      <span className="text-[14px] leading-relaxed text-[#3d4f66]">{c.d}</span>
-                      <span className="mt-auto pt-2 text-[14px] font-bold underline decoration-[#ffc933] decoration-2 underline-offset-4">{c.cta} →</span>
+                      <span className="text-[14px] leading-relaxed text-[#5a5a5a]">{c.d}</span>
+                      <span className="mt-auto pt-2 text-[14px] font-bold underline decoration-amber decoration-2 underline-offset-4">{c.cta} →</span>
                     </span>
                   </Link>
                 </li>
@@ -322,7 +318,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
               {stats.map(([v, k]) => (
                 <div key={k}>
-                  <dt className="font-display text-[40px] font-extrabold leading-none tabular-nums text-[#0e2a47]">
+                  <dt className="font-display text-[40px] font-extrabold leading-none tabular-nums text-ink">
                     <CountUp to={v} />
                   </dt>
                   <dd className="mt-2 text-[14px] leading-snug text-muted">{k}</dd>
@@ -406,11 +402,11 @@ export function HomeLight({ lang }: { lang: Lang }) {
           ctas={<Link href={langPath(lang, "plan-to-estimate")} className={btnDark}>{L(lang, "Upload a plan", "नक्शा अपलोड करें")}</Link>}
           visual={
             <div className="grid grid-cols-2 gap-3">
-              <div className="overflow-hidden rounded-2xl border border-line bg-white p-2">
+              <div className="overflow-hidden rounded-lg border border-line bg-white p-2">
                 <img src={nakshaImage(n)} alt={L(lang, "Your plan", "आपका नक्शा")} loading="lazy" className="aspect-square w-full object-contain [filter:grayscale(1)_contrast(1.1)]" />
                 <p className="px-1 pt-1 text-[12px] font-semibold text-muted">{L(lang, "1 · Your plan", "1 · आपका नक्शा")}</p>
               </div>
-              <div className="overflow-hidden rounded-2xl border border-line bg-white p-2">
+              <div className="overflow-hidden rounded-lg border border-line bg-white p-2">
                 <img src={`/home/shots/materials${hiSfx}.webp`} alt={L(lang, "Estimate", "एस्टिमेट")} loading="lazy" className="aspect-square w-full object-cover object-left-top" />
                 <p className="px-1 pt-1 text-[12px] font-semibold text-muted">{L(lang, "2 · Estimate and purchase plan", "2 · एस्टिमेट और ख़रीद प्लान")}</p>
               </div>
@@ -434,7 +430,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
           visual={
             <ul className="flex flex-col gap-3">
               {checks.map((c) => (
-                <li key={c.p.id} className="flex items-start gap-4 rounded-2xl border border-line bg-white p-4 shadow-sm">
+                <li key={c.p.id} className="flex items-start gap-4 rounded-lg border border-line bg-white p-4">
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber text-[13px] font-black">✓</span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-[12px] font-bold uppercase tracking-wide text-muted">{c.stage}</span>
@@ -448,10 +444,10 @@ export function HomeLight({ lang }: { lang: Lang }) {
         />
 
         {/* how every number is made: the trust block, in the same drawing-sheet language as the hero */}
-        <section className="bg-[#eef1f4]">
+        <section className="bg-[#f5f5f5]">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-            <div className="overflow-hidden rounded-[6px] border border-[#0e2a47] bg-white shadow-[8px_8px_0_0_rgba(14,42,71,0.12)]">
-              <div className="flex flex-wrap items-center justify-between gap-2 bg-[#ffc933] px-5 py-3 text-[#0e2a47]">
+            <div className="overflow-hidden rounded-lg border border-line bg-white hover:shadow-[0_14px_32px_-14px_rgba(8,8,8,0.35)]">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-white px-5 py-3 text-ink">
                 <h2 className="font-hoard text-[22px] font-black leading-tight sm:text-[28px]">
                   {L(lang, "How every number is made", "हर आंकड़ा कैसे बनता है")}
                 </h2>
@@ -459,7 +455,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
                   {L(lang, "About BOQFather", "BOQFather के बारे में")}
                 </Link>
               </div>
-              <ul className="grid divide-y divide-[#0e2a47]/25 text-[#0e2a47] sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
+              <ul className="grid divide-y divide-line text-ink sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
                 {[
                   {
                     h: L(lang, "Measured, not guessed", "नापकर, अंदाज़े से नहीं"),
@@ -480,7 +476,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 ].map((x) => (
                   <li key={x.h} className="flex flex-col gap-2 p-5">
                     <h3 className="text-[17px] font-extrabold leading-snug">{x.h}</h3>
-                    <p className="text-[14px] leading-relaxed text-[#3d4f66]">{x.p}</p>
+                    <p className="text-[14px] leading-relaxed text-[#5a5a5a]">{x.p}</p>
                   </li>
                 ))}
               </ul>
@@ -489,7 +485,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
         </section>
 
         {/* what else is inside */}
-        <section id="features" className="bg-[#f7fafe]">
+        <section id="features" className="bg-[#f5f5f5]">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
             <Reveal>
               <div className="mx-auto max-w-3xl text-center">
@@ -504,8 +500,8 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {feats.map((c) => (
                 <li key={c.t}>
-                  <Link href={c.href} className="group flex h-full flex-col overflow-hidden rounded-[16px] border border-line bg-white transition hover:-translate-y-1 hover:shadow-lg">
-                    <span className="block aspect-[16/10] overflow-hidden bg-[#eef3f9]">
+                  <Link href={c.href} className="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white transition hover:-translate-y-1 hover:shadow-lg">
+                    <span className="block aspect-[16/10] overflow-hidden bg-[#f0f0f0]">
                       <img src={c.img} alt="" loading="lazy" className={`h-full w-full ${c.fit} transition duration-500 group-hover:scale-[1.03]`} />
                     </span>
                     <span className="flex flex-1 flex-col gap-1.5 p-5">
@@ -520,7 +516,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
         </section>
 
         {/* plans by type */}
-        <section className="bg-[#f7fafe]">
+        <section className="bg-[#f5f5f5]">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
             <h2 className="font-display mb-8 text-center text-[28px] font-extrabold tracking-tight sm:text-[36px]">
               {L(lang, "See house plans by type", "प्रकार के हिसाब से नक्शे देखें")}
@@ -538,8 +534,8 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {who.map((w, i) => (
                 <Reveal key={w.t} delay={i * 70}>
-                  <li className="flex h-full flex-col overflow-hidden rounded-[16px] border border-line bg-white transition hover:-translate-y-1 hover:shadow-lg">
-                    <img src={w.img} alt="" loading="lazy" className="aspect-[4/3] w-full bg-[#eef3f9] object-cover object-left-top" />
+                  <li className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white transition hover:-translate-y-1 hover:shadow-lg">
+                    <img src={w.img} alt="" loading="lazy" className="aspect-[4/3] w-full bg-[#f0f0f0] object-cover object-left-top" />
                     <div className="flex flex-1 flex-col gap-2 p-5">
                       <h3 className="font-display text-[20px] font-extrabold">{w.t}</h3>
                       <p className="text-[14px] leading-relaxed text-body">{w.d}</p>
@@ -562,7 +558,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 {L(lang, "Plan the whole house — before you pay for a single brick", "पूरा घर प्लान करें — एक भी ईंट ख़रीदने से पहले")}
               </h2>
               <div className="flex flex-wrap gap-3">
-                <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-12 items-center rounded-[4px] bg-[#ffc933] px-7 text-[15px] font-extrabold text-[#0e2a47] hover:bg-[#ffd75e]">
+                <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-12 items-center rounded-[4px] bg-amber px-7 text-[15px] font-extrabold text-white hover:bg-amber-dark">
                   {L(lang, "Start free estimate", "मुफ़्त एस्टिमेट शुरू करें")}
                 </Link>
                 <Link href={langPath(lang, "pro")} className="inline-flex h-12 items-center rounded-[4px] border border-white/30 px-6 text-[15px] font-bold hover:border-white">
@@ -570,7 +566,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 </Link>
               </div>
             </div>
-            <img src={nakshaPreview(mosaic[0] ?? n).src} alt="" loading="lazy" className="aspect-[16/10] w-full rounded-[10px] object-cover" />
+            <img src={nakshaPreview(mosaic[0] ?? n).src} alt="" loading="lazy" className="aspect-[16/10] w-full rounded-lg object-cover" />
           </div>
         </section>
 
@@ -590,9 +586,9 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <ul className="mt-10 grid auto-rows-[150px] grid-cols-2 gap-3 sm:auto-rows-[190px] sm:grid-cols-4">
               {mosaic.slice(0, 9).map((x, i) => (
                 <li key={x.slug} className={i === 0 ? "col-span-2 row-span-2" : ""}>
-                  <Link href={langPath(lang, `naksha/${x.slug}`)} className="group relative block h-full overflow-hidden rounded-2xl bg-[#eef3f9]">
+                  <Link href={langPath(lang, `naksha/${x.slug}`)} className="group relative block h-full overflow-hidden rounded-lg bg-[#f0f0f0]">
                     <img src={nakshaPreview(x).src} alt={nakshaTitle(x, lang)} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                    <span className="absolute bottom-2 left-2 rounded-full bg-white/95 px-3 py-1 text-[12px] font-bold shadow">
+                    <span className="absolute bottom-2 left-2 rounded-[4px] bg-white/95 px-3 py-1 text-[12px] font-bold shadow">
                       {x.plot.w}×{x.plot.d} · {facing(x)}
                     </span>
                   </Link>
@@ -619,8 +615,8 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {calcs.map((c) => (
                 <li key={c.slug}>
-                  <Link href={langPath(lang, c.slug)} className="flex h-full items-center gap-4 rounded-2xl border border-line bg-white p-4 transition hover:border-ink hover:shadow-md">
-                    <span className="font-display flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-tint text-[16px] font-extrabold text-amber-dark">{c.mark}</span>
+                  <Link href={langPath(lang, c.slug)} className="flex h-full items-center gap-4 rounded-lg border border-line bg-white p-4 transition hover:border-ink hover:shadow-md">
+                    <span className="font-display flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-amber-tint text-[16px] font-extrabold text-amber-dark">{c.mark}</span>
                     <span className="flex min-w-0 flex-col">
                       <span className="text-[16px] font-bold">{c[lang].name}</span>
                       <span className="truncate text-[13px] text-muted">{c[lang].short}</span>
@@ -633,15 +629,15 @@ export function HomeLight({ lang }: { lang: Lang }) {
         </section>
 
         {/* FAQ */}
-        <section className="bg-[#f7fafe]">
+        <section className="bg-[#f5f5f5]">
           <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:py-20">
             <div className="flex min-w-0 flex-col gap-4">
               <h2 className="font-display text-[28px] font-extrabold tracking-tight sm:text-[36px]">{d.faq}</h2>
-              <img src={nakshaPreview(mosaic[2] ?? n).src} alt="" loading="lazy" className="hidden aspect-[4/3] w-full rounded-[16px] object-cover lg:block" />
+              <img src={nakshaPreview(mosaic[2] ?? n).src} alt="" loading="lazy" className="hidden aspect-[4/3] w-full rounded-lg object-cover lg:block" />
             </div>
             <div className="flex min-w-0 flex-col gap-2">
               {faqs.map(([q, a]) => (
-                <details key={q} className="group rounded-2xl border border-line bg-white px-5 py-4 open:shadow-sm">
+                <details key={q} className="group rounded-lg border border-line bg-white px-5 py-4 open:shadow-sm">
                   <summary className="flex cursor-pointer list-none items-start justify-between gap-3 text-[16px] font-semibold [&::-webkit-details-marker]:hidden">
                     {q}
                     <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-tint text-[18px] transition group-open:rotate-45">+</span>
@@ -656,12 +652,12 @@ export function HomeLight({ lang }: { lang: Lang }) {
         {/* closing */}
         <section className="bg-white">
           <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-4 py-20 text-center sm:px-6">
-            <span className="font-display flex h-16 w-16 items-center justify-center rounded-2xl bg-amber text-[24px] font-extrabold text-white">BF</span>
+            <span className="font-display flex h-16 w-16 items-center justify-center rounded-lg bg-amber text-[24px] font-extrabold text-white">BF</span>
             <h2 className="font-display text-[28px] font-extrabold tracking-tight sm:text-[40px]">
               {L(lang, "Plan your own house on BOQFather", "अपना घर BOQFather पर प्लान करें")}
             </h2>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-full bg-amber px-8 text-[16px] font-extrabold text-white">
+              <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-[4px] bg-amber px-8 text-[16px] font-extrabold text-white">
                 {L(lang, "Make my estimate — free", "मेरा एस्टिमेट बनाएं — फ़्री")}
               </Link>
               <Link href={langPath(lang, "calculators")} className={btnLight}>{d.all_calculators}</Link>

@@ -100,7 +100,7 @@ export function Shell({
         <div className="relative mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6 sm:pt-12">
         <nav
           aria-label="Breadcrumb"
-          className="w-fit max-w-full truncate rounded-full border border-line bg-white/80 px-3.5 py-1.5 text-[13px] text-muted shadow-sm"
+          className="w-fit max-w-full truncate rounded-[4px] border border-line bg-white/80 px-3.5 py-1.5 text-[13px] text-muted"
         >
           {all.map((c, i) => (
             <span key={c.name}>
@@ -125,7 +125,7 @@ export function Shell({
         </div>
         <div className="flex flex-col gap-14">{children}</div>
         {faqs?.length && !faqsHidden ? <Faqs lang={lang} faqs={faqs} /> : null}
-        <p className="mb-16 mt-12 max-w-3xl rounded-2xl border border-[#f0dfae] bg-warn-tint px-5 py-4 text-[13px] leading-relaxed text-[#4a3b12]">
+        <p className="mb-16 mt-12 max-w-3xl rounded-lg border border-[#f0dfae] bg-warn-tint px-5 py-4 text-[13px] leading-relaxed text-[#4a3b12]">
           {t(lang).disclaimer}
         </p>
         </div>
@@ -161,7 +161,7 @@ export function Faqs({
         {faqs.map((f) => (
           <details
             key={f.q}
-            className="group rounded-2xl border border-line bg-white px-5 py-4 transition open:pb-5 open:shadow-sm hover:border-[#d6d0c4]"
+            className="group rounded-lg border border-line bg-white px-5 py-4 transition open:pb-5 open:shadow-sm hover:border-[#d6d0c4]"
           >
             <summary className="cursor-pointer list-none text-[16px] font-semibold marker:hidden [&::-webkit-details-marker]:hidden">
               <span className="flex items-start justify-between gap-3">
@@ -188,7 +188,7 @@ export function Stats({ items }: { items: [string, string][] }) {
       {items.map(([k, v]) => (
         <div
           key={k}
-          className="flex flex-col gap-1.5 rounded-[20px] border border-line bg-white px-5 py-4 shadow-[0_8px_24px_-16px_rgba(22,24,26,0.25)]"
+          className="flex flex-col gap-1.5 rounded-lg border border-line bg-white px-5 py-4 shadow-[0_8px_24px_-16px_rgba(22,24,26,0.25)]"
         >
           <dt className="text-[12px] font-bold uppercase tracking-[0.08em] text-muted">
             {k}
@@ -212,7 +212,7 @@ export function Table({
   caption?: string;
 }) {
   return (
-    <div className="overflow-x-auto rounded-[20px] border border-line bg-white shadow-[0_8px_24px_-18px_rgba(22,24,26,0.3)]">
+    <div className="overflow-x-auto rounded-lg border border-line bg-white shadow-[0_8px_24px_-18px_rgba(22,24,26,0.3)]">
       <table className="w-full min-w-[480px] border-collapse text-[14px]">
         {caption && <caption className="sr-only">{caption}</caption>}
         <thead>
@@ -256,7 +256,7 @@ export function Cta({ href, children }: { href: string; children: ReactNode }) {
   return (
     <Link
       href={href}
-      className="inline-flex h-12 w-fit items-center gap-2 rounded-2xl bg-ink px-6 text-[15px] font-bold text-white shadow-[0_10px_30px_-12px_rgba(22,24,26,0.6)] transition hover:-translate-y-0.5"
+      className="inline-flex h-12 w-fit items-center gap-2 rounded-[4px] bg-amber px-6 text-[15px] font-bold text-white transition hover:bg-amber-dark"
     >
       {children}
     </Link>
@@ -276,7 +276,7 @@ export function LinkGrid({
             href={l.href}
             aria-current={l.current ? "page" : undefined}
             className={
-              "flex h-full flex-col gap-0.5 rounded-2xl border bg-white px-4 py-3.5 transition hover:-translate-y-0.5 hover:border-amber hover:shadow-md " +
+              "flex h-full flex-col gap-0.5 rounded-lg border bg-white px-4 py-3.5 transition hover:-translate-y-0.5 hover:border-amber hover:shadow-md " +
               (l.current ? "border-amber" : "border-line")
             }
           >
@@ -463,7 +463,7 @@ export function PlotPage({ lang, slug }: { lang: Lang; slug: string }) {
             `${s} घर का नक्शा — ग्राउंड और पहली मंज़िल`,
           )}
         </H2>
-        <div className="rounded-2xl border border-line bg-white p-4 sm:p-6">
+        <div className="rounded-lg border border-line bg-white p-4 sm:p-6">
           <PlotPlanPreview lang={lang} slug={slug} />
         </div>
         {fit.notes.length > 0 && (
@@ -525,7 +525,7 @@ export function PlotPage({ lang, slug }: { lang: Lang; slug: string }) {
           {floorsRooms.map((f) => (
             <div
               key={f.floor}
-              className="rounded-2xl border border-line bg-white p-4"
+              className="rounded-lg border border-line bg-white p-4"
             >
               <h3 className="text-[15px] font-bold">{FLOORS(f.floor, lang)}</h3>
               <ul className="mt-2 flex flex-col text-[14px]">
@@ -649,7 +649,7 @@ export function PlotIndexPage({ lang }: { lang: Lang }) {
             <li key={plotSlug(p)}>
               <Link
                 href={langPath(lang, `house-plan/${plotSlug(p)}`)}
-                className="flex h-full flex-col gap-2 rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-amber"
+                className="flex h-full flex-col gap-2 rounded-lg border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-amber"
               >
                 <span className="font-display text-[26px] font-extrabold leading-none">
                   {p.w}×{p.d}
@@ -1033,7 +1033,7 @@ function CardList({
         <li key={it.href}>
           <Link
             href={it.href}
-            className="flex h-full flex-col gap-1.5 rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-amber"
+            className="flex h-full flex-col gap-1.5 rounded-lg border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-amber"
           >
             {it.tag && (
               <span className="text-[12px] font-bold uppercase tracking-wide text-amber-dark">
@@ -1072,9 +1072,9 @@ export function GuidePage({ lang }: { lang: Lang }) {
     >
       <Link
         href={langPath(lang, `${GUIDE_BASE}/checklist`)}
-        className="flex max-w-3xl flex-col gap-2 rounded-2xl border-2 border-amber bg-amber-tint p-5 transition hover:-translate-y-0.5 sm:p-6"
+        className="flex max-w-3xl flex-col gap-2 rounded-lg border-2 border-amber bg-amber-tint p-5 transition hover:-translate-y-0.5 sm:p-6"
       >
-        <span className="self-start rounded-full bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-white">
+        <span className="self-start rounded-[4px] bg-amber px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-white">
           {L(
             lang,
             `${CHECKLIST_COUNT} POINTS · WITH VIDEOS`,
@@ -1199,7 +1199,7 @@ function GuideNext({ lang, slug }: { lang: Lang; slug: string }) {
           <Link
             key={lbl as string}
             href={langPath(lang, `${GUIDE_BASE}/${it.slug}`)}
-            className="flex flex-col gap-1 rounded-xl border border-line bg-white px-4 py-3 hover:border-amber"
+            className="flex flex-col gap-1 rounded-lg border border-line bg-white px-4 py-3 hover:border-amber"
           >
             <span className="text-[12px] font-semibold uppercase tracking-wide text-muted">
               {lbl as string}
@@ -1254,7 +1254,7 @@ export function GuideItemPage({ lang, slug }: { lang: Lang; slug: string }) {
             {tp.section.items.map((it) => (
               <li
                 key={it.t.en}
-                className="flex gap-3 rounded-xl border border-line bg-white px-4 py-3"
+                className="flex gap-3 rounded-lg border border-line bg-white px-4 py-3"
               >
                 <span
                   aria-hidden="true"
@@ -1302,7 +1302,7 @@ export function GuideItemPage({ lang, slug }: { lang: Lang; slug: string }) {
             {tp.mistakes.map((m) => (
               <li
                 key={m.en}
-                className="flex gap-3 rounded-xl bg-warn-tint px-4 py-3 text-[15px] leading-relaxed text-[#4a3b12]"
+                className="flex gap-3 rounded-lg bg-warn-tint px-4 py-3 text-[15px] leading-relaxed text-[#4a3b12]"
               >
                 <span aria-hidden="true" className="font-black">
                   ✕
@@ -1327,7 +1327,7 @@ export function GuideItemPage({ lang, slug }: { lang: Lang; slug: string }) {
       faqsHidden
       intro={null}
     >
-      <div className="max-w-3xl rounded-2xl border-2 border-amber bg-white p-5">
+      <div className="max-w-3xl rounded-lg border-2 border-amber bg-white p-5">
         <p className="text-[12px] font-bold uppercase tracking-wide text-amber-dark">
           {L(lang, "Short answer", "छोटा जवाब")}
         </p>
@@ -1393,7 +1393,7 @@ export function ChecklistPage({ lang }: { lang: Lang }) {
       }
     >
       <Checklist lang={lang} />
-      <p className="max-w-3xl rounded-xl bg-[#f3efe7] px-4 py-3 text-[13px] leading-relaxed text-body">
+      <p className="max-w-3xl rounded-lg bg-[#f3efe7] px-4 py-3 text-[13px] leading-relaxed text-body">
         {L(
           lang,
           "The video links open YouTube results for each topic; the videos are made by others, so check that what you watch matches your drawings. Structural work must follow your engineer's drawing.",

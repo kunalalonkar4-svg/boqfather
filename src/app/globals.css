@@ -3,15 +3,15 @@
 /* BOQFather brand tokens */
 :root {
   /* BOQFather engineering palette: navy, blue, white */
-  --ink: #15263b;
-  --ground: #f7fafe;
+  --ink: #080808;
+  --ground: #ffffff;
   --surface: #ffffff;
-  --line: #e3eaf2;
-  --muted: #66758a;
-  --body: #3d4d63;
+  --line: #d8d8d8;
+  --muted: #5a5a5a;
+  --body: #444444;
   /* accent (token names kept so every page follows): engineering blue */
-  --amber: #1769d2;
-  --amber-dark: #1769d2;
+  --amber: #146ef5;
+  --amber-dark: #1366e2;
   --amber-tint: #eaf3ff;
   --steel: #12345a;
   --good: #15966b;

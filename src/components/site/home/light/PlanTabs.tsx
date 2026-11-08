@@ -43,7 +43,7 @@ export function PlanTabs({
               setT(k);
               setI(0);
             }}
-            className={`shrink-0 rounded-full border px-4 py-2 text-[15px] font-semibold transition ${
+            className={`shrink-0 rounded-[4px] border px-4 py-2 text-[15px] font-semibold transition ${
               k === t ? "border-ink bg-ink text-white" : "border-line bg-white text-ink hover:border-ink"
             }`}
           >
@@ -52,7 +52,7 @@ export function PlanTabs({
         ))}
       </div>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-        <div className="relative min-w-0 overflow-hidden rounded-[28px] border border-line bg-[#eef3f9]">
+        <div className="relative min-w-0 overflow-hidden rounded-lg border border-line bg-[#f0f0f0]">
           <img
             key={p.href + (two ? "2" : "3")}
             src={two ? p.img2d : p.img3d}
@@ -66,7 +66,7 @@ export function PlanTabs({
                 key={m}
                 type="button"
                 onClick={() => setTwo(m === "Plan")}
-                className={`rounded-full px-3.5 py-1 ${(m === "Plan") === two ? "bg-ink text-white" : "text-ink"}`}
+                className={`rounded-[4px] px-3.5 py-1 ${(m === "Plan") === two ? "bg-ink text-white" : "text-ink"}`}
               >
                 {m}
               </button>
@@ -74,7 +74,7 @@ export function PlanTabs({
           </div>
         </div>
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="rounded-[24px] border border-line bg-white p-6">
+          <div className="rounded-lg border border-line bg-white p-6">
             <h3 className="font-display text-[24px] font-extrabold leading-tight">{p.title}</h3>
             <p className="mt-2 text-[15px] text-body">{p.sub}</p>
             <p className="mt-4 text-[13px] font-semibold uppercase tracking-wide text-muted">
@@ -82,10 +82,10 @@ export function PlanTabs({
             </p>
             <p className="font-display text-[30px] font-extrabold">{p.cost}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <Link href={p.href} className="inline-flex h-11 items-center rounded-full bg-ink px-5 text-[14px] font-bold text-white">
+              <Link href={p.href} className="inline-flex h-11 items-center rounded-[4px] bg-ink px-5 text-[14px] font-bold text-white">
                 {L("Open plan & BOQ →", "नक्शा और BOQ खोलें →")}
               </Link>
-              <Link href={allHref} className="inline-flex h-11 items-center rounded-full border border-line px-5 text-[14px] font-bold hover:border-ink">
+              <Link href={allHref} className="inline-flex h-11 items-center rounded-[4px] border border-line px-5 text-[14px] font-bold hover:border-ink">
                 {L("All plans", "सभी नक्शे")}
               </Link>
             </div>
@@ -96,7 +96,7 @@ export function PlanTabs({
                 <button
                   type="button"
                   onClick={() => setI(k)}
-                  className={`w-full overflow-hidden rounded-xl border-2 transition ${k === i ? "border-ink" : "border-transparent hover:border-line"}`}
+                  className={`w-full overflow-hidden rounded-lg border-2 transition ${k === i ? "border-ink" : "border-transparent hover:border-line"}`}
                 >
                   <img src={x.img3d} alt={x.title} loading="lazy" className="aspect-[4/3] w-full object-cover" />
                 </button>

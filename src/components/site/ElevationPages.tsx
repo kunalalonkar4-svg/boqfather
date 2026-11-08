@@ -118,7 +118,7 @@ export function ElevationPage({ lang, slug }: { lang: Lang; slug: string }) {
       faqs={faqs}
     >
       <section className="flex flex-col gap-3">
-        <div className="overflow-hidden rounded-[6px] border border-[#0e2a47] shadow-[8px_8px_0_0_rgba(14,42,71,0.12)]">
+        <div className="overflow-hidden rounded-lg border border-line hover:shadow-[0_14px_32px_-14px_rgba(8,8,8,0.35)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={elevationImage(x)} alt={alt(x, lang)} width={1600} height={900} className="aspect-[16/9] w-full object-cover" fetchPriority="high" />
         </div>
@@ -157,7 +157,7 @@ export function ElevationPage({ lang, slug }: { lang: Lang; slug: string }) {
           </p>
           <div className="flex flex-wrap gap-3">
             <Cta href={tool}>{L(lang, `Get the full BOQ for ${s}`, `${s} का पूरा BOQ पाएं`)}</Cta>
-            <Link href={langPath(lang, `naksha/${d.slug}`)} className="inline-flex h-12 items-center rounded-2xl border border-line bg-white px-5 text-[15px] font-bold hover:border-amber">
+            <Link href={langPath(lang, `naksha/${d.slug}`)} className="inline-flex h-12 items-center rounded-lg border border-line bg-white px-5 text-[15px] font-bold hover:border-amber">
               {L(lang, "See the floor plan", "फ़्लोर प्लान देखें")}
             </Link>
           </div>

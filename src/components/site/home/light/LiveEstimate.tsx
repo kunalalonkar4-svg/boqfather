@@ -87,15 +87,15 @@ export function LiveEstimate({
               onClick={() => setSlug(r.slug)}
               className={`shrink-0 rounded-[4px] border px-3 py-1.5 text-[14px] font-bold tabular-nums transition ${
                 r.slug === slug
-                  ? "border-[#0e2a47] bg-[#0e2a47] text-white"
-                  : "border-[#c5cfdb] bg-white text-[#0e2a47] hover:border-[#0e2a47]"
+                  ? "border-ink bg-ink text-white"
+                  : "border-[#d8d8d8] bg-white text-ink hover:border-ink"
               }`}
             >
               {r.w}×{r.d}
             </button>
           ))}
         </div>
-        <div role="group" aria-label={labels.finish} className="inline-flex w-fit overflow-hidden rounded-[4px] border border-[#c5cfdb] bg-white">
+        <div role="group" aria-label={labels.finish} className="inline-flex w-fit overflow-hidden rounded-[4px] border border-[#d8d8d8] bg-white">
           {QUALITY.map((q) => (
             <button
               key={q}
@@ -103,7 +103,7 @@ export function LiveEstimate({
               aria-pressed={q === quality}
               onClick={() => setQuality(q)}
               className={`px-4 py-1.5 text-[14px] font-semibold transition ${
-                q === quality ? "bg-[#0e2a47] text-white" : "text-[#0e2a47] hover:bg-[#eef1f4]"
+                q === quality ? "bg-ink text-white" : "text-ink hover:bg-[#f5f5f5]"
               }`}
             >
               {labels.quality[q]}
@@ -113,8 +113,8 @@ export function LiveEstimate({
       </div>
 
       {/* the sheet: a drawing with its title block and a site-hoarding cost board */}
-      <div className="overflow-hidden rounded-[6px] border border-[#0e2a47] bg-white shadow-[8px_8px_0_0_rgba(14,42,71,0.12)]">
-        <div className="relative bg-gradient-to-b from-[#dbeaf8] to-[#f4f8fc]">
+      <div className="overflow-hidden rounded-lg border border-line bg-white shadow-[0_24px_60px_-30px_rgba(8,8,8,0.35)]">
+        <div className="relative bg-gradient-to-b from-[#f0f0f0] to-[#f5f5f5]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             key={row.slug}
@@ -126,35 +126,35 @@ export function LiveEstimate({
             fetchPriority="high"
           />
           <svg aria-hidden="true" viewBox="0 0 100 8" preserveAspectRatio="none" className="absolute inset-x-0 bottom-2 h-6 w-full">
-            <g stroke="#0e2a47" strokeWidth="0.35" vectorEffect="non-scaling-stroke" fill="none">
+            <g stroke="#080808" strokeWidth="0.35" vectorEffect="non-scaling-stroke" fill="none">
               <path d="M10 4H90M10 1.6V6.4M90 1.6V6.4" vectorEffect="non-scaling-stroke" />
             </g>
           </svg>
-          <span className="absolute bottom-[10px] left-1/2 -translate-x-1/2 rounded-[3px] bg-white px-2 py-0.5 text-[12px] font-bold tabular-nums text-[#0e2a47]">
+          <span className="absolute bottom-[10px] left-1/2 -translate-x-1/2 rounded-[3px] bg-white px-2 py-0.5 text-[12px] font-bold tabular-nums text-ink">
             {row.w} ft {labels.frontage}
           </span>
         </div>
 
-        <div className="grid grid-cols-3 divide-x divide-[#0e2a47]/25 border-y border-[#0e2a47] text-[13px] text-[#0e2a47]">
+        <div className="grid grid-cols-3 divide-x divide-line border-y border-line text-[13px] text-ink">
           <div className="px-3 py-2">
-            <span className="block text-[#52627a]">{labels.plot}</span>
+            <span className="block text-[#5a5a5a]">{labels.plot}</span>
             <b className="tabular-nums">
               {row.w} × {row.d} ft
             </b>
           </div>
           <div className="px-3 py-2">
-            <span className="block text-[#52627a]">{labels.built}</span>
+            <span className="block text-[#5a5a5a]">{labels.built}</span>
             <b className="tabular-nums">
               {rupee(row.builtUp)} {labels.sqft}
             </b>
           </div>
           <div className="px-3 py-2">
-            <span className="block text-[#52627a]">G+1</span>
+            <span className="block text-[#5a5a5a]">G+1</span>
             <b>{row.bhk} BHK</b>
           </div>
         </div>
 
-        <div className="flex items-end justify-between gap-3 bg-[#ffc933] px-4 py-3 text-[#0e2a47]">
+        <div className="flex items-end justify-between gap-3 bg-[#ffc933] px-4 py-3 text-ink">
           <div>
             <span className="block text-[13px] font-semibold">{labels.total}</span>
             <span aria-live="polite" className="font-hoard text-[40px] font-black leading-none tabular-nums sm:text-[52px]">
@@ -168,27 +168,27 @@ export function LiveEstimate({
         </div>
 
         <div className="px-4 pb-4 pt-3">
-          <p className="mb-2 text-[13px] font-semibold text-[#52627a]">{labels.biggest}</p>
+          <p className="mb-2 text-[13px] font-semibold text-[#5a5a5a]">{labels.biggest}</p>
           <ul className="flex flex-col gap-2">
             {cur.stages.map((s) => (
-              <li key={s.t} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 text-[13px] text-[#0e2a47]">
+              <li key={s.t} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 text-[13px] text-ink">
                 <span className="truncate">{s.t}</span>
                 <span className="font-semibold tabular-nums">₹{lakh(s.v)} {labels.lakh}</span>
-                <span className="col-span-2 h-[5px] bg-[#e6ecf3]">
-                  <span className="block h-full bg-[#1668d6] transition-[width] duration-500" style={{ width: `${Math.max(4, (s.v / top) * 100)}%` }} />
+                <span className="col-span-2 h-[5px] bg-[#e8e8e8]">
+                  <span className="block h-full bg-[#146ef5] transition-[width] duration-500" style={{ width: `${Math.max(4, (s.v / top) * 100)}%` }} />
                 </span>
               </li>
             ))}
           </ul>
           <Link
             href={row.href}
-            className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-[4px] bg-[#0e2a47] px-5 text-[15px] font-bold text-white transition hover:bg-[#16406b]"
+            className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-[4px] bg-amber px-5 text-[15px] font-bold text-white transition hover:bg-amber-dark"
           >
             {labels.cta.replace("{size}", `${row.w}×${row.d}`)}
           </Link>
         </div>
       </div>
-      <p className="mt-2 text-[12.5px] text-[#52627a]">{labels.note}</p>
+      <p className="mt-2 text-[12.5px] text-[#5a5a5a]">{labels.note}</p>
     </div>
   );
 }

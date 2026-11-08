@@ -138,7 +138,7 @@ function CustomSection({
   return (
     <section
       id="custom"
-      className="flex scroll-mt-4 flex-col gap-4 rounded-2xl border-2 border-amber bg-white p-5 sm:p-6"
+      className="flex scroll-mt-4 flex-col gap-4 rounded-lg border-2 border-amber bg-white p-5 sm:p-6"
     >
       <div className="flex max-w-3xl flex-col gap-1">
         <H2>
@@ -201,7 +201,7 @@ export function NakshaIndexPage({ lang }: { lang: Lang }) {
           <Link
             key={g.slug}
             href={langPath(lang, `${BASE}/gaj/${g.slug}`)}
-            className="rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold hover:border-amber"
+            className="rounded-[4px] border border-line bg-white px-4 py-2 text-[14px] font-semibold hover:border-amber"
           >
             {L(lang, `${g.gaj} gaj naksha`, `${g.gaj} गज़ का नक्शा`)}
           </Link>
@@ -354,7 +354,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
 
       <section className="flex flex-col gap-3">
         <H2>{L(lang, `${s} house front elevation`, `${s} घर का फ़्रंट एलिवेशन`)}</H2>
-        <div className="overflow-hidden rounded-2xl border border-line bg-white">
+        <div className="overflow-hidden rounded-lg border border-line bg-white">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={nakshaPreview(n).src}
@@ -373,8 +373,8 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
 
       <section className="flex flex-col gap-3">
         <H2>{L(lang, `What it costs to build this ${s} house`, `यह ${s} घर बनाने में कितना खर्च`)}</H2>
-        <div className="overflow-hidden rounded-[10px] border border-[#0e2a47] bg-white shadow-[6px_6px_0_0_rgba(14,42,71,0.12)]">
-          <div className="grid divide-y divide-[#0e2a47]/25 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <div className="overflow-hidden rounded-lg border border-line bg-white hover:shadow-[0_14px_32px_-14px_rgba(8,8,8,0.35)]">
+          <div className="grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             {(
               [
                 [L(lang, "Basic finish", "बेसिक फ़िनिश"), i.basic, false],
@@ -382,7 +382,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
                 [L(lang, "Premium finish", "प्रीमियम फ़िनिश"), i.premium, false],
               ] as const
             ).map(([label, v, on]) => (
-              <div key={label} className={`px-5 py-4 text-[#0e2a47] ${on ? "bg-[#ffc933]" : "bg-white"}`}>
+              <div key={label} className={`px-5 py-4 text-ink ${on ? "bg-[#f0f0f0]" : "bg-white"}`}>
                 <span className="block text-[13px] font-semibold">{label}</span>
                 <span className="block text-[30px] font-black leading-tight tabular-nums sm:text-[34px]">{lakh(v, lang)}</span>
                 <span className="block text-[13px] tabular-nums">
@@ -391,8 +391,8 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
               </div>
             ))}
           </div>
-          <div className="border-t border-[#0e2a47] px-5 py-4">
-            <p className="mb-3 text-[13px] font-semibold text-[#52627a]">
+          <div className="border-t border-line px-5 py-4">
+            <p className="mb-3 text-[13px] font-semibold text-[#5a5a5a]">
               {L(lang, `Where the money goes (standard finish, ${num(i.builtUp)} sq ft)`, `पैसा कहां जाता है (स्टैंडर्ड फ़िनिश, ${num(i.builtUp)} sq ft)`)}
             </p>
             <ul className="flex flex-col gap-2.5">
@@ -401,13 +401,13 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
                 const top = secs[0]?.subtotal || 1;
                 const sum = res.sections.reduce((t, x) => t + x.subtotal, 0) || 1;
                 return secs.map((x) => (
-                  <li key={x.code} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 text-[14px] text-[#0e2a47]">
+                  <li key={x.code} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 text-[14px] text-ink">
                     <span className="truncate">{x.title[lang].replace(/^[A-Z]\.\s*/, "")}</span>
                     <span className="font-semibold tabular-nums">
                       {lakh(x.subtotal, lang)} · {Math.round((x.subtotal / sum) * 100)}%
                     </span>
-                    <span className="col-span-2 h-[6px] bg-[#e6ecf3]">
-                      <span className="block h-full bg-[#1668d6]" style={{ width: `${Math.max(4, (x.subtotal / top) * 100)}%` }} />
+                    <span className="col-span-2 h-[6px] bg-[#e8e8e8]">
+                      <span className="block h-full bg-[#146ef5]" style={{ width: `${Math.max(4, (x.subtotal / top) * 100)}%` }} />
                     </span>
                   </li>
                 ));
@@ -415,7 +415,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             </ul>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Cta href={tool}>{L(lang, "Change rates and see the full item-wise BOQ →", "रेट बदलें और पूरा आइटम-वार BOQ देखें →")}</Cta>
-              <span className="text-[13px] text-[#52627a]">
+              <span className="text-[13px] text-[#5a5a5a]">
                 {L(lang, "Land, approvals, interiors, compound wall and borewell are extra.", "ज़मीन, मंज़ूरी, इंटीरियर, बाउंड्री वॉल और बोरवेल अलग।")}
               </span>
             </div>
@@ -431,7 +431,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             `${s} ${f.hi} नक्शा — ग्राउंड और पहली मंज़िल`,
           )}
         </H2>
-        <div className="rounded-2xl border border-line bg-white p-4 sm:p-6">
+        <div className="rounded-lg border border-line bg-white p-4 sm:p-6">
           <NakshaPlanView lang={lang} slug={slug} />
         </div>
         {fit.notes.length > 0 && (
@@ -456,7 +456,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
           </Cta>
           <a
             href="#custom"
-            className="rounded-xl border border-line bg-white px-4 py-3 text-[14px] font-semibold hover:border-amber"
+            className="rounded-lg border border-line bg-white px-4 py-3 text-[14px] font-semibold hover:border-amber"
           >
             {L(lang, "Get a custom naksha", "कस्टम नक्शा बनवाएं")}
           </a>
@@ -469,7 +469,7 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
           {res.sketch.map((fl) => (
             <div
               key={fl.floor}
-              className="rounded-2xl border border-line bg-white p-4"
+              className="rounded-lg border border-line bg-white p-4"
             >
               <h3 className="flex justify-between text-[15px] font-bold">
                 {FLOORS(fl.floor, lang)}
@@ -693,7 +693,7 @@ export function GajPage({ lang, slug }: { lang: Lang; slug: string }) {
           <Link
             key={x.slug}
             href={langPath(lang, `${BASE}/gaj/${x.slug}`)}
-            className="rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold hover:border-amber"
+            className="rounded-[4px] border border-line bg-white px-4 py-2 text-[14px] font-semibold hover:border-amber"
           >
             {L(lang, `${x.gaj} gaj naksha`, `${x.gaj} गज़ का नक्शा`)}
           </Link>

@@ -36,7 +36,7 @@ export function ElevationGallery({ lang, cards }: { lang: Lang; cards: Elevation
             aria-pressed={group === c.id}
             onClick={() => setGroup(c.id)}
             className={`rounded-[4px] border px-3.5 py-2 text-[14px] font-bold transition ${
-              group === c.id ? "border-[#0e2a47] bg-[#0e2a47] text-white" : "border-[#c5cfdb] bg-white text-[#0e2a47] hover:border-[#0e2a47]"
+              group === c.id ? "border-ink bg-ink text-white" : "border-[#d8d8d8] bg-white text-ink hover:border-ink"
             }`}
           >
             {c.label}
@@ -51,7 +51,7 @@ export function ElevationGallery({ lang, cards }: { lang: Lang; cards: Elevation
           <li key={c.href} hidden={!shown.includes(c)}>
             <Link
               href={c.href}
-              className="group flex h-full flex-col overflow-hidden rounded-[6px] border border-[#0e2a47]/25 bg-white transition duration-300 hover:-translate-y-1 hover:border-[#0e2a47] hover:shadow-[6px_6px_0_0_rgba(14,42,71,0.12)]"
+              className="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white transition duration-300 hover:-translate-y-1 hover:border-ink hover:hover:shadow-[0_14px_32px_-14px_rgba(8,8,8,0.35)]"
             >
               <span className="block aspect-[16/10] overflow-hidden bg-[#e9eef4]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
