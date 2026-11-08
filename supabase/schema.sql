@@ -114,3 +114,16 @@ grant execute on function public.shared_project(text) to anon, authenticated;
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
 -- payments, orders and usage are written only by the server
 revoke insert, update, delete on public.payments, public.custom_orders, public.ai_usage from authenticated, anon;
+
+-- Newsletter sign-ups from the home page. Written and read only by the server (service role); no policies on purpose.
+create table if not exists public.newsletter_subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique check (email = lower(email)),
+  status text not null default 'active',          -- active | unsubscribed
+  token uuid not null unique default gen_random_uuid(), -- goes in the unsubscribe link of every email
+  source text,
+  consent_at timestamptz,
+  unsubscribed_at timestamptz,
+  created_at timestamptz default now()
+);
+alter table public.newsletter_subscribers enable row level security;

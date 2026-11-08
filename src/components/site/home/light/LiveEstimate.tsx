@@ -112,8 +112,9 @@ export function LiveEstimate({
         </div>
       </div>
 
-      {/* the sheet: a drawing with its title block and a site-hoarding cost board */}
-      <div className="overflow-hidden rounded-lg border border-line bg-white shadow-[0_24px_60px_-30px_rgba(8,8,8,0.35)]">
+      {/* one frame: the elevation and its facts on the left, the cost and its breakdown on the right */}
+      <div className="grid overflow-hidden rounded-[14px] border border-line bg-white lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+       <div className="min-w-0">
         <div className="relative bg-gradient-to-b from-[#f0f0f0] to-[#f5f5f5]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -122,8 +123,8 @@ export function LiveEstimate({
             alt=""
             width={1200}
             height={720}
-            className="aspect-[16/9] w-full object-cover object-bottom"
-            fetchPriority="high"
+            className="aspect-[16/10] w-full object-cover object-bottom"
+            loading="lazy"
           />
           <svg aria-hidden="true" viewBox="0 0 100 8" preserveAspectRatio="none" className="absolute inset-x-0 bottom-2 h-6 w-full">
             <g stroke="#080808" strokeWidth="0.35" vectorEffect="non-scaling-stroke" fill="none">
@@ -153,23 +154,27 @@ export function LiveEstimate({
             <b>{row.bhk} BHK</b>
           </div>
         </div>
+       </div>
 
-        <div className="flex items-end justify-between gap-3 bg-[#ffc933] px-4 py-3 text-ink">
+       <div className="flex min-w-0 flex-col">
+        <div className="flex items-end justify-between gap-3 bg-[#0f2440] px-5 py-5 text-white">
           <div>
-            <span className="block text-[13px] font-semibold">{labels.total}</span>
-            <span aria-live="polite" className="font-hoard text-[40px] font-black leading-none tabular-nums sm:text-[52px]">
+            <span className="block text-[13px] font-semibold text-[#b8cdea]">
+              {labels.total} · {labels.quality[quality]}
+            </span>
+            <span aria-live="polite" className="font-hoard text-[44px] font-black leading-none tabular-nums sm:text-[56px]">
               ₹{lakh(total)} <span className="text-[22px] sm:text-[26px]">{labels.lakh}</span>
             </span>
           </div>
           <div className="pb-1 text-right text-[14px] font-semibold tabular-nums">
             ₹{rupee(cur.perSqft)}
-            <span className="block text-[12px] font-medium">{labels.perSqft}</span>
+            <span className="block text-[12px] font-medium text-[#b8cdea]">{labels.perSqft}</span>
           </div>
         </div>
 
-        <div className="px-4 pb-4 pt-3">
+        <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
           <p className="mb-2 text-[13px] font-semibold text-[#5a5a5a]">{labels.biggest}</p>
-          <ul className="flex flex-col gap-2">
+          <ul className="mb-4 flex flex-col gap-2.5">
             {cur.stages.map((s) => (
               <li key={s.t} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 text-[13px] text-ink">
                 <span className="truncate">{s.t}</span>
@@ -182,11 +187,12 @@ export function LiveEstimate({
           </ul>
           <Link
             href={row.href}
-            className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-[4px] bg-amber px-5 text-[15px] font-bold text-white transition hover:bg-amber-dark"
+            className="mt-auto inline-flex h-12 w-full items-center justify-center rounded-[4px] bg-amber px-5 text-[15px] font-bold text-white transition hover:bg-amber-dark"
           >
             {labels.cta.replace("{size}", `${row.w}×${row.d}`)}
           </Link>
         </div>
+       </div>
       </div>
       <p className="mt-2 text-[12.5px] text-[#5a5a5a]">{labels.note}</p>
     </div>

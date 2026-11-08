@@ -90,14 +90,14 @@ input[type="number"] {
 /* ---------- home page motion ---------- */
 .reveal-wait {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translateY(20px);
 }
 .reveal-in {
   opacity: 1;
   transform: none;
   transition:
-    opacity 0.8s ease,
-    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    opacity 0.5s ease-out,
+    transform 0.5s ease-out;
 }
 @keyframes hero-float {
   0%,
