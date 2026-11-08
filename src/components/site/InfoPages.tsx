@@ -144,6 +144,29 @@ export function AboutPage({ lang }: { lang: Lang }) {
         </div>
       </section>
       <Prose>
+        <H2>{L(lang, "Why I built it", "मैंने यह क्यों बनाया")}</H2>
+        <p>
+          {L(
+            lang,
+            "I am a civil engineer with more than 12 years in the field. I worked in a job for the first 5 years, then became a contractor and took government contracts, where I worked as the estimate engineer: measuring the work, making the BOQ and checking the rates.",
+            "मैं सिविल इंजीनियर हूं और 12 साल से ज़्यादा का अनुभव है। पहले 5 साल मैंने नौकरी की, फिर ठेकेदारी शुरू की और सरकारी ठेके लिए, जिनमें मैंने एस्टिमेट इंजीनियर के तौर पर काम किया: काम की नाप, BOQ बनाना और रेट जांचना।",
+          )}
+        </p>
+        <p>
+          {L(
+            lang,
+            "Again and again I saw house owners pay too much, or get stuck midway, because nobody had shown them the item-wise cost before they started. The calculators here are built from that site and estimating experience. I wanted every owner to have the same working that an engineer uses.",
+            "बार-बार मैंने देखा कि घर मालिक ज़्यादा पैसे दे देते हैं, या बीच में अटक जाते हैं, क्योंकि शुरू करने से पहले किसी ने उन्हें आइटम-वार खर्च नहीं दिखाया था। यहां के कैलकुलेटर उसी साइट और एस्टिमेटिंग के अनुभव से बने हैं। मैं चाहता था कि हर मालिक के पास वही हिसाब हो जो इंजीनियर इस्तेमाल करता है।",
+          )}
+        </p>
+        <p className="rounded-lg border border-[#f0dfae] bg-warn-tint px-4 py-3 text-[14px] leading-relaxed text-[#4a3b12]">
+          <strong>{L(lang, "Disclaimer: ", "डिस्क्लेमर: ")}</strong>
+          {L(
+            lang,
+            "The calculators and estimates are built from my experience and standard Indian practice. They are for planning and budgeting only. Actual quantities and costs depend on your design, soil, site, material and local rates, and can differ. They are not a structural design, a valuation report or a sanctioned drawing. Before you build or buy, get the drawings and the final BOQ checked by a registered engineer or architect, and use your own quotes. Guniyo and its author are not liable for decisions made only on these estimates.",
+            "कैलकुलेटर और एस्टिमेट मेरे अनुभव और भारतीय मानक प्रथा से बने हैं। ये सिर्फ़ प्लानिंग और बजट के लिए हैं। असली मात्रा और खर्च आपके डिज़ाइन, मिट्टी, साइट, सामग्री और स्थानीय रेट पर निर्भर करते हैं और अलग हो सकते हैं। ये स्ट्रक्चरल डिज़ाइन, वैल्यूएशन रिपोर्ट या पास किया हुआ नक्शा नहीं हैं। बनाने या ख़रीदने से पहले ड्रॉइंग और अंतिम BOQ किसी रजिस्टर्ड इंजीनियर या आर्किटेक्ट से जंचवाएं, और अपने कोटेशन इस्तेमाल करें। सिर्फ़ इन एस्टिमेट के आधार पर लिए गए फ़ैसलों के लिए Guniyo और उसके लेखक ज़िम्मेदार नहीं हैं।",
+          )}
+        </p>
         <H2>{L(lang, "How the numbers are made", "आंकड़े कैसे बनते हैं")}</H2>
         <ul>
           <li>
