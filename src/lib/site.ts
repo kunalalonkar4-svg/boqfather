@@ -41,15 +41,15 @@ export const WHATSAPP_NUMBER = "";
 export const OWNER = {
   name: "Kunal Alonkar",
   /** e.g. "B.E. Civil Engineering" */
-  degree: "",
+  degree: "Civil Engineer",
   /** e.g. "8 years in house construction, estimation and site work" */
-  experience: "",
+  experience: "12+ years in civil engineering and valuation",
   /** e.g. "Indore, Madhya Pradesh" */
   city: "",
   /** One or two lines about the work done, e.g. "50+ houses planned and estimated across MP". */
-  work: "",
+  work: "Civil engineer and valuer",
   /** Public contact email; empty = not shown. */
-  email: "",
+  email: "uniquevaluerandengineers@yahoo.com",
   /** Photo path under /public, e.g. "/team/kunal.webp"; empty = initials. */
   photo: "",
 };
