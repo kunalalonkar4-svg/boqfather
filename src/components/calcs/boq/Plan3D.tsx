@@ -26,6 +26,7 @@ export function Plan3D({
   still,
   onError,
   plot,
+  look = "plan",
 }: {
   lang: Lang;
   sketch: { floor: number; L: number; B: number; rects: SketchRect[] }[];
@@ -37,11 +38,17 @@ export function Plan3D({
   onError?: () => void;
   /** Plot frontage, depth and back setback, feet (for the site around the house). */
   plot?: { w: number; d: number; back: number };
+  /**
+   * "plan": the technical aerial plan (road, plot dimensions, room names).
+   * "model": an architect's-model look: cut-away house on a plinth seen from the front-right, warm light.
+   */
+  look?: "plan" | "model";
 }) {
   const host = useRef<HTMLDivElement>(null);
+  const isModel = look === "model";
   const [show, setShow] = useState<number>(0); // ground floor first; -1 = whole house
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
-  const [labels, setLabels] = useState(true);
+  const [labels, setLabels] = useState(!(isModel && still));
   const labelsRef = useRef(labels);
   labelsRef.current = labels;
   const onErrorRef = useRef(onError);
@@ -67,6 +74,7 @@ export function Plan3D({
 
         const renderer = new THREE.WebGLRenderer({
           antialias: true,
+          alpha: isModel, // the model look sits on the page's own soft gradient
           preserveDrawingBuffer: !!still,
         });
         renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
@@ -81,16 +89,17 @@ export function Plan3D({
         const FT = 0.3048;
         const ft = (m: number) => formatFtIn(m).replace(/'-0"$/, "'").replace(/'-(\d+)"$/, "'$1\"");
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xe4e9ef);
+        if (!isModel) scene.background = new THREE.Color(0xe4e9ef);
+        else renderer.setClearColor(0x000000, 0);
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
+        renderer.toneMappingExposure = isModel ? 1.12 : 1.0;
 
         // the plot around the house (from the plot size, or a modest garden when not known)
         const site = plot
           ? { w: plot.w * FT, d: plot.d * FT, back: plot.back * FT }
           : { w: W + 3, d: D + 4, back: 1 };
         const mats = makeMaterials();
-        const { group: siteGroup, extents: E } = buildSite(mats, W, D, site, sketch[0].rects, facingLabel, ft);
+        const { group: siteGroup, extents: E } = buildSite(mats, W, D, site, sketch[0].rects, facingLabel, ft, isModel);
         scene.add(siteGroup);
 
         // aerial view from the road side, slightly tilted
@@ -102,7 +111,7 @@ export function Plan3D({
         const span = Math.max(needW, needH);
         const floorY = top * STOREY;
         const camera = new THREE.PerspectiveCamera(30, el.clientWidth / el.clientHeight, 0.1, 500);
-        const fit = () => {
+        const fitPlan = () => {
           const a = el.clientWidth / el.clientHeight;
           // distance that fits the site in both directions
           const t = Math.tan((15 * Math.PI) / 180);
@@ -110,9 +119,40 @@ export function Plan3D({
           const tilt = (24 * Math.PI) / 180; // from straight down
           camera.position.set(cx, floorY + dist * Math.cos(tilt), cz + dist * Math.sin(tilt));
         };
+        // model look: look at the plinth from the front-right and back off until all of it is in frame
+        const rim = 0.45;
+        const modelTarget = new THREE.Vector3((E.X0 + E.X1) / 2, floorY + 0.3, (E.Z0 + E.Z1) / 2);
+        const modelCorners: T.Vector3[] = [];
+        for (const x of [E.X0 - rim, E.X1 + rim])
+          for (const z of [E.Z0 - rim, E.Z1 + rim])
+            for (const y of [-1.25, floorY + 3.1]) modelCorners.push(new THREE.Vector3(x, y, z));
+        const fitModel = () => {
+          const az = (36 * Math.PI) / 180,
+            el2 = (40 * Math.PI) / 180;
+          const dir = new THREE.Vector3(Math.sin(az) * Math.cos(el2), Math.sin(el2), Math.cos(az) * Math.cos(el2));
+          const fits = (d: number) => {
+            camera.position.copy(modelTarget).addScaledVector(dir, d);
+            camera.lookAt(modelTarget);
+            camera.updateMatrixWorld();
+            return modelCorners.every((c) => {
+              const p = c.clone().project(camera);
+              return Math.abs(p.x) <= 0.97 && Math.abs(p.y) <= 0.97 && p.z < 1;
+            });
+          };
+          let lo = 3,
+            hi = 600;
+          for (let i = 0; i < 40; i++) {
+            const mid = (lo + hi) / 2;
+            if (fits(mid)) hi = mid;
+            else lo = mid;
+          }
+          fits(hi);
+        };
+        const fit = isModel ? fitModel : fitPlan;
         fit();
         const controls = new OrbitControls(camera, renderer.domElement);
-        controls.target.set(cx, floorY, cz);
+        if (isModel) controls.target.copy(modelTarget);
+        else controls.target.set(cx, floorY, cz);
         controls.enableDamping = true;
         controls.maxPolarAngle = Math.PI * 0.45;
         controls.minDistance = 4;
@@ -120,9 +160,11 @@ export function Plan3D({
         controls.autoRotate = false;
         controls.update();
 
-        scene.add(new THREE.HemisphereLight(0xffffff, 0xb8c2cf, 1.9));
-        const sun = new THREE.DirectionalLight(0xfff1dc, 2.6);
-        sun.position.set(cx - span * 0.7, floorY + span * 1.6, cz - span * 0.9);
+        scene.add(isModel ? new THREE.HemisphereLight(0xfff3e4, 0xc4ccd6, 1.05) : new THREE.HemisphereLight(0xffffff, 0xb8c2cf, 1.9));
+        const sun = new THREE.DirectionalLight(0xffeccf, isModel ? 3.3 : 2.6);
+        // model look: sun from the front-left, so the near walls and the room floors are lit and shadows fall back-right
+        if (isModel) sun.position.set(cx - span * 0.9, floorY + span * 1.2, cz + span * 0.7);
+        else sun.position.set(cx - span * 0.7, floorY + span * 1.6, cz - span * 0.9);
         sun.target.position.set(cx, floorY, cz);
         sun.castShadow = true;
         sun.shadow.mapSize.set(2048, 2048);
@@ -133,11 +175,24 @@ export function Plan3D({
         sc.right = sc.top = span * 0.9;
         sc.far = span * 6;
         scene.add(sun, sun.target);
+        if (isModel) {
+          // warm lamps in the biggest living rooms, like the lit interiors of a presentation model
+          const topFloor = sketch.find((s) => s.floor === top);
+          const rooms = (topFloor?.rects ?? [])
+            .filter((r) => ["hall", "bedroom", "dining", "kitchen", "study"].includes(r.type) && r.w * r.h > 5)
+            .sort((a, b) => b.w * b.h - a.w * a.h)
+            .slice(0, 5);
+          for (const r of rooms) {
+            const lamp = new THREE.PointLight(0xffdcb4, 14, 8, 1.6);
+            lamp.position.set(r.x + r.w / 2, floorY + 2.3, r.y + r.h / 2);
+            scene.add(lamp);
+          }
+        }
 
         const labelGroup = new THREE.Group();
         for (const s of floors) {
           // only the top floor shown is cut open; floors below are full height
-          const g = buildFloor(mats, s.L, s.B, s.rects, s.floor, { cut: s.floor === top });
+          const g = buildFloor(mats, s.L, s.B, s.rects, s.floor, { cut: s.floor === top, model: isModel });
           scene.add(g);
           if (s.floor !== top) continue;
           for (const r of s.rects.filter((x) => x.type !== "column" && x.type !== "stair" && x.type !== "parking" && x.w * x.h > 2.2)) {
@@ -200,7 +255,7 @@ export function Plan3D({
       stop = true;
       cleanup();
     };
-  }, [sketch, show, facingLabel, plot]);
+  }, [sketch, show, facingLabel, plot, isModel]);
 
   const chip = (on: boolean) =>
     `rounded-full px-3.5 py-1.5 text-[13px] font-bold transition ${on ? "bg-ink text-white" : "bg-white text-ink hover:bg-[#eaf3ff]"}`;
@@ -233,9 +288,18 @@ export function Plan3D({
       <div
         ref={host}
         data-plan3d
-        className="relative h-[420px] w-full touch-none overflow-hidden rounded-[22px] border border-line bg-[#f7fafe] sm:h-[540px]"
+        className={`relative h-[420px] w-full touch-none overflow-hidden rounded-[22px] border border-line sm:h-[540px] ${isModel ? "" : "bg-[#f7fafe]"}`}
+        style={
+          isModel
+            ? {
+                background: "linear-gradient(180deg,#f8fafc 0%,#e4e9ef 100%)",
+                // preview pictures: a fixed 1000 × 640 frame (about the shape of a card), whatever the page width
+                ...(still ? { width: 1000, height: 640 } : {}),
+              }
+            : undefined
+        }
       >
-        {plot && state === "ready" && (
+        {plot && !isModel && state === "ready" && (
           <div className="pointer-events-none absolute right-3 top-3 rounded-lg border border-line bg-white/95 px-3.5 py-2.5 text-ink shadow-sm">
             <p className="text-[12px] font-bold">{L(lang, "Residential plot", "रिहायशी प्लॉट")}</p>
             <p className="font-display text-[16px] font-extrabold leading-tight">

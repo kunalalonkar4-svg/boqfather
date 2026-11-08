@@ -7,6 +7,6 @@ import { type Naksha, nakshaImage, nakshaImage3d } from "./naksha";
 export function nakshaPreview(n: Naksha): { src: string; w: number; h: number; is3d: boolean } {
   const p = nakshaImage3d(n);
   return existsSync(join(process.cwd(), "public", p))
-    ? { src: p, w: 1200, h: 615, is3d: true }
+    ? { src: p, w: 1200, h: 761, is3d: true }
     : { src: nakshaImage(n), w: 1054, h: 911, is3d: false };
 }

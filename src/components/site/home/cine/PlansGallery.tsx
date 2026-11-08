@@ -86,7 +86,7 @@ export function PlansGallery({
                     src={p.img3d}
                     alt={p.title}
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full scale-[1.3] object-cover transition duration-700 group-hover:scale-[1.38]"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.05]"
                     style={{ opacity: two ? 0 : 1 }}
                   />
                   <img

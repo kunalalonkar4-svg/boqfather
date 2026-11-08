@@ -81,7 +81,7 @@ export function PlanToEstimate({
         style={{ opacity: pinned ? to3d : 1, transform: pinned ? `scale(${0.9 + to3d * 0.1})` : undefined }}
         hidden={!pinned}
       >
-        <img src={img3d} alt={L(lang, "The same plan in 3D", "वही नक्शा 3D में")} className="h-full w-full scale-[1.3] object-cover" loading="lazy" />
+        <img src={img3d} alt={L(lang, "The same plan in 3D", "वही नक्शा 3D में")} className="h-full w-full object-cover" loading="lazy" />
       </div>
       {pinned &&
         chips.map((c, i) => (

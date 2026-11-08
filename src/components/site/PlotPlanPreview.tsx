@@ -36,6 +36,7 @@ export function PlotPlanPreview({
       }
       fileName={`${slug}-house-plan-boqfather`}
       plot={plot}
+      look3d="model"
       names={(tp) =>
         tp in ROOM_DEFS ? ROOM_DEFS[tp as RoomType].name[lang] : tp
       }

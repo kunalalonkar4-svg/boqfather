@@ -33,10 +33,13 @@ export function SketchPanel({
   subtitle,
   fileName,
   plot,
+  look3d = "plan",
 }: {
   r: BoqResult;
   /** Plot frontage, depth and back setback in feet, for the 3D site. */
   plot?: { w: number; d: number; back: number };
+  /** 3D look: "model" = cut-away architect's model, "plan" = technical aerial plan. ?look=model|plan overrides. */
+  look3d?: "plan" | "model";
   lang: Lang;
   names: (t: string) => string;
   /** Heading printed on the downloaded sheet. */
@@ -49,10 +52,13 @@ export function SketchPanel({
   // 3D first; ?still3d=1 fixes the camera (used to make the preview images)
   const [mode, setMode] = useState<"2d" | "3d">("3d");
   const [still, setStill] = useState(false);
+  const [look, setLook] = useState<"plan" | "model">(look3d);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     setStill(q.has("still3d"));
     if (q.has("plan2d")) setMode("2d");
+    const l = q.get("look");
+    if (l === "model" || l === "plan") setLook(l);
   }, []);
   const download = async (kind: "png" | "pdf") => {
     const svgs = Array.from(
@@ -156,8 +162,9 @@ export function SketchPanel({
       </div>
       {mode === "3d" && (
         <Plan3D
-          key={still ? "still" : "live"}
+          key={`${still ? "still" : "live"}-${look}`}
           still={still}
+          look={look}
           plot={plot}
           onError={() => setMode("2d")}
           lang={lang}

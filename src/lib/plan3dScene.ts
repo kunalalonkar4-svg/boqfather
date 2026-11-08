@@ -13,6 +13,10 @@ const PRESENTATION = true;
 
 export const CUT_H = 1.15; // walls are cut here, so the rooms can be seen from above
 const LEVEL = 3.05;
+/** Wall heights of the cut-away model look, m: far walls, inner walls, near walls. */
+const MODEL_FULL = 2.95;
+const MODEL_MID = 1.35;
+const MODEL_LOW = 0.32;
 
 function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, rep: [number, number]) {
   const c = document.createElement("canvas");
@@ -119,11 +123,35 @@ export function makeMaterials(): Materials {
     },
     [1, 1],
   );
+  const marble = canvasTex(
+    512,
+    512,
+    (g) => {
+      for (let i = 0; i < 2; i++)
+        for (let j = 0; j < 2; j++) {
+          const v = 236 + Math.floor(r() * 12);
+          g.fillStyle = `rgb(${v},${v - 2},${v - 5})`;
+          g.fillRect(i * 256 + 2, j * 256 + 2, 252, 252);
+          g.strokeStyle = "rgba(120,122,130,0.22)";
+          g.lineWidth = 1.5;
+          for (let k = 0; k < 5; k++) {
+            g.beginPath();
+            const x0 = i * 256 + r() * 256,
+              y0 = j * 256 + r() * 256;
+            g.moveTo(x0, y0);
+            g.bezierCurveTo(x0 + r() * 90 - 45, y0 + r() * 90, x0 + r() * 120 - 60, y0 + r() * 120, x0 + r() * 160 - 80, y0 + 90 + r() * 90);
+            g.stroke();
+          }
+        }
+    },
+    [1, 1],
+  );
   const S = (color: string, rough = 0.8, extra: THREE.MeshStandardMaterialParameters = {}) =>
     new THREE.MeshStandardMaterial({ color, roughness: rough, ...extra });
   return {
     wall: S("#f4f3f0", 0.9),
     cap: S("#1c2f4a", 0.7),
+    capDark: S("#43474e", 0.7),
     column: S("#f4f3f0", 0.9),
     glass: new THREE.MeshStandardMaterial({ color: "#a9c8e3", roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.45 }),
     frame: S("#2b2d31", 0.5),
@@ -131,6 +159,7 @@ export function makeMaterials(): Materials {
     slab: S("#bdbbb6", 0.95),
     woodFloor: new THREE.MeshStandardMaterial({ map: wood, roughness: 0.55 }),
     tileFloor: new THREE.MeshStandardMaterial({ map: tile, roughness: 0.35 }),
+    marbleFloor: new THREE.MeshStandardMaterial({ map: marble, roughness: 0.18 }),
     stoneFloor: new THREE.MeshStandardMaterial({ map: stone, roughness: 0.45 }),
     blueFloor: new THREE.MeshStandardMaterial({ map: blue, roughness: 0.3 }),
     paveFloor: new THREE.MeshStandardMaterial({ map: pave, roughness: 0.9 }),
@@ -150,7 +179,7 @@ export function makeMaterials(): Materials {
     granite: S("#2e3033", 0.3),
     steel: S("#b9bcc0", 0.25, { metalness: 0.8 }),
     ceramic: S("#ffffff", 0.2),
-    car: S("#dfe4ea", 0.3, { metalness: 0.2 }),
+    car: S("#b4bdc8", 0.3, { metalness: 0.35 }),
     tyre: S("#1c1c1e", 0.8),
     carGlass: S("#1e2630", 0.08, { metalness: 0.7 }),
     leaf: S("#3f7a3a", 0.8),
@@ -182,6 +211,24 @@ const FLOOR_OF: Record<string, string> = {
   open: "deck",
 };
 
+/** Floors of the model look: warm wood in the living rooms, white marble in the kitchen and baths. */
+const MODEL_FLOOR_OF: Record<string, string> = {
+  hall: "woodFloor",
+  bedroom: "woodFloor",
+  dining: "woodFloor",
+  study: "woodFloor",
+  dress: "woodFloor",
+  passage: "woodFloor",
+  corridor: "woodFloor",
+  lobby: "woodFloor",
+  pooja: "marbleFloor",
+  kitchen: "marbleFloor",
+  toilet: "marbleFloor",
+  shop: "marbleFloor",
+  utility: "marbleFloor",
+  store: "marbleFloor",
+};
+
 /** Builds one floor (cut-away, furnished) into a group; plan x → x, plan y → z, metres. */
 export function buildFloor(
   m: Materials,
@@ -189,10 +236,11 @@ export function buildFloor(
   D: number,
   rects: SketchRect[],
   level: number,
-  opts: { cut?: boolean; cutH?: number } = {},
+  opts: { cut?: boolean; cutH?: number; model?: boolean } = {},
 ) {
   const group = new THREE.Group();
   const cut = opts.cut !== false;
+  const model = !!opts.model;
   const base = level * LEVEL;
   const unit = new THREE.BoxGeometry(1, 1, 1);
   const add = (mat: THREE.Material, x: number, y: number, z: number, w: number, h: number, d: number, shadow = true) => {
@@ -214,7 +262,23 @@ export function buildFloor(
   };
 
   // walls, glass, stair
-  const { blocks, tiles } = floorBlocks(W, D, rects, level, cut ? { wallH: opts.cutH ?? CUT_H, doorLintel: false } : {});
+  // model look: a cut-away box seen from the front-right: back and left walls stay tall, the walls facing the
+  // camera are cut low, inner walls half height, so every room can be seen and the corner reads as a room
+  const T = 0.32;
+  const { blocks, tiles } = floorBlocks(
+    W,
+    D,
+    rects,
+    level,
+    cut
+      ? model
+        ? {
+            wallH: MODEL_MID,
+            heightAt: (x, z) => (z < T || x < T ? MODEL_FULL : z > D - T || x > W - T ? MODEL_LOW : MODEL_MID),
+          }
+        : { wallH: opts.cutH ?? CUT_H, doorLintel: false }
+      : {},
+  );
   for (const b of blocks) {
     if (b.kind === "slab") {
       add(m.slab, b.x, b.y, b.z, b.w, b.h, b.d);
@@ -224,7 +288,7 @@ export function buildFloor(
     add(mat, b.x, b.y, b.z, b.w, b.h, b.d, b.kind !== "glass");
     // dark cut line on top of every wall (the floor-plan look)
     if (cut && (b.kind === "wall" || b.kind === "column" || b.kind === "lintel"))
-      add(m.cap, b.x - 0.004, b.y + b.h, b.z - 0.004, b.w + 0.008, 0.025, b.d + 0.008, false);
+      add(model ? m.capDark : m.cap, b.x - 0.004, b.y + b.h, b.z - 0.004, b.w + 0.008, 0.025, b.d + 0.008, false);
     if (b.kind === "glass") {
       // thin frame along the sill and the top
       const flat = b.w > b.d;
@@ -235,16 +299,18 @@ export function buildFloor(
   }
   // floors
   for (const t of tiles) {
-    const key = FLOOR_OF[t.type] ?? "woodFloor";
+    const key = (model ? MODEL_FLOOR_OF[t.type] : undefined) ?? FLOOR_OF[t.type] ?? "woodFloor";
     let mat = m[key];
     if ((mat as THREE.MeshStandardMaterial).map) {
       const mm = (mat as THREE.MeshStandardMaterial).clone();
       const tex = (mm.map as THREE.Texture).clone();
       // metres per texture repeat: 600 mm tiles, 150 mm bath tiles, 400 mm pavers
-      const sc = ({ woodFloor: 2.4, stoneFloor: 2.4, blueFloor: 1.2, paveFloor: 1.6, tileFloor: 1.2 } as Record<string, number>)[key] ?? 1.2;
+      const sc = ({ woodFloor: 2.4, stoneFloor: 2.4, blueFloor: 1.2, paveFloor: 1.6, tileFloor: 1.2, marbleFloor: 2.4 } as Record<string, number>)[key] ?? 1.2;
       tex.repeat.set(t.w / sc, t.d / sc);
       tex.needsUpdate = true;
       mm.map = tex;
+      // model look: deeper walnut boards, like a furnished presentation model
+      if (model && key === "woodFloor") mm.color.set("#a8917f");
       mat = mm;
     }
     const f = new THREE.Mesh(new THREE.PlaneGeometry(t.w, t.d), mat);
@@ -388,8 +454,10 @@ export function buildFloor(
         };
         part(m.car, 0.05, cl - 0.1, 0.22, 0.42, cw); // body
         part(m.car, 0, cl, 0.3, 0.26, cw - 0.06); // bumpers
-        part(m.carGlass, 1.05, 2.15, 0.64, 0.44, cw - 0.14); // glass house
-        part(m.car, 1.2, 1.85, 1.06, 0.06, cw - 0.22); // roof
+        part(m.carGlass, 1.15, 1.95, 0.64, 0.4, cw - 0.34); // glass house, set in from the body sides
+        part(m.car, 1.3, 1.65, 1.0, 0.07, cw - 0.4); // roof
+        part(m.car, 1.2, 0.07, 0.64, 0.4, cw - 0.32); // windscreen pillar
+        part(m.car, 3.05, 0.07, 0.64, 0.4, cw - 0.32); // rear pillar
         part(m.black, 0.02, 0.06, 0.32, 0.12, cw - 0.4); // grille
         for (const [sx, sz] of [
           [-1, -1],
@@ -501,6 +569,8 @@ export function buildSite(
   rects: SketchRect[],
   roadLabel: string,
   ft: (metres: number) => string,
+  /** Model look: a plinth with lawn and trimmed trees, no road, labels or dimension lines. */
+  model = false,
 ) {
   const g = new THREE.Group();
   const r = rnd(Math.round(W * 31 + D * 7));
@@ -551,17 +621,24 @@ export function buildSite(
     Z1 = Math.max(D + 0.6, Z0 + plot.d);
   const span = Math.max(X1 - X0, Z1 - Z0);
 
-  // land around, the road in front with a footpath
-  plane(grass, X0 - span * 3, Z0 - span * 3, span * 7, span * 7, -0.16);
-  plane(kerb, X0 - span * 3, Z1 + 0.25, span * 7, 1.4, -0.14);
-  plane(asphalt, X0 - span * 3, Z1 + 1.65, span * 7, 7, -0.13);
-  for (let x = X0 - span * 3; x < X1 + span * 3; x += 3) plane(white, x, Z1 + 5.1, 1.5, 0.14, -0.12);
-  const road = groundText(roadLabel, 0.8, { color: "#12345a" });
-  road.position.set((X0 + X1) / 2, -0.11, Z1 + 3.3);
-  g.add(road);
+  if (model) {
+    // a plinth like an architect's model: light slab under the plot with a paved rim around the lawn
+    const rim = 0.55;
+    box(S("#dfe3e8", 0.9), X0 - rim, -1.25, Z0 - rim, X1 - X0 + 2 * rim, 1.23, Z1 - Z0 + 2 * rim);
+    box(S("#eef0f3", 0.85), X0 - rim, -0.03, Z0 - rim, X1 - X0 + 2 * rim, 0.03, Z1 - Z0 + 2 * rim, false);
+  } else {
+    // land around, the road in front with a footpath
+    plane(grass, X0 - span * 3, Z0 - span * 3, span * 7, span * 7, -0.16);
+    plane(kerb, X0 - span * 3, Z1 + 0.25, span * 7, 1.4, -0.14);
+    plane(asphalt, X0 - span * 3, Z1 + 1.65, span * 7, 7, -0.13);
+    for (let x = X0 - span * 3; x < X1 + span * 3; x += 3) plane(white, x, Z1 + 5.1, 1.5, 0.14, -0.12);
+    const road = groundText(roadLabel, 0.8, { color: "#12345a" });
+    road.position.set((X0 + X1) / 2, -0.11, Z1 + 3.3);
+    g.add(road);
+  }
 
   // inside the plot: lawn, then the house on top
-  plane(grass2, X0, Z0, X1 - X0, Z1 - Z0, -0.02);
+  plane(model ? S("#8bb866") : grass2, X0, Z0, X1 - X0, Z1 - Z0, model ? -0.01 : -0.02);
 
   // boundary wall with a gate in front of the parking (or the main door)
   const bt = 0.15,
@@ -635,6 +712,39 @@ export function buildSite(
         g.add(fr);
       }
     }
+  }
+
+  if (model) {
+    // hedges along the sides and back, trimmed round trees and shrubs on the lawn
+    const hedgeM = S("#4c8a3a", 0.9);
+    const shrub = S("#5a9a43", 0.9);
+    const hw = Math.min(0.5, sx - 0.2);
+    if (hw > 0.25) {
+      box(hedgeM, X0 + 0.08, 0, Z0 + 0.1, hw, 0.6, Z1 - Z0 - 0.5);
+      box(hedgeM, X1 - hw - 0.08, 0, Z0 + 0.1, hw, 0.6, Z1 - Z0 - 0.5);
+    }
+    if (plot.back > 0.7) box(hedgeM, X0 + 0.1, 0, Z0 + 0.08, X1 - X0 - 0.2, 0.55, Math.min(0.5, plot.back - 0.25));
+    const topiary = (x: number, z: number, s: number) => {
+      const t = new THREE.Mesh(new THREE.CylinderGeometry(0.05 * s, 0.07 * s, 0.9 * s, 8), trunk);
+      t.position.set(x, 0.45 * s, z);
+      t.castShadow = true;
+      g.add(t);
+      sphere(r() > 0.5 ? leafA : leafB, x, 1.15 * s, z, 0.42 * s);
+    };
+    const front = Z1 - 0.75;
+    const lawnL = [X0 + 0.7, g0 - 0.5],
+      lawnR = [g1 + 0.5, X1 - 0.7];
+    for (const [a, b] of [lawnL, lawnR]) {
+      if (b - a < 0.2) continue;
+      topiary((a + b) / 2, front, 1);
+      if (b - a > 2.2) {
+        sphere(shrub, a + 0.25, 0.25, front - 0.1, 0.28);
+        sphere(shrub, b - 0.25, 0.25, front - 0.1, 0.28);
+      }
+    }
+    if (sx > 0.9) for (let z = Z0 + 1.2; z < D - 1.4; z += 3.2) topiary(X0 + sx / 2, z, 0.9);
+    if (sx > 0.9) for (let z = Z0 + 2.4; z < D - 1.4; z += 3.6) topiary(X1 - sx / 2, z, 0.9);
+    return { group: g, extents: { X0, X1, Z0, Z1 } };
   }
 
   // trees on the neighbouring land

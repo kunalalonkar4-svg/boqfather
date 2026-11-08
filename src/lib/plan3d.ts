@@ -158,9 +158,16 @@ export function floorBlocks(
     doorLintel?: boolean;
     /** Stair steps (off when the floor is shown on its own). */
     stair?: boolean;
+    /**
+     * Wall height at a point (x, z in metres), for a cut-away model: tall at the back and left, low at the
+     * front and right, medium inside. Overrides wallH; walls, columns, sills, glass and lintels follow it.
+     */
+    heightAt?: (x: number, z: number) => number;
   } = {},
 ): { blocks: Block[]; tiles: FloorTile[] } {
   const WALL_H = opts.wallH ?? 2.9;
+  const hAt = (r: Rect2) =>
+    opts.heightAt ? opts.heightAt((r.x + r.w / 2) * CELL, (r.y + r.h / 2) * CELL) : WALL_H;
   const nx = Math.ceil(W / CELL),
     nz = Math.ceil(D / CELL);
   const g = new Uint8Array(nx * nz).fill(WALL);
@@ -192,17 +199,39 @@ export function floorBlocks(
       y: base + y0,
       h: y1 - y0,
     });
-  for (const r of mergeGrid(g, nx, nz, WALL)) add(r, "wall", 0, WALL_H);
-  for (const r of mergeGrid(g, nx, nz, COL)) add(r, "column", 0, WALL_H + 0.02);
-  if (opts.doorLintel !== false && WALL_H > DOOR_H) {
-    for (const r of mergeGrid(g, nx, nz, DOOR)) add(r, "lintel", DOOR_H, WALL_H);
-    for (const r of mergeGrid(g, nx, nz, ARCH)) add(r, "lintel", DOOR_H, WALL_H);
+  if (opts.heightAt) {
+    // cut-away model: give every wall / column cell the class of its height, then merge each class on its own
+    const classes = new Map<number, number>(); // height → grid value of its walls (columns use value + 1)
+    for (let j = 0; j < nz; j++)
+      for (let i = 0; i < nx; i++) {
+        const v = g[j * nx + i];
+        if (v !== WALL && v !== COL) continue;
+        const h = opts.heightAt((i + 0.5) * CELL, (j + 0.5) * CELL);
+        let id = classes.get(h);
+        if (id === undefined) {
+          id = 10 + classes.size * 2;
+          classes.set(h, id);
+        }
+        g[j * nx + i] = v === COL ? id + 1 : id;
+      }
+    for (const [h, id] of classes) {
+      for (const r of mergeGrid(g, nx, nz, id)) add(r, "wall", 0, h);
+      for (const r of mergeGrid(g, nx, nz, id + 1)) add(r, "column", 0, h + 0.02);
+    }
+  } else {
+    for (const r of mergeGrid(g, nx, nz, WALL)) add(r, "wall", 0, WALL_H);
+    for (const r of mergeGrid(g, nx, nz, COL)) add(r, "column", 0, WALL_H + 0.02);
   }
-  const top = Math.min(DOOR_H, WALL_H);
+  if (opts.doorLintel !== false) {
+    for (const r of mergeGrid(g, nx, nz, DOOR)) if (hAt(r) > DOOR_H) add(r, "lintel", DOOR_H, hAt(r));
+    for (const r of mergeGrid(g, nx, nz, ARCH)) if (hAt(r) > DOOR_H) add(r, "lintel", DOOR_H, hAt(r));
+  }
   for (const r of mergeGrid(g, nx, nz, WIN)) {
-    add(r, "sill", 0, SILL_H);
-    if (WALL_H > DOOR_H) add(r, "lintel", DOOR_H, WALL_H);
-    add(r, "glass", SILL_H, top);
+    const h = hAt(r);
+    const top = Math.min(DOOR_H, h);
+    add(r, "sill", 0, Math.min(SILL_H, h));
+    if (h > DOOR_H) add(r, "lintel", DOOR_H, h);
+    if (top > SILL_H + 0.05) add(r, "glass", SILL_H, top);
   }
   // slab under this floor
   blocks.push({ kind: "slab", x: 0, z: 0, w: W, d: D, y: base - 0.14, h: 0.14 });
