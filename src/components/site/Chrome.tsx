@@ -26,6 +26,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
     { href: langPath(lang), label: hi ? "होम" : "Home", desk: true },
     { href: `${langPath(lang)}#features`, label: hi ? "फ़ीचर" : "Features", desk: true },
     { href: langPath(lang, "naksha"), label: hi ? "नक्शे और खर्च" : "Plans & Cost", desk: true },
+    { href: langPath(lang, "elevations"), label: hi ? "एलिवेशन" : "Elevations", desk: true },
     { href: langPath(lang, "calculators"), label: d.nav_calculators, desk: true },
     { href: langPath(lang, "plan-to-estimate"), label: hi ? "नक्शे से एस्टिमेट" : "Plan → Estimate", pro: true, desk: true },
     { href: langPath(lang, "pro"), label: hi ? "प्राइसिंग" : "Pricing", desk: true },
@@ -205,6 +206,14 @@ export function SiteFooter({ lang }: { lang: Lang }) {
                   {lang === "hi"
                     ? "घर बनाने की पूरी गाइड →"
                     : "House building guide →"}
+                </Link>
+              </p>
+              <p className="mt-2 text-[14px]">
+                <Link
+                  href={langPath(lang, "elevations")}
+                  className="font-semibold text-white hover:text-[#8fb8ee]"
+                >
+                  {lang === "hi" ? "फ़्रंट एलिवेशन डिज़ाइन →" : "Front elevation designs →"}
                 </Link>
               </p>
               <p className="mt-2 text-[14px]">

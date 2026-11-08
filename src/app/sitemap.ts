@@ -4,6 +4,7 @@ import { PLOTS, plotSlug, SQFT_SIZES, sqftSlug } from "@/content/plots";
 import { GUIDE_BASE, QUESTIONS, TOPICS } from "@/content/guideTopics";
 import { GAJ, NAKSHE } from "@/content/naksha";
 import { CITIES } from "@/content/cities";
+import { ELEVATIONS } from "@/content/elevations";
 import { langPath, SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -23,6 +24,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "naksha",
     ...NAKSHE.map((n) => `naksha/${n.slug}`),
     ...GAJ.map((g) => `naksha/gaj/${g.slug}`),
+    "elevations",
+    ...ELEVATIONS.map((x) => `elevations/${x.slug}`),
     "house-construction-cost-in",
     ...CITIES.map((c) => `house-construction-cost-in/${c.slug}`),
     "plan-to-estimate",

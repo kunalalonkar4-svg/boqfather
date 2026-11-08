@@ -344,6 +344,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
           ctas={
             <>
               <Link href={langPath(lang, `naksha/${n.slug}`)} className={btnDark}>{L(lang, "Open a plan", "नक्शा खोलें")}</Link>
+              <Link href={langPath(lang, "elevations")} className={btnLight}>{L(lang, "Browse elevations", "एलिवेशन देखें")}</Link>
               <Link href={langPath(lang, "naksha")} className={btnLight}>{L(lang, "All plans", "सभी नक्शे")}</Link>
             </>
           }

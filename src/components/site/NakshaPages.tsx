@@ -361,10 +361,10 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             alt={L(lang, `${s} ft G+1 house front elevation, ${nakshaHinglish(n)}`, `${s} फ़ीट G+1 घर का फ़्रंट एलिवेशन — ${nakshaHinglish(n)}`)}
             width={nakshaPreview(n).w}
             height={nakshaPreview(n).h}
-            className="aspect-[5/3] w-full object-cover"
+            className="aspect-[16/9] w-full object-cover"
           />
         </div>
-        {!nakshaPreview(n).own && (
+        {(
           <p className="text-[12.5px] text-muted">
             {L(lang, "Artist impression of the front. Final look depends on your design and finishes.", "सामने के हिस्से का काल्पनिक चित्र। अंतिम रूप आपके डिज़ाइन और फ़िनिश पर निर्भर करेगा।")}
           </p>
