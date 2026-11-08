@@ -262,7 +262,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
               </div>
 
               <dl className="mt-4 grid grid-cols-2 gap-2">
-                <div className="rounded-xl bg-[#222427] p-3">
+                <div className="rounded-xl bg-white/[0.07] ring-1 ring-white/10 p-3">
                   <dt className="text-[12px] text-[#c3cfdd]">
                     {hi ? "ठेकेदार" : "Quote"}
                   </dt>
@@ -273,7 +273,7 @@ export default function QuoteCalc({ lang }: { lang: Lang }) {
                     ₹{lakhWords(res.quoteTotal)}
                   </dd>
                 </div>
-                <div className="rounded-xl bg-[#222427] p-3">
+                <div className="rounded-xl bg-white/[0.07] ring-1 ring-white/10 p-3">
                   <dt className="text-[12px] text-[#c3cfdd]">
                     {hi ? "BOQFather बेंचमार्क" : "BOQFather benchmark"}
                   </dt>

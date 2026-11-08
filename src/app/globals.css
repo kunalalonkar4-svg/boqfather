@@ -252,3 +252,30 @@ input[type="number"] {
     animation: none !important;
   }
 }
+
+/* ---------- polish ---------- */
+/* The accent blue (--amber) is for light backgrounds; on navy panels it is hard to read, so use a lighter blue there. */
+:where(.bg-ink, .bg-night, .bg-night-2, .bg-night-3, .bg-steel) .text-amber,
+:where(.bg-ink, .bg-night, .bg-night-2, .bg-night-3, .bg-steel).text-amber {
+  color: #8dbaff;
+}
+
+/* Visible keyboard focus everywhere (buttons, links, inputs). */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid #1769d2;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+:where(.bg-ink, .bg-night, .bg-night-2, .bg-night-3, .bg-steel)
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline-color: #8dbaff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

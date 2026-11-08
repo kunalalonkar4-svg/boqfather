@@ -241,9 +241,9 @@ export function HomeLight({ lang }: { lang: Lang }) {
             {/* collage: a 3D plan, the BOQ on a phone, a floating cost card */}
             <div className="relative min-w-0">
               <div className="overflow-hidden rounded-[18px] border border-line bg-[#eef3f9] shadow-[0_40px_80px_-40px_rgba(22,24,26,0.45)]">
-                <img src={nakshaPreview(n).src} alt={nakshaTitle(n, lang)} className="aspect-[16/11] w-full object-cover" fetchPriority="high" />
+                <img src={nakshaPreview(n).src} alt={nakshaTitle(n, lang)} className="aspect-[16/10] w-full object-cover object-top" fetchPriority="high" />
               </div>
-              <div className="absolute -bottom-8 -left-3 w-[44%] max-w-[230px] overflow-hidden rounded-[26px] border-[6px] border-ink bg-white shadow-2xl sm:-left-8">
+              <div className="absolute -bottom-8 -left-3 w-[38%] max-w-[205px] overflow-hidden rounded-[26px] border-[6px] border-ink bg-white shadow-2xl sm:-left-8">
                 <img src={`/home/shots/boq${hiSfx}.webp`} alt={L(lang, "Item-wise BOQ on a phone", "फ़ोन पर आइटम-वार BOQ")} className="aspect-[9/16] w-full object-cover object-left-top" />
               </div>
               <div className="absolute -right-2 -top-5 rounded-2xl border border-line bg-white px-4 py-3 shadow-xl sm:-right-6">

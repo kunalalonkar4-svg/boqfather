@@ -225,7 +225,7 @@ export function Plan3D({
             type="checkbox"
             checked={labels}
             onChange={(e) => setLabels(e.target.checked)}
-            className="h-4 w-4 accent-[#16181a]"
+            className="h-4 w-4 accent-[#1769d2]"
           />
           {L(lang, "Room names", "कमरों के नाम")}
         </label>

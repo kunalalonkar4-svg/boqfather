@@ -167,7 +167,7 @@ export default function HouseCalc({
                 <span className="text-[13px] font-bold uppercase tracking-wide text-amber">
                   {d.total_cost}
                 </span>
-                <span className="rounded-full bg-[#2a2c2f] px-2.5 py-1 text-[11px] font-semibold text-[#c3cfdd]">
+                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-[#c3cfdd]">
                   {d.preliminary}
                 </span>
               </div>
@@ -178,13 +178,13 @@ export default function HouseCalc({
                 ≈ ₹{lakhWords(v.total)}
               </div>
               <dl className="mt-4 grid grid-cols-3 gap-2">
-                <div className="rounded-xl bg-[#222427] p-3">
+                <div className="rounded-xl bg-white/[0.07] p-3 ring-1 ring-white/10">
                   <dt className="text-[12px] text-[#c3cfdd]">{d.per_sqft}</dt>
                   <dd className="text-[18px] font-bold text-amber">
                     {rupees(v.ratePerSqft)}
                   </dd>
                 </div>
-                <div className="rounded-xl bg-[#222427] p-3">
+                <div className="rounded-xl bg-white/[0.07] p-3 ring-1 ring-white/10">
                   <dt className="text-[12px] text-[#c3cfdd]">
                     {lang === "hi" ? "बिल्ट-अप" : "Built-up"}
                   </dt>
@@ -192,7 +192,7 @@ export default function HouseCalc({
                     {inr(v.totalSqft)} sqft
                   </dd>
                 </div>
-                <div className="rounded-xl bg-[#222427] p-3">
+                <div className="rounded-xl bg-white/[0.07] p-3 ring-1 ring-white/10">
                   <dt className="text-[12px] text-[#c3cfdd]">{d.timeline}</dt>
                   <dd className="text-[18px] font-bold">
                     ~{v.months} {d.months}

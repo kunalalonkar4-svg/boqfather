@@ -1370,7 +1370,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                 <span className="text-[13px] font-bold uppercase tracking-wide text-amber">
                   {floorTag} · {hi ? "आइटम-वार BOQ" : "Item-wise BOQ"}
                 </span>
-                <span className="rounded-full bg-[#2a2c2f] px-2.5 py-1 text-[11px] font-semibold text-[#c3cfdd]">
+                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-[#c3cfdd]">
                   {d.preliminary}
                 </span>
               </div>
@@ -1390,7 +1390,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                 )}
               </div>
               <dl className="mt-4 grid grid-cols-3 gap-2">
-                <div className="rounded-xl bg-[#222427] p-3">
+                <div className="rounded-xl bg-white/[0.07] ring-1 ring-white/10 p-3">
                   <dt className="text-[12px] text-[#c3cfdd]">
                     {d.per_sqft}
                     {res.externalTotal > 0 ? (hi ? " (घर)" : " (house)") : ""}
@@ -1399,7 +1399,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                     {rupees(res.perSqft)}
                   </dd>
                 </div>
-                <div className="rounded-xl bg-[#222427] p-3">
+                <div className="rounded-xl bg-white/[0.07] ring-1 ring-white/10 p-3">
                   <dt className="text-[12px] text-[#c3cfdd]">
                     {hi ? "कुल बिल्ट-अप" : "Total built-up"}
                   </dt>
@@ -1407,7 +1407,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                     {inr(res.geometry.builtUpSqft)}
                   </dd>
                 </div>
-                <div className="rounded-xl bg-[#222427] p-3">
+                <div className="rounded-xl bg-white/[0.07] ring-1 ring-white/10 p-3">
                   <dt className="text-[12px] text-[#c3cfdd]">
                     {hi ? "BOQ आइटम" : "BOQ items"}
                   </dt>
@@ -1420,7 +1420,7 @@ export default function BoqCalc({ lang }: { lang: Lang }) {
                 {res.geometry.perFloor.map((p) => (
                   <li
                     key={p.floor}
-                    className="flex flex-wrap justify-between gap-x-3 rounded-lg bg-[#222427] px-3 py-2"
+                    className="flex flex-wrap justify-between gap-x-3 rounded-lg bg-white/[0.07] ring-1 ring-white/10 px-3 py-2"
                   >
                     <span className="font-semibold">
                       {FLOOR_NAME(p.floor, hi)}
