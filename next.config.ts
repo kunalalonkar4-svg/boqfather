@@ -5,6 +5,14 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
+  // guniyo.com used to host a different app (a contractor accounts app). Old addresses that Google still has
+  // go to the closest page on this site, with a permanent redirect.
+  async redirects() {
+    return [
+      { source: "/disclaimer", destination: "/about/", permanent: true },
+      { source: "/disclaimer/", destination: "/about/", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;
