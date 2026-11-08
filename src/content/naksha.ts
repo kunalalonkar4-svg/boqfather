@@ -62,6 +62,13 @@ export const NAKSHE: Naksha[] = [
 
 export const getNaksha = (slug: string) => NAKSHE.find((n) => n.slug === slug);
 
+/**
+ * One design = one plot size and type (house or house-with-shop). Its East, North, West and South
+ * nakshe use the same rooms, set for each road direction, so galleries show each design once
+ * (the East-facing plan) and let the visitor switch the direction. The facing pages stay for search.
+ */
+export const DESIGNS: Naksha[] = NAKSHE.filter((n) => n.facing === "E");
+
 export const gajOf = (p: PlotCfg) => (p.w * p.d) / 9;
 
 /** Gaj (square yard) groups people search for, with the plot sizes in each. */

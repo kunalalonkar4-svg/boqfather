@@ -4,6 +4,7 @@ import { CALCULATORS } from "@/content/calculators";
 import { CHECKLIST, CHECKLIST_COUNT, ytUrl } from "@/content/checklist";
 import { CITIES } from "@/content/cities";
 import {
+  DESIGNS,
   FACING_NAME,
   getNaksha,
   NAKSHE,
@@ -114,20 +115,20 @@ export function HomeLight({ lang }: { lang: Lang }) {
     const xi = nakshaInfo(x);
     return {
       href: langPath(lang, `naksha/${x.slug}`),
-      title: `${x.plot.w}×${x.plot.d} ${facing(x)}`,
+      // a design card: the four road directions share the same rooms, so the title has no direction
+      title: `${x.plot.w}×${x.plot.d}${x.kind === "shop" ? L(lang, " house with shop", " दुकान के साथ घर") : L(lang, " house plan", " घर का नक्शा")}`,
       sub: `${xi.bhk} BHK · G+1 · ${num(xi.builtUp)} sq ft · ${L(lang, "Vastu", "वास्तु")} ${xi.vastu.pct}%`,
       cost: lakh(xi.total, lang),
       img3d: nakshaPreview(x).src,
       img2d: nakshaImage(x),
     };
   };
-  const pick = (f: (x: Naksha) => boolean, k = 6) => NAKSHE.filter(f).slice(0, k).map(card);
+  // one card per design (the East-facing plan links to the other directions), so no tab repeats the same rooms
+  const pick = (f: (x: Naksha) => boolean, k = 6) => DESIGNS.filter(f).slice(0, k).map(card);
   const tabs = [
     { key: "2", label: "2 BHK", plans: pick((x) => nakshaInfo(x).bhk === 2 && x.kind === "house") },
-    { key: "3", label: "3 BHK", plans: pick((x) => nakshaInfo(x).bhk === 3 && x.kind === "house" && x.facing === "E") },
+    { key: "3", label: "3 BHK", plans: pick((x) => nakshaInfo(x).bhk === 3 && x.kind === "house") },
     { key: "4", label: "4 BHK", plans: pick((x) => nakshaInfo(x).bhk >= 4 && x.kind === "house") },
-    { key: "E", label: L(lang, "East facing", "पूर्व मुखी"), plans: pick((x) => x.facing === "E" && x.kind === "house" && x.plot.w >= 25) },
-    { key: "N", label: L(lang, "North facing", "उत्तर मुखी"), plans: pick((x) => x.facing === "N" && x.kind === "house" && x.plot.w >= 25) },
     { key: "shop", label: L(lang, "With shop", "दुकान के साथ"), plans: pick((x) => x.kind === "shop") },
   ].filter((x) => x.plans.length);
 
@@ -138,7 +139,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
   const stats: [number, string][] = [
     [CALCULATORS.length, L(lang, "calculators", "कैलकुलेटर")],
     [items, L(lang, "BOQ items per house", "BOQ आइटम हर घर में")],
-    [NAKSHE.length, L(lang, "house plans, 2D + 3D", "घर के नक्शे, 2D + 3D")],
+    [DESIGNS.length, L(lang, "house designs, 2D + 3D", "घर के डिज़ाइन, 2D + 3D")],
     [CITIES.length, L(lang, "city rates", "शहरों के रेट")],
     [CHECKLIST_COUNT, L(lang, "site checks", "साइट जांच")],
   ];

@@ -3,6 +3,7 @@ import { nakshaPreview } from "@/content/nakshaPreview";
 import { ROOM_DEFS, RoomType } from "@/engine";
 import {
   FACING_NAME,
+  DESIGNS,
   FACINGS,
   GAJ,
   gajOf,
@@ -31,6 +32,42 @@ const num = (n: number, d = 0) =>
   n.toLocaleString("en-IN", { maximumFractionDigits: d });
 const FT = 0.3048;
 const BASE = "naksha";
+
+/** Vastu zones, room roles and verdicts in plain words (English / Hindi) for the direction-wise table. */
+const ZONE_NAME: Record<string, [string, string]> = {
+  NE: ["North-East", "उत्तर-पूर्व"],
+  N: ["North", "उत्तर"],
+  NW: ["North-West", "उत्तर-पश्चिम"],
+  E: ["East", "पूर्व"],
+  C: ["Centre", "बीच"],
+  W: ["West", "पश्चिम"],
+  SE: ["South-East", "दक्षिण-पूर्व"],
+  S: ["South", "दक्षिण"],
+  SW: ["South-West", "दक्षिण-पश्चिम"],
+};
+const ROLE_NAME: Record<string, [string, string]> = {
+  entrance: ["Main entrance", "मुख्य प्रवेश"],
+  kitchen: ["Kitchen", "रसोई"],
+  master: ["Master bedroom", "मास्टर बेडरूम"],
+  bedroom: ["Bedroom", "बेडरूम"],
+  pooja: ["Pooja", "पूजा"],
+  toilet: ["Toilet", "टॉयलेट"],
+  stair: ["Staircase", "सीढ़ी"],
+  hall: ["Living hall", "लिविंग हॉल"],
+  dining: ["Dining", "डाइनिंग"],
+  parking: ["Car parking", "कार पार्किंग"],
+  balcony: ["Balcony", "बालकनी"],
+};
+const STATUS_NAME: Record<string, [string, string]> = {
+  good: ["Recommended", "उत्तम"],
+  ok: ["Acceptable", "चलने लायक़"],
+  bad: ["Not ideal", "अनुकूल नहीं"],
+};
+const STATUS_CLASS: Record<string, string> = {
+  good: "text-good",
+  ok: "text-steel",
+  bad: "text-warn",
+};
 const naksheName = (lang: Lang) =>
   L(lang, "House plans (naksha)", "घर के नक्शे");
 
@@ -135,8 +172,8 @@ export const naksheTitle = (lang: Lang) =>
 export const naksheDescription = (lang: Lang) =>
   L(
     lang,
-    `${NAKSHE.length} house plans drawn to scale — 20×40 to 40×60, east, north, west and south facing, with parking or shop — each with a Vastu check, room sizes and construction cost.`,
-    `स्केल पर बने ${NAKSHE.length} घर के नक्शे — 20×40 से 40×60, पूर्व, उत्तर, पश्चिम और दक्षिण मुखी, पार्किंग या दुकान के साथ — हर एक में वास्तु जांच, कमरों के साइज़ और बनाने का खर्च।`,
+    `${DESIGNS.length} house designs drawn to scale — 20×40 to 50×80, each set for east, north, west and south facing plots, with parking or a shop — every one with a Vastu check, room sizes and construction cost.`,
+    `स्केल पर बने ${DESIGNS.length} घर के डिज़ाइन — 20×40 से 50×80, हर एक पूर्व, उत्तर, पश्चिम और दक्षिण मुखी प्लॉट के लिए, पार्किंग या दुकान के साथ — हर एक में वास्तु जांच, कमरों के साइज़ और बनाने का खर्च।`,
   );
 
 export function NakshaIndexPage({ lang }: { lang: Lang }) {
@@ -204,6 +241,20 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
   const tool = `${langPath(lang, "house-boq-estimate")}?w=${p.w}&d=${p.d}&bhk=${p.bhk}&floors=2&front=${p.front}&back=${p.back}&side=${p.side}&facing=${n.facing}`;
   const mat = (k: string) => res.materials.find((m) => m.key === k);
   const bad = i.vastu.rows.filter((x) => x.status === "bad").length;
+  const entrance = i.vastu.rows.find((x) => x.role === "entrance");
+  // number rooms that repeat on a floor (Toilet 1, Toilet 2…) so the Vastu table rows can be told apart
+  const roleTotal = new Map<string, number>();
+  i.vastu.rows.forEach((r) => {
+    const k = `${r.floor}-${r.role}`;
+    roleTotal.set(k, (roleTotal.get(k) ?? 0) + 1);
+  });
+  const roleSeen = new Map<string, number>();
+  const vastuRows = i.vastu.rows.map((r) => {
+    const k = `${r.floor}-${r.role}`;
+    const seen = (roleSeen.get(k) ?? 0) + 1;
+    roleSeen.set(k, seen);
+    return { r, n: (roleTotal.get(k) ?? 1) > 1 ? seen : 0 };
+  });
   const siblings = NAKSHE.filter(
     (x) => plotSlug(x.plot) === plotSlug(p) && x.kind === n.kind && x !== n,
   );
@@ -378,6 +429,45 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <H2>
+          {L(
+            lang,
+            `Vastu for a ${f.en.toLowerCase()} plot — where each room sits`,
+            `${f.hi} प्लॉट का वास्तु — कौन सा कमरा किस दिशा में`,
+          )}
+        </H2>
+        <p className="max-w-3xl text-[14px] leading-relaxed text-body">
+          {entrance
+            ? L(
+                lang,
+                `With the road on the ${f.en.split(" ")[0].toLowerCase()} side, the main door of this plan is in the ${ZONE_NAME[entrance.zone]?.[0] ?? entrance.zone} part of the front wall (${STATUS_NAME[entrance.status][0].toLowerCase()}). The same rooms are arranged differently for each road direction, so the Vastu result changes: this ${f.en.toLowerCase()} plan scores ${i.vastu.pct}%.`,
+                `सड़क ${f.hi.replace(" मुखी", "")} दिशा में होने पर इस नक्शे का मुख्य दरवाज़ा सामने की दीवार के ${ZONE_NAME[entrance.zone]?.[1] ?? entrance.zone} हिस्से में है (${STATUS_NAME[entrance.status][1]})। वही कमरे हर सड़क दिशा के लिए अलग तरह से रखे जाते हैं, इसलिए वास्तु नतीजा बदलता है: यह ${f.hi} नक्शा ${i.vastu.pct}% है।`,
+              )
+            : L(
+                lang,
+                `The same rooms are arranged differently for each road direction, so the Vastu result changes: this ${f.en.toLowerCase()} plan scores ${i.vastu.pct}%.`,
+                `वही कमरे हर सड़क दिशा के लिए अलग तरह से रखे जाते हैं, इसलिए वास्तु नतीजा बदलता है: यह ${f.hi} नक्शा ${i.vastu.pct}% है।`,
+              )}
+        </p>
+        <Table
+          head={[
+            L(lang, "Room", "कमरा"),
+            L(lang, "Direction", "दिशा"),
+            L(lang, "Vastu", "वास्तु"),
+          ]}
+          rows={vastuRows.map(({ r, n }) => [
+            `${ROLE_NAME[r.role] ? ROLE_NAME[r.role][lang === "hi" ? 1 : 0] : r.role}${n ? ` ${n}` : ""}${r.floor > 0 ? L(lang, " (first floor)", " (पहली मंज़िल)") : ""}`,
+            ZONE_NAME[r.zone]
+              ? ZONE_NAME[r.zone][lang === "hi" ? 1 : 0]
+              : r.zone,
+            <span key={`${r.floor}-${r.key}`} className={`font-semibold ${STATUS_CLASS[r.status]}`}>
+              {STATUS_NAME[r.status][lang === "hi" ? 1 : 0]}
+            </span>,
+          ])}
+        />
       </section>
 
       <section className="flex flex-col gap-4">

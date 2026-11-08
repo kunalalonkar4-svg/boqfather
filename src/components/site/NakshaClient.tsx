@@ -60,12 +60,14 @@ export function NakshaGallery({
   sizes: string[];
 }) {
   const [size, setSize] = useState("");
-  const [facing, setFacing] = useState("");
+  // The four directions of a plot share the same rooms, so show one direction at a time (East first)
+  // instead of four near-identical cards per plot. Every card is still in the HTML for search engines.
+  const [facing, setFacing] = useState("E");
   const [kind, setKind] = useState("");
   const shown = cards.filter(
     (c) =>
       (!size || c.size === size) &&
-      (!facing || c.facing === facing) &&
+      c.facing === facing &&
       (!kind || c.kind === kind),
   );
   const sel =
@@ -95,7 +97,6 @@ export function NakshaGallery({
             value={facing}
             onChange={(e) => setFacing(e.target.value)}
           >
-            <option value="">{L(lang, "All directions", "सभी दिशा")}</option>
             <option value="E">{L(lang, "East facing", "पूर्व मुखी")}</option>
             <option value="N">{L(lang, "North facing", "उत्तर मुखी")}</option>
             <option value="W">{L(lang, "West facing", "पश्चिम मुखी")}</option>
@@ -119,7 +120,11 @@ export function NakshaGallery({
           </select>
         </label>
         <span className="pb-2 text-[13px] text-muted">
-          {L(lang, `${shown.length} plans`, `${shown.length} नक्शे`)}
+          {L(
+            lang,
+            `${shown.length} designs · same rooms, set for your road direction`,
+            `${shown.length} डिज़ाइन · वही कमरे, आपकी सड़क की दिशा के अनुसार`,
+          )}
         </span>
       </div>
       <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
