@@ -510,6 +510,47 @@ export function HomeLight({ lang }: { lang: Lang }) {
           </div>
         </section>
 
+        {/* how every number is made: the trust block, in the same drawing-sheet language as the hero */}
+        <section className="bg-[#eef1f4]">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
+            <div className="overflow-hidden rounded-[6px] border border-[#0e2a47] bg-white shadow-[8px_8px_0_0_rgba(14,42,71,0.12)]">
+              <div className="flex flex-wrap items-center justify-between gap-2 bg-[#ffc933] px-5 py-3 text-[#0e2a47]">
+                <h2 className="font-hoard text-[22px] font-black leading-tight sm:text-[28px]">
+                  {L(lang, "How every number is made", "हर आंकड़ा कैसे बनता है")}
+                </h2>
+                <Link href={langPath(lang, "about")} className="text-[14px] font-bold underline underline-offset-4">
+                  {L(lang, "About BOQFather", "BOQFather के बारे में")}
+                </Link>
+              </div>
+              <ul className="grid divide-y divide-[#0e2a47]/25 text-[#0e2a47] sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
+                {[
+                  {
+                    h: L(lang, "Measured, not guessed", "नापकर, अंदाज़े से नहीं"),
+                    p: L(lang, "56 items are taken off the drawn plan: walls, slabs, steel, finishes. Quantities follow IS 456 and IS 1200 practice.", "56 आइटम बने हुए नक्शे से निकाले जाते हैं: दीवार, स्लैब, स्टील, फिनिशिंग। मात्रा IS 456 और IS 1200 के तरीक़े से।"),
+                  },
+                  {
+                    h: L(lang, "Every rate is yours to change", "हर रेट आप बदल सकते हैं"),
+                    p: L(lang, "Start from mid-city market rates, then type your own contractor's rate. Every total updates.", "मध्यम शहर के बाज़ार रेट से शुरू करें, फिर अपने ठेकेदार का रेट डालें। हर टोटल बदल जाता है।"),
+                  },
+                  {
+                    h: L(lang, "Working shown", "पूरा हिसाब दिखता है"),
+                    p: L(lang, "Open any item to see its measurement. You can check the sum, or hand it to your engineer to check.", "किसी भी आइटम को खोलकर उसकी नाप देखें। आप हिसाब जाँच सकते हैं या अपने इंजीनियर से जँचवा सकते हैं।"),
+                  },
+                  {
+                    h: L(lang, "Built by a civil engineer", "सिविल इंजीनियर ने बनाया"),
+                    p: L(lang, "It is a planning estimate. Structural sizes and steel must be confirmed by your engineer before work starts.", "यह प्लानिंग एस्टिमेट है। काम शुरू होने से पहले स्ट्रक्चर साइज़ और स्टील आपके इंजीनियर से पक्का करवाएं।"),
+                  },
+                ].map((x) => (
+                  <li key={x.h} className="flex flex-col gap-2 p-5">
+                    <h3 className="text-[17px] font-extrabold leading-snug">{x.h}</h3>
+                    <p className="text-[14px] leading-relaxed text-[#3d4f66]">{x.p}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
         <section className="bg-[#f7fafe]">
           <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:py-20">
