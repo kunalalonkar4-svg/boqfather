@@ -1,12 +1,18 @@
 import "server-only";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { type Naksha, nakshaImage, nakshaImage3d } from "./naksha";
+import { type Naksha } from "./naksha";
+import { plotSlug } from "./plots";
 
-/** The 3D preview if it has been made (scripts/naksha-3d-images.mjs), else the 2D plan image. */
-export function nakshaPreview(n: Naksha): { src: string; w: number; h: number; is3d: boolean } {
-  const p = nakshaImage3d(n);
-  return existsSync(join(process.cwd(), "public", p))
-    ? { src: p, w: 1200, h: 761, is3d: true }
-    : { src: nakshaImage(n), w: 1054, h: 911, is3d: false };
+/**
+ * The front-elevation picture of a design. A real photo or render dropped into public/elevations/ as
+ * `<plot>.webp|jpg|png` (e.g. 30x40.webp, 25x50-shop.jpg) wins; otherwise the generated illustration is used.
+ */
+export function nakshaPreview(n: Naksha): { src: string; w: number; h: number; own: boolean } {
+  const key = `${plotSlug(n.plot)}${n.kind === "shop" ? "-shop" : ""}`;
+  for (const ext of ["webp", "jpg", "jpeg", "png"]) {
+    const rel = `/elevations/${key}.${ext}`;
+    if (existsSync(join(process.cwd(), "public", rel))) return { src: rel, w: 1200, h: 720, own: true };
+  }
+  return { src: `/naksha/elev/${n.slug}.webp`, w: 1200, h: 720, own: false };
 }

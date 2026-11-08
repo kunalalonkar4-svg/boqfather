@@ -25,7 +25,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const links: { href: string; label: string; pro?: boolean; desk?: boolean }[] = [
     { href: langPath(lang), label: hi ? "होम" : "Home", desk: true },
     { href: `${langPath(lang)}#features`, label: hi ? "फ़ीचर" : "Features", desk: true },
-    { href: langPath(lang, "naksha"), label: hi ? "घर के नक्शे" : "House Plans", desk: true },
+    { href: langPath(lang, "naksha"), label: hi ? "नक्शे और खर्च" : "Plans & Cost", desk: true },
     { href: langPath(lang, "calculators"), label: d.nav_calculators, desk: true },
     { href: langPath(lang, "plan-to-estimate"), label: hi ? "नक्शे से एस्टिमेट" : "Plan → Estimate", pro: true, desk: true },
     { href: langPath(lang, "pro"), label: hi ? "प्राइसिंग" : "Pricing", desk: true },
@@ -157,7 +157,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
                   href={langPath(lang, "house-plan")}
                   className="hover:text-white"
                 >
-                  {lang === "hi" ? "घर के नक्शे" : "House plans"}
+                  {lang === "hi" ? "नक्शे और खर्च" : "Plans & cost"}
                 </Link>
               </h2>
               <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[14px]">

@@ -352,6 +352,25 @@ export function NakshaPage({ lang, slug }: { lang: Lang; slug: string }) {
         ]}
       />
 
+      <section className="flex flex-col gap-3">
+        <H2>{L(lang, `${s} house front elevation`, `${s} घर का फ़्रंट एलिवेशन`)}</H2>
+        <div className="overflow-hidden rounded-2xl border border-line bg-white">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={nakshaPreview(n).src}
+            alt={L(lang, `${s} ft G+1 house front elevation, ${nakshaHinglish(n)}`, `${s} फ़ीट G+1 घर का फ़्रंट एलिवेशन — ${nakshaHinglish(n)}`)}
+            width={nakshaPreview(n).w}
+            height={nakshaPreview(n).h}
+            className="aspect-[5/3] w-full object-cover"
+          />
+        </div>
+        {!nakshaPreview(n).own && (
+          <p className="text-[12.5px] text-muted">
+            {L(lang, "Artist impression of the front. Final look depends on your design and finishes.", "सामने के हिस्से का काल्पनिक चित्र। अंतिम रूप आपके डिज़ाइन और फ़िनिश पर निर्भर करेगा।")}
+          </p>
+        )}
+      </section>
+
       <section className="flex flex-col gap-4">
         <H2>
           {L(

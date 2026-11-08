@@ -61,12 +61,12 @@ export function PlanTabs({
             loading="lazy"
           />
           <div className="absolute left-4 top-4 flex rounded-full bg-white/95 p-1 text-[13px] font-bold shadow">
-            {(["3D", "2D"] as const).map((m) => (
+            {(["Front", "Plan"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
-                onClick={() => setTwo(m === "2D")}
-                className={`rounded-full px-3.5 py-1 ${(m === "2D") === two ? "bg-ink text-white" : "text-ink"}`}
+                onClick={() => setTwo(m === "Plan")}
+                className={`rounded-full px-3.5 py-1 ${(m === "Plan") === two ? "bg-ink text-white" : "text-ink"}`}
               >
                 {m}
               </button>

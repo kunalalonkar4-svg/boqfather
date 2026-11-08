@@ -139,7 +139,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
   const stats: [number, string][] = [
     [CALCULATORS.length, L(lang, "calculators", "कैलकुलेटर")],
     [items, L(lang, "BOQ items per house", "BOQ आइटम हर घर में")],
-    [DESIGNS.length, L(lang, "house designs, 2D + 3D", "घर के डिज़ाइन, 2D + 3D")],
+    [DESIGNS.length, L(lang, "house designs with cost and Vastu", "लागत और वास्तु के साथ घर के डिज़ाइन")],
     [CITIES.length, L(lang, "city rates", "शहरों के रेट")],
     [CHECKLIST_COUNT, L(lang, "site checks", "साइट जांच")],
   ];
@@ -225,7 +225,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
               <ul className="flex flex-col gap-2.5">
                 <Tick>{L(lang, "Start from your plot size, a ready Vastu plan, or your own drawing", "अपने प्लॉट साइज़, तैयार वास्तु नक्शे, या अपनी ड्रॉइंग से शुरू करें")}</Tick>
                 <Tick>{L(lang, `Get an item-wise BOQ — ${items} items, steel BBS and material list`, `आइटम-वार BOQ पाएं — ${items} आइटम, सरिया BBS और मटेरियल लिस्ट`)}</Tick>
-                <Tick>{L(lang, "See the plan in 2D and 3D, download PDF and Excel", "नक्शा 2D और 3D में देखें, PDF और Excel डाउनलोड करें")}</Tick>
+                <Tick>{L(lang, "See the plan, elevation and cost, download PDF and Excel", "नक्शा, एलिवेशन और खर्च देखें, PDF और Excel डाउनलोड करें")}</Tick>
               </ul>
               <div className="mt-1 flex flex-wrap gap-3">
                 <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-14 items-center rounded-full bg-amber px-7 text-[16px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(23,105,210,0.7)] transition hover:brightness-105">
@@ -300,8 +300,8 @@ export function HomeLight({ lang }: { lang: Lang }) {
 
         <Split
           tint
-          title={L(lang, "See your naksha come to life in 3D", "अपना नक्शा 3D में बनता देखिए")}
-          text={L(lang, "Every plan is drawn to scale from the plot — walls, doors, stair and furniture — and shown in 3D on the plot with its road, garden and parking.", "हर नक्शा प्लॉट से स्केल पर बनता है — दीवारें, दरवाज़े, सीढ़ी और फ़र्नीचर — और 3D में सड़क, बगीचे और पार्किंग के साथ प्लॉट पर दिखता है।")}
+          title={L(lang, "From naksha to front elevation", "नक्शे से फ़्रंट एलिवेशन तक")}
+          text={L(lang, "Every plan is drawn to scale from the plot — walls, doors, stair and rooms — with its Vastu check, a front elevation and the full construction cost, so you can see the house and its price together.", "हर नक्शा प्लॉट से स्केल पर बनता है — दीवारें, दरवाज़े, सीढ़ी और कमरे — वास्तु जांच, फ़्रंट एलिवेशन और पूरे निर्माण खर्च के साथ, ताकि घर और उसकी कीमत साथ दिखे।")}
           points={[
             L(lang, "Ground and first floor, room sizes on every room", "ग्राउंड और पहली मंज़िल, हर कमरे पर साइज़"),
             L(lang, "Vastu chart for each room", "हर कमरे का वास्तु चार्ट"),
@@ -309,7 +309,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
           ]}
           ctas={
             <>
-              <Link href={langPath(lang, `naksha/${n.slug}`)} className={btnDark}>{L(lang, "Open a plan in 3D", "नक्शा 3D में खोलें")}</Link>
+              <Link href={langPath(lang, `naksha/${n.slug}`)} className={btnDark}>{L(lang, "Open a plan", "नक्शा खोलें")}</Link>
               <Link href={langPath(lang, "naksha")} className={btnLight}>{L(lang, "All plans", "सभी नक्शे")}</Link>
             </>
           }
@@ -318,9 +318,9 @@ export function HomeLight({ lang }: { lang: Lang }) {
               <BeforeAfter
                 before={<img src={nakshaImage(n)} alt="" className="absolute inset-0 h-full w-full bg-white object-contain p-3" />}
                 after={<img src={nakshaPreview(n).src} alt="" className="absolute inset-0 h-full w-full object-cover" />}
-                label={L(lang, "Drag to compare 2D and 3D", "2D और 3D की तुलना के लिए खींचें")}
+                label={L(lang, "Drag to compare plan and elevation", "नक्शे और एलिवेशन की तुलना के लिए खींचें")}
               />
-              <p className="text-center text-[13px] text-muted">{L(lang, "2D plan ‹ drag › 3D view", "2D नक्शा ‹ खींचें › 3D व्यू")}</p>
+              <p className="text-center text-[13px] text-muted">{L(lang, "Plan ‹ drag › elevation", "नक्शा ‹ खींचें › एलिवेशन")}</p>
             </div>
           }
         />
