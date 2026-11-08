@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "./site";
 
+export const DEFAULT_OG = "/og.png";
+
 /** Page metadata with canonical URL and hreflang alternates for English / Hindi. */
 export function pageMeta(opts: {
   lang: Lang;
@@ -29,10 +31,11 @@ export function pageMeta(opts: {
       siteName: SITE_NAME,
       locale: opts.lang === "hi" ? "hi_IN" : "en_IN",
       type: "website",
-      ...(opts.image ? { images: [{ url: `${SITE_URL}${opts.image}` }] } : {}),
+      images: [{ url: `${SITE_URL}${opts.image ?? DEFAULT_OG}`, width: 1200, height: 630 }],
     },
     twitter: {
-      card: opts.image ? "summary_large_image" : "summary",
+      card: "summary_large_image",
+      images: [`${SITE_URL}${opts.image ?? DEFAULT_OG}`],
       title: opts.title,
       description: opts.description,
     },

@@ -360,8 +360,8 @@ export function ProPage({ lang }: { lang: Lang }) {
     [
       L(
         lang,
-        "84 Vastu-checked nakshe, city rates, calculators",
-        "84 वास्तु-जांचे नक्शे, शहर के रेट, कैलकुलेटर",
+        "21 Vastu-checked house designs for every road direction, city rates, calculators",
+        "21 वास्तु-जांचे घर के डिज़ाइन, हर सड़क दिशा के लिए, शहर के रेट, कैलकुलेटर",
       ),
       "",
       true,

@@ -188,11 +188,24 @@ export function HomeLight({ lang }: { lang: Lang }) {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: SITE_NAME,
-    url: `${SITE_URL}${langPath(lang)}`,
-    inLanguage: lang === "hi" ? "hi-IN" : "en-IN",
-    description: d.home_sub,
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: `${SITE_URL}${langPath(lang)}`,
+        inLanguage: lang === "hi" ? "hi-IN" : "en-IN",
+        description: d.home_sub,
+      },
+      { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/icon.svg` },
+      {
+        "@type": "WebApplication",
+        name: `${SITE_NAME} house construction cost calculator`,
+        url: SITE_URL,
+        applicationCategory: "BusinessApplication",
+        operatingSystem: "Any",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+      },
+    ],
   };
 
   return (

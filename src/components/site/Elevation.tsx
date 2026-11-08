@@ -20,11 +20,13 @@ const TONES = [
 export function Elevation({
   seed,
   plotW = 30,
+  shop = false,
   className,
   title,
 }: {
   seed: string;
   plotW?: number;
+  shop?: boolean;
   className?: string;
   title?: string;
 }) {
@@ -95,8 +97,35 @@ export function Elevation({
         <rect x="150" y="310" width="510" height="110" fill={t.wall} />
         <rect x="150" y="310" width="510" height="110" fill={`url(#sh${id})`} opacity="0.35" />
         {/* car porch under the cantilever */}
-        <rect x="160" y="318" width="140" height="102" fill="#4b5663" />
-        <rect x="160" y="318" width="140" height="102" fill={`url(#sh${id})`} />
+        {shop ? (
+          <>
+            <rect x="160" y="318" width="140" height="102" fill={t.dark} />
+            <rect x="166" y="344" width="128" height="76" fill={glass} />
+            <rect x="166" y="344" width="128" height="76" fill="#ffd9a0" opacity="0.38" />
+            <rect x="228" y="344" width="3" height="76" fill={t.dark} />
+            <rect x="166" y="322" width="128" height="18" rx="2" fill="#fff" opacity="0.92" />
+            <rect x="160" y="340" width="140" height="8" fill={t.accent} />
+            {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+              <rect key={i} x={160 + i * 20} y="340" width="10" height="8" fill="#fff" opacity="0.75" />
+            ))}
+            <rect x="248" y="372" width="40" height="48" fill={t.dark} opacity="0.55" />
+          </>
+        ) : (
+          <>
+            <rect x="160" y="318" width="140" height="102" fill="#4b5663" />
+            <rect x="160" y="318" width="140" height="102" fill={`url(#sh${id})`} />
+            {/* a car parked under the porch */}
+            <ellipse cx="232" cy="418" rx="66" ry="4" fill="#000" opacity="0.28" />
+            <path d="M176 410 q0 -22 14 -26 l20 -2 q10 -20 28 -20 h30 q16 0 24 18 l12 4 q8 3 8 14 v12 z" fill="#d6dbe1" />
+            <path d="M214 382 q8 -15 22 -15 h26 q12 0 19 15 z" fill="#5d7690" />
+            <rect x="240" y="368" width="2.5" height="14" fill="#d6dbe1" />
+            <rect x="283" y="395" width="8" height="5" rx="2" fill="#ffe7a8" />
+            <circle cx="200" cy="411" r="9" fill="#1d2329" />
+            <circle cx="200" cy="411" r="4" fill="#9aa3ad" />
+            <circle cx="268" cy="411" r="9" fill="#1d2329" />
+            <circle cx="268" cy="411" r="4" fill="#9aa3ad" />
+          </>
+        )}
         <rect x="150" y="318" width="12" height="102" fill={t.stone} />
         <rect x="298" y="318" width="12" height="102" fill={t.stone} />
         {/* first floor, cantilevered over the porch */}
@@ -127,6 +156,7 @@ export function Elevation({
         <rect x="241" y="219" width="160" height="22" fill="#fff" opacity="0.14" />
         <rect x="428" y="212" width="70" height="80" fill={t.dark} />
         <rect x="433" y="217" width="60" height="70" fill={glass} />
+        <rect x="433" y="217" width="60" height="70" fill="#ffd9a0" opacity="0.25" />
         <rect x="462" y="217" width="3" height="70" fill={t.dark} />
         {/* glass balcony rail */}
         <rect x="418" y="268" width="90" height="38" fill="#cfe6f4" opacity="0.55" />
@@ -137,6 +167,7 @@ export function Elevation({
         <rect x="341" y="339" width="126" height="52" fill={glass} />
         <rect x="402" y="339" width="3" height="52" fill={t.dark} />
         <rect x="341" y="339" width="126" height="16" fill="#fff" opacity="0.14" />
+        <rect x="341" y="339" width="126" height="52" fill="#ffd9a0" opacity="0.22" />
         <rect x="518" y="326" width="92" height="94" fill={t.dark} />
         <rect x="524" y="332" width="50" height="88" fill={`url(#w${id})`} />
         {[0, 1, 2, 3, 4, 5].map((i) => (
