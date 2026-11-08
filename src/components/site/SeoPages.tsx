@@ -30,6 +30,7 @@ import HouseCalc from "@/components/calcs/HouseCalc";
 import { CHECKLIST, CHECKLIST_COUNT, ytUrl } from "@/content/checklist";
 import { Checklist } from "./ChecklistClient";
 import { SiteFooter, SiteHeader } from "./Chrome";
+import { JourneyRoadmap } from "./JourneyPages";
 import { PlotPlanPreview } from "./PlotPlanPreview";
 
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
@@ -1096,6 +1097,7 @@ export function GuidePage({ lang }: { lang: Lang }) {
           )}
         </span>
       </Link>
+      <JourneyRoadmap lang={lang} />
       <section className="flex flex-col gap-4">
         <H2>{L(lang, "Step by step", "क़दम-दर-क़दम")}</H2>
         <CardList

@@ -4,6 +4,8 @@ import {
   guideItemDescription,
   guideItemTitle,
 } from "@/components/site/SeoPages";
+import { JourneyPage, journeyDescription, journeyTitle } from "@/components/site/JourneyPages";
+import { isJourneySlug, JOURNEY_SLUGS } from "@/content/journey";
 import {
   getQuestion,
   getTopic,
@@ -16,10 +18,10 @@ import { pageMeta } from "@/lib/seo";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return [...TOPICS, ...QUESTIONS].map((x) => ({ topic: x.slug }));
+  return [...TOPICS.map((x) => x.slug), ...QUESTIONS.map((x) => x.slug), ...JOURNEY_SLUGS].map((topic) => ({ topic }));
 }
 
-const known = (s: string) => !!(getTopic(s) ?? getQuestion(s));
+const known = (s: string) => !!(getTopic(s) ?? getQuestion(s)) || isJourneySlug(s);
 
 export async function generateMetadata({
   params,
@@ -31,8 +33,8 @@ export async function generateMetadata({
   return pageMeta({
     lang: "hi",
     path: `${GUIDE_BASE}/${topic}`,
-    title: `${guideItemTitle(topic, "hi")} | BOQFather`,
-    description: guideItemDescription(topic, "hi"),
+    title: `${isJourneySlug(topic) ? journeyTitle(topic, "hi") : guideItemTitle(topic, "hi")} | BOQFather`,
+    description: isJourneySlug(topic) ? journeyDescription(topic, "hi") : guideItemDescription(topic, "hi"),
   });
 }
 
@@ -43,5 +45,6 @@ export default async function Page({
 }) {
   const { topic } = await params;
   if (!known(topic)) notFound();
+  if (isJourneySlug(topic)) return <JourneyPage lang="hi" slug={topic} />;
   return <GuideItemPage lang="hi" slug={topic} />;
 }

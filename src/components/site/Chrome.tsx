@@ -26,8 +26,8 @@ export function Logo() {
 export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
   const d = t(lang);
   const hi = lang === "hi";
-  const links: { href: string; label: string; pro?: boolean; desk?: boolean }[] = [
-    { href: langPath(lang), label: hi ? "होम" : "Home", desk: true },
+  const links: { href: string; label: string; pro?: boolean; desk?: boolean; guide?: boolean }[] = [
+    { href: langPath(lang, "house-construction-guide"), label: hi ? "गाइड" : "Guide", desk: true, guide: true },
     { href: `${langPath(lang)}#features`, label: hi ? "फ़ीचर" : "Features", desk: true },
     { href: langPath(lang, "naksha"), label: hi ? "नक्शे और खर्च" : "Plans & Cost", desk: true },
     { href: langPath(lang, "elevations"), label: hi ? "एलिवेशन" : "Elevations", desk: true },
@@ -36,7 +36,7 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
     { href: langPath(lang, "pro"), label: hi ? "प्राइसिंग" : "Pricing", desk: true },
     { href: langPath(lang, "house-boq-estimate"), label: hi ? "आइटम-वार BOQ" : "Item-wise BOQ" },
     { href: langPath(lang, "house-construction-cost"), label: d.nav_house },
-    { href: langPath(lang, "house-construction-guide"), label: hi ? "गाइड" : "Guide" },
+    { href: langPath(lang), label: hi ? "होम" : "Home" },
   ];
   const cta = (
     <Link

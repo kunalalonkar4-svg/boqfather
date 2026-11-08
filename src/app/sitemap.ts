@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { CALCULATORS } from "@/content/calculators";
 import { PLOTS, plotSlug, SQFT_SIZES, sqftSlug } from "@/content/plots";
 import { GUIDE_BASE, QUESTIONS, TOPICS } from "@/content/guideTopics";
+import { JOURNEY_SLUGS } from "@/content/journey";
 import { GAJ, NAKSHE } from "@/content/naksha";
 import { CITIES } from "@/content/cities";
 import { ELEVATIONS } from "@/content/elevations";
@@ -21,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "house-construction-guide",
     "house-construction-guide/checklist",
     ...[...TOPICS, ...QUESTIONS].map((x) => `${GUIDE_BASE}/${x.slug}`),
+    ...JOURNEY_SLUGS.map((s) => `${GUIDE_BASE}/${s}`),
     "naksha",
     ...NAKSHE.map((n) => `naksha/${n.slug}`),
     ...GAJ.map((g) => `naksha/gaj/${g.slug}`),
