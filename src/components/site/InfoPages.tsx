@@ -9,6 +9,7 @@ import {
   WHATSAPP_NUMBER,
 } from "@/lib/site";
 import { CustomNakshaForm } from "./NakshaClient";
+import { FeedbackForm } from "./FeedbackForm";
 import { ProBuy } from "@/components/account/ProBuy";
 import { AccountView } from "@/components/account/AccountPage";
 import { H2, Shell } from "./SeoPages";
@@ -24,7 +25,7 @@ function Prose({ children }: { children: ReactNode }) {
 }
 
 export const INFO_META: Record<
-  "about" | "contact" | "privacy" | "terms" | "pro" | "account",
+  "about" | "contact" | "feedback" | "privacy" | "terms" | "pro" | "account",
   { title: [string, string]; description: [string, string] }
 > = {
   about: {
@@ -35,6 +36,16 @@ export const INFO_META: Record<
     description: [
       "Guniyo is made by a civil engineer to give Indian home builders honest, item-wise construction estimates and house plans, free.",
       "Guniyo एक सिविल इंजीनियर ने बनाया है ताकि घर बनाने वालों को ईमानदार, आइटम-वार एस्टिमेट और नक्शे मुफ़्त मिलें।",
+    ],
+  },
+  feedback: {
+    title: [
+      "Feedback and reviews — help us improve Guniyo",
+      "फ़ीडबैक और रिव्यू — Guniyo को बेहतर बनाने में मदद करें",
+    ],
+    description: [
+      "Tell us what worked, report a wrong number or suggest a feature. We read every message and fix what we can.",
+      "बताइए क्या अच्छा लगा, कोई ग़लत आंकड़ा बताइए या सुझाव दीजिए। हम हर संदेश पढ़ते हैं और जो हो सके सुधारते हैं।",
     ],
   },
   contact: {
@@ -216,6 +227,30 @@ export function AboutPage({ lang }: { lang: Lang }) {
   );
 }
 
+export function FeedbackPage({ lang }: { lang: Lang }) {
+  return (
+    <Shell
+      lang={lang}
+      path="feedback"
+      crumbs={[{ name: L(lang, "Feedback", "फ़ीडबैक") }]}
+      h1={L(lang, "Feedback and reviews", "फ़ीडबैक और रिव्यू")}
+      intro={
+        <p>
+          {L(
+            lang,
+            "Found a wrong number, a missing feature or something confusing? Or did Guniyo help you? Tell us. We read every message and fix what we can.",
+            "कोई ग़लत आंकड़ा, कोई कमी या कुछ उलझाने वाला मिला? या Guniyo से आपको मदद मिली? हमें बताइए। हम हर संदेश पढ़ते हैं और जो हो सके सुधारते हैं।",
+          )}
+        </p>
+      }
+    >
+      <section className="max-w-3xl rounded-2xl border border-line bg-white p-5 sm:p-6">
+        <FeedbackForm lang={lang} />
+      </section>
+    </Shell>
+  );
+}
+
 export function ContactPage({ lang }: { lang: Lang }) {
   return (
     <Shell
@@ -289,6 +324,14 @@ export function PrivacyPage({ lang }: { lang: Lang }) {
             lang,
             "When you use the custom naksha or contact form, your details are put into a WhatsApp message on your own phone; nothing is sent until you press send in WhatsApp. We use those details only to reply to you and never sell or share them.",
             "कस्टम नक्शा या संपर्क फ़ॉर्म भरने पर आपकी जानकारी आपके अपने फ़ोन पर WhatsApp मैसेज में भरी जाती है; जब तक आप WhatsApp में भेजें नहीं दबाते, कुछ नहीं जाता। हम उस जानकारी का इस्तेमाल सिर्फ़ आपको जवाब देने के लिए करते हैं, कभी बेचते या शेयर नहीं करते।",
+          )}
+        </p>
+        <H2>{L(lang, "Feedback", "फ़ीडबैक")}</H2>
+        <p>
+          {L(
+            lang,
+            "If you send feedback or a review, we save your message, your rating and the page you came from. Your name and your email or phone are saved only if you type them in. We use them to improve the site and to reply to you if you asked, and we do not sell or share them. We do not publish a review without your permission.",
+            "अगर आप फ़ीडबैक या रिव्यू भेजते हैं तो हम आपका संदेश, रेटिंग और वह पेज सेव करते हैं जहां से आप आए। आपका नाम और ईमेल या फ़ोन तभी सेव होता है जब आप ख़ुद लिखें। हम इनका इस्तेमाल साइट सुधारने और आपके कहने पर जवाब देने के लिए करते हैं, बेचते या शेयर नहीं करते। आपकी अनुमति के बिना कोई रिव्यू प्रकाशित नहीं करते।",
           )}
         </p>
         <H2>{L(lang, "Visitor statistics", "विज़िटर आंकड़े")}</H2>

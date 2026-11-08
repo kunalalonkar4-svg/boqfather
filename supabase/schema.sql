@@ -127,3 +127,18 @@ create table if not exists public.newsletter_subscribers (
   created_at timestamptz default now()
 );
 alter table public.newsletter_subscribers enable row level security;
+
+-- Feedback and reviews from the site. Written and read only by the server (service role); no policies on purpose.
+-- Nothing here is shown on the site: it is for the owner to read and act on.
+create table if not exists public.site_feedback (
+  id uuid primary key default gen_random_uuid(),
+  kind text not null default 'feedback' check (kind in ('feedback','error','review','idea')),
+  rating smallint check (rating between 1 and 5),
+  message text not null check (char_length(message) between 5 and 2000),
+  name text check (char_length(name) <= 100),
+  contact text check (char_length(contact) <= 200),   -- optional email or phone, only if the person wants a reply
+  page text check (char_length(page) <= 300),
+  lang text,
+  created_at timestamptz default now()
+);
+alter table public.site_feedback enable row level security;

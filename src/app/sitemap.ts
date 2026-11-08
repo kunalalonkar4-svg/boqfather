@@ -34,6 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "pro",
     "about",
     "contact",
+    "feedback",
     "privacy",
     "terms",
   ];

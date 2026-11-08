@@ -328,6 +328,7 @@ export function SiteFooter({ lang }: { lang: XLang }) {
   const links: [string, string, string, string, string][] = [
     ["about", "About", "हमारे बारे में", "आमच्याबद्दल", "અમારા વિશે"],
     ["contact", "Contact", "संपर्क", "संपर्क", "સંપર્ક"],
+    ["feedback", "Feedback", "फ़ीडबैक", "अभिप्राय", "પ્રતિભાવ"],
     ["pro", "Pricing", "प्राइसिंग", "किंमत", "કિંમત"],
     ["elevations", "Elevations", "एलिवेशन", "एलिव्हेशन", "એલિવેશન"],
     ["naksha", "House plans", "घर के नक्शे", "घराचे नकाशे", "ઘરના નકશા"],
