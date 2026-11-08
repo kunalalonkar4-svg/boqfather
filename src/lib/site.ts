@@ -47,7 +47,7 @@ export const OWNER = {
   /** e.g. "Indore, Madhya Pradesh" */
   city: "",
   /** One or two lines about the work done, e.g. "50+ houses planned and estimated across MP". */
-  work: "Civil engineer and valuer",
+  work: "Civil engineer and valuer. Valuer, IIV Pune, Membership No. Cat-I/F-7426.",
   /** Public contact email; empty = not shown. */
   email: "uniquevaluerandengineers@yahoo.com",
   /** Photo path under /public, e.g. "/team/kunal.webp"; empty = initials. */
