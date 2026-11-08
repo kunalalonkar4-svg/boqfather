@@ -5,10 +5,33 @@ export const SITE_NAME = "Guniyo";
 export const LANGS = ["en", "hi"] as const;
 export type Lang = (typeof LANGS)[number];
 
-/** Path for a page in a language: English lives at the root, Hindi under /hi. */
-export function langPath(lang: Lang, path = "/"): string {
+/**
+ * Languages beyond Hindi and English. A language gets its own pages only for the paths in READY below:
+ * a page that is not fully translated is not published in that language (no mixed-language pages).
+ */
+export const XLANGS = ["en", "hi", "mr", "gu"] as const;
+export type XLang = (typeof XLANGS)[number];
+export type NewLang = Exclude<XLang, Lang>;
+
+export const LANG_LABEL: Record<XLang, string> = { en: "English", hi: "हिंदी", mr: "मराठी", gu: "ગુજરાતી" };
+export const HREFLANG: Record<XLang, string> = { en: "en-IN", hi: "hi-IN", mr: "mr-IN", gu: "gu-IN" };
+export const OG_LOCALE: Record<XLang, string> = { en: "en_IN", hi: "hi_IN", mr: "mr_IN", gu: "gu_IN" };
+
+/** The language whose data tables and labels a page falls back to where a translation does not exist yet. */
+export const baseLang = (l: XLang): Lang => (l === "mr" ? "hi" : l === "gu" ? "en" : l);
+
+/** Paths (no slashes at the ends; "" is the home page) that are fully translated, per added language. */
+export const READY: Record<NewLang, string[]> = { mr: [], gu: [] };
+export const hasPage = (lang: XLang, path: string): boolean => {
+  if (lang === "en" || lang === "hi") return true;
+  const p = path === "/" ? "" : path.replace(/^\/|\/$/g, "");
+  return READY[lang].includes(p);
+};
+
+/** Path for a page in a language: English lives at the root, every other language under its code. */
+export function langPath(lang: XLang, path = "/"): string {
   const clean = path === "/" ? "/" : `/${path.replace(/^\/|\/$/g, "")}/`;
-  return lang === "en" ? clean : `/hi${clean === "/" ? "/" : clean}`;
+  return lang === "en" ? clean : `/${lang}${clean === "/" ? "/" : clean}`;
 }
 
 /** WhatsApp number for custom naksha requests, with country code and no "+" (e.g. "9198xxxxxxxx"). Empty = form shown, sending disabled. */

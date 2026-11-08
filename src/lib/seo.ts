@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Lang, langPath, SITE_NAME, SITE_URL } from "./site";
+import { hasPage, HREFLANG, langPath, OG_LOCALE, SITE_NAME, SITE_URL, XLANGS, type XLang } from "./site";
 
 export const DEFAULT_OG = "/og.png";
 
 /** Page metadata with canonical URL and hreflang alternates for English / Hindi. */
 export function pageMeta(opts: {
-  lang: Lang;
+  lang: XLang;
   path: string;
   title: string;
   description: string;
@@ -19,8 +19,9 @@ export function pageMeta(opts: {
     alternates: {
       canonical: url,
       languages: {
-        "en-IN": `${SITE_URL}${langPath("en", opts.path)}`,
-        "hi-IN": `${SITE_URL}${langPath("hi", opts.path)}`,
+        ...Object.fromEntries(
+          XLANGS.filter((l) => hasPage(l, opts.path)).map((l) => [HREFLANG[l], `${SITE_URL}${langPath(l, opts.path)}`]),
+        ),
         "x-default": `${SITE_URL}${langPath("en", opts.path)}`,
       },
     },
@@ -29,7 +30,7 @@ export function pageMeta(opts: {
       description: opts.description,
       url,
       siteName: SITE_NAME,
-      locale: opts.lang === "hi" ? "hi_IN" : "en_IN",
+      locale: OG_LOCALE[opts.lang],
       type: "website",
       images: [{ url: `${SITE_URL}${opts.image ?? DEFAULT_OG}`, width: 1200, height: 630 }],
     },

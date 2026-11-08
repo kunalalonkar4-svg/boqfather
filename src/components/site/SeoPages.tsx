@@ -25,7 +25,7 @@ import {
 } from "@/content/plots";
 import { name, t } from "@/i18n/ui";
 import { FACING_NAME, NAKSHE } from "@/content/naksha";
-import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
+import { baseLang, Lang, langPath, SITE_NAME, SITE_URL, type XLang } from "@/lib/site";
 import HouseCalc from "@/components/calcs/HouseCalc";
 import { CHECKLIST, CHECKLIST_COUNT, ytUrl } from "@/content/checklist";
 import { Checklist } from "./ChecklistClient";
@@ -51,7 +51,7 @@ export function Shell({
   faqsHidden,
   children,
 }: {
-  lang: Lang;
+  lang: XLang;
   path: string;
   crumbs: Crumb[];
   h1: string;
@@ -127,7 +127,11 @@ export function Shell({
         <div className="flex flex-col gap-14">{children}</div>
         {faqs?.length && !faqsHidden ? <Faqs lang={lang} faqs={faqs} /> : null}
         <p className="mb-16 mt-12 max-w-3xl rounded-lg border border-[#f0dfae] bg-warn-tint px-5 py-4 text-[13px] leading-relaxed text-[#4a3b12]">
-          {t(lang).disclaimer}
+          {lang === "mr"
+            ? "हे निकाल प्रमाण अंगठा-नियमांवर आणि दिलेल्या माहितीवर आधारित प्राथमिक अंदाज आहेत. अंतिम प्रमाण ड्रॉइंग आणि सविस्तर BOQ मधून येते. स्ट्रक्चरल आकार आणि सळईची तपासणी पात्र अभियंत्याने करावी."
+            : lang === "gu"
+              ? "આ પરિણામો પ્રમાણભૂત અંગૂઠા-નિયમો અને આપેલી માહિતી પર આધારિત પ્રાથમિક અંદાજ છે. અંતિમ જથ્થા ડ્રોઇંગ અને વિગતવાર BOQ પરથી આવે છે. સ્ટ્રક્ચરલ સાઇઝ અને સળિયાની તપાસ લાયક એન્જિનિયરે કરવી જોઈએ."
+              : t(lang).disclaimer}
         </p>
         </div>
       </main>
@@ -152,12 +156,12 @@ export function Faqs({
   lang,
   faqs,
 }: {
-  lang: Lang;
+  lang: XLang;
   faqs: { q: string; a: string }[];
 }) {
   return (
     <section className="mt-16 max-w-3xl">
-      <H2>{t(lang).faq}</H2>
+      <H2>{lang === "mr" ? "वारंवार विचारले जाणारे प्रश्न" : lang === "gu" ? "વારંવાર પુછાતા પ્રશ્નો" : t(baseLang(lang)).faq}</H2>
       <div className="mt-4 flex flex-col gap-2">
         {faqs.map((f) => (
           <details

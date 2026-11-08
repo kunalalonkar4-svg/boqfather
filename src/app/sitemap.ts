@@ -6,7 +6,7 @@ import { JOURNEY_SLUGS } from "@/content/journey";
 import { GAJ, NAKSHE } from "@/content/naksha";
 import { CITIES } from "@/content/cities";
 import { ELEVATIONS } from "@/content/elevations";
-import { langPath, SITE_URL } from "@/lib/site";
+import { hasPage, HREFLANG, langPath, SITE_URL, XLANGS } from "@/lib/site";
 
 export const dynamic = "force-static";
 
@@ -38,19 +38,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "terms",
   ];
   const lastModified = new Date("2026-11-03");
-  return paths.flatMap((p) =>
-    (["en", "hi"] as const).map((lang) => ({
+  return paths.flatMap((p) => {
+    const langs = XLANGS.filter((l) => hasPage(l, p));
+    const languages = Object.fromEntries(langs.map((l) => [HREFLANG[l], `${SITE_URL}${langPath(l, p)}`]));
+    return langs.map((lang) => ({
       url: `${SITE_URL}${langPath(lang, p)}`,
       lastModified,
       changeFrequency: "monthly" as const,
-      priority:
-        p === "/" ? 1 : p === "house-construction-cost-calculator" ? 0.9 : 0.8,
-      alternates: {
-        languages: {
-          "en-IN": `${SITE_URL}${langPath("en", p)}`,
-          "hi-IN": `${SITE_URL}${langPath("hi", p)}`,
-        },
-      },
-    })),
-  );
+      priority: p === "/" ? 1 : p === "house-construction-cost-calculator" ? 0.9 : 0.8,
+      alternates: { languages },
+    }));
+  });
 }
