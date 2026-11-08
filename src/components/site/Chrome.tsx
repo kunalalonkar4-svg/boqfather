@@ -75,6 +75,12 @@ export function SiteHeader({ lang, altPath }: { lang: Lang; altPath: string }) {
             <AccountButton lang={lang} />
           </span>
           <Link
+            href={langPath(lang, "house-construction-guide")}
+            className="inline-flex h-10 items-center rounded-[4px] bg-ink px-3 text-[14px] font-bold text-white transition hover:bg-[#333] xl:hidden"
+          >
+            {hi ? "गाइड" : "Guide"}
+          </Link>
+          <Link
             href={altPath}
             hrefLang={lang === "en" ? "hi" : "en"}
             className="rounded-[4px] border border-line px-3 py-1.5 text-[13px] font-semibold text-ink hover:border-ink"
