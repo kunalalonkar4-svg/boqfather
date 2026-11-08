@@ -324,11 +324,11 @@ const FLOORS = (i: number, lang: Lang) =>
 
 export const plotTitle = (slug: string, lang: Lang) => {
   const p = getPlot(slug)!;
-  const s = `${p.w}×${p.d}`;
+  const s = `${p.w}x${p.d}`;
   return L(
     lang,
-    `${s} House Plan (${plotArea(p)} sq ft) with Cost Estimate`,
-    `${s} घर का नक्शा (${plotArea(p)} sq ft) और बनाने का खर्च`,
+    `${s} House Plan (${plotArea(p)} sq ft): ${p.bhk} BHK G+1 Design with Cost`,
+    `${s} घर का नक्शा (${plotArea(p)} sq ft): ${p.bhk} BHK G+1 डिज़ाइन और खर्च`,
   );
 };
 export const plotDescription = (slug: string, lang: Lang) => {
@@ -718,8 +718,8 @@ const sqftCost = (n: number) =>
 export const sqftTitle = (n: number, lang: Lang) =>
   L(
     lang,
-    `${num(n)} sq ft House Construction Cost in India (2026)`,
-    `${num(n)} sq ft घर बनाने का खर्च (2026)`,
+    `${num(n)} sq ft House Construction Cost in India (2026): Material & Labour`,
+    `${num(n)} sq ft घर बनाने का खर्च (2026): सीमेंट, सरिया, मज़दूरी`,
   );
 export const sqftDescription = (n: number, lang: Lang) => {
   const [b, s, p] = sqftCost(n);
