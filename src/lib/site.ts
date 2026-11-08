@@ -45,9 +45,9 @@ export const OWNER = {
   /** e.g. "8 years in house construction, estimation and site work" */
   experience: "12+ years in civil engineering and valuation",
   /** e.g. "Indore, Madhya Pradesh" */
-  city: "",
+  city: "Chhindwara, Madhya Pradesh",
   /** One or two lines about the work done, e.g. "50+ houses planned and estimated across MP". */
-  work: "Civil engineer and valuer. Valuer, IIV Pune, Membership No. Cat-I/F-7426.",
+  work: "Civil engineer and valuer. Valuer, Indian Institution of Valuers (IIV), Pune, Membership No. Cat-I/F-7426.",
   /** Public contact email; empty = not shown. */
   email: "uniquevaluerandengineers@yahoo.com",
   /** Photo path under /public, e.g. "/team/kunal.webp"; empty = initials. */
