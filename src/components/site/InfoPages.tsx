@@ -303,8 +303,8 @@ export function PrivacyPage({ lang }: { lang: Lang }) {
         <p>
           {L(
             lang,
-            "Last updated: 3 November 2026",
-            "आख़िरी बदलाव: 3 नवंबर 2026",
+            "Last updated: 9 November 2026",
+            "आख़िरी बदलाव: 9 नवंबर 2026",
           )}
         </p>
       }
