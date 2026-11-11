@@ -14,9 +14,9 @@ const wrap = "mx-auto w-full max-w-[1120px] px-5 sm:px-8";
 const serif = "font-[Merriweather,'Noto_Serif_Devanagari',Georgia,serif]";
 const teal = "text-[#0b5f6e]";
 const btnYellow =
-  "inline-flex h-12 items-center justify-center rounded-[6px] bg-[#fdbd2f] px-7 text-[15px] font-semibold text-[#1a1a1a] transition hover:bg-[#f0ae15] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b5f6e]";
+  "inline-flex h-12 items-center justify-center rounded-[6px] bg-[#fdbd2f] bg-[linear-gradient(#0b5f6e,#0b5f6e)] bg-no-repeat bg-[length:0%_100%] transition-[background-size,color] duration-300 hover:bg-[length:100%_100%] hover:text-white px-7 text-[15px] font-semibold text-[#1a1a1a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b5f6e]";
 const btnLine =
-  "inline-flex h-12 items-center justify-center rounded-[6px] border border-[#0b5f6e] bg-white px-7 text-[15px] font-semibold text-[#0b5f6e] transition hover:bg-[#eef6f7] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b5f6e]";
+  "inline-flex h-12 items-center justify-center rounded-[6px] border border-[#0b5f6e] bg-white bg-[linear-gradient(#0b5f6e,#0b5f6e)] bg-no-repeat bg-[length:0%_100%] transition-[background-size,color] duration-300 hover:bg-[length:100%_100%] hover:text-white px-7 text-[15px] font-semibold text-[#0b5f6e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b5f6e]";
 
 function Step({ n, title, text }: { n: string; title: string; text: string }) {
   return (
@@ -31,14 +31,14 @@ function Step({ n, title, text }: { n: string; title: string; text: string }) {
 function Card({ img, title, text, href, cta, children }: { img?: ReactNode; title: string; text: string; href?: string; cta?: string; children?: ReactNode }) {
   return (
     <li className="flex flex-col overflow-hidden rounded-[8px] border border-[#e5e7eb] bg-white">
-      {img && <div className="overflow-hidden border-b border-[#eef0f2] bg-[#f6f7f8]">{img}</div>}
+      {img && <div className="fx-zoom overflow-hidden border-b border-[#eef0f2] bg-[#f6f7f8]">{img}</div>}
       <div className="flex flex-1 flex-col gap-2 p-5">
         <h3 className={`${serif} text-[19px] font-normal leading-snug`}>{title}</h3>
         <p className="text-[14.5px] leading-relaxed text-body">{text}</p>
         {children}
         {href && cta && (
-          <Link href={href} className={`mt-auto pt-2 text-[13px] font-bold tracking-wide ${teal} hover:underline`}>
-            {cta.toUpperCase()} →
+          <Link href={href} className={`fx-arrow mt-auto pt-2 text-[13px] font-bold tracking-wide ${teal}`}>
+            {cta.toUpperCase()} <span aria-hidden="true" className="inline-block transition-transform duration-300">→</span>
           </Link>
         )}
       </div>

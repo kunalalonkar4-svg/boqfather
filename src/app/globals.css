@@ -334,3 +334,26 @@ a, button, summary {
     transform: none;
   }
 }
+
+/* image zoom inside its frame, and the arrow on "Learn more" slides forward */
+.fx-zoom img {
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (hover: hover) {
+  li:hover > .fx-zoom img {
+    transform: scale(1.05);
+  }
+  .fx-arrow:hover span {
+    transform: translateX(6px);
+  }
+  main li a.fx-arrow:hover,
+  main li a.fx-arrow {
+    background-size: 0 0 !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  li:hover > .fx-zoom img,
+  .fx-arrow:hover span {
+    transform: none;
+  }
+}
