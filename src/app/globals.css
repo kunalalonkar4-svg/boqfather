@@ -291,3 +291,46 @@ html {
 .home-hoard h2 {
   letter-spacing: -0.012em;
 }
+
+
+/* hover feel: each kind of word reacts in its own way (reduced for people who ask for less motion) */
+@media (hover: hover) {
+  /* links in the bar, the footer and running text: the underline draws in from the left */
+  header nav a:not([class*="rounded-full"]),
+  footer a:not([class*="bg-"]),
+  main :is(p, li, dd, figcaption) a:not([class*="bg-"]):not([class*="border"]) {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 2px;
+    transition: background-size 0.3s ease, color 0.2s ease;
+  }
+  header nav a:not([class*="rounded-full"]):hover,
+  footer a:not([class*="bg-"]):hover,
+  main :is(p, li, dd, figcaption) a:not([class*="bg-"]):not([class*="border"]):hover {
+    background-size: 100% 2px;
+  }
+  /* headings: the colour warms to the brand teal */
+  main :is(h1, h2, h3) {
+    transition: color 0.3s ease;
+  }
+  main :is(h2, h3):hover {
+    color: #0b5f6e;
+  }
+  /* cards lift a little */
+  main li:has(> h3), main ul > li.rounded-\[8px\] {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  main ul > li.rounded-\[8px\]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px -18px rgba(11, 60, 80, 0.45);
+  }
+}
+a, button, summary {
+  -webkit-tap-highlight-color: rgba(11, 95, 110, 0.15);
+}
+@media (prefers-reduced-motion: reduce) {
+  main ul > li.rounded-\[8px\]:hover {
+    transform: none;
+  }
+}

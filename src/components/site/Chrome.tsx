@@ -154,6 +154,23 @@ export function SiteHeader({ lang, altPath }: { lang: XLang; altPath: string }) 
           </details>
         </div>
       </div>
+      {/* section links stay in the bar on phones and tablets, scrolling sideways */}
+      <nav aria-label={x("Sections", "सेक्शन", "विभाग", "વિભાગ")} className="border-t border-line/70 xl:hidden">
+        <div className="mx-auto flex max-w-7xl gap-1.5 overflow-x-auto px-4 py-2 text-[14px] [scrollbar-width:none] sm:px-6 [&::-webkit-scrollbar]:hidden">
+          {links
+            .filter((l) => l.href !== langPath(lang))
+            .map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-[#f1f3f6] px-3.5 py-1.5 font-semibold text-ink transition hover:bg-ink hover:text-white active:scale-95"
+              >
+                {l.label}
+                {l.pro && <span className="rounded bg-amber px-1 text-[10px] font-extrabold text-white">PRO</span>}
+              </Link>
+            ))}
+        </div>
+      </nav>
     </header>
   );
 }
