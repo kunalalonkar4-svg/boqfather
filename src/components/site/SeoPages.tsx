@@ -25,7 +25,7 @@ import {
 } from "@/content/plots";
 import { name, t } from "@/i18n/ui";
 import { FACING_NAME, NAKSHE } from "@/content/naksha";
-import { baseLang, Lang, langPath, SITE_NAME, SITE_URL, type XLang } from "@/lib/site";
+import { baseLang, Lang, OWNER, langPath, SITE_NAME, SITE_URL, type XLang } from "@/lib/site";
 import HouseCalc from "@/components/calcs/HouseCalc";
 import { CHECKLIST, CHECKLIST_COUNT, ytUrl } from "@/content/checklist";
 import { Checklist } from "./ChecklistClient";
@@ -131,10 +131,26 @@ export function Shell({
             </div>
           </div>
         </div>
-        <div className="relative mx-auto w-full max-w-6xl px-4 pt-10 sm:px-6 sm:pt-12">
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-10 sm:px-6 sm:pt-12">
         <div className="flex flex-col gap-14">{children}</div>
+        <aside className="mt-12 flex max-w-3xl items-start gap-4 rounded-xl border border-line bg-white p-5">
+          <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-night text-[15px] font-extrabold text-white">KA</span>
+          <p className="text-[14px] leading-relaxed text-body">
+            <strong className="text-ink">{lang === "hi" ? "तैयार करने वाले: " : "Prepared by "}{OWNER.name}</strong>
+            {lang === "hi"
+              ? ", सिविल इंजीनियर और वैल्यूअर (IIV पुणे, Cat-I/F-7426)। रेट और अंगूठा-नियम बाज़ार और साइट अनुभव पर आधारित हैं। कोई ग़लती दिखे तो "
+              : ", civil engineer and valuer (IIV Pune, Cat-I/F-7426). Rates and rules of thumb come from market data and site experience. Spotted a mistake? "}
+            <Link href={langPath(lang, "feedback")} className="font-semibold text-amber-dark underline underline-offset-2">
+              {lang === "hi" ? "बताइए" : "Tell us"}
+            </Link>
+            {" · "}
+            <Link href={langPath(lang, "about")} className="font-semibold text-amber-dark underline underline-offset-2">
+              {lang === "hi" ? "हमारे बारे में" : "About the author"}
+            </Link>
+          </p>
+        </aside>
         {faqs?.length && !faqsHidden ? <Faqs lang={lang} faqs={faqs} /> : null}
-        <p className="mb-16 mt-12 max-w-3xl rounded-lg border border-[#f0dfae] bg-warn-tint px-5 py-4 text-[13px] leading-relaxed text-[#4a3b12]">
+        <p className="mt-6 max-w-3xl rounded-lg border border-[#f0dfae] bg-warn-tint px-5 py-4 text-[13px] leading-relaxed text-[#4a3b12]">
           {lang === "mr"
             ? "हे निकाल प्रमाण अंगठा-नियमांवर आणि दिलेल्या माहितीवर आधारित प्राथमिक अंदाज आहेत. अंतिम प्रमाण ड्रॉइंग आणि सविस्तर BOQ मधून येते. स्ट्रक्चरल आकार आणि सळईची तपासणी पात्र अभियंत्याने करावी."
             : lang === "gu"

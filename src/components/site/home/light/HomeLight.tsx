@@ -569,6 +569,32 @@ export function HomeLight({ lang }: { lang: Lang }) {
           </div>
         </section>
 
+        {/* trust strip: only facts that are true of the site and its author */}
+        <section className="border-b border-line bg-white">
+          <div className={`${wrap} grid gap-6 py-7 lg:grid-cols-[1.2fr_2fr] lg:items-center`}>
+            <div className="flex items-center gap-4">
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-night text-[17px] font-extrabold text-white">KA</span>
+              <p className="text-[14px] leading-snug text-body">
+                <strong className="block text-[15px] text-ink">{L(lang, "Built by a civil engineer and valuer", "सिविल इंजीनियर और वैल्यूअर द्वारा बनाया गया")}</strong>
+                {L(lang, "Kunal Alonkar · 12+ years · IIV member (Cat-I/F-7426)", "कुणाल अलोणकर · 12+ वर्ष · IIV सदस्य (Cat-I/F-7426)")}
+              </p>
+            </div>
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+              {([
+                [String(CALCULATORS.length), L(lang, "construction calculators", "निर्माण कैलकुलेटर")],
+                [String(CITIES.length), L(lang, "city-wise rate pages", "शहर-वार रेट पेज")],
+                ["14", L(lang, "stage house-building guide", "चरणों की गाइड")],
+                [String(CHECKLIST_COUNT), L(lang, "point site checklist", "पॉइंट की साइट चेकलिस्ट")],
+              ] as [string, string][]).map(([n, l]) => (
+                <div key={l} className="flex flex-col">
+                  <dt className="order-2 text-[13px] leading-tight text-muted">{l}</dt>
+                  <dd className="order-1 font-display text-[26px] font-extrabold leading-none text-ink">{n}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
         {/* what you get */}
         <section id="features" className="bg-white">
           <div className={`${wrap} py-16 lg:py-20`}>
