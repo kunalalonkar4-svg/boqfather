@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { CALCULATORS } from "@/content/calculators";
 import { CHECKLIST_COUNT } from "@/content/checklist";
 import { CITIES } from "@/content/cities";
-import { getNaksha, NAKSHE, nakshaImage, nakshaInfo } from "@/content/naksha";
+import { getNaksha, NAKSHE, nakshaImage, nakshaInfo, nakshaPlan } from "@/content/naksha";
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import { SiteFooter, SiteHeader } from "../../Chrome";
@@ -59,6 +59,10 @@ export function HomeLight({ lang }: { lang: Lang }) {
   const hi = lang === "hi" ? "-hi" : "";
   const n = getNaksha("30x40-east-facing") ?? NAKSHE[0];
   const info = nakshaInfo(n);
+  const { res } = nakshaPlan(n);
+  const heads = [...res.sections].sort((a, b) => b.subtotal - a.subtotal).slice(0, 4);
+  const headMax = heads[0]?.subtotal ?? 1;
+  const lk = (x: number) => `₹${(x / 1e5).toLocaleString("en-IN", { maximumFractionDigits: 1 })} ${L(lang, "lakh", "लाख")}`;
   const start = langPath(lang, "house-boq-estimate");
   const crop = (name: string, alt: string, w: number, h: number) => (
     // eslint-disable-next-line @next/next/no-img-element
@@ -130,7 +134,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 <div className="rounded-[8px] bg-white p-4">
                   <p className="text-[12.5px] text-muted">{L(lang, "Sample estimate · 30×40 ft, G+1, standard", "सैंपल एस्टिमेट · 30×40 ft, G+1, स्टैंडर्ड")}</p>
                   <p className={`${serif} mt-1 text-[30px] leading-none`}>₹{(info.total / 1e5).toLocaleString("en-IN", { maximumFractionDigits: 1 })} {L(lang, "lakh", "लाख")}</p>
-                  <p className="mt-2 text-[12.5px] text-muted">{info.bhk} BHK · {info.builtUp.toLocaleString("en-IN")} sq ft</p>
+                  <p className="mt-2 text-[12.5px] text-muted">{info.bhk} BHK · {Math.round(info.builtUp).toLocaleString("en-IN")} sq ft</p>
                 </div>
               </div>
             </div>
@@ -166,6 +170,25 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 cta={L(lang, "Learn more", "और जानें")}
               >
                 <ul className="mt-1 flex flex-col gap-1"><Tick>{L(lang, "Plans for all four road sides", "चारों सड़क दिशाओं के नक्शे")}</Tick><Tick>{L(lang, "Vastu chart for each room", "हर कमरे का वास्तु चार्ट")}</Tick><Tick>{L(lang, "Cost shown with each plan", "हर नक्शे के साथ खर्च")}</Tick></ul>
+                <div className="mt-2 flex flex-1 flex-col justify-end gap-3">
+                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-[6px] bg-[#f3f4f5] p-3 text-[13px]">
+                    <div><dt className="text-muted">{L(lang, "Plot", "प्लॉट")}</dt><dd className="font-semibold">{n.plot.w} × {n.plot.d} ft</dd></div>
+                    <div><dt className="text-muted">{L(lang, "Rooms", "कमरे")}</dt><dd className="font-semibold">{info.bhk} BHK · G+1</dd></div>
+                    <div><dt className="text-muted">{L(lang, "Built-up", "बिल्ट-अप")}</dt><dd className="font-semibold tabular-nums">{Math.round(info.builtUp).toLocaleString("en-IN")} sq ft</dd></div>
+                    <div><dt className="text-muted">{L(lang, "Per sq ft", "प्रति sq ft")}</dt><dd className="font-semibold tabular-nums">₹{Math.round(res.perSqft).toLocaleString("en-IN")}</dd></div>
+                    <div><dt className="text-muted">{L(lang, "Sample estimate", "सैंपल एस्टिमेट")}</dt><dd className="font-semibold tabular-nums text-[#0b5f6e]">{lk(info.total)}</dd></div>
+                    <div><dt className="text-muted">{L(lang, "Vastu", "वास्तु")}</dt><dd className="font-semibold tabular-nums">{info.vastu.pct}%</dd></div>
+                  </dl>
+                  <ul className="flex flex-col gap-2">
+                    {heads.map((x) => (
+                      <li key={x.code} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 text-[12.5px]">
+                        <span className="truncate">{x.title[lang].replace(/^[A-Z]\.\s*/, "")}</span>
+                        <span className="font-semibold tabular-nums">{lk(x.subtotal)}</span>
+                        <span className="col-span-2 h-1 rounded bg-[#e5e7eb]"><span className="block h-full rounded bg-[#0b5f6e]" style={{ width: `${Math.max(4, (x.subtotal / headMax) * 100)}%` }} /></span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </Card>
             </ul>
             <p className="mx-auto mt-6 max-w-3xl text-center text-[13px] leading-relaxed text-muted">
