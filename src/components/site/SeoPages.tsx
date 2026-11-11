@@ -93,37 +93,45 @@ export function Shell({
         lang={lang}
         altPath={langPath(lang === "en" ? "hi" : "en", path)}
       />
-      <main lang={lang} className="relative">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(circle_at_1px_1px,rgba(22,24,26,0.07)_1px,transparent_0)] [background-size:22px_22px] [mask-image:linear-gradient(to_bottom,black,transparent)]"
-        />
-        <div className="relative mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6 sm:pt-12">
-        <nav
-          aria-label="Breadcrumb"
-          className="w-fit max-w-full truncate rounded-[4px] border border-line bg-white/80 px-3.5 py-1.5 text-[13px] text-muted"
-        >
-          {all.map((c, i) => (
-            <span key={c.name}>
-              {i > 0 && <span className="mx-1.5">/</span>}
-              {c.path && i < all.length - 1 ? (
-                <Link href={langPath(lang, c.path)} className="hover:text-ink">
-                  {c.name}
-                </Link>
-              ) : (
-                <span className="text-ink">{c.name}</span>
-              )}
-            </span>
-          ))}
-        </nav>
-        <div className="mb-10 mt-6 flex max-w-3xl flex-col gap-4">
-          <h1 className="font-display text-[34px] font-extrabold leading-[1.06] tracking-tight [text-wrap:balance] sm:text-[48px]">
-            {h1}
-          </h1>
-          <div className="text-[17px] leading-relaxed text-body sm:text-[18px]">
-            {intro}
+      <main lang={lang} className="relative bg-[#f4f7fb]">
+        <div className="relative overflow-hidden bg-night text-white">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)] [background-size:44px_44px] [mask-image:linear-gradient(to_bottom_left,black,transparent_70%)]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-[#146ef5] via-[#3b82f6] to-transparent"
+          />
+          <div className="relative mx-auto w-full max-w-6xl px-4 pb-12 pt-7 sm:px-6 sm:pb-16 sm:pt-10">
+            <nav
+              aria-label="Breadcrumb"
+              className="w-fit max-w-full truncate text-[13px] text-mist"
+            >
+              {all.map((c, i) => (
+                <span key={c.name}>
+                  {i > 0 && <span className="mx-1.5 opacity-60">/</span>}
+                  {c.path && i < all.length - 1 ? (
+                    <Link href={langPath(lang, c.path)} className="hover:text-white">
+                      {c.name}
+                    </Link>
+                  ) : (
+                    <span className="text-white">{c.name}</span>
+                  )}
+                </span>
+              ))}
+            </nav>
+            <div className="mt-5 flex max-w-3xl flex-col gap-4">
+              <h1 className="font-display text-[32px] font-extrabold leading-[1.08] tracking-tight [text-wrap:balance] sm:text-[46px]">
+                {h1}
+              </h1>
+              <div className="text-[16px] leading-relaxed text-[#c7d3e3] sm:text-[18px] [&_a]:text-white [&_a]:underline [&_strong]:text-white">
+                {intro}
+              </div>
+            </div>
           </div>
         </div>
+        <div className="relative mx-auto w-full max-w-6xl px-4 pt-10 sm:px-6 sm:pt-12">
         <div className="flex flex-col gap-14">{children}</div>
         {faqs?.length && !faqsHidden ? <Faqs lang={lang} faqs={faqs} /> : null}
         <p className="mb-16 mt-12 max-w-3xl rounded-lg border border-[#f0dfae] bg-warn-tint px-5 py-4 text-[13px] leading-relaxed text-[#4a3b12]">
@@ -146,7 +154,7 @@ export function Shell({
 
 export function H2({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-display text-[26px] font-extrabold leading-tight tracking-tight [text-wrap:balance] sm:text-[32px]">
+    <h2 className="border-l-4 border-amber pl-3.5 font-display text-[24px] font-extrabold leading-tight tracking-tight [text-wrap:balance] sm:text-[30px]">
       {children}
     </h2>
   );
