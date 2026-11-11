@@ -56,6 +56,18 @@ export function PlanFrame({ b }: { b: { x: number; y: number; w: number; h: numb
       ].map(([cx, cy], i) => (
         <rect key={i} x={cx} y={cy} width={c} height={c} fill="#3b6fb6" opacity="0.9" />
       ))}
+      <text
+        x={-0.5}
+        y={-0.28}
+        textAnchor="start"
+        fontSize="0.32"
+        fontWeight="700"
+        fill="#7a1f1f"
+        opacity="0.8"
+        fontFamily="Inter, Arial, sans-serif"
+      >
+        TENTATIVE · FOR QUANTITY ONLY
+      </text>
     </g>
   );
 }

@@ -168,6 +168,9 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 <ul className="mt-1 flex flex-col gap-1"><Tick>{L(lang, "Plans for all four road sides", "चारों सड़क दिशाओं के नक्शे")}</Tick><Tick>{L(lang, "Vastu chart for each room", "हर कमरे का वास्तु चार्ट")}</Tick><Tick>{L(lang, "Cost shown with each plan", "हर नक्शे के साथ खर्च")}</Tick></ul>
               </Card>
             </ul>
+            <p className="mx-auto mt-6 max-w-3xl text-center text-[13px] leading-relaxed text-muted">
+              {L(lang, "Plans on Guniyo are tentative layouts used to work out BOQ quantities. They are not construction or approval drawings. Get final drawings from your architect.", "Guniyo के प्लान BOQ की मात्रा निकालने के लिए अनुमानित लेआउट हैं। ये निर्माण या मंज़ूरी की ड्रॉइंग नहीं हैं। फ़ाइनल ड्रॉइंग अपने आर्किटेक्ट से बनवाएं।")}
+            </p>
           </div>
         </section>
 

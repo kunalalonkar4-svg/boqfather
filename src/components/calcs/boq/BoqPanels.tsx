@@ -102,6 +102,9 @@ export function SketchPanel({
     c ? `rgb(${c[0]},${c[1]},${c[2]})` : "none";
   return (
     <div className="flex flex-col gap-5">
+      <p className="rounded-lg border border-[#e6c7c7] bg-[#fdf3f3] px-3 py-2 text-[13.5px] font-semibold text-[#7a1f1f]">
+        {L(lang, "Tentative plan, for BOQ quantities only.", "अनुमानित प्लान, सिर्फ़ BOQ की मात्रा निकालने के लिए।")}
+      </p>
       <p className="text-[13px] text-muted">
         {L(
           lang,
@@ -236,6 +239,13 @@ export function SketchPanel({
           );
         })}
       </div>
+      <p className="text-[12.5px] leading-relaxed text-muted">
+        {L(
+          lang,
+          "This plan is a tentative layout used to work out quantities for the BOQ. It is not a final architectural or structural drawing. Room sizes, wall positions, column positions, doors and windows may change in the final design. Do not build, apply for approval or buy materials from this drawing alone. Get final drawings from your architect and structural engineer, and check local bye-laws.",
+          "यह प्लान BOQ की मात्रा निकालने के लिए एक अनुमानित लेआउट है। यह फ़ाइनल आर्किटेक्चरल या स्ट्रक्चरल ड्रॉइंग नहीं है। फ़ाइनल डिज़ाइन में कमरों के साइज़, दीवारों, कॉलम, दरवाज़ों और खिड़कियों की जगह बदल सकती है। सिर्फ़ इस ड्रॉइंग से निर्माण, मंज़ूरी की अर्ज़ी या मटीरियल की ख़रीद न करें। फ़ाइनल ड्रॉइंग अपने आर्किटेक्ट और स्ट्रक्चरल इंजीनियर से बनवाएं और लोकल नियम जांचें।",
+        )}
+      </p>
       {r.vastu && <VastuChart r={r} lang={lang} names={nm} />}
     </div>
   );

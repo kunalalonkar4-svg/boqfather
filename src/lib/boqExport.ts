@@ -766,7 +766,7 @@ export async function downloadBoqPdf(
         .setFontSize(7)
         .setTextColor(92, 90, 85)
         .text(
-          "Drawn to scale from the room list - finalise with your architect and local bye-laws",
+          "Tentative plan for BOQ quantities only - not a construction or approval drawing. Finalise with your architect.",
           W - M,
           boxY + 3,
           { align: "right" },

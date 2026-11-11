@@ -35,6 +35,7 @@ const page = await browser.newPage({
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 for (const slug of slugs) {
   await page.goto(`http://localhost:${port}/naksha/${slug}/?plan2d=1`);
+  await page.addStyleTag({ content: "header,[class*='sticky'],[class*='fixed']{display:none!important}" });
   const el = page.locator("[data-plan-grid]").first();
   await el.evaluate((e) => {
     e.style.background = "#fff";
