@@ -156,7 +156,10 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 <ul className="mt-1 flex flex-col gap-1"><Tick>{L(lang, "DXF is free", "DXF फ़्री है")}</Tick><Tick>{L(lang, "You check every room", "हर कमरा आप जांचते हैं")}</Tick><Tick>{L(lang, "Opens straight in the BOQ", "सीधे BOQ में खुलता है")}</Tick></ul>
               </Card>
               <Card
-                img={<ElevationDrawing w={n.plot.w} className="block aspect-[16/9] w-full object-cover" />}
+                img={
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src="/home/house-estimate.webp" alt={L(lang, "Front view of a 30×40 ft G+1 house with its sample estimate of ₹25.9 lakh", "30×40 ft G+1 घर का फ़्रंट व्यू, ₹25.9 लाख के सैंपल एस्टिमेट के साथ")} width={1400} height={781} loading="lazy" className="block h-auto w-full" />
+                }
                 title={L(lang, "No plan yet? Pick one", "नक्शा नहीं है? चुनें")}
                 text={L(lang, "Scaled plans with room sizes, a front elevation and a Vastu chart, for common plot sizes.", "आम प्लॉट साइज़ के लिए नाप वाले नक्शे, कमरों के साइज़, फ़्रंट एलिवेशन और वास्तु चार्ट के साथ।")}
                 href={langPath(lang, "naksha")}
