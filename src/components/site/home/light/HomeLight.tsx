@@ -19,7 +19,8 @@ import { SiteFooter, SiteHeader } from "../../Chrome";
 import { BeforeAfter } from "../BeforeAfter";
 import { Reveal } from "../Motion";
 import { LiveEstimate, type LiveRow } from "./LiveEstimate";
-import { HeroSlider, type HeroSlide } from "./HeroSlider";
+import { ElevationDrawing } from "./ElevationDrawing";
+import { type HeroSlide } from "./HeroSlider";
 import { Showcase, type ShowItem } from "./Showcase";
 import { ElevationCarousel, type CarouselItem } from "./ElevationCarousel";
 import { Newsletter } from "./Newsletter";
@@ -574,7 +575,44 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 <span className="ml-3 truncate rounded-full bg-white px-4 py-1 text-[12.5px] font-semibold text-muted">guniyo.com · {L(lang, "Sample project", "सैंपल प्रोजेक्ट")}</span>
               </div>
               <div className="p-3 sm:p-5">
-                <HeroSlider slides={slides} labels={heroLabels} />
+                <div className="grid gap-4 lg:grid-cols-[1fr_1.05fr]">
+                  <div className="flex flex-col overflow-hidden rounded-2xl border border-[#e3e9f2] bg-white">
+                    <p className="border-b border-[#e3e9f2] px-4 py-2.5 text-[13px] font-bold text-ink">{L(lang, "1 · Floor plan", "1 · नक्शा")} <span className="font-medium text-muted">· {n.plot.w}×{n.plot.d} ft, {info.bhk} BHK</span></p>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={nakshaImage(n)} alt={L(lang, "30×40 ft floor plan with room sizes", "30×40 ft नक्शा, कमरों के साइज़ के साथ")} width={1200} height={800} className="aspect-[4/3] w-full flex-1 bg-white object-contain p-2" />
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <div className="overflow-hidden rounded-2xl border border-[#e3e9f2] bg-white">
+                      <p className="border-b border-[#e3e9f2] px-4 py-2.5 text-[13px] font-bold text-ink">{L(lang, "2 · Front elevation", "2 · फ़्रंट एलिवेशन")}</p>
+                      <ElevationDrawing w={n.plot.w} className="block aspect-[16/9] w-full object-cover" />
+                    </div>
+                    <div className="rounded-2xl border border-[#e3e9f2] bg-white">
+                      <div className="flex items-end justify-between gap-3 rounded-t-2xl bg-night px-4 py-3 text-white">
+                        <span>
+                          <span className="block text-[12.5px] text-[#b8cdea]">{L(lang, "3 · Sample estimate, standard", "3 · सैंपल एस्टिमेट, स्टैंडर्ड")}</span>
+                          <span className="font-hoard text-[34px] font-black leading-none tabular-nums">{lakh(info.total, lang)}</span>
+                        </span>
+                        <span className="pb-0.5 text-right text-[13px] font-semibold tabular-nums">₹{num(res.perSqft)}<span className="block text-[11.5px] font-medium text-[#b8cdea]">{L(lang, "per sq ft", "प्रति sq ft")}</span></span>
+                      </div>
+                      <ul className="flex flex-col gap-2 px-4 py-3">
+                        {topSections.slice(0, 4).map((x) => (
+                          <li key={x.code} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 text-[12.5px]">
+                            <span className="truncate">{x.title[lang].replace(/^[A-Z]\.\s*/, "")}</span>
+                            <span className="font-semibold tabular-nums">₹{num(x.subtotal / 1e5, 1)} {L(lang, "lakh", "लाख")}</span>
+                            <span className="col-span-2 h-1 rounded bg-[#e8eef6]"><span className="block h-full rounded bg-amber" style={{ width: `${Math.max(4, (x.subtotal / topMax) * 100)}%` }} /></span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-[14px]">
+                  <p className="text-[12.5px] text-muted">{L(lang, "Sample G+1 estimate, mid-city rates, parking included. Drawing is illustrative.", "सैंपल G+1 एस्टिमेट, मध्यम शहर के रेट, पार्किंग सहित। ड्रॉइंग उदाहरण के लिए है।")}</p>
+                  <span className="flex gap-4 font-bold">
+                    <Link href={linkedHref} className="underline decoration-amber decoration-2 underline-offset-4 hover:text-amber-dark">{L(lang, "Open this plan", "यह नक्शा खोलें")}</Link>
+                    <Link href={boqHref(n.plot)} className="underline decoration-amber decoration-2 underline-offset-4 hover:text-amber-dark">{L(lang, "Get full BOQ", "पूरा BOQ पाएं")}</Link>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -637,19 +675,6 @@ export function HomeLight({ lang }: { lang: Lang }) {
           </div>
         </section>
 
-        {/* what you get */}
-        <section id="features" className="bg-white">
-          <div className={`${wrap} py-16 lg:py-20`}>
-            <Head
-              title={L(lang, "What you get with Guniyo", "Guniyo में आपको क्या मिलता है")}
-              text={L(lang, "Real screens from the tool, not mock-ups. Pick one to preview it.", "टूल की असली स्क्रीन, मॉक-अप नहीं। देखने के लिए एक चुनिए।")}
-            />
-            <div className="mt-9">
-              <Showcase items={showItems} label={L(lang, "What you get", "आपको क्या मिलता है")} />
-            </div>
-          </div>
-        </section>
-
         {/* live estimate */}
         <section id="live-estimate" className="bg-[#eef3fa]">
           <div className={`${wrap} py-16 lg:py-20`}>
@@ -672,81 +697,6 @@ export function HomeLight({ lang }: { lang: Lang }) {
             </Reveal>
           </div>
         </section>
-
-        {/* why choose */}
-        <section className="bg-white">
-          <div className={`${wrap} py-16 lg:py-20`}>
-            <Head
-              title={L(lang, "Why choose Guniyo?", "Guniyo क्यों चुनें?")}
-              text={L(lang, "Four practical reasons, each with the output behind it.", "चार काम की वजहें, हर एक के पीछे का असली आउटपुट के साथ।")}
-            >
-              <Link href={langPath(lang, "about")} className={`text-[15px] ${link}`}>
-                {L(lang, "How the estimate is calculated", "एस्टिमेट कैसे बनता है")}
-              </Link>
-            </Head>
-            <ul className="mt-9 grid grid-cols-[minmax(0,1fr)] gap-5 md:grid-cols-2">
-              {reasons.map((r, i) => (
-                <li key={r.t} className="min-w-0">
-                  <Reveal delay={(i % 2) * 70} className="h-full min-w-0">
-                    <div className="flex h-full flex-col gap-4 rounded-[14px] border border-line bg-white p-5 sm:p-6">
-                      <div>
-                        <h3 className="font-display text-[20px] font-extrabold leading-snug">{r.t}</h3>
-                        <p className="mt-1.5 text-[15px] leading-relaxed text-body">{r.d}</p>
-                      </div>
-                      {r.proof}
-                      <Link href={r.href} className={`mt-auto text-[15px] ${link}`}>
-                        {r.cta} →
-                      </Link>
-                    </div>
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* elevation gallery */}
-        <section className="bg-[#f4f7fb]">
-          <div className={`${wrap} py-16 lg:py-20`}>
-            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-              <Head
-                title={L(lang, "Front elevations for every plot size", "हर प्लॉट साइज़ के लिए फ़्रंट एलिवेशन")}
-                text={L(lang, "Each elevation was drawn for a plot size. Open it to see the plan it fits and what the whole house costs.", "हर एलिवेशन एक प्लॉट साइज़ के लिए बना है। खोलकर देखिए कौन सा नक्शा उसमें बैठता है और पूरे घर का खर्च कितना आएगा।")}
-              />
-              <Link href={langPath(lang, "elevations")} className={btnDark}>
-                {L(lang, "Browse All Elevations", "सभी एलिवेशन देखें")}
-              </Link>
-            </div>
-            <ElevationCarousel items={carousel} labels={carouselLabels} />
-            <p className="mt-3 text-[12.5px] text-[#5a5a5a]">{L(lang, "Front views are artist impressions of the design, not photographs of built houses.", "फ़्रंट व्यू डिज़ाइन के काल्पनिक चित्र हैं, बने हुए घरों की फ़ोटो नहीं।")}</p>
-          </div>
-        </section>
-
-        <Split
-          title={L(lang, "From floor plan to front elevation", "फ़्लोर प्लान से फ़्रंट एलिवेशन तक")}
-          text={L(lang, "Every plan is drawn to scale from the plot, with walls, doors, stair and room sizes, then paired with its front elevation and full construction cost.", "हर नक्शा प्लॉट से स्केल पर बनता है, दीवारें, दरवाज़े, सीढ़ी और कमरों के साइज़ के साथ, फिर उसके फ़्रंट एलिवेशन और पूरे निर्माण खर्च से जुड़ता है।")}
-          points={[
-            L(lang, "Ground and first floor, with sizes on every room", "ग्राउंड और पहली मंज़िल, हर कमरे पर साइज़"),
-            L(lang, "A Vastu chart for each room", "हर कमरे का वास्तु चार्ट"),
-            L(lang, "Download the plan as a PDF or image", "नक्शा PDF या इमेज में डाउनलोड"),
-          ]}
-          ctas={
-            <>
-              <Link href={langPath(lang, `naksha/${n.slug}`)} className={btnDark}>{L(lang, "Open this plan", "यह नक्शा खोलें")}</Link>
-              <a href={nakshaImage(n)} target="_blank" rel="noopener noreferrer" className={btnLight}>{L(lang, "View the plan full size", "नक्शा पूरे साइज़ में देखें")}</a>
-            </>
-          }
-          visual={
-            <div className="flex flex-col gap-3">
-              <BeforeAfter
-                before={<img src={nakshaImage(n)} alt={L(lang, "30×40 ft floor plan", "30×40 ft नक्शा")} loading="lazy" className="absolute inset-0 h-full w-full bg-white object-contain p-3" />}
-                after={<img src={nakshaPreview(n).src} alt={L(lang, "Front elevation of the same house", "उसी घर का फ़्रंट एलिवेशन")} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
-                label={L(lang, "Compare plan and elevation (use arrow keys)", "नक्शे और एलिवेशन की तुलना (तीर वाली कुंजियां इस्तेमाल करें)")}
-              />
-              <p className="text-center text-[13px] text-muted">{L(lang, "Drag, or focus the handle and use the arrow keys", "खींचें, या हैंडल पर जाकर तीर वाली कुंजियां इस्तेमाल करें")}</p>
-            </div>
-          }
-        />
 
         <Split
           tint

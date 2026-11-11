@@ -1,5 +1,6 @@
 "use client";
 
+import { ElevationDrawing } from "./ElevationDrawing";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -116,24 +117,7 @@ export function LiveEstimate({
       <div className="grid overflow-hidden rounded-[14px] border border-line bg-white lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
        <div className="min-w-0">
         <div className="relative bg-gradient-to-b from-[#f0f0f0] to-[#f5f5f5]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            key={row.slug}
-            src={row.img}
-            alt=""
-            width={1200}
-            height={720}
-            className="aspect-[16/10] w-full object-cover object-bottom"
-            loading="lazy"
-          />
-          <svg aria-hidden="true" viewBox="0 0 100 8" preserveAspectRatio="none" className="absolute inset-x-0 bottom-2 h-6 w-full">
-            <g stroke="#080808" strokeWidth="0.35" vectorEffect="non-scaling-stroke" fill="none">
-              <path d="M10 4H90M10 1.6V6.4M90 1.6V6.4" vectorEffect="non-scaling-stroke" />
-            </g>
-          </svg>
-          <span className="absolute bottom-[10px] left-1/2 -translate-x-1/2 rounded-[3px] bg-white px-2 py-0.5 text-[12px] font-bold tabular-nums text-ink">
-            {row.w} ft {labels.frontage}
-          </span>
+          <ElevationDrawing key={row.slug} w={row.w} className="block aspect-[16/10] w-full" />
         </div>
 
         <div className="grid grid-cols-3 divide-x divide-line border-y border-line text-[13px] text-ink">
