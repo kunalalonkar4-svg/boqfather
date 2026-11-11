@@ -44,6 +44,10 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap"
         />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Noto+Serif+Devanagari:wght@400;600&display=swap"
+        />
       </head>
       <body className="min-h-screen antialiased">
         <AccountProvider>{children}</AccountProvider>
