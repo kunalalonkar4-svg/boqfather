@@ -87,7 +87,23 @@ export function HomeLight({ lang }: { lang: Lang }) {
     <>
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
       <main lang={lang} className="bg-white text-ink">
-        {/* hero: words on the left, the product on a teal panel on the right */}
+        {lang === "en" ? (
+          <section className="bg-white">
+            <h1 className="sr-only">Professional House Cost Estimates in Minutes</h1>
+            <picture>
+              <source media="(max-width: 639px)" srcSet="/home/hero-banner-m.webp" width={800} height={614} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/home/hero-banner.webp" alt="A two-storey house with its floor plan, estimated cost and material BOQ cards: professional house cost estimates in minutes" width={2000} height={848} fetchPriority="high" className="block h-auto w-full" />
+            </picture>
+            <div className={`${wrap} flex flex-col items-center gap-4 py-8 text-center`}>
+              <p className="max-w-2xl text-[17px] leading-relaxed text-body">Choose a house plan and get an item-wise BOQ with quantities, rates and costs. Built by a civil engineer and valuer, free to start.</p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link href={start} className={btnYellow}>Start free estimate</Link>
+                <Link href={langPath(lang, "naksha")} className={btnLine}>Explore house plans</Link>
+              </div>
+            </div>
+          </section>
+        ) : (
         <section className={`${wrap} grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1fr_1.05fr] lg:gap-14`}>
           <div>
             <h1 className={`${serif} text-[36px] font-normal leading-[1.15] tracking-[-0.01em] [text-wrap:balance] sm:text-[52px]`}>
@@ -120,6 +136,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
             </div>
           </div>
         </section>
+        )}
 
         {/* step 1 */}
         <section className="bg-white">
