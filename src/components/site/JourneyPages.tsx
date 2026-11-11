@@ -126,24 +126,45 @@ function Roadmap({ lang, current }: { lang: Lang; current: number }) {
     ...EARLIER.map((e) => ({ n: e.n, slug: e.slug, label: pick(e.short, lang) })),
     ...STAGES.map((s) => ({ n: s.n, slug: s.slug, label: pick(s.short, lang) })),
   ];
+  const phases: { en: string; hi: string; from: number; to: number }[] = [
+    { en: "Plan and paperwork", hi: "योजना और काग़ज़ात", from: 1, to: 5 },
+    { en: "Build the structure", hi: "ढांचा बनाना", from: 6, to: 10 },
+    { en: "Services and finishing", hi: "फिनिशिंग का काम", from: 11, to: 13 },
+    { en: "Handover", hi: "हैंडओवर", from: 14, to: 14 },
+  ];
   return (
-    <nav aria-label={L(lang, "All 14 stages", "सभी 14 चरण")} className="max-w-3xl">
-      <ol className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        {items.map((it) => (
-          <li key={it.slug}>
-            <Link
-              href={gp(lang, it.slug)}
-              aria-current={it.n === current ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-[10px] border px-3.5 py-2.5 text-[15px] font-semibold transition hover:border-amber ${
-                it.n === current ? "border-amber bg-[#eef5ff]" : "border-line bg-white"
-              }`}
-            >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink text-[13px] font-bold text-white">{it.n}</span>
-              {it.label}
-            </Link>
-          </li>
-        ))}
-      </ol>
+    <nav aria-label={L(lang, "All 14 stages", "सभी 14 चरण")} className="grid gap-4 lg:grid-cols-2">
+      {phases.map((ph) => (
+        <div key={ph.from} className="rounded-xl border border-line bg-white p-5">
+          <p className="mb-3 text-[15px] font-bold text-amber-dark">
+            {L(lang, ph.en, ph.hi)}
+          </p>
+          <ol className="relative flex flex-col gap-1 before:absolute before:bottom-4 before:left-[15px] before:top-4 before:w-px before:bg-line">
+            {items
+              .filter((it) => it.n >= ph.from && it.n <= ph.to)
+              .map((it) => (
+                <li key={it.slug} className="relative">
+                  <Link
+                    href={gp(lang, it.slug)}
+                    aria-current={it.n === current ? "page" : undefined}
+                    className={`flex items-center gap-3 rounded-lg px-1.5 py-2 text-[15px] font-semibold transition hover:bg-[#eef5ff] ${
+                      it.n === current ? "bg-[#eef5ff]" : ""
+                    }`}
+                  >
+                    <span
+                      className={`relative z-10 flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[13px] font-bold ${
+                        it.n === current ? "bg-amber text-white" : "border border-[#b9cdea] bg-[#eef5ff] text-steel"
+                      }`}
+                    >
+                      {it.n}
+                    </span>
+                    {it.label}
+                  </Link>
+                </li>
+              ))}
+          </ol>
+        </div>
+      ))}
     </nav>
   );
 }
