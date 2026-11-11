@@ -86,7 +86,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
   return (
     <>
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
-      <main lang={lang} className="bg-white text-ink">
+      <main lang={lang} className="overflow-x-clip bg-white text-ink">
         {lang === "en" ? (
           <section className="bg-white">
             <h1 className="sr-only">Professional House Cost Estimates in Minutes</h1>
@@ -146,7 +146,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
               <Card
                 img={
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={nakshaImage(n)} alt={L(lang, "A floor plan to upload", "अपलोड करने वाला नक्शा")} loading="lazy" className="aspect-[16/9] w-full object-contain p-3" />
+                  <img src="/home/plan-35x50.webp" alt={L(lang, "A coloured 35×50 ft floor plan, ground and first floor, east facing", "35×50 ft का रंगीन नक्शा, ग्राउंड और पहली मंज़िल, पूर्व-मुखी")} width={1200} height={1600} loading="lazy" className="aspect-square w-full object-cover object-top" />
                 }
                 title={L(lang, "Already have a plan? Upload it", "नक्शा पहले से है? अपलोड करें")}
                 text={L(lang, "An AutoCAD DXF is read on your own device, free. A photo or PDF is read by AI on Pro.", "AutoCAD DXF आपके अपने डिवाइस पर पढ़ा जाता है, फ़्री। फ़ोटो या PDF प्रो में AI पढ़ता है।")}
