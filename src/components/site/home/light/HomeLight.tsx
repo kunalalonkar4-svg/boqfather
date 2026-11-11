@@ -543,55 +543,97 @@ export function HomeLight({ lang }: { lang: Lang }) {
     <>
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
       <main lang={lang} className="home-hoard overflow-x-clip bg-white">
-        {/* hero: promise and next step on the left, a real elevation with its estimate on the right */}
-        <section className="relative overflow-hidden bg-night text-white">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.16] [background-image:linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)] [background-size:48px_48px] [mask-image:linear-gradient(to_bottom_left,black,transparent_75%)]" />
-          <div className={`${wrap} relative grid items-center gap-8 pb-12 pt-10 lg:grid-cols-[2fr_3fr] lg:gap-12 lg:pb-16 lg:pt-14`}>
-            <div className="flex min-w-0 flex-col gap-5">
-              <p className="w-fit rounded-full border border-night-line bg-night-2 px-3 py-1 text-[13px] font-semibold text-[#8fb8ff]">{L(lang, "House plans · Construction cost · Item-wise BOQ", "घर के नक्शे · निर्माण खर्च · आइटम-वार BOQ")}</p>
-              <h1 className="font-hoard text-[36px] font-extrabold leading-[1.06] tracking-[-0.015em] text-white [text-wrap:balance] sm:text-[46px] lg:text-[54px]">
-                {L(lang, "Know your construction cost before you build.", "घर बनाने से पहले जानिए, कितना खर्च आएगा।")}
-              </h1>
-              <p className="max-w-[34rem] text-[17px] leading-relaxed text-[#c7d3e3] sm:text-[18px]">
-                {L(lang, "Explore house plans and front elevations, then see the quantities, rates and costs behind your estimate.", "घर के नक्शे और फ़्रंट एलिवेशन देखिए, फिर अपने एस्टिमेट के पीछे की मात्रा, रेट और खर्च देखिए।")}
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-12 items-center rounded-[4px] bg-amber px-7 text-[16px] font-bold text-white transition hover:bg-amber-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber">
-                  {L(lang, "Start Free Estimate", "मुफ़्त एस्टिमेट शुरू करें")}
-                </Link>
-                <Link href={langPath(lang, "naksha")} className="inline-flex h-12 items-center rounded-[4px] border border-[#3a5278] bg-transparent px-6 text-[16px] font-bold text-white transition hover:bg-night-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber">
-                  {L(lang, "Explore House Plans", "घर के नक्शे देखें")}
-                </Link>
-              </div>
-              <p className="text-[14px] text-mist">{L(lang, "Free, no sign-up · In English and Hindi", "मुफ़्त, साइन-अप नहीं · हिंदी और अंग्रेज़ी में")}</p>
+        {/* hero: centred promise, then the real product in a window frame */}
+        <section className="relative overflow-hidden bg-white">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[560px] [background:radial-gradient(60%_60%_at_50%_0%,#d6e6ff_0%,rgba(214,230,255,0)_100%)]" />
+          <div className={`${wrap} relative flex flex-col items-center pb-14 pt-14 text-center sm:pt-20 lg:pb-20`}>
+            <p className="rounded-full border border-[#c9dcfb] bg-white/80 px-4 py-1.5 text-[13.5px] font-semibold text-amber-dark">
+              {L(lang, "House plans · Construction cost · Item-wise BOQ", "घर के नक्शे · निर्माण खर्च · आइटम-वार BOQ")}
+            </p>
+            <h1 className="font-hoard mt-6 max-w-4xl text-[38px] font-extrabold leading-[1.04] tracking-[-0.025em] text-ink [text-wrap:balance] sm:text-[58px] lg:text-[72px]">
+              {L(lang, "The house cost studio for India.", "भारत के लिए घर के खर्च का स्टूडियो।")}
+            </h1>
+            <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-body sm:text-[20px]">
+              {L(lang, "Pick a plan, see the elevation, and get the quantities, rates and cost behind your estimate. Know the number before you build.", "नक्शा चुनिए, एलिवेशन देखिए, और अपने एस्टिमेट के पीछे की मात्रा, रेट और खर्च पाइए। बनाने से पहले आंकड़ा जानिए।")}
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-13 items-center rounded-full bg-ink px-8 py-3.5 text-[16px] font-bold text-white transition hover:bg-amber focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber">
+                {L(lang, "Start free estimate", "मुफ़्त एस्टिमेट शुरू करें")}
+              </Link>
+              <Link href={langPath(lang, "naksha")} className="inline-flex items-center rounded-full border border-[#cbd5e3] bg-white px-8 py-3.5 text-[16px] font-bold text-ink transition hover:border-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber">
+                {L(lang, "Explore house plans", "घर के नक्शे देखें")}
+              </Link>
             </div>
-            <HeroSlider slides={slides} labels={heroLabels} />
+            <p className="mt-4 text-[14px] text-muted">{L(lang, "Free, no sign-up · In English and Hindi", "मुफ़्त, साइन-अप नहीं · हिंदी और अंग्रेज़ी में")}</p>
+
+            <div className="mt-12 w-full max-w-5xl overflow-hidden rounded-[22px] border border-[#d5deeb] bg-white text-left shadow-[0_30px_80px_-30px_rgba(20,60,130,0.35)]">
+              <div className="flex items-center gap-2 border-b border-[#e3e9f2] bg-[#f4f7fb] px-4 py-3">
+                <span aria-hidden="true" className="h-3 w-3 rounded-full bg-[#ff6b5f]" />
+                <span aria-hidden="true" className="h-3 w-3 rounded-full bg-[#ffc23d]" />
+                <span aria-hidden="true" className="h-3 w-3 rounded-full bg-[#2bc84a]" />
+                <span className="ml-3 truncate rounded-full bg-white px-4 py-1 text-[12.5px] font-semibold text-muted">guniyo.com · {L(lang, "Sample project", "सैंपल प्रोजेक्ट")}</span>
+              </div>
+              <div className="p-3 sm:p-5">
+                <HeroSlider slides={slides} labels={heroLabels} />
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* trust strip: only facts that are true of the site and its author */}
-        <section className="border-b border-line bg-white">
-          <div className={`${wrap} grid gap-6 py-7 lg:grid-cols-[1.2fr_2fr] lg:items-center`}>
-            <div className="flex items-center gap-4">
-              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-night text-[17px] font-extrabold text-white">KA</span>
-              <p className="text-[14px] leading-snug text-body">
-                <strong className="block text-[15px] text-ink">{L(lang, "Built by a civil engineer and valuer", "सिविल इंजीनियर और वैल्यूअर द्वारा बनाया गया")}</strong>
-                {L(lang, "Kunal Alonkar · 12+ years · IIV member (Cat-I/F-7426)", "कुणाल अलोणकर · 12+ वर्ष · IIV सदस्य (Cat-I/F-7426)")}
-              </p>
+        {/* three things you do */}
+        <section className="bg-white">
+          <div className={`${wrap} pb-6 pt-4 lg:pb-10`}>
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="text-[30px] font-extrabold leading-[1.1] tracking-tight [text-wrap:balance] sm:text-[44px]">
+                {L(lang, "Anyone can plan a house with numbers.", "कोई भी घर को आंकड़ों के साथ प्लान कर सकता है।")}
+              </h2>
             </div>
-            <dl className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+            <ul className="mt-10 grid gap-5 md:grid-cols-3">
+              {[
+                { k: "plan", t: L(lang, "Choose a plan", "नक्शा चुनिए"), d: L(lang, "Scaled house plans with a front elevation and a Vastu chart, for every common plot size.", "हर आम प्लॉट साइज़ के लिए नाप वाले नक्शे, फ़्रंट एलिवेशन और वास्तु चार्ट के साथ।"), href: langPath(lang, "naksha"), cta: L(lang, "Explore house plans", "घर के नक्शे देखें") },
+                { k: "boq", t: L(lang, "Get the BOQ", "BOQ पाइए"), d: L(lang, "Every item with quantity, unit, rate and amount. Change any rate and watch the total move.", "हर आइटम मात्रा, यूनिट, रेट और रकम के साथ। कोई भी रेट बदलिए और टोटल बदलते देखिए।"), href: langPath(lang, "house-boq-estimate"), cta: L(lang, "Make my BOQ", "मेरा BOQ बनाएं") },
+                { k: "quote", t: L(lang, "Check the quote", "कोटेशन जांचिए"), d: L(lang, "Set a contractor's rate beside the market rate before you sign anything.", "कुछ भी साइन करने से पहले ठेकेदार का रेट बाज़ार रेट के बगल में रखिए।"), href: langPath(lang, "contractor-quote-checker"), cta: L(lang, "Check a quote", "कोटेशन जांचें") },
+              ].map((c) => (
+                <li key={c.k} className="flex flex-col rounded-[24px] bg-[#f2f6fc] p-7 transition hover:bg-[#e8f0fb]">
+                  <span aria-hidden="true" className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ink text-white">
+                    {c.k === "plan" && (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 4h16v16H4zM4 11h9M13 4v16M13 15h7" /></svg>)}
+                    {c.k === "boq" && (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5" /></svg>)}
+                    {c.k === "quote" && (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 12l5 5L20 6" /></svg>)}
+                  </span>
+                  <h3 className="mt-6 text-[24px] font-extrabold leading-tight">{c.t}</h3>
+                  <p className="mt-2 text-[16px] leading-relaxed text-body">{c.d}</p>
+                  <Link href={c.href} className="mt-6 inline-flex w-fit items-center rounded-full bg-white px-5 py-2.5 text-[15px] font-bold text-ink shadow-sm transition hover:bg-ink hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber">
+                    {c.cta}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* numbers: only facts that are true of the site and its author */}
+        <section className="bg-white">
+          <div className={`${wrap} py-12 lg:py-16`}>
+            <dl className="grid grid-cols-2 gap-y-10 text-center lg:grid-cols-4">
               {([
                 [String(CALCULATORS.length), L(lang, "construction calculators", "निर्माण कैलकुलेटर")],
                 [String(CITIES.length), L(lang, "city-wise rate pages", "शहर-वार रेट पेज")],
                 ["14", L(lang, "stage house-building guide", "चरणों की गाइड")],
                 [String(CHECKLIST_COUNT), L(lang, "point site checklist", "पॉइंट की साइट चेकलिस्ट")],
-              ] as [string, string][]).map(([n, l]) => (
-                <div key={l} className="flex flex-col">
-                  <dt className="order-2 text-[13px] leading-tight text-muted">{l}</dt>
-                  <dd className="order-1 font-display text-[26px] font-extrabold leading-none text-ink">{n}</dd>
+              ] as [string, string][]).map(([v, l]) => (
+                <div key={l} className="flex flex-col items-center">
+                  <dd className="order-1 font-hoard text-[56px] font-extrabold leading-none tracking-tight text-ink sm:text-[76px]">{v}</dd>
+                  <dt className="order-2 mt-2 text-[15px] text-muted">{l}</dt>
                 </div>
               ))}
             </dl>
+            <p className="mx-auto mt-12 flex max-w-xl items-center justify-center gap-3 text-left text-[14px] leading-snug text-body">
+              <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink text-[15px] font-extrabold text-white">KA</span>
+              <span>
+                <strong className="block text-[15px] text-ink">{L(lang, "Built by a civil engineer and valuer", "सिविल इंजीनियर और वैल्यूअर द्वारा बनाया गया")}</strong>
+                {L(lang, "Kunal Alonkar · 12+ years · IIV member (Cat-I/F-7426)", "कुणाल अलोणकर · 12+ वर्ष · IIV सदस्य (Cat-I/F-7426)")}
+              </span>
+            </p>
           </div>
         </section>
 
