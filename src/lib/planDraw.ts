@@ -15,6 +15,8 @@ export interface PRect {
   fill?: RGB;
   stroke?: RGB;
   sw?: number;
+  /** Floor material drawn on screen over the fill (the PDF keeps the flat fill). */
+  tex?: "wood" | "marble" | "tile" | "tileBlue" | "paver" | "grass" | "stone";
 }
 export interface PLine {
   x1: number;
@@ -103,6 +105,28 @@ export const PLAN_FILL: Record<string, RGB> = {
   dress: [240, 236, 248],
 };
 
+/** Floor material and the flat colour that stands for it in the PDF. */
+export const PLAN_TEX: Record<string, { tex: NonNullable<PRect["tex"]>; fill: RGB }> = {
+  bedroom: { tex: "wood", fill: [196, 150, 100] },
+  dress: { tex: "wood", fill: [196, 150, 100] },
+  study: { tex: "wood", fill: [196, 150, 100] },
+  stair: { tex: "wood", fill: [190, 140, 92] },
+  hall: { tex: "marble", fill: [238, 236, 232] },
+  dining: { tex: "marble", fill: [238, 236, 232] },
+  passage: { tex: "marble", fill: [240, 238, 234] },
+  corridor: { tex: "marble", fill: [240, 238, 234] },
+  kitchen: { tex: "tile", fill: [238, 238, 234] },
+  pooja: { tex: "marble", fill: [244, 238, 228] },
+  toilet: { tex: "tileBlue", fill: [183, 205, 226] },
+  utility: { tex: "tileBlue", fill: [183, 205, 226] },
+  store: { tex: "tile", fill: [248, 232, 160] },
+  parking: { tex: "paver", fill: [196, 196, 196] },
+  porch: { tex: "paver", fill: [200, 200, 200] },
+  balcony: { tex: "stone", fill: [226, 214, 200] },
+  open: { tex: "grass", fill: [128, 178, 100] },
+  shop: { tex: "tile", fill: [238, 238, 234] },
+};
+
 export function planPrimitives(
   W: number,
   D: number,
@@ -157,14 +181,17 @@ export function planPrimitives(
 
   // walls: the whole floor in wall colour, spaces cut out of it — exact wall thickness everywhere
   P.rects.push({ x: 0, y: 0, w: W, h: D, fill: WALL });
-  for (const r of spaces)
+  for (const r of spaces) {
+    const mat = PLAN_TEX[r.type];
     P.rects.push({
       x: r.x,
       y: r.y,
       w: r.w,
       h: r.h,
-      fill: PLAN_FILL[r.type] ?? [240, 240, 240],
+      fill: mat?.fill ?? PLAN_FILL[r.type] ?? [240, 240, 240],
+      tex: mat?.tex,
     });
+  }
   for (const c of cols)
     P.rects.push({ x: c.x, y: c.y, w: c.w, h: c.h, fill: [0, 0, 0] });
 
@@ -349,14 +376,14 @@ export function planPrimitives(
       if (s) {
         const u0 = s.u + (tables ? 0.5 : 0);
         placed.push(s.b);
-        rect(box(s.sd, u0, 0.03, bw, bl));
+        rect(box(s.sd, u0, 0.03, bw, bl), [190, 186, 184]);
         fur("bed", box(s.sd, u0, 0.03, bw, bl), s.sd);
-        rect(box(s.sd, u0 + 0.1, 0.1, bw / 2 - 0.15, 0.3));
-        rect(box(s.sd, u0 + bw / 2 + 0.05, 0.1, bw / 2 - 0.15, 0.3));
+        rect(box(s.sd, u0 + 0.1, 0.1, bw / 2 - 0.15, 0.3), [232, 230, 228]);
+        rect(box(s.sd, u0 + bw / 2 + 0.05, 0.1, bw / 2 - 0.15, 0.3), [232, 230, 228]);
         line(s.sd, u0, 0.75, u0 + bw, 0.75);
         if (tables) {
-          rect(box(s.sd, s.u, 0.03, 0.42, 0.4));
-          rect(box(s.sd, s.u + bw + 0.58, 0.03, 0.42, 0.4));
+          rect(box(s.sd, s.u, 0.03, 0.42, 0.4), [120, 84, 56]);
+          rect(box(s.sd, s.u + bw + 0.58, 0.03, 0.42, 0.4), [120, 84, 56]);
           fur("sidetable", box(s.sd, s.u, 0.03, 0.42, 0.4), s.sd);
           fur("sidetable", box(s.sd, s.u + bw + 0.58, 0.03, 0.42, 0.4), s.sd);
         }
@@ -366,7 +393,7 @@ export function planPrimitives(
         const w = wl >= 1.0 ? spot(others, wl, 0.6, ["s", "e", "c"]) : null;
         if (w) {
           placed.push(w.b);
-          rect(w.b);
+          rect(w.b, [128, 90, 60]);
           fur("wardrobe", w.b, w.sd);
           for (let k = 0.6; k < wl - 0.1; k += 0.6)
             line(w.sd, w.u + k, 0.03, w.u + k, 0.63);
@@ -378,15 +405,15 @@ export function planPrimitives(
       const s = spot(sides, sl, 0.85);
       if (s) {
         placed.push(s.b);
-        rect(s.b);
+        rect(s.b, [214, 178, 112]);
         fur("sofa", s.b, s.sd);
-        rect(box(s.sd, s.u, 0.03, sl, 0.2), [244, 241, 235]);
-        rect(box(s.sd, s.u, 0.03, 0.2, 0.85), [244, 241, 235]);
-        rect(box(s.sd, s.u + sl - 0.2, 0.03, 0.2, 0.85), [244, 241, 235]);
+        rect(box(s.sd, s.u, 0.03, sl, 0.2), [196, 160, 98]);
+        rect(box(s.sd, s.u, 0.03, 0.2, 0.85), [196, 160, 98]);
+        rect(box(s.sd, s.u + sl - 0.2, 0.03, 0.2, 0.85), [196, 160, 98]);
         const tb = box(s.sd, s.u + sl / 2 - 0.5, 1.25, 1.0, 0.5);
         if (deep(s.sd) > 2.2 && fits(tb)) {
           placed.push(tb);
-          rect(tb);
+          rect(tb, [150, 108, 72]);
           fur("ctable", tb, s.sd);
         }
         const opp: Side =
@@ -400,7 +427,7 @@ export function planPrimitives(
         const tv = spot([opp], 1.5, 0.4);
         if (tv && deep(s.sd) > 3.0) {
           placed.push(tv.b);
-          rect(tv.b, [236, 233, 226]);
+          rect(tv.b, [90, 86, 82]);
           fur("tv", tv.b, opp);
         }
       }
@@ -414,7 +441,7 @@ export function planPrimitives(
       const t: Box = { x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, w, h };
       const zone = { x: t.x - 0.5, y: t.y - 0.5, w: t.w + 1.0, h: t.h + 1.0 };
       if (fits(zone) || fits(t)) {
-        rect(t);
+        rect(t, [150, 122, 98]);
         fur("dtable", t);
         const n = big ? 3 : 2;
         for (let i = 0; i < n; i++) {
@@ -429,7 +456,7 @@ export function planPrimitives(
                 [{ x: t.x + w + 0.05, y: t.y + f * h - 0.2, w: 0.4, h: 0.4 }, "right"],
               ];
           for (const [c, sd] of chairs) {
-            rect(c);
+            rect(c, [128, 98, 72]);
             fur("chair", c, sd);
           }
         }
@@ -442,10 +469,10 @@ export function planPrimitives(
         const b = box(sd, 0.03, 0.03, L - 0.06, 0.6);
         if (!fits(b)) continue;
         placed.push(b);
-        rect(b, [246, 243, 238]);
+        rect(b, [96, 96, 98]);
         fur("counter", b, sd);
         // sink and two-burner hob
-        rect(box(sd, L * 0.2, 0.1, 0.55, 0.42));
+        rect(box(sd, L * 0.2, 0.1, 0.55, 0.42), [214, 216, 220]);
         fur("sink", box(sd, L * 0.2, 0.1, 0.55, 0.42), sd);
         fur("hob", box(sd, L * 0.72 - 0.15, 0.15, 0.6, 0.36), sd);
         const [hx, hy] = pt(sd, L * 0.72, 0.33);
@@ -471,7 +498,7 @@ export function planPrimitives(
             );
             if (fits(lb)) {
               placed.push(lb);
-              rect(lb, [246, 243, 238]);
+              rect(lb, [96, 96, 98]);
               fur("counter", lb, a);
               break;
             }
@@ -505,13 +532,13 @@ export function planPrimitives(
       const w = along ? cw : cl,
         h = along ? cl : cw;
       const c: Box = { x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, w, h };
-      rect(c, [250, 250, 250]);
+      rect(c, [150, 156, 166]);
       // front of the car faces the road (bottom of the plan)
       fur("car", c, along ? "bottom" : "right");
       if (along) {
         rect(
           { x: c.x + 0.18, y: c.y + 1.1, w: cw - 0.36, h: 1.9 },
-          [236, 236, 236],
+          [96, 104, 116],
         );
         P.lines.push({
           x1: c.x + 0.18,
@@ -524,7 +551,7 @@ export function planPrimitives(
       } else {
         rect(
           { x: c.x + 1.1, y: c.y + 0.18, w: 1.9, h: cw - 0.36 },
-          [236, 236, 236],
+          [96, 104, 116],
         );
       }
     } else if (r.type === "pooja" && mn >= 0.9) {
@@ -551,7 +578,7 @@ export function planPrimitives(
   };
 
   for (const r of spaces) {
-    const fill = PLAN_FILL[r.type] ?? WHITE;
+    const fill = PLAN_TEX[r.type]?.fill ?? PLAN_FILL[r.type] ?? WHITE;
     const edgeLen = (s: Side) => (s === "top" || s === "bottom" ? r.w : r.h);
     // doors and openings
     const busy: Record<Side, [number, number][]> = {

@@ -13,6 +13,7 @@ import {
 } from "@/engine";
 import type { Lang } from "@/lib/site";
 import { planPrimitives } from "@/lib/planDraw";
+import { PlanDefs, PlanFrame } from "./PlanDefs";
 import { downloadPlanPdf, downloadPlanPng } from "@/lib/planDownload";
 
 const FT = 3.28084;
@@ -179,6 +180,8 @@ export function SketchPanel({
                 role="img"
                 aria-label={`${FLOOR(s.floor, lang)} plan`}
               >
+                <PlanDefs id={`f${s.floor}`} />
+                <PlanFrame b={b} />
                 {P.rects.map((x, i) => (
                   <rect
                     key={`r${i}`}
@@ -186,7 +189,7 @@ export function SketchPanel({
                     y={x.y}
                     width={x.w}
                     height={x.h}
-                    fill={rgb(x.fill)}
+                    fill={x.tex ? `url(#pt-f${s.floor}-${x.tex})` : rgb(x.fill)}
                     stroke={rgb(x.stroke)}
                     strokeWidth={x.sw ?? 0}
                   />
