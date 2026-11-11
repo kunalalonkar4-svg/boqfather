@@ -150,7 +150,7 @@ export function HeroSlider({ slides, labels }: { slides: HeroSlide[]; labels: He
         </div>
       </div>
 
-      <div className="mt-3 rounded-[14px] border border-line bg-white p-4" aria-live="polite">
+      <div className="mt-3 rounded-[14px] border border-line bg-white p-4 text-ink" aria-live="polite">
         <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-[14px] sm:grid-cols-4">
           <div>
             <dt className="text-[#5a5a5a]">{labels.plot}</dt>

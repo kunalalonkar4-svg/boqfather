@@ -544,25 +544,26 @@ export function HomeLight({ lang }: { lang: Lang }) {
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
       <main lang={lang} className="home-hoard overflow-x-clip bg-white">
         {/* hero: promise and next step on the left, a real elevation with its estimate on the right */}
-        <section className="bg-[#f4f7fb]">
-          <div className={`${wrap} grid items-center gap-8 pb-10 pt-8 lg:grid-cols-[2fr_3fr] lg:gap-12 lg:pb-14 lg:pt-10`}>
+        <section className="relative overflow-hidden bg-night text-white">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.16] [background-image:linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)] [background-size:48px_48px] [mask-image:linear-gradient(to_bottom_left,black,transparent_75%)]" />
+          <div className={`${wrap} relative grid items-center gap-8 pb-12 pt-10 lg:grid-cols-[2fr_3fr] lg:gap-12 lg:pb-16 lg:pt-14`}>
             <div className="flex min-w-0 flex-col gap-5">
-              <p className="text-[14px] font-semibold text-amber-dark">{L(lang, "House plans · Construction cost · Item-wise BOQ", "घर के नक्शे · निर्माण खर्च · आइटम-वार BOQ")}</p>
-              <h1 className="font-hoard text-[36px] font-extrabold leading-[1.06] tracking-[-0.015em] text-ink [text-wrap:balance] sm:text-[46px] lg:text-[54px]">
+              <p className="w-fit rounded-full border border-night-line bg-night-2 px-3 py-1 text-[13px] font-semibold text-[#8fb8ff]">{L(lang, "House plans · Construction cost · Item-wise BOQ", "घर के नक्शे · निर्माण खर्च · आइटम-वार BOQ")}</p>
+              <h1 className="font-hoard text-[36px] font-extrabold leading-[1.06] tracking-[-0.015em] text-white [text-wrap:balance] sm:text-[46px] lg:text-[54px]">
                 {L(lang, "Know your construction cost before you build.", "घर बनाने से पहले जानिए, कितना खर्च आएगा।")}
               </h1>
-              <p className="max-w-[34rem] text-[17px] leading-relaxed text-body sm:text-[18px]">
+              <p className="max-w-[34rem] text-[17px] leading-relaxed text-[#c7d3e3] sm:text-[18px]">
                 {L(lang, "Explore house plans and front elevations, then see the quantities, rates and costs behind your estimate.", "घर के नक्शे और फ़्रंट एलिवेशन देखिए, फिर अपने एस्टिमेट के पीछे की मात्रा, रेट और खर्च देखिए।")}
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link href={langPath(lang, "house-boq-estimate")} className="inline-flex h-12 items-center rounded-[4px] bg-amber px-7 text-[16px] font-bold text-white transition hover:bg-amber-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber">
                   {L(lang, "Start Free Estimate", "मुफ़्त एस्टिमेट शुरू करें")}
                 </Link>
-                <Link href={langPath(lang, "naksha")} className="inline-flex h-12 items-center rounded-[4px] border border-line bg-white px-6 text-[16px] font-bold text-ink transition hover:border-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber">
+                <Link href={langPath(lang, "naksha")} className="inline-flex h-12 items-center rounded-[4px] border border-[#3a5278] bg-transparent px-6 text-[16px] font-bold text-white transition hover:bg-night-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber">
                   {L(lang, "Explore House Plans", "घर के नक्शे देखें")}
                 </Link>
               </div>
-              <p className="text-[14px] text-[#5a5a5a]">{L(lang, "Free, no sign-up · In English and Hindi", "मुफ़्त, साइन-अप नहीं · हिंदी और अंग्रेज़ी में")}</p>
+              <p className="text-[14px] text-mist">{L(lang, "Free, no sign-up · In English and Hindi", "मुफ़्त, साइन-अप नहीं · हिंदी और अंग्रेज़ी में")}</p>
             </div>
             <HeroSlider slides={slides} labels={heroLabels} />
           </div>
