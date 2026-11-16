@@ -38,7 +38,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "privacy",
     "terms",
   ];
-  const lastModified = new Date("2026-11-03");
+  // date of the last real site-wide change (new design, plan drawings and header); update it when pages change
+  const lastModified = new Date("2026-11-11");
   return paths.flatMap((p) => {
     const langs = XLANGS.filter((l) => hasPage(l, p));
     const languages = Object.fromEntries(langs.map((l) => [HREFLANG[l], `${SITE_URL}${langPath(l, p)}`]));
