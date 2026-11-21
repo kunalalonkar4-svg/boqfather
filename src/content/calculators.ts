@@ -45,7 +45,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Total cost, materials, stages",
       h1: "House Construction Cost Calculator",
       metaTitle:
-        "House Construction Cost Calculator India 2026 – Cost per sqft, Materials | Guniyo",
+        "House Construction Cost Calculator India (2026) | Guniyo",
       metaDescription:
         "Calculate house construction cost in India from built-up area, floors, city and quality. Get cement, steel, sand, bricks, stage-wise cost, payment schedule and a PDF report.",
       intro:
@@ -112,7 +112,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Cement, sand, aggregate",
       h1: "Concrete Calculator – Cement, Sand and Aggregate",
       metaTitle:
-        "Concrete Calculator – Cement, Sand, Aggregate for M20, M15, M10 | Guniyo",
+        "Concrete Calculator: Cement, Sand, Aggregate (M20) | Guniyo",
       metaDescription:
         "Find cement bags, sand and aggregate for M5 to M25 concrete. Enter slab, beam, column or footing size in metre or feet. Step-by-step working with the 1.54 dry volume factor.",
       intro:
@@ -171,7 +171,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Bricks, cement, sand",
       h1: "Brick Calculator – Bricks, Cement and Sand for a Wall",
       metaTitle:
-        "Brick Calculator – How Many Bricks in a Wall, Cement & Sand for Brickwork | Guniyo",
+        "Brick Calculator: How Many Bricks in a Wall | Guniyo",
       metaDescription:
         "Calculate the number of bricks, cement bags and sand for 9 inch (230 mm) or 4.5 inch (115 mm) walls. Deduct doors and windows. Modular, traditional and fly ash bricks.",
       intro:
@@ -226,7 +226,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Cement and sand for plaster",
       h1: "Plaster Calculator – Cement and Sand for Wall Plaster",
       metaTitle:
-        "Plaster Calculator – Cement & Sand for 12 mm, 15 mm, 20 mm Plaster | Guniyo",
+        "Plaster Calculator: Cement & Sand per Sq Ft | Guniyo",
       metaDescription:
         "Calculate cement bags and sand for internal and external plaster in 1:4, 1:5 or 1:6. Enter area in sqft or m², choose 12, 15 or 20 mm thickness.",
       intro:
@@ -285,7 +285,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Bar weight, kg per m³, kg per sqft",
       h1: "Steel Calculator – Rebar Weight and Steel Quantity",
       metaTitle:
-        "Steel Calculator – Rebar Weight (D²/162), Steel for Slab, Beam, Column | Guniyo",
+        "Steel Calculator: Rebar Weight for Slab, Beam, Column | Guniyo",
       metaDescription:
         "Calculate steel bar weight with D²/162, steel for footing, column, beam and slab by thumb rule, and total steel for a house per sqft. 8 mm to 32 mm bars.",
       intro:
@@ -344,7 +344,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Tiles and boxes",
       h1: "Tile Calculator – How Many Tiles and Boxes",
       metaTitle:
-        "Tile Calculator – How Many Tiles & Boxes for a Room (60x60, 60x120, 80x80) | Guniyo",
+        "Tile Calculator: How Many Tiles & Boxes | Guniyo",
       metaDescription:
         "Calculate tiles and boxes for any floor area with wastage. Sizes 30x30 to 80x80 and 60x120 cm. Enter room size in feet or metre.",
       intro:
@@ -403,7 +403,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Paint, primer, putty",
       h1: "Paint Calculator – Paint, Primer and Putty for a Room",
       metaTitle:
-        "Paint Calculator – How Much Paint, Primer & Putty for a Room or House | Guniyo",
+        "Paint Calculator: Paint, Primer & Putty Needed | Guniyo",
       metaDescription:
         "Calculate litres of paint, primer and kg of wall putty from room size or wall area. Deduct doors and windows, choose coats and coverage.",
       intro:
@@ -462,7 +462,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Volume, brass, cost",
       h1: "Excavation Calculator – Volume, Brass and Cost",
       metaTitle:
-        "Excavation Calculator – Foundation Pit & Trench Volume in m³, cft, Brass | Guniyo",
+        "Excavation Calculator: Foundation Pit Volume | Guniyo",
       metaDescription:
         "Calculate excavation volume for footing pits and trenches with working space. Get m³, cft, brass, loose soil for disposal and cost.",
       intro:
@@ -521,7 +521,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "m³ ↔ cft ↔ brass, bags ↔ kg",
       h1: "Construction Unit Converter – m³, cft, Brass, sqft, Cement Bags",
       metaTitle:
-        "Construction Unit Converter – m³ to cft, Brass, sqft to m², Cement Bags to kg | Guniyo",
+        "Construction Unit Converter: m³, cft, Brass, sqft | Guniyo",
       metaDescription:
         "Convert construction units instantly: cubic metre to cft and brass, sqft to m², cement bags to kg and m³, kg to tonnes, feet-inch to metre.",
       intro:
@@ -574,7 +574,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Rooms → BOQ, measurement book, Excel",
       h1: "House BOQ Estimate – Item-wise with Measurement Book",
       metaTitle:
-        "House BOQ Estimate in Excel – Item-wise Cost, Measurement Book | Guniyo",
+        "House BOQ Estimate in Excel: Item-wise Cost | Guniyo",
       metaDescription:
         "Enter floors, bedrooms, toilets and kitchen to get an item-wise BOQ of your house: excavation, RCC, steel, brickwork, plaster, flooring, doors, plumbing, electrical — with measurement book, editable rates, Excel and PDF.",
       intro:
@@ -641,7 +641,7 @@ export const CALCULATORS: CalcInfo[] = [
       short: "Is your contractor's rate fair?",
       h1: "Contractor Quote Checker – Is Your Construction Rate Fair?",
       metaTitle:
-        "Contractor Rate Checker India – Is ₹/sqft Construction Quote Fair? | Guniyo",
+        "Contractor Rate Checker: Is Your ₹/sqft Quote Fair? | Guniyo",
       metaDescription:
         "Check if your contractor's construction quote is fair. Compare ₹/sqft for turnkey or labour-only contracts with market benchmarks for your city and quality, check item rates, and get a checklist before signing.",
       intro:

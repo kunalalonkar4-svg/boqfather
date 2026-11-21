@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import {
   SqftPage,
   sqftDescription,
-  sqftTitle,
+  sqftMetaTitle,
 } from "@/components/site/SeoPages";
 import { getSqft, SQFT_SIZES, sqftSlug } from "@/content/plots";
 import { pageMeta } from "@/lib/seo";
@@ -24,7 +24,7 @@ export async function generateMetadata({
   return pageMeta({
     lang: "en",
     path: `house-construction-cost/${size}`,
-    title: `${sqftTitle(n, "en")} | Guniyo`,
+    title: `${sqftMetaTitle(n, "en")} | Guniyo`,
     description: sqftDescription(n, "en"),
   });
 }

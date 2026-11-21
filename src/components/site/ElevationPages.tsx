@@ -14,7 +14,7 @@ const sizeOf = (x: Elevation) => x.plot.replace("-shop", "").replace("x", "×");
 const withShop = (x: Elevation, lang: Lang) => (x.plot.endsWith("-shop") ? L(lang, " with shop", " दुकान के साथ") : "");
 
 export const elevationsTitle = (lang: Lang) =>
-  L(lang, "House Front Elevation Designs for Indian Plots, with Plan and Cost", "भारतीय प्लॉट के लिए घर के फ़्रंट एलिवेशन डिज़ाइन, नक्शे और खर्च के साथ");
+  L(lang, "House Front Elevation Designs for Indian Homes, with Cost", "भारतीय प्लॉट के लिए घर के फ़्रंट एलिवेशन डिज़ाइन, नक्शे और खर्च के साथ");
 export const elevationsDescription = (lang: Lang) =>
   L(
     lang,

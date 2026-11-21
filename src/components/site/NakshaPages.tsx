@@ -166,7 +166,7 @@ function CustomSection({
 export const naksheTitle = (lang: Lang) =>
   L(
     lang,
-    "Ghar ka Naksha: House Plans for Every Plot Size and Facing, as per Vastu",
+    "Ghar ka Naksha: House Plans by Plot Size, Vastu-based",
     "घर का नक्शा: हर प्लॉट साइज़ और हर दिशा के वास्तु अनुसार नक्शे",
   );
 export const naksheDescription = (lang: Lang) =>

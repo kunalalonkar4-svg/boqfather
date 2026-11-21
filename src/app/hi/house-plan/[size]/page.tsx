@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import {
   PlotPage,
   plotDescription,
-  plotTitle,
+  plotMetaTitle,
 } from "@/components/site/SeoPages";
 import { getPlot, PLOTS, plotSlug } from "@/content/plots";
 import { pageMeta } from "@/lib/seo";
@@ -23,7 +23,7 @@ export async function generateMetadata({
   return pageMeta({
     lang: "hi",
     path: `house-plan/${size}`,
-    title: `${plotTitle(size, "hi")} | Guniyo`,
+    title: `${plotMetaTitle(size, "hi")} | Guniyo`,
     description: plotDescription(size, "hi"),
   });
 }

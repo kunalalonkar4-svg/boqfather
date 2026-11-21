@@ -13,8 +13,14 @@ export function pageMeta(opts: {
   image?: string;
 }): Metadata {
   const url = `${SITE_URL}${langPath(opts.lang, opts.path)}`;
+  // Google cuts titles near 60 characters: drop the brand suffix on long ones so the keywords stay visible.
+  const SUFFIX = " | Guniyo";
+  const title =
+    opts.title.length > 62 && opts.title.endsWith(SUFFIX)
+      ? opts.title.slice(0, -SUFFIX.length)
+      : opts.title;
   return {
-    title: opts.title,
+    title,
     description: opts.description,
     alternates: {
       canonical: url,
@@ -26,7 +32,7 @@ export function pageMeta(opts: {
       },
     },
     openGraph: {
-      title: opts.title,
+      title,
       description: opts.description,
       url,
       siteName: SITE_NAME,
@@ -37,7 +43,7 @@ export function pageMeta(opts: {
     twitter: {
       card: "summary_large_image",
       images: [`${SITE_URL}${opts.image ?? DEFAULT_OG}`],
-      title: opts.title,
+      title,
       description: opts.description,
     },
   };
