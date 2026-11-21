@@ -5,6 +5,7 @@ import { CITIES } from "@/content/cities";
 import { ELEVATIONS, groupOf } from "@/content/elevations";
 import { GUIDE_BASE, QUESTIONS, TOPICS } from "@/content/guideTopics";
 import { PLOTS, plotSlug, SQFT_SIZES, sqftSlug } from "@/content/plots";
+import { GAJ } from "@/content/naksha";
 import { FooterGroups } from "./FooterGroups";
 import { t } from "@/i18n/ui";
 import { baseLang, hasPage, langPath, LANG_LABEL, XLANGS, type XLang } from "@/lib/site";
@@ -212,6 +213,18 @@ export function SiteFooter({ lang }: { lang: XLang }) {
                 </li>
               ))}
             </ul>
+            <h2 className={`${sub} mt-6`}>
+              {L2(lang, "Naksha by gaj", "गज़ के हिसाब से नक्शे", "गजानुसार नकाशे", "ગજ પ્રમાણે નકશા")}
+            </h2>
+            <ul className="flex flex-wrap gap-x-4 gap-y-2 text-[14px]">
+              {GAJ.map((g) => (
+                <li key={g.gaj}>
+                  <Link href={langPath(lang, `naksha/gaj/${g.slug}`)} className={a}>
+                    {g.gaj} {L2(lang, "gaj", "गज़", "गज", "ગજ")}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="grid gap-6 sm:grid-cols-2">
             {(["narrow", "medium", "wide", "shop"] as const).map((g) => (
@@ -352,6 +365,7 @@ export function SiteFooter({ lang }: { lang: XLang }) {
     ["calculators", "Calculators", "कैलकुलेटर", "कॅल्क्युलेटर", "કેલ્ક્યુલેટર"],
     [GUIDE_BASE, "Guide", "गाइड", "गाइड", "ગાઇડ"],
     ["privacy", "Privacy", "प्राइवेसी", "गोपनीयता", "ગોપનીયતા"],
+    ["all-pages", "All pages", "सभी पेज", "सर्व पृष्ठे", "બધા પેજ"],
     ["terms", "Terms of use", "नियम और शर्तें", "वापराच्या अटी", "ઉપયોગની શરતો"],
   ];
   return (
