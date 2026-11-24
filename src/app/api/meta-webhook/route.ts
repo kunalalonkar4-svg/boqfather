@@ -11,7 +11,7 @@ export const maxDuration = 30;
 
 const GRAPH = "https://graph.facebook.com/v24.0";
 const VERIFY = process.env.META_VERIFY_TOKEN || "96228ef7f908dc1de31730f587233fdd";
-const TOKEN = process.env.META_ACCESS_TOKEN || "";
+const TOKEN = process.env.META_ACCESS_TOKEN || process.env.INSTAGRAM_ACCESS_TOKEN || "";
 const IG_ID = "17841405405723381";
 const IG_USER = "eralonkar";
 const PAGE_NCSA = "414948528376093";
