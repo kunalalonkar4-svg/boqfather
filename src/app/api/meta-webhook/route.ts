@@ -72,7 +72,7 @@ async function writeReply(persona: Persona, platform: string, who: string, text:
     if (process.env.GEMINI_API_KEY) {
       const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
       const r = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY.trim()}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -144,6 +144,20 @@ async function handlePageComment(pageId: string, v: Record<string, any>) {
 
 export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
+  if (q.get("diag") === "1" && q.get("hub.verify_token") === VERIFY) {
+    const key = process.env.GEMINI_API_KEY || "";
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    let gem = "no key";
+    if (key) {
+      const r = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key.trim()}`,
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "Say OK" }] }] }) },
+      );
+      const t = await r.text();
+      gem = `${r.status} ${t.slice(0, 300)}`;
+    }
+    return Response.json({ token: !!TOKEN, gemini_key_len: key.length, key_has_space: key !== key.trim(), model, gemini: gem });
+  }
   if (q.get("hub.mode") === "subscribe" && q.get("hub.verify_token") === VERIFY)
     return new Response(q.get("hub.challenge") || "", { status: 200 });
   return new Response("forbidden", { status: 403 });
