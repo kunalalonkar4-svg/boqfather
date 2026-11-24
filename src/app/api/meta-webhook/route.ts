@@ -17,6 +17,11 @@ const IG_USER = "eralonkar";
 const PAGE_NCSA = "414948528376093";
 const PAGE_ASTIK = "1018455281360345";
 
+const GEMINI_MODELS = () =>
+  [process.env.GEMINI_MODEL, "gemini-3.8-flash", "gemini-3-flash-preview", "gemini-3.8-flash-lite", "gemini-flash-latest"].filter(
+    (m, i, a): m is string => !!m && a.indexOf(m) === i,
+  );
+
 type Persona = "engineer" | "devotional";
 type Out = { public_reply: string; dm_text: string };
 
@@ -70,23 +75,28 @@ async function writeReply(persona: Persona, platform: string, who: string, text:
   const user = `${platform} comment by ${who || "a follower"}:\n"${text}"`;
   try {
     if (process.env.GEMINI_API_KEY) {
-      const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-      const r = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY.trim()}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: system }] },
-            contents: [{ role: "user", parts: [{ text: user }] }],
-            generationConfig: { temperature: 0.6, maxOutputTokens: 4096, responseMimeType: "application/json" },
-          }),
-        },
-      );
-      const j = await r.json();
-      const t = j?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text || "").join("") || "";
-      const o = parseJson(t);
-      if (o) return o;
+      for (const model of GEMINI_MODELS()) {
+        const r = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY.trim()}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: system }] },
+              contents: [{ role: "user", parts: [{ text: user }] }],
+              generationConfig: { temperature: 0.6, maxOutputTokens: 4096, responseMimeType: "application/json" },
+            }),
+          },
+        );
+        if (!r.ok) {
+          console.error("gemini", model, r.status);
+          continue;
+        }
+        const j = await r.json();
+        const t = j?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text || "").join("") || "";
+        const o = parseJson(t);
+        if (o) return o;
+      }
     } else if (process.env.ANTHROPIC_API_KEY) {
       const r = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -146,17 +156,17 @@ export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
   if (q.get("diag") === "1" && q.get("hub.verify_token") === VERIFY) {
     const key = process.env.GEMINI_API_KEY || "";
-    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-    let gem = "no key";
+    const results: Record<string, string> = {};
     if (key) {
-      const r = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key.trim()}`,
-        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "Say OK" }] }] }) },
-      );
-      const t = await r.text();
-      gem = `${r.status} ${t.slice(0, 300)}`;
+      for (const model of GEMINI_MODELS()) {
+        const r = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key.trim()}`,
+          { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "Say OK" }] }] }) },
+        );
+        results[model] = `${r.status} ${(await r.text()).slice(0, 120)}`;
+      }
     }
-    return Response.json({ token: !!TOKEN, gemini_key_len: key.length, key_has_space: key !== key.trim(), model, gemini: gem });
+    return Response.json({ token: !!TOKEN, gemini_key_len: key.length, key_has_space: key !== key.trim(), gemini: results });
   }
   if (q.get("hub.mode") === "subscribe" && q.get("hub.verify_token") === VERIFY)
     return new Response(q.get("hub.challenge") || "", { status: 200 });
