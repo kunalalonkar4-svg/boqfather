@@ -70,7 +70,7 @@ async function writeReply(persona: Persona, platform: string, who: string, text:
   const user = `${platform} comment by ${who || "a follower"}:\n"${text}"`;
   try {
     if (process.env.GEMINI_API_KEY) {
-      const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+      const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
       const r = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY.trim()}`,
         {
@@ -79,7 +79,7 @@ async function writeReply(persona: Persona, platform: string, who: string, text:
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: system }] },
             contents: [{ role: "user", parts: [{ text: user }] }],
-            generationConfig: { temperature: 0.6, maxOutputTokens: 2048, responseMimeType: "application/json" },
+            generationConfig: { temperature: 0.6, maxOutputTokens: 4096, responseMimeType: "application/json" },
           }),
         },
       );
@@ -146,7 +146,7 @@ export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
   if (q.get("diag") === "1" && q.get("hub.verify_token") === VERIFY) {
     const key = process.env.GEMINI_API_KEY || "";
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
     let gem = "no key";
     if (key) {
       const r = await fetch(
