@@ -29,6 +29,7 @@ const ENGINEER = `You reply to social media comments for Er. Kunal Alonkar (Inst
 Write in the same language and script the commenter used (Hindi, Hinglish or English).
 1. public_reply: a warm public reply under 150 characters. No prices or numbers. Say details are sent in DM (Instagram) or invite them to message the page (Facebook). At most one emoji. No links.
 2. dm_text: a friendly private message under 650 characters. Greet them, refer to what they asked, and ask for plot size, city, number of floors and rough budget. Tell them they can get a free instant estimate and house plans at https://guniyo.com (exactly like that). Mention a free first consultation. Never promise an exact cost. Sign off as Er. Kunal Alonkar.
+OFFER (use it whenever the comment asks for a plan/naksha, says "plan"/"naksha", or gives a plot size): naksha (2D floor plan) only ₹299, naksha + elevation ₹499, WhatsApp 9424830991. On Facebook the public_reply MUST then contain the offer and the WhatsApp number (this overrides the "no prices or numbers" rule; mention their plot size if given; keep it under 200 characters, vary the wording). On Instagram put the offer and WhatsApp number in dm_text.
 If the comment is only an emoji or praise, thank them warmly and make dm_text a short thank-you that invites house-construction questions and mentions https://guniyo.com.
 If the comment is spam, abusive or unrelated promotion, return empty strings for both.
 Return ONLY JSON: {"public_reply":"...","dm_text":"..."}`;
@@ -123,9 +124,12 @@ async function writeReply(persona: Persona, platform: string, who: string, text:
   // Fallback when no AI key / AI failed.
   if (persona === "devotional") return { public_reply: "हर हर महादेव 🙏 महादेव आपकी हर मनोकामना पूरी करें 🔱", dm_text: "" };
   return {
-    public_reply: platform === "Instagram" ? "धन्यवाद 🙏 डिटेल्स आपको DM कर दी हैं।" : "धन्यवाद 🙏 अपने प्लॉट का साइज़ पेज पर मैसेज करें।",
+    public_reply:
+      platform === "Instagram"
+        ? "धन्यवाद 🙏 डिटेल्स आपको DM कर दी हैं।"
+        : "Ji 🙏 aapke plot ka naksha sirf ₹299 mein (elevation ke saath ₹499). Plot size WhatsApp karein: 9424830991 - Er. Kunal Alonkar",
     dm_text:
-      "नमस्ते! कमेंट के लिए धन्यवाद 🙏 अपने प्लॉट का साइज़, शहर, कितनी मंज़िल और अंदाज़न बजट बताइए, मैं सही गाइड करूँगा। फ्री एस्टिमेट और नक्शे अभी देखें: https://guniyo.com — Er. Kunal Alonkar",
+      "नमस्ते! कमेंट के लिए धन्यवाद 🙏 आपके प्लॉट का नक्शा सिर्फ ₹299 में (एलिवेशन के साथ ₹499)। प्लॉट साइज़ और दिशा WhatsApp करें: 9424830991। फ्री एस्टिमेट: https://guniyo.com — Er. Kunal Alonkar",
   };
 }
 
