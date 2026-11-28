@@ -120,7 +120,7 @@ export function ElevationPage({ lang, slug }: { lang: Lang; slug: string }) {
       <section className="flex flex-col gap-3">
         <div className="overflow-hidden rounded-lg border border-line hover:shadow-[0_14px_32px_-14px_rgba(8,8,8,0.35)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={elevationImage(x)} alt={alt(x, lang)} width={1600} height={900} className="aspect-[16/9] w-full object-cover" fetchPriority="high" />
+          <img src={elevationImage(x)} alt={alt(x, lang)} width={1600} height={900} className="h-auto w-full" fetchPriority="high" />
         </div>
         <p className="text-[12.5px] text-muted">{L(lang, "Artist impression. Final look depends on your design and finishes.", "काल्पनिक चित्र। अंतिम रूप आपके डिज़ाइन और फ़िनिश पर निर्भर करेगा।")}</p>
       </section>
