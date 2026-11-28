@@ -7,7 +7,6 @@ import { getNaksha, NAKSHE, nakshaImage, nakshaInfo, nakshaPlan } from "@/conten
 import { t } from "@/i18n/ui";
 import { Lang, langPath, SITE_NAME, SITE_URL } from "@/lib/site";
 import { SiteFooter, SiteHeader } from "../../Chrome";
-import { ElevationDrawing } from "./ElevationDrawing";
 
 const L = (lang: Lang, en: string, hi: string) => (lang === "hi" ? hi : en);
 const wrap = "mx-auto w-full max-w-[1120px] px-5 sm:px-8";
@@ -108,11 +107,12 @@ export function HomeLight({ lang }: { lang: Lang }) {
               <p className="mt-4 text-[14px] leading-relaxed text-body">{L(lang, "No sign-up to try · Editable rates · Planning estimates", "आज़माने के लिए साइन-अप नहीं · रेट बदलें · प्लानिंग के लिए अनुमान")}</p>
             </div>
             <div className="overflow-hidden rounded-xl border border-[#dbe8eb] bg-white shadow-sm">
-              <ElevationDrawing w={n.plot.w} className="block aspect-[16/10] w-full object-cover" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/elevations/gallery/e10.webp" alt={L(lang, "Realistic modern two-storey house elevation with stone cladding, illuminated jaali, glass balcony and landscaped entrance", "पत्थर की क्लैडिंग, रोशन जाली, कांच की बालकनी और गार्डन वाला मॉडर्न दो मंज़िला घर का एलिवेशन")} width={1600} height={833} fetchPriority="high" className="block aspect-[16/10] w-full object-cover" />
               <div className="p-5">
-                <p className="text-[14px] font-semibold text-body">{L(lang, "Example only · 30×40 ft plot · Ground + first floor", "सिर्फ उदाहरण · 30×40 ft प्लॉट · ग्राउंड + पहली मंज़िल")}</p>
+                <p className="text-[14px] font-semibold text-body">{L(lang, "Elevation inspiration · Sample 30×40 ft plan estimate", "एलिवेशन का उदाहरण · 30×40 ft नक्शे का सैंपल खर्च")}</p>
                 <p className={`${serif} mt-2 text-[30px] ${teal}`}>{lk(info.total)}</p>
-                <p className="mt-2 text-[14px] leading-relaxed text-body">{L(lang, "Sample plan estimate. Your built-up area, local rates, specifications and structural design will change the cost.", "सैंपल नक्शे का अनुमान। आपके बिल्ट-अप एरिया, स्थानीय रेट, स्पेसिफिकेशन और स्ट्रक्चर डिज़ाइन से खर्च बदलेगा।")}</p>
+                <p className="mt-2 text-[14px] leading-relaxed text-body">{L(lang, "Artist impression for design inspiration. The amount is for the sample plan; the pictured finishes are not a quotation. Your area, rates and specifications change the cost.", "तस्वीर डिज़ाइन समझने के लिए है। रकम सैंपल नक्शे की है, तस्वीर में दिख रही फ़िनिशिंग का कोटेशन नहीं। एरिया, रेट और स्पेसिफिकेशन से खर्च बदलेगा।")}</p>
                 <Link href={langPath(lang, `naksha/${n.slug}`)} className={`mt-3 inline-flex min-h-11 items-center text-[16px] font-semibold underline underline-offset-4 ${teal}`}>{L(lang, "View this plan and cost", "यह नक्शा और खर्च देखें")}</Link>
               </div>
             </div>
