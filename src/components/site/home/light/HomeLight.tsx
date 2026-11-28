@@ -237,7 +237,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
             <p className="mt-3 text-[16px] leading-relaxed text-body">{L(lang, "When you need clean reports with your name, plan photos read by AI or saved projects, move to Pro.", "जब आपको अपने नाम की साफ़ रिपोर्ट, AI से पढ़ी गई नक्शे की फ़ोटो या सेव प्रोजेक्ट चाहिए, प्रो लें।")}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href={start} className={btnYellow}>{L(lang, "Start free estimate", "मुफ़्त एस्टिमेट शुरू करें")}</Link>
-              <Link href={langPath(lang, "pricing")} className={btnLine}>{L(lang, "View pricing", "कीमत देखें")}</Link>
+              <Link href={langPath(lang, "pro")} className={btnLine}>{L(lang, "View pricing", "कीमत देखें")}</Link>
             </div>
           </div>
           <div className="rounded-[8px] border border-[#e5e7eb] bg-white p-6 shadow-sm">
