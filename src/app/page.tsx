@@ -7,7 +7,7 @@ export const metadata = pageMeta({
   title:
     "House Construction Cost Calculator & BOQ India | Guniyo",
   description:
-    "Free house construction cost calculator for India: cost per sq ft, item-wise BOQ, house plans by plot size (30x40, 20x40, 25x50), elevations and a step-by-step building guide. Hindi and English.",
+    "Estimate your house construction cost in India. Calculate materials, create an item-wise BOQ with editable rates, and explore house plans. Free tools in English and Hindi.",
 });
 
 export default function Page() {
