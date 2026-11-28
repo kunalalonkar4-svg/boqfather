@@ -34,11 +34,11 @@ export function SiteHeader({ lang, altPath }: { lang: XLang; altPath: string }) 
   const available = XLANGS.filter((l) => hasPage(l, pagePath));
   const links: { href: string; label: string; pro?: boolean; desk?: boolean; guide?: boolean }[] = [
     { href: langPath(lang, "house-construction-guide"), label: x("Guide", "गाइड", "गाइड", "ગાઇડ"), desk: true, guide: true },
-    { href: `${langPath(lang)}#features`, label: x("Features", "फ़ीचर", "वैशिष्ट्ये", "ફીચર્સ"), desk: true },
+    { href: `${langPath(lang)}#features`, label: x("Choose a tool", "टूल चुनें", "वैशिष्ट्ये", "ફીચર્સ"), desk: true },
     { href: langPath(lang, "naksha"), label: x("Plans & Cost", "नक्शे और खर्च", "नकाशे आणि खर्च", "નકશા અને ખર્ચ"), desk: true },
     { href: langPath(lang, "elevations"), label: x("Elevations", "एलिवेशन", "एलिव्हेशन", "એલિવેશન"), desk: true },
     { href: langPath(lang, "calculators"), label: x("Calculators", "कैलकुलेटर", "कॅल्क्युलेटर", "કેલ્ક્યુલેટર"), desk: true },
-    { href: langPath(lang, "plan-to-estimate"), label: x("Plan → Estimate", "नक्शे से एस्टिमेट", "नकाशावरून अंदाज", "નકશા પરથી અંદાજ"), pro: true, desk: true },
+    { href: langPath(lang, "plan-to-estimate"), label: x("Plan to Estimate", "नक्शे से एस्टिमेट", "नकाशावरून अंदाज", "નકશા પરથી અંદાજ"), pro: true, desk: true },
     { href: langPath(lang, "pro"), label: x("Pricing", "प्राइसिंग", "किंमत", "કિંમત"), desk: true },
     { href: langPath(lang, "house-boq-estimate"), label: x("Item-wise BOQ", "आइटम-वार BOQ", "आयटमनिहाय BOQ", "આઇટમ-વાર BOQ") },
     { href: langPath(lang, "house-construction-cost"), label: x("House cost", "घर का खर्च", "घराचा खर्च", "ઘરનો ખર્ચ") },
