@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   // go to the closest page on this site, with a permanent redirect.
   async redirects() {
     return [
+      { source: "/:path*", has: [{ type: "host", value: "www.guniyo.com" }], destination: "https://guniyo.com/:path*", permanent: true },
       { source: "/disclaimer", destination: "/about/", permanent: true },
       { source: "/disclaimer/", destination: "/about/", permanent: true },
     ];
