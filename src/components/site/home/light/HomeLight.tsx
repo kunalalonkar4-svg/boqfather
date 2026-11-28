@@ -34,11 +34,11 @@ function Card({ img, title, text, href, cta, children }: { img?: ReactNode; titl
       {img && <div className="fx-zoom overflow-hidden border-b border-[#eef0f2] bg-[#f6f7f8]">{img}</div>}
       <div className="flex flex-1 flex-col gap-2 p-5">
         <h3 className={`${serif} text-[19px] font-normal leading-snug`}>{title}</h3>
-        <p className="text-[14.5px] leading-relaxed text-body">{text}</p>
+        <p className="text-[16px] leading-relaxed text-body">{text}</p>
         {children}
         {href && cta && (
-          <Link href={href} className={`fx-arrow mt-auto pt-2 text-[13px] font-bold tracking-wide ${teal}`}>
-            {cta.toUpperCase()} <span aria-hidden="true" className="inline-block transition-transform duration-300">→</span>
+          <Link href={href} className={`fx-arrow mt-auto pt-2 text-[14px] font-bold tracking-wide ${teal}`}>
+            {cta}
           </Link>
         )}
       </div>
@@ -91,56 +91,56 @@ export function HomeLight({ lang }: { lang: Lang }) {
     <>
       <SiteHeader lang={lang} altPath={langPath(lang === "en" ? "hi" : "en")} />
       <main lang={lang} className="overflow-x-clip bg-white text-ink">
-        {lang === "en" ? (
-          <section className="bg-white">
-            <h1 className="sr-only">Professional House Cost Estimates in Minutes</h1>
-            <picture>
-              <source media="(max-width: 639px)" srcSet="/home/hero-banner-m.webp" width={800} height={614} />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/home/hero-banner.webp" alt="A two-storey house with its floor plan, estimated cost and material BOQ cards: professional house cost estimates in minutes" width={2000} height={848} fetchPriority="high" className="block h-auto w-full" />
-            </picture>
-            <div className={`${wrap} flex flex-col items-center gap-4 py-8 text-center`}>
-              <p className="max-w-2xl text-[17px] leading-relaxed text-body">Choose a house plan and get an item-wise BOQ with quantities, rates and costs. Built by a civil engineer and valuer, free to start.</p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <Link href={start} className={btnYellow}>Start free estimate</Link>
-                <Link href={langPath(lang, "naksha")} className={btnLine}>Explore house plans</Link>
+        <section className="border-b border-[#dbe8eb] bg-[#f0f7f8]">
+          <div className={`${wrap} grid items-center gap-8 py-10 sm:py-14 lg:grid-cols-[1.1fr_1fr]`}>
+            <div>
+              <p className={`text-[14px] font-semibold ${teal}`}>{L(lang, "Free construction tools · English & Hindi", "मुफ़्त निर्माण टूल · हिंदी और अंग्रेज़ी")}</p>
+              <h1 className={`${serif} mt-3 text-[34px] leading-[1.18] [text-wrap:balance] sm:text-[48px]`}>
+                {L(lang, "House Construction Cost Calculator & Item-wise BOQ", "घर बनाने का खर्च और मटीरियल का हिसाब")}
+              </h1>
+              <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-body">
+                {L(lang, "Know your approximate house budget from the built-up area. For a detailed estimate, use a house plan to review quantities, rates and costs for each item.", "बिल्ट-अप एरिया से घर का अनुमानित बजट जानें। विस्तृत हिसाब के लिए नक्शे से हर काम की मात्रा, रेट और खर्च वाला BOQ बनाएं।")}
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Link href={langPath(lang, "house-construction-cost-calculator")} className={btnYellow}>{L(lang, "Calculate house cost", "घर का खर्च निकालें")}</Link>
+                <Link href={start} className={btnLine}>{L(lang, "Create detailed BOQ", "विस्तृत BOQ बनाएं")}</Link>
               </div>
+              <p className="mt-4 text-[14px] leading-relaxed text-body">{L(lang, "No sign-up to try · Editable rates · Planning estimates", "आज़माने के लिए साइन-अप नहीं · रेट बदलें · प्लानिंग के लिए अनुमान")}</p>
             </div>
-          </section>
-        ) : (
-        <section className={`${wrap} grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1fr_1.05fr] lg:gap-14`}>
-          <div>
-            <h1 className={`${serif} text-[36px] font-normal leading-[1.15] tracking-[-0.01em] [text-wrap:balance] sm:text-[52px]`}>
-              {L(lang, "Professional House Cost Estimates in Minutes", "मिनटों में घर का पक्का खर्च का एस्टिमेट")}
-            </h1>
-            <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-body">
-              {L(lang, "Choose a house plan and get an item-wise BOQ with quantities, rates and costs. Built by a civil engineer and valuer, free to start.", "घर का नक्शा चुनें और मात्रा, रेट और खर्च के साथ आइटम-वार BOQ पाएं। एक सिविल इंजीनियर और वैल्यूअर द्वारा बनाया गया, शुरू करना फ़्री।")}
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href={start} className={btnYellow}>{L(lang, "Start free estimate", "मुफ़्त एस्टिमेट शुरू करें")}</Link>
-              <Link href={langPath(lang, "naksha")} className={btnLine}>{L(lang, "Explore house plans", "घर के नक्शे देखें")}</Link>
-            </div>
-          </div>
-          <div className="rounded-[10px] bg-[#0b6b7a] p-4 sm:p-6">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="overflow-hidden rounded-[8px] bg-white">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={nakshaImage(n)} alt={L(lang, "30×40 ft floor plan with room sizes", "30×40 ft नक्शा, कमरों के साइज़ के साथ")} width={1200} height={800} className="aspect-[4/5] w-full object-contain p-2 sm:aspect-auto sm:h-full" />
-              </div>
-              <div className="flex flex-col gap-3">
-                <div className="overflow-hidden rounded-[8px] bg-white">
-                  <ElevationDrawing w={n.plot.w} className="block aspect-[16/10] w-full object-cover" />
-                </div>
-                <div className="rounded-[8px] bg-white p-4">
-                  <p className="text-[12.5px] text-muted">{L(lang, "Sample estimate · 30×40 ft, G+1, standard", "सैंपल एस्टिमेट · 30×40 ft, G+1, स्टैंडर्ड")}</p>
-                  <p className={`${serif} mt-1 text-[30px] leading-none`}>₹{(info.total / 1e5).toLocaleString("en-IN", { maximumFractionDigits: 1 })} {L(lang, "lakh", "लाख")}</p>
-                  <p className="mt-2 text-[12.5px] text-muted">{info.bhk} BHK · {Math.round(info.builtUp).toLocaleString("en-IN")} sq ft</p>
-                </div>
+            <div className="overflow-hidden rounded-xl border border-[#dbe8eb] bg-white shadow-sm">
+              <ElevationDrawing w={n.plot.w} className="block aspect-[16/10] w-full object-cover" />
+              <div className="p-5">
+                <p className="text-[14px] font-semibold text-body">{L(lang, "Example only · 30×40 ft plot · Ground + first floor", "सिर्फ उदाहरण · 30×40 ft प्लॉट · ग्राउंड + पहली मंज़िल")}</p>
+                <p className={`${serif} mt-2 text-[30px] ${teal}`}>{lk(info.total)}</p>
+                <p className="mt-2 text-[14px] leading-relaxed text-body">{L(lang, "Sample plan estimate. Your built-up area, local rates, specifications and structural design will change the cost.", "सैंपल नक्शे का अनुमान। आपके बिल्ट-अप एरिया, स्थानीय रेट, स्पेसिफिकेशन और स्ट्रक्चर डिज़ाइन से खर्च बदलेगा।")}</p>
+                <Link href={langPath(lang, `naksha/${n.slug}`)} className={`mt-3 inline-flex min-h-11 items-center text-[16px] font-semibold underline underline-offset-4 ${teal}`}>{L(lang, "View this plan and cost", "यह नक्शा और खर्च देखें")}</Link>
               </div>
             </div>
           </div>
         </section>
-        )}
+
+        <section id="features" className={`${wrap} scroll-mt-32 py-10 sm:py-12`} aria-labelledby="tool-choice-title">
+          <h2 id="tool-choice-title" className={`${serif} text-[28px] sm:text-[34px]`}>{L(lang, "What would you like to do?", "आप क्या करना चाहते हैं?")}</h2>
+          <p className="mt-2 text-[16px] leading-relaxed text-body">{L(lang, "Choose the tool that matches your next step. Not sure? Start with the house cost calculator.", "अपनी ज़रूरत का टूल चुनें। समझ नहीं आ रहा? पहले घर का खर्च कैलकुलेटर आज़माएं।")}</p>
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              ["house-construction-cost-calculator", L(lang, "I want a quick house budget", "मुझे घर का अनुमानित खर्च जानना है"), L(lang, "Enter built-up area, floors and finish quality. See approximate cost and material needs.", "बिल्ट-अप एरिया, मंज़िलें और फिनिश क्वालिटी भरें। अनुमानित खर्च और मटीरियल देखें।"), L(lang, "Calculate cost", "खर्च निकालें")],
+              ["house-boq-estimate", L(lang, "I need a detailed BOQ", "मुझे हर काम का विस्तृत हिसाब चाहिए"), L(lang, "Use a plan or enter rooms. Review item quantities, change rates and download the estimate.", "नक्शा इस्तेमाल करें या कमरे भरें। हर काम की मात्रा देखें, रेट बदलें और एस्टिमेट डाउनलोड करें।"), L(lang, "Create BOQ", "BOQ बनाएं")],
+              ["naksha", L(lang, "I need a house plan", "मुझे घर का नक्शा चाहिए"), L(lang, "Browse layouts by plot size, with room dimensions and sample construction costs.", "प्लॉट साइज़ के अनुसार नक्शे, कमरों के नाप और निर्माण के सैंपल खर्च देखें।"), L(lang, "Find house plans", "नक्शे देखें")],
+              ["calculators", L(lang, "I need material quantities", "मुझे मटीरियल की मात्रा निकालनी है"), L(lang, "Calculate concrete, bricks, steel, plaster, tiles and paint with the working shown.", "पूरे हिसाब के साथ कंक्रीट, ईंट, सरिया, प्लास्टर, टाइल्स और पेंट की मात्रा निकालें।"), L(lang, "Choose a calculator", "कैलकुलेटर चुनें")],
+              ["contractor-quote-checker", L(lang, "I want to compare a quote", "मुझे ठेकेदार का कोटेशन जांचना है"), L(lang, "Compare item rates with the reference estimate before discussing your contract.", "ठेका तय करने से पहले आइटम के रेट की तुलना संदर्भ एस्टिमेट से करें।"), L(lang, "Compare rates", "रेट की तुलना करें")],
+              ["house-construction-guide", L(lang, "I am building for the first time", "मैं पहली बार घर बनवा रहा हूं"), L(lang, "Understand planning, budget, contractor agreements and checks at each construction stage.", "प्लानिंग, बजट, ठेकेदार एग्रीमेंट और हर निर्माण चरण की जांच समझें।"), L(lang, "Read the building guide", "घर बनाने की गाइड पढ़ें")],
+            ].map(([path, title, description, label]) => (
+              <li key={path}>
+                <Link href={langPath(lang, path)} className="group flex h-full flex-col rounded-xl border border-[#dbe8eb] bg-white p-5 transition hover:border-[#0b5f6e] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0b5f6e]">
+                  <h3 className="text-[18px] font-semibold leading-snug">{title}</h3>
+                  <p className="mb-4 mt-2 text-[16px] leading-relaxed text-body">{description}</p>
+                  <span className={`mt-auto text-[16px] font-semibold underline underline-offset-4 ${teal}`}>{label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         {/* step 1 */}
         <section className="bg-white">
@@ -155,7 +155,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 title={L(lang, "Already have a plan? Upload it", "नक्शा पहले से है? अपलोड करें")}
                 text={L(lang, "An AutoCAD DXF is read on your own device, free. A photo or PDF is read by AI on Pro.", "AutoCAD DXF आपके अपने डिवाइस पर पढ़ा जाता है, फ़्री। फ़ोटो या PDF प्रो में AI पढ़ता है।")}
                 href={langPath(lang, "plan-to-estimate")}
-                cta={L(lang, "Learn more", "और जानें")}
+                cta={L(lang, "Upload my plan", "अपना नक्शा अपलोड करें")}
               >
                 <ul className="mt-1 flex flex-col gap-1"><Tick>{L(lang, "DXF is free", "DXF फ़्री है")}</Tick><Tick>{L(lang, "You check every room", "हर कमरा आप जांचते हैं")}</Tick><Tick>{L(lang, "Opens straight in the BOQ", "सीधे BOQ में खुलता है")}</Tick></ul>
               </Card>
@@ -167,7 +167,7 @@ export function HomeLight({ lang }: { lang: Lang }) {
                 title={L(lang, "No plan yet? Pick one", "नक्शा नहीं है? चुनें")}
                 text={L(lang, "Scaled plans with room sizes, a front elevation and a Vastu chart, for common plot sizes.", "आम प्लॉट साइज़ के लिए नाप वाले नक्शे, कमरों के साइज़, फ़्रंट एलिवेशन और वास्तु चार्ट के साथ।")}
                 href={langPath(lang, "naksha")}
-                cta={L(lang, "Learn more", "और जानें")}
+                cta={L(lang, "Browse house plans", "घर के नक्शे देखें")}
               >
                 <ul className="mt-1 flex flex-col gap-1"><Tick>{L(lang, "Plans for all four road sides", "चारों सड़क दिशाओं के नक्शे")}</Tick><Tick>{L(lang, "Vastu chart for each room", "हर कमरे का वास्तु चार्ट")}</Tick><Tick>{L(lang, "Cost shown with each plan", "हर नक्शे के साथ खर्च")}</Tick></ul>
                 <div className="mt-2 flex flex-1 flex-col justify-end gap-3">
