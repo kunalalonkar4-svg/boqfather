@@ -108,12 +108,17 @@ export default function HouseCalc({
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <div className="rounded-2xl border border-line bg-white p-5 sm:p-6">
           <div className="flex flex-col gap-4">
+            <div className="rounded-xl bg-[#f0f7f8] p-4 text-[16px] leading-relaxed text-body">
+              <p className="font-semibold text-ink">{lang === "hi" ? "पहले अपना बिल्ट-अप एरिया भरें" : "Start with your built-up area"}</p>
+              <p className="mt-1">{lang === "hi" ? "प्रति मंज़िल बनने वाला एरिया डालें, पूरा प्लॉट एरिया नहीं। उदाहरण: 1,000 sq ft प्रति मंज़िल और G+1 यानी कुल 2,000 sq ft। नीचे दिख रहे नंबर उदाहरण हैं; अपनी जानकारी भरते ही नतीजे बदलेंगे।" : "Enter the area you will build on each floor, rather than the full plot area. Example: 1,000 sq ft per floor with G+1 means 2,000 sq ft in total. The starting numbers are examples; results update as you edit."}</p>
+            </div>
             <NumberField
               label={d.area_per_floor}
               value={area}
               onChange={setArea}
               suffix="sqft"
             />
+            <p className="text-[14px] leading-relaxed text-muted">{lang === "hi" ? "G = सिर्फ ग्राउंड फ़्लोर · G+1 = ग्राउंड + पहली मंज़िल" : "G = ground floor only · G+1 = ground + first floor"}</p>
             <Segmented
               label={d.floors}
               value={floors}
